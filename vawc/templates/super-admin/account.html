@@ -1,0 +1,778 @@
+{% extends "../base/base_admin.html" %}
+{% block title %}Manage | Account {% endblock %}
+{% load static %}
+{% block styles %}
+<link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
+<link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
+{% endblock %}
+{% block content %}
+<div class="container-fluid pb-4">
+    <div class="row d-flex justify-content-between">
+        <div class="col-auto">
+            <h1>Account</h1>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account"><i class="bx bx-plus"></i> Add Account</button>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-6 mb-lg-0 mb-3 ">
+            <div class="input-group search-keyword">
+                <input type="text" name="keyword" id="keyword" placeholder="Search Name" class="form-control">
+                <button class="btn btn-outline-secondary background-color-green" type="button"><i class='bx bx-search-alt'></i></button>
+            </div>
+        </div>
+        <div class="form-group col-lg-6 mb-lg-0 mb-3 ">
+            <select name="status" id="status" class="form-select me-md-2">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Not Active">Not Active</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="pt-4">
+        <table class="table table-striped nowrap" id="table-account" style="width:100%">
+            <thead class="border-bottom border-dark border-2 border-opacity-50">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Barangay</th>
+                    <th scope="col">Date Added</th>
+                    <th class="text-center" scope="col">Manage</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.last_name }},{{ account.first_name }}&nbsp;{{ account.middle_name }}</td>
+                        <td>{{ account.user.email }}</td>
+                        <td>{{ account.status }}</td>
+                        <td>{{ account.barangay }}</td>
+                        <td>{{ account.user.date_joined }}</td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-success edit-account-btn" role="button" data-account-id="{{ account.user.id }}">View</button>
+                            <button class="btn btn-outline-danger delete-account-btn ms-lg-3" role="button" data-account-id="{{ account.user.id }}">Delete</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div><!--end of div of table-->
+</div>
+<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
+<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Success</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+        </div>
+    </div>
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Error</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+        </div>
+    </div>
+</div>
+
+<!-- Modal add  -->
+<div class="modal fade" id="add_new_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Account</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="addAccountForm" method="POST">
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="account_username" name="account_username" placeholder="name@example.com" >
+                    <label for="account_username">Username</label>
+                    <div id="account_usernameFeedback" class="invalid-feedback">
+                        Username is already Taken.
+                    </div>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="account_email" name="account_email" placeholder="name@example.com" >
+                    <label for="account_email">Email</label>
+                    <div id="account_emailFeedback" class="invalid-feedback">
+                        Email is already Taken.
+                    </div>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="account_fname" name="account_fname" placeholder="name@example.com" >
+                            <label for="account_fname">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-12l">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="account_mname" name="account_mname" placeholder="name@example.com" >
+                            <label for="account_mname">Middle Name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="account_lname" name="account_lname" placeholder="name@example.com" >
+                    <label for="account_lname">Last Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="account_region" name="account_region">
+                        <option value="region-I">Region I – Ilocos Region</option>
+                        <option value="region-II">Region II – Cagayan Valley</option>
+                        <option value="region-III">Region III – Central Luzon</option>
+                        <option value="region-IV">Region IV‑A – CALABARZON</option>
+                        <option value="mimaropa">MIMAROPA Region</option>
+                        <option value="region-V">Region V – Bicol Region</option>
+                        <option value="region-VI">Region VI – Western Visayas</option>
+                        <option value="region-VII">Region VII – Central Visayas</option>
+                        <option value="region-VIII">Region VIII – Eastern Visayas</option>
+                        <option value="region-IX" selected>Region IX – Zamboanga Peninsula</option>
+                        <option value="region-X">Region X – Northern Mindanao</option>
+                        <option value="region-XI">Region XI – Davao Region</option>
+                        <option value="region-XII">Region XII – SOCCSKSARGEN</option>
+                        <option value="region-XIII">Region XIII – Caraga</option>
+                        <option value="ncr">NCR – National Capital Region</option>
+                        <option value="car">CAR – Cordillera Administrative Region</option>
+                        <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
+                    </select>
+                    <label for="victim_region">Region</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="account_province" name="account_province" aria-label="Province">
+                    <option value="Zamboanga del Norte">Zamboanga del Norte</option>
+                    <option value="Zamboanga del Sur" selected>Zamboanga del Sur</option>
+                    <option value="Zamboanga Sibugay">Zamboanga Sibugay</option>
+                    </select>
+                    <label for="account_province">Province</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="account_city" name="account_city" aria-label="City/Municipality">
+                        <option value="" selected>Select City/Municipality</option>
+                        <option value="Aurora">Aurora</option>
+                        <option value="Bayog">Bayog</option>
+                        <option value="Dimataling">Dimataling</option>
+                        <option value="Dinas">Dinas</option>
+                        <option value="Dumalinao">Dumalinao</option>
+                        <option value="Dumingag">Dumingag</option>
+                        <option value="Guipos">Guipos</option>
+                        <option value="Josefina">Josefina</option>
+                        <option value="Kumalarang">Kumalarang</option>
+                        <option value="Labangan">Labangan</option>
+                        <option value="Lakewood">Lakewood</option>
+                        <option value="Lapuyan">Lapuyan</option>
+                        <option value="Mahayag">Mahayag</option>
+                        <option value="Margosatubig">Margosatubig</option>
+                        <option value="Midsalip">Midsalip</option>
+                        <option value="Molave">Molave</option>
+                        <option value="Pagadian">Pagadian (Capital)</option>
+                        <option value="Pitogo">Pitogo</option>
+                        <option value="Ramon Magsaysay">Ramon Magsaysay</option>
+                        <option value="San Miguel">San Miguel</option>
+                        <option value="San Pablo">San Pablo</option>
+                        <option value="Sominot">Sominot</option>
+                        <option value="Tabina">Tabina</option>
+                        <option value="Tambulig">Tambulig</option>
+                        <option value="Tigbao">Tigbao</option>
+                        <option value="Tukuran">Tukuran</option>
+                        <option value="Vincenzo A. Sagun">Vincenzo A. Sagun</option>
+                        <option value="Zamboanga City" selected>Zamboanga City</option>
+                    </select>
+                    <label for="account_city">City/Municipality</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select id="account_barangay" name="account_barangay" class="form-select">
+                        <option selected>---Select Barangay---</option>
+                        <option value="Aplaya">Aplaya</option>
+                        <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
+                        <option value="Ayala">Ayala</option>
+                        <option value="Bagong Calarian">Bagong Calarian</option>
+                        <option value="Baluno">Baluno</option>
+                        <option value="Baliwasan">Baluno</option>
+                        <option value="Boalan">Boalan</option>
+                        <option value="Bolong">Bolong</option>
+                        <option value="Buenavista">Buenavista</option>
+                        <option value="Bunguiao">Bunguiao</option>
+                        <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
+                        <option value="Cabaluay">Cabaluay</option>
+                        <option value="Cabatangan">Cabatangan</option>
+                        <option value="Cacao">Cacao</option>
+                        <option value="Calabasa">Calabasa</option>
+                        <option value="Calarian">Calarian</option>
+                        <option value="Camino Nuevo">Camino Nuevo</option>
+                        <option value="Campo Islam">Campo Islam</option>
+                        <option value="Canelar">Canelar</option>
+                        <option value="Capisan">Capisan</option>
+                        <option value="Cawit">Cawit</option>
+                        <option value="Culianan">Culianan</option>
+                        <option value="Curuan">Curuan</option>
+                        <option value="Dita">Dita</option>
+                        <option value="Divisoria">Divisoria</option>
+                        <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
+                        <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
+                        <option value="Guisao">Guisao</option>
+                        <option value="Guiwan">Guiwan</option>
+                        <option value="Kasanyangan">Kasanyangan</option>
+                        <option value="La Paz">La Paz</option>
+                        <option value="Labuan">Labuan</option>
+                        <option value="Lamisahan">Lamisahan</option>
+                        <option value="Landang Gua">Landang Gua</option>
+                        <option value="Landang Laum">Landang Laum</option>
+                        <option value="Lanzones">Lanzones</option>
+                        <option value="Lapakan">Lapakan</option>
+                        <option value="Lapuyan">Lapuyan</option>
+                        <option value="Latuan Curuan">Latuan Curuan</option>
+                        <option value="Licomo">Licomo</option>
+                        <option value="Limaong">Limaong</option>
+                        <option value="Limpapa">Limpapa</option>
+                        <option value="Luba">Luba</option>
+                        <option value="Lumayang">Lumayang</option>
+                        <option value="Lunzuran">Lunzuran</option>
+                        <option value="Maasin">Maasin</option>
+                        <option value="Malagutay">Malagutay</option>
+                        <option value="Mampang">Mampang</option>
+                        <option value="Manalipa">Manalipa</option>
+                        <option value="Mangusu">Mangusu</option>
+                        <option value="Manicahan">Manicahan</option>
+                        <option value="Mariki">Mariki</option>
+                        <option value="Mercedes">Mercedes</option>
+                        <option value="Mutong">Mutong</option>
+                        <option value="Pamucutan">Pamucutan</option>
+                        <option value="Panubigan">Panubigan</option>
+                        <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
+                        <option value="Pasobolong">Pasobolong</option>
+                        <option value="Pasonanca">Pasonanca</option>
+                        <option value="Patalon">Patalon</option>
+                        <option value="Putsan">Putsan</option>
+                        <option value="Quiniput">Quiniput</option>
+                        <option value="Recodo">Recodo</option>
+                        <option value="Rio Hondo">Rio Hondo</option>
+                        <option value="Salaan">Salaan</option>
+                        <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
+                        <option value="San Jose Gusu">San Jose Gusu</option>
+                        <option value="San Ramon">San Ramon</option>
+                        <option value="San Roque">San Roque</option>
+                        <option value="Sangali">Sangali</option>
+                        <option value="Santa Barbara">Santa Barbara</option>
+                        <option value="Santa Catalina">Santa Catalina</option>
+                        <option value="Santa Maria">Santa Maria</option>
+                        <option value="Santa Roza">Santa Roza</option>
+                        <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
+                        <option value="Sinubong">Sinubong</option>
+                        <option value="Sinunuc">Sinunuc</option>
+                        <option value="Sta. Cruz">Sta. Cruz</option>
+                        <option value="Sta. Maria">Sta. Maria</option>
+                        <option value="Sta. Catalina">Sta. Catalina</option>
+                        <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
+                        <option value="Sta. Maria">Sta. Maria</option>
+                        <option value="Sto. Niño">Sto. Niño</option>
+                        <option value="Tagasilay">Tagasilay</option>
+                        <option value="Taguiti">Taguiti</option>
+                        <option value="Talabaan">Talabaan</option>
+                        <option value="Talisayan">Talisayan</option>
+                        <option value="Talon-Talon">Talon-Talon</option>
+                        <option value="Taluksangay">Taluksangay</option>
+                        <option value="Talungon">Talungon</option>
+                        <option value="Tetuan">Tetuan</option>
+                        <option value="Tictapul">Tictapul</option>
+                        <option value="Tigbalabag">Tigbalabag</option>
+                        <option value="Tigtabon">Tigtabon</option>
+                        <option value="Tolosa">Tolosa</option>
+                        <option value="Tugbungan">Tugbungan</option>
+                        <option value="Tulungatung">Tulungatung</option>
+                        <option value="Tumaga">Tumaga</option>
+                        <option value="Tumalutab">Tumalutab</option>
+                        <option value="Tumitus">Tumitus</option>
+                        <option value="Victoria">Victoria</option>
+                        <option value="Vitali">Vitali</option>
+                        <option value="Zambowood">Zambowood</option>
+                    </select>
+                    <label for="account_barangay">Barangay</label>
+                </div><!--End of col-->
+               
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="addAccountBtn" disabled>Add New Account</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal edit -->
+<div class="modal fade" id="edit_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Account</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="editAccountForm" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <input type="hidden" id="account_id" name="account_id" value="0">
+                    <div class="col-lg-6 col-12">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="edit_account_fname" name="edit_account_fname" placeholder="name@example.com" >
+                            <label for="edit_account_fname">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-12l">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="edit_account_mname" name="edit_account_mname" placeholder="name@example.com" >
+                            <label for="edit_account_mname">Middle Name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="edit_account_lname" name="edit_account_lname" placeholder="name@example.com" >
+                    <label for="edit_account_lname">Last Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" name="edit_status" id="edit_status">
+                        <option value="Active">Active</option>
+                        <option value="Not Active">Not Active</option>
+                    </select>
+                    <label for="edit_status">Status</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="edit_account_region" name="edit_account_region">
+                        <option value="region-I">Region I – Ilocos Region</option>
+                        <option value="region-II">Region II – Cagayan Valley</option>
+                        <option value="region-III">Region III – Central Luzon</option>
+                        <option value="region-IV">Region IV‑A – CALABARZON</option>
+                        <option value="mimaropa">MIMAROPA Region</option>
+                        <option value="region-V">Region V – Bicol Region</option>
+                        <option value="region-VI">Region VI – Western Visayas</option>
+                        <option value="region-VII">Region VII – Central Visayas</option>
+                        <option value="region-VIII">Region VIII – Eastern Visayas</option>
+                        <option value="region-IX">Region IX – Zamboanga Peninsula</option>
+                        <option value="region-X">Region X – Northern Mindanao</option>
+                        <option value="region-XI">Region XI – Davao Region</option>
+                        <option value="region-XII">Region XII – SOCCSKSARGEN</option>
+                        <option value="region-XIII">Region XIII – Caraga</option>
+                        <option value="ncr">NCR – National Capital Region</option>
+                        <option value="car">CAR – Cordillera Administrative Region</option>
+                        <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
+                    </select>
+                    <label for="edit_victim_region">Region</label>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="edit_account_province" name="edit_account_province" aria-label="Province">
+                    <option value="Zamboanga del Norte">Zamboanga del Norte</option>
+                    <option value="Zamboanga del Sur" selected>Zamboanga del Sur</option>
+                    <option value="Zamboanga Sibugay">Zamboanga Sibugay</option>
+                    </select>
+                    <label for="edit_account_province">Province</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="edit_account_city" name="edit_account_city" aria-label="City/Municipality">
+                        <option value="" selected>Select City/Municipality</option>
+                        <option value="Aurora">Aurora</option>
+                        <option value="Bayog">Bayog</option>
+                        <option value="Dimataling">Dimataling</option>
+                        <option value="Dinas">Dinas</option>
+                        <option value="Dumalinao">Dumalinao</option>
+                        <option value="Dumingag">Dumingag</option>
+                        <option value="Guipos">Guipos</option>
+                        <option value="Josefina">Josefina</option>
+                        <option value="Kumalarang">Kumalarang</option>
+                        <option value="Labangan">Labangan</option>
+                        <option value="Lakewood">Lakewood</option>
+                        <option value="Lapuyan">Lapuyan</option>
+                        <option value="Mahayag">Mahayag</option>
+                        <option value="Margosatubig">Margosatubig</option>
+                        <option value="Midsalip">Midsalip</option>
+                        <option value="Molave">Molave</option>
+                        <option value="Pagadian">Pagadian (Capital)</option>
+                        <option value="Pitogo">Pitogo</option>
+                        <option value="Ramon Magsaysay">Ramon Magsaysay</option>
+                        <option value="San Miguel">San Miguel</option>
+                        <option value="San Pablo">San Pablo</option>
+                        <option value="Sominot">Sominot</option>
+                        <option value="Tabina">Tabina</option>
+                        <option value="Tambulig">Tambulig</option>
+                        <option value="Tigbao">Tigbao</option>
+                        <option value="Tukuran">Tukuran</option>
+                        <option value="Vincenzo A. Sagun">Vincenzo A. Sagun</option>
+                        <option value="Zamboanga City" selected>Zamboanga City</option>
+                    </select>
+                    <label for="edit_account_city">City/Municipality</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select id="edit_account_barangay" name="edit_account_barangay" class="form-select">
+                        <option value="Aplaya">Aplaya</option>
+                        <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
+                        <option value="Ayala">Ayala</option>
+                        <option value="Bagong Calarian">Bagong Calarian</option>
+                        <option value="Baluno">Baluno</option>
+                        <option value="Baliwasan">Baluno</option>
+                        <option value="Boalan">Boalan</option>
+                        <option value="Bolong">Bolong</option>
+                        <option value="Buenavista">Buenavista</option>
+                        <option value="Bunguiao">Bunguiao</option>
+                        <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
+                        <option value="Cabaluay">Cabaluay</option>
+                        <option value="Cabatangan">Cabatangan</option>
+                        <option value="Cacao">Cacao</option>
+                        <option value="Calabasa">Calabasa</option>
+                        <option value="Calarian">Calarian</option>
+                        <option value="Camino Nuevo">Camino Nuevo</option>
+                        <option value="Campo Islam">Campo Islam</option>
+                        <option value="Canelar">Canelar</option>
+                        <option value="Capisan">Capisan</option>
+                        <option value="Cawit">Cawit</option>
+                        <option value="Culianan">Culianan</option>
+                        <option value="Curuan">Curuan</option>
+                        <option value="Dita">Dita</option>
+                        <option value="Divisoria">Divisoria</option>
+                        <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
+                        <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
+                        <option value="Guisao">Guisao</option>
+                        <option value="Guiwan">Guiwan</option>
+                        <option value="Kasanyangan">Kasanyangan</option>
+                        <option value="La Paz">La Paz</option>
+                        <option value="Labuan">Labuan</option>
+                        <option value="Lamisahan">Lamisahan</option>
+                        <option value="Landang Gua">Landang Gua</option>
+                        <option value="Landang Laum">Landang Laum</option>
+                        <option value="Lanzones">Lanzones</option>
+                        <option value="Lapakan">Lapakan</option>
+                        <option value="Lapuyan">Lapuyan</option>
+                        <option value="Latuan Curuan">Latuan Curuan</option>
+                        <option value="Licomo">Licomo</option>
+                        <option value="Limaong">Limaong</option>
+                        <option value="Limpapa">Limpapa</option>
+                        <option value="Luba">Luba</option>
+                        <option value="Lumayang">Lumayang</option>
+                        <option value="Lunzuran">Lunzuran</option>
+                        <option value="Maasin">Maasin</option>
+                        <option value="Malagutay">Malagutay</option>
+                        <option value="Mampang">Mampang</option>
+                        <option value="Manalipa">Manalipa</option>
+                        <option value="Mangusu">Mangusu</option>
+                        <option value="Manicahan">Manicahan</option>
+                        <option value="Mariki">Mariki</option>
+                        <option value="Mercedes">Mercedes</option>
+                        <option value="Mutong">Mutong</option>
+                        <option value="Pamucutan">Pamucutan</option>
+                        <option value="Panubigan">Panubigan</option>
+                        <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
+                        <option value="Pasobolong">Pasobolong</option>
+                        <option value="Pasonanca">Pasonanca</option>
+                        <option value="Patalon">Patalon</option>
+                        <option value="Putsan">Putsan</option>
+                        <option value="Quiniput">Quiniput</option>
+                        <option value="Recodo">Recodo</option>
+                        <option value="Rio Hondo">Rio Hondo</option>
+                        <option value="Salaan">Salaan</option>
+                        <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
+                        <option value="San Jose Gusu">San Jose Gusu</option>
+                        <option value="San Ramon">San Ramon</option>
+                        <option value="San Roque">San Roque</option>
+                        <option value="Sangali">Sangali</option>
+                        <option value="Santa Barbara">Santa Barbara</option>
+                        <option value="Santa Catalina">Santa Catalina</option>
+                        <option value="Santa Maria">Santa Maria</option>
+                        <option value="Santa Roza">Santa Roza</option>
+                        <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
+                        <option value="Sinubong">Sinubong</option>
+                        <option value="Sinunuc">Sinunuc</option>
+                        <option value="Sta. Cruz">Sta. Cruz</option>
+                        <option value="Sta. Maria">Sta. Maria</option>
+                        <option value="Sta. Catalina">Sta. Catalina</option>
+                        <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
+                        <option value="Sta. Maria">Sta. Maria</option>
+                        <option value="Sto. Niño">Sto. Niño</option>
+                        <option value="Tagasilay">Tagasilay</option>
+                        <option value="Taguiti">Taguiti</option>
+                        <option value="Talabaan">Talabaan</option>
+                        <option value="Talisayan">Talisayan</option>
+                        <option value="Talon-Talon">Talon-Talon</option>
+                        <option value="Taluksangay">Taluksangay</option>
+                        <option value="Talungon">Talungon</option>
+                        <option value="Tetuan">Tetuan</option>
+                        <option value="Tictapul">Tictapul</option>
+                        <option value="Tigbalabag">Tigbalabag</option>
+                        <option value="Tigtabon">Tigtabon</option>
+                        <option value="Tolosa">Tolosa</option>
+                        <option value="Tugbungan">Tugbungan</option>
+                        <option value="Tulungatung">Tulungatung</option>
+                        <option value="Tumaga">Tumaga</option>
+                        <option value="Tumalutab">Tumalutab</option>
+                        <option value="Tumitus">Tumitus</option>
+                        <option value="Victoria">Victoria</option>
+                        <option value="Vitali">Vitali</option>
+                        <option value="Zambowood">Zambowood</option>
+                    </select>
+                    <label for="edit_account_barangay">Barangay</label>
+                </div><!--End of col-->
+               
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="saveAccountBtn">Save Account</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal confirm delete  -->
+<div class="modal fade" id="confirmAccountDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this Account?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmAccountDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#table-account').DataTable({
+            dom: 'Brt <"bottom"lp>',
+            responsive: true,
+            fixedHeader: true,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            //order: [[4, 'desc']],
+            order: [[0, 'desc']],
+        });
+
+        // Your filter options and search functionality
+        $('input#keyword').on('input', function(e){
+            var status = $(this).val();
+            $('#table-account').DataTable().columns([0]).search(status).draw();
+        });
+        $('select#status').on('change', function(e){
+            var status = $(this).val();
+            $('#table-account').DataTable().columns([2]).search(status).draw();
+        });
+
+        // Function to handle form submission
+        $('#addAccountForm').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            $.ajax({
+                url: '{% url "create account" %}',
+                method: 'POST',
+                data: $(this).serialize(), // Serialize form data
+                success: function(response) {
+                    if (response.success) {
+                        // Display success message and reload page after 2 seconds
+                        $('#successToast .toast-body').text(response.message);
+                        $('#successToast').toast('show');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        // Display error message
+                        $('#errorToast .toast-body').text(response.message);
+                        $('#errorToast').toast('show');
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        });
+
+        $(document).on('click', '.edit-account-btn', function() {
+            var accountId = $(this).data('account-id');
+            //console.log(accountId);
+            $.ajax({
+                url: '{% url "edit_account" 0 %}'.replace('0', accountId),
+                method: 'GET',
+                success: function(response) {
+                    console.log(response);
+                    // Populate the modal with the data from the response
+                    $('#account_id').val(response.account_id);
+                    $('#edit_account_fname').val(response.first_name);
+                    $('#edit_account_mname').val(response.middle_name);
+                    $('#edit_account_lname').val(response.last_name);
+                    $('#edit_status').val(response.status);
+                    $('#edit_account_region').val(response.region);
+                    $('#edit_account_province').val(response.province);
+                    $('#edit_account_city').val(response.city);
+                    $('#edit_account_barangay').val(response.barangay);
+        
+                    // Show the modal
+                    $('#edit_account').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        $('#saveAccountBtn').on('click', function() {
+            var formData = $('#editAccountForm').serialize();
+
+            // Get the accountId from the hidden input field
+            var accountId = $('#account_id').val();
+            console.log('Account Id:', accountId);
+            console.log(accountId);
+            $.ajax({
+                url: '{% url "edit_account" 0 %}'.replace('0', accountId),
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Handle success response
+                    console.log(response);
+                    // Optionally, close the modal or show a success message
+                    $('#edit_account').modal('hide');
+                    // Display success message and reload page after 2 seconds
+                    $('#successToast .toast-body').text(response.message);
+                    $('#successToast').toast('show');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                    // Refresh the page or update any UI as needed
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error:', error);
+                    // Display error message
+                    $('#errorToast .toast-body').text(response.message);
+                    $('#errorToast').toast('show');
+                    // Optionally, show an error message to the user
+                }
+            });
+        });
+
+        // Attach click event listener to the Delete button
+        $('.delete-account-btn').on('click', function() {
+            // Retrieve the account ID from the data-account-id attribute
+            var accountId = $(this).data('account-id');
+            
+            // Set the account ID value in the modal confirmation button
+            $('#confirmAccountDeleteBtn').data('account-id', accountId);
+            
+            // Open the confirmation modal
+            $('#confirmAccountDelete').modal('show');
+        });
+
+        // Attach click event listener to the confirmation modal Delete button
+        $('#confirmAccountDeleteBtn').on('click', function() {
+            // Retrieve the account ID from the data-account-id attribute of the Delete button in the modal
+            var accountId = $(this).data('account-id');
+            
+            // Send an AJAX request to delete the account
+            $.ajax({
+                url: '{% url "delete_account" %}',
+                method: 'POST',
+                data: {
+                    account_id: accountId,
+                    // Add any additional data if needed
+                },
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
+                },
+                success: function(response) {
+                    // Handle success response
+                    // Display success message and reload page after 2 seconds
+                    $('#successToast .toast-body').text(response.message);
+                    $('#successToast').toast('show');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error:', error);
+                    // Display error message
+                    $('#errorToast .toast-body').text(response.message);
+                    $('#errorToast').toast('show');
+                    // Optionally, show an error message to the user
+                }
+            });
+        });
+
+
+        // Attach the form submission function to the click event of the submit button
+        $('#addAccountBtn').click(function() {
+            $('#addAccountForm').submit(); // Trigger form submission when the button is clicked
+        });
+
+        $('#account_username, #account_email').on('blur', function() {
+            var username = $('#account_username').val();
+            var email = $('#account_email').val();
+        
+            $.ajax({
+                type: 'GET',
+                url: '/check_username_email/',
+                data: {
+                    'username': username,
+                    'email': email
+                },
+                success: function(response) {
+                    if (response.username_taken) {
+                        $('#account_username').addClass('is-invalid');
+                        $('#account_username').removeClass('is-valid'); // Remove is-valid class
+                        $('#account_usernameFeedback').show();
+                        $('#account_usernameFeedback.valid-feedback').hide(); // Hide valid feedback
+                    } else {
+                        $('#account_username').removeClass('is-invalid');
+                        $('#account_username').addClass('is-valid'); // Add is-valid class
+                        $('#account_usernameFeedback').hide();
+                        $('#account_usernameFeedback.valid-feedback').show(); // Show valid feedback
+                    }
+        
+                    if (response.email_taken) {
+                        $('#account_email').addClass('is-invalid');
+                        $('#account_email').removeClass('is-valid'); // Remove is-valid class
+                        $('#account_emailFeedback').show();
+                        $('#account_emailFeedback.valid-feedback').hide(); // Hide valid feedback
+                    } else {
+                        $('#account_email').removeClass('is-invalid');
+                        $('#account_email').addClass('is-valid'); // Add is-valid class
+                        $('#account_emailFeedback').hide();
+                        $('#account_emailFeedback.valid-feedback').show(); // Show valid feedback
+                    }
+        
+                    // Check if both username and email are valid
+                    if (!$('#account_username').hasClass('is-invalid') && !$('#account_email').hasClass('is-invalid')) {
+                        $('#addAccountBtn').removeAttr('disabled'); // Remove disabled attribute
+                    } else {
+                        $('#addAccountBtn').attr('disabled', 'disabled'); // Add disabled attribute
+                    }
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock scripts %}

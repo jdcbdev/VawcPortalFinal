@@ -1,0 +1,212 @@
+{% extends "../base/base_admin.html" %}
+{% block title %}Home | Settings {% endblock %}
+{% load static %}
+{% block styles %}
+<style>
+    input[type="checkbox"] { 
+        transform: scale(1.5); 
+    } 
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h1 class="pt-2">Settings</h1>
+    <hr>
+    <h3 class="mt-5">Change Password</h3>
+    <hr>
+    <div class="d-flex flex-row bd-highlight mb-3">
+        <div class="pe-3"><h4>Password</h4></div>
+        <div class="bg-danger text-danger bg-opacity-10 rounded border border-danger" style="display:none;"><i class='bx bx-info-circle align-middle ms-2'></i><span class="px-2 align-middle me-1"></span></div>
+        <div class="bg-success text-success bg-opacity-10 rounded border border-success" style="display:none;"><i class='bx bx-check-circle align-middle ms-2'></i><span class="px-2 align-middle me-1">Correct</span></div>
+    </div>
+    <form class="row" id="passwordChangeForm" method="post" data-url="{% url 'custom_password_change' %}">
+        {% csrf_token %}
+        <div class="col-lg-4">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="currentPassword" name="current_password">
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <label for="newPassword1" class="form-label">New Password</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="newPassword1" name="new_password1">
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <label for="newPassword2" class="form-label">Confirm New Password</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="newPassword2" name="new_password2">
+            </div>
+        </div>
+        <div class="form-check ms-3 mt-3">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+              Show Password
+            </label>
+        </div>
+        <div class="d-flex flex-row-reverse">
+            <div class="mt-2"><button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button></div>
+        </div>
+    </form>
+</div>
+
+<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
+<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Success</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+            Password changed successfully!
+        </div>
+    </div>
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Error</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+            Error changing password. Please check your input.
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script>
+    function showToast(type) {
+        var toastId = type === 'success' ? '#successToast' : '#errorToast';
+        var toast = new bootstrap.Toast(document.querySelector(toastId));
+        toast.show();
+    }
+    function togglePasswordVisibility() {
+        var currentPasswordInput = document.getElementById('currentPassword');
+        var passwordInput = document.getElementById('newPassword1');
+        var confirmPasswordInput = document.getElementById('newPassword2');
+        var showPasswordCheckbox = document.getElementById('flexCheckDefault');
+    
+        if (showPasswordCheckbox.checked) {
+            currentPasswordInput.type = 'text';
+            passwordInput.type = 'text';
+            confirmPasswordInput.type = 'text';
+        } else {
+            currentPasswordInput.type = 'password';
+            passwordInput.type = 'password';
+            confirmPasswordInput.type = 'password';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const newPasswordInput = document.getElementById('newPassword1');
+        const confirmNewPasswordInput = document.getElementById('newPassword2');
+        const validationMessageContainer = document.querySelector('.bg-danger');
+        const correctMessageContainer = document.querySelector('.bg-success');
+        const validationMessage = document.querySelector('.bg-danger span');
+        const confirmPasswordBtn = document.querySelector('#confirmPasswordBtn');
+    
+        const updateValidationMessage = (message) => {
+            validationMessage.textContent = message;
+            validationMessageContainer.style.display = 'block';
+            correctMessageContainer.style.display = 'none';
+            disableConfirmButton();
+        };
+    
+        const updateCorrectMessage = () => {
+            validationMessageContainer.style.display = 'none';
+            correctMessageContainer.style.display = 'block';
+            enableConfirmButton();
+        };
+    
+        const clearMessages = () => {
+            validationMessage.textContent = '';
+            validationMessageContainer.style.display = 'none';
+            correctMessageContainer.style.display = 'none';
+            enableConfirmButton();  // Ensure the button is initially enabled
+        };
+    
+        const enableConfirmButton = () => {
+            confirmPasswordBtn.disabled = false;
+        };
+    
+        const disableConfirmButton = () => {
+            confirmPasswordBtn.disabled = true;
+        };
+    
+        const validatePassword = () => {
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmNewPasswordInput.value;
+    
+            // Password length validation
+            if (newPassword.length < 8) {
+                updateValidationMessage('Password should be at least 8 characters.');
+                return;
+            }
+    
+            // Password match validation
+            if (newPassword !== confirmPassword) {
+                updateValidationMessage('Passwords do not match.');
+                return;
+            }
+    
+            // Special character validation
+            const specialCharacterRegex = /[!@#$%^&*(),.?":{}|<>_]/;
+            if (!specialCharacterRegex.test(newPassword)) {
+                updateValidationMessage('Password should have at least one special character.');
+                return;
+            }
+    
+            // Uppercase letter validation
+            const uppercaseLetterRegex = /[A-Z]/;
+            if (!uppercaseLetterRegex.test(newPassword)) {
+                updateValidationMessage('Password should have at least one uppercase letter.');
+                return;
+            }
+    
+            // All validations passed
+            updateCorrectMessage();
+        };
+    
+        newPasswordInput.addEventListener('input', validatePassword);
+        confirmNewPasswordInput.addEventListener('input', validatePassword);
+    
+        // Reset messages on input focus
+        newPasswordInput.addEventListener('focus', clearMessages);
+        confirmNewPasswordInput.addEventListener('focus', clearMessages);
+    });
+
+    function changePassword() {
+        var form = $('#passwordChangeForm');
+        var url = form.data('url');
+        var formData = form.serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            success: function (data) {
+                if (data.success) {
+                    showToast('success');
+                    // Reload the page after 3 seconds
+                    setTimeout(function () {
+                        location.reload();
+                    }, 3000);
+                } else {
+                    showToast('error');
+                    // Handle form validation errors here if needed
+                    console.log(data.errors);
+                }
+            },
+            error: function () {
+                showToast('error');
+            }
+        });
+    }
+    // Attach the togglePasswordVisibility function to the checkbox change event
+    document.getElementById('flexCheckDefault').addEventListener('change', togglePasswordVisibility);
+</script>
+
+{% endblock scripts %}

@@ -1,0 +1,129 @@
+{% extends "../base/base_barangay.html" %}
+{% block title %}Home | Dashboard{% endblock %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+    <h1 class="pt-5">DASHBOARD BARANGAY: {{ barangay }}</h1>
+    <div class="col-lg-12 col-12">
+      <div class="row">
+        <div class="col-lg-4 col-6">
+          <div class="card">
+            <div class="card-body">
+              Total Cases: <span>{{ filtered_cases_count }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-6">
+            <div class="card">
+                <div class="card-body">
+                  Total Impacted: <span>{{ impacted_count }}</span>
+                </div>
+              </div>
+        </div>
+        <div class="col-lg-4 col-6">
+            <div class="card">
+                <div class="card-body">
+                  Total Behalf: <span>{{ behalf_count }}</span>
+                </div>
+              </div>
+        </div>
+      </div>
+      <div class="row">
+        
+        <div class="col-lg-3 col-6">
+            <div class="card">
+                <div class="card-body">
+                  Active Cases: <span>{{ active_count }}</span>
+                </div>
+              </div>
+        </div>
+        <div class="col-lg-3 col-6">
+            <div class="card">
+                <div class="card-body">
+                  Close Cases: <span>{{ closed_count }}</span>
+                </div>
+              </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <div class="card">
+              <div class="card-body">
+                Total Crisis: <span>{{ crisis_count }}</span>
+              </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-6">
+          <div class="card">
+              <div class="card-body">
+                Total BPO: <span>{{ bpo_count }}</span>
+              </div>
+            </div>
+        </div>
+      </div><!--End of row-->
+    </div>
+    <div class="row d-flex align-items-center pt-3">
+      <div class="col-lg-6 col-12">
+        <canvas id="myBarChart"></canvas>
+      </div>
+      <div class="col-lg-6 col-12">
+          <canvas id="myPieChart"></canvas>
+      </div>
+    </div><!--End of row-->
+  
+</div>
+
+{% endblock content %}
+{% block scripts %}
+<script>
+  var ctx = document.getElementById('myPieChart').getContext('2d');
+
+  var myPieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+          labels: ['Impacted', 'Behalf'],
+          datasets: [{
+              label: 'Reported',
+              data: [{{ impacted_count }}, {{ behalf_count }}], // Impacted and Behalf data
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.5)', // Red for Impacted
+                  'rgba(54, 162, 235, 0.5)', // Blue for Behalf
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+      }
+  });
+
+  var ctx = document.getElementById('myBarChart').getContext('2d');
+
+  var myBarChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['Victim (Minor)', 'Perpetrator (Minor)'],
+          datasets: [{
+            label: 'Number of Minor',
+              data: [{{ minor_victim_count }}, {{ minor_perp_count }}], // Data retrieved from the server
+              backgroundColor: [
+                  'rgba(63, 72, 222, 0.8)', // Red for Victim (Minor)
+                  'rgba(54, 162, 235, 0.5)', // Blue for Perpetrator (Minor)
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
+
+  
+
+</script>
+{% endblock scripts %}

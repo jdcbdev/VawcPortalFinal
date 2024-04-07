@@ -1,0 +1,94 @@
+{% extends "../base/base.html" %}
+{% block title %}Forgot Password{% endblock %}
+{% load static %}
+{% block content %}
+<div class="container pt-5 pb-5">
+    <div class="card">
+        <div class="card-body">
+            <a href="{% url 'login' %}"><button type="button" class="btn-close d-flex ms-auto" aria-label="Close"></button></a>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
+                    <img src= "{% static '/img/login.png' %}" class="img-fluid" alt="image">
+                </div>
+            <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
+                <h2 class="text-center pt-3 pb-3">Forgot Password</h2>
+                    <form id="forgotPassForm" method="post">
+                        {% csrf_token %}
+                        <div class="row pb-2">
+                            <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
+                                <label for="barangay-email" class="form-label">Email: </label>
+                                <input type="email" class="form-control" id="barangay-email" name="barangay-email" aria-describedby="barangay-emailFeedback">
+                                <div id="barangay-emailFeedback" class="invalid-feedback">
+
+                                </div>
+                                <!--invalid feedback-->
+                            </div>
+                        </div><!--First row-->
+                        <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2">
+                            <button id="submitButton" class="btn btn-primary w-100" type="submit">Recover Password</button>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal success -->
+<div class="modal fade" id="successmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Success</h1>
+        </div>
+        <div class="modal-body">
+            <div class="wrapper"> <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"> <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/> <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            </div>
+            <h3 class="text-center">Success</h3>
+            <p class="py-1 fs-4 text-center">A link has been sent to this account</p>
+        </div>
+        <div class="modal-footer">
+            <a type="button" class="btn btn-primary" href="{% url 'login' %}">Back to Login Page</a>
+        </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#forgotPassForm').on('submit', function(event) {
+            event.preventDefault();  // Prevent the default form submission behavior
+        
+            // Get the email input value
+            var email = $('#barangay-email').val();
+        
+            // Send AJAX request to the view
+            $.ajax({
+                type: 'GET',
+                url: '{% url "forgot_pass_sent" %}',
+                data: {'email': email},
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    if (response.success) {
+                        // Show the success modal
+                        $('#successmodal').modal('show');
+                    } else {
+                        // If email does not exist, add is-invalid class to the input and display invalid feedback
+                        $('#barangay-email').addClass('is-invalid');
+                        $('#barangay-emailFeedback').text('Email does not exist.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    // Handle other errors if needed
+                }
+            });
+        });
+    });
+</script>
+{% endblock scripts %}

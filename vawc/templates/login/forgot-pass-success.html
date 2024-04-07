@@ -1,0 +1,25 @@
+{% extends "../base/base.html" %}
+{% block title %}Forgot Password | Success{% endblock %}
+{% load static %}
+{% block content %}
+<div class="container pt-5 pb-5">
+    <div class="card">
+        <div class="card-body">
+            <a href="{% url 'login' %}"><button type="button" class="btn-close d-flex ms-auto" aria-label="Close"></button></a>
+            <div class="row">
+            <div class="wrapper"> <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"> <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/> <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            </div>
+            <h3 class="text-center">Success</h3>
+            <p class="py-1 fs-4 text-center">Password Change Successfully</p>
+            <div class="d-flex justify-content-center col-lg-12">
+                <a href="{% url 'login' %}" class="btn btn-primary ">Back to Login Page</a>
+            </div>
+      </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+{% block scripts %}
+{% endblock scripts %}

@@ -1,0 +1,158 @@
+{% extends "../base/base_admin.html" %}
+{% block title %}Manage | Passkeys{% endblock %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+    <h1 class="pt-2">Passkeys</h1>
+
+    <div class="container">
+    <div class="pt-4">
+        <table class="table table-striped nowrap" id="table-pending" style="width:100%">
+            <thead class="border-bottom border-dark border-2 border-opacity-50">
+                <tr>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th> <!-- Add a column for actions -->
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for passkey in request %}
+                    <tr>
+                        <td class="email" >{{ passkey.email }}</td>
+                        <td >{{ passkey.status }}</td>
+                        <td >{{ passkey.date }}</td>
+                        <td>
+                            <a class="btn btn-success approve" href="#">Approve</a> <!-- Add Bootstrap button classes -->
+                            <a class="btn btn-danger decline" href="#">Decline</a> <!-- Add Bootstrap button classes -->
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div><!--end of div of table-->
+
+</div>
+<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
+<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Success</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+        </div>
+    </div>
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Error</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script>
+    $('#table-pending').DataTable({
+        dom: 'Brt <"bottom"lp>',
+        responsive: true,
+        fixedHeader: true,
+        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+    });
+
+    // Your filter options and search functionality
+    $('input#keyword').on('input', function(e){
+        var status = $(this).val();
+        $('#table-account').DataTable().columns([0]).search(status).draw();
+    });
+
+
+    let tableParent = document.querySelector("table")
+
+    console.log(tableParent)
+
+    tableParent.addEventListener("click", function(e) {
+        if (e.target.classList.contains("approve")) {
+            let element = e.target
+            let email = element.closest('tr').querySelector(".email").textContent
+            let action = 'approve'
+
+            $.ajax({
+                url: '{% url 'update_passkey'  %}', // Modify the URL to point to your Django view endpoint
+                method: 'POST',
+                data: {
+                    'action': action,
+                    'email': email  // Pass the notification ID as data
+                },
+                headers: {
+                  'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
+                },
+                success: function(response) {
+                    // Display success message and reload page after 2 seconds
+                    $('#successToast .toast-body').text('Passkey Generation Approved');
+                    $('#successToast').toast('show');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                    // You can perform any additional actions here after the notification is marked as read
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error marking notification as read:', error);
+                }
+              });
+
+        }
+        if (e.target.classList.contains("decline")) {
+            let element = e.target
+            let email = element.closest('tr').querySelector(".email").textContent
+            let action = 'decline'
+
+            $.ajax({
+                url: '{% url 'update_passkey'  %}', // Modify the URL to point to your Django view endpoint
+                method: 'POST',
+                data: {
+                    'action': action,
+                    'email': email  // Pass the notification ID as data
+                },
+                headers: {
+                  'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
+                },
+                success: function(response) {
+                    // Display success message and reload page after 2 seconds
+                    $('#successToast .toast-body').text('Passkey Generation Declined');
+                    $('#successToast').toast('show');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error marking notification as read:', error);
+                }
+              });
+        }
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock scripts %}

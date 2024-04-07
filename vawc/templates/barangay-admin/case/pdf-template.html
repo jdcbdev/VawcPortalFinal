@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report | PDF</title>
+</head>
+<style>
+  * {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  @page {
+    size: legal portrait;
+    margin: 0.1in 0in 0in 0in;
+  }
+  div.break {
+    page-break-before:always;
+	}
+  .text-center {
+    text-align: center;
+  }
+  .container {
+    max-width: 1200px; /* Adjust max-width as needed */
+    margin: 0 auto; /* Center the container horizontally */
+    padding: 0 20px; /* Add padding to the sides */
+    box-sizing: border-box; /* Include padding and border in the total width */
+  }
+  .bold{
+    font-weight: 900;
+  }
+  .thin-font {
+    font-weight: 300; /* Set font weight to a thinner value */
+  }
+  .underline {
+    text-decoration: underline;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .row h3 {
+    margin: 0; /* Remove default margin */
+  }
+  .mt-0{
+    margin-top: 0px ;
+  }
+  .mt-1{
+    margin-top: 2px ;
+  }
+  .mt-2{
+    margin-top: 4px ;
+  }
+  .mt-3{
+    margin-top: 6px ;
+  }
+  .mx-3 {
+    margin: 0px 3px 0px 3px ;
+  }
+  .fs-1{
+    font-size: 17px;
+  }
+  .fs-2{
+    font-size: 15px;
+  }
+  .fs-3{
+    font-size: 13px;
+  }
+  .justify-content-center{
+    display: flex;
+    justify-content: center;
+  }
+  .person-name {
+    text-align: center;
+    margin: 0px 6px 0px 6px;
+  }
+
+  .person-name h3 {
+      margin: 0;
+      border-bottom: 1px solid black;
+      text-transform: capitalize;
+  }
+
+  .indicator {
+      font-size: 10px;
+  }
+  .row-start {
+    justify-content: flex-start;
+  }
+  hr {
+    border: 0; /* Remove default border */
+    height: 5px; /* Set the height or thickness */
+    background-color: black; /* Set the color */
+    margin: 0px;
+  }
+  .title {
+    margin: 0; /* Remove margin */
+    padding: 0; /* Remove padding */
+  }
+  .disability-container {
+    margin-top: 4px ;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 400px
+  }
+
+  .disability-section {
+      display: flex;
+      align-items: center;
+  }
+  .circle_selected {
+    width: 12px; 
+    height: 12px; 
+    border-radius: 50%; 
+    background-color: black;
+  }
+
+  .circle_unselected {
+    width: 10px; 
+    height: 10px; 
+    border-radius: 50%; 
+    background-color: transparent;
+    border: 1px solid black;
+  }
+
+</style>
+<body>
+  <div class="container" style="margin-top:10px">
+    <div class="justify-content-center row">
+      <h3 class="fs-1">National Violence Against Woman (NVAW) Documentation System</h3>
+    </div>
+    <div class="justify-content-center row mt-0">
+      <h3 class="fs-1">(Barangay Form)</h3>
+    </div>
+  </div>
+  <br>
+  <div class="container">
+    <section>
+      <div class="row">
+        <h3 class="thin-font fs-1">Handling Organization: <span class="underline">Barangay VAW Desk</span></h3>
+        <h3 class="thin-font fs-1">Date of Intake: <span class="underline">{{ case.date_added|date:"m/d/Y" }}</span> (MM/DD/Year)</h3>
+      </div>
+      <div class="row mt-2">
+        <h3 class="thin-font fs-1">Address: <span class="underline">Zamboanga Peninsula, Zamboanga del Sur, Zamboanga City, Santa Maria</span></h3>
+      </div>
+      <div class="row mt-3">
+        <h3 class="thin-font fs-2">Region: 
+          <span class="underline">
+            {% if case_decrypted.region == 'region-I' %}
+                Region I
+            {% elif case_decrypted.region == 'region-II' %}
+                Region II
+            {% elif case_decrypted.region == 'region-III' %}
+                Region III
+            {% elif case_decrypted.region == 'region-IV' %}
+                Region IV‑A
+            {% elif case_decrypted.region == 'mimaropa' %}
+                MIMAROPA Region
+            {% elif case_decrypted.region == 'region-V' %}
+                Region V
+            {% elif case_decrypted.region == 'region-VI' %}
+                Region VI
+            {% elif case_decrypted.region == 'region-VII' %}
+                Region VII
+            {% elif case_decrypted.region == 'region-VIII' %}
+                Region VIII
+            {% elif case_decrypted.region == 'region-IX' %}
+                Region IX
+            {% elif case_decrypted.region == 'region-X' %}
+                Region X
+            {% elif case_decrypted.region == 'region-XI' %}
+                Region XI
+            {% elif case_decrypted.region == 'region-XII' %}
+                Region XII
+            {% elif case_decrypted.region == 'region-XIII' %}
+                Region XIII
+            {% elif case_decrypted.region == 'ncr' %}
+                NCR
+            {% elif case_decrypted.region == 'car' %}
+                CAR
+            {% elif case_decrypted.region == 'barmm' %}
+                BARMM
+            {% endif %}
+          </span>
+        </h3>
+        <h3 class="thin-font fs-2">Province: <span class="underline">{{ case_decrypted.province }}</span></h3>
+        <h3 class="thin-font fs-2">City / Mun: <span class="underline">{{ case_decrypted.city }}</span></h3>
+        <h3 class="thin-font fs-2">Barangay: <span class="underline">{{ case_decrypted.barangay }}</span></h3>
+      </div>
+      <div class="row row-start">
+        <h3 class="thin-font fs-1">Interviewed By:</h3>
+          <div class="person-name" style="margin-top:10px">
+              <h3 class="thin-font fs-1">
+                  <span>{{ account.last_name }}</span>
+              </h3>
+              <span class="indicator">Last Name</span>
+          </div>
+          <div class="person-name">
+              <h3 class="thin-font fs-1" style="margin-top:10px">
+                  <span>{{ account.first_name }}</span>
+              </h3>
+              <span class="indicator">First Name</span>
+          </div>
+          <div class="person-name" style="margin-top:10px">
+              <h3 class="thin-font fs-1">
+                  <span>{{ account.middle_name }}</span>
+              </h3>
+              <span class="indicator">Middle Name</span>
+          </div>
+        <h3 class="thin-font fs-1" style="margin-left: 50px;">Position: <span class="underline">Staff</span></h3>
+        
+        <h3 class="thin-font fs-1" style="margin-left: 50px;">Bgy #: <span class="underline">{{ case.case_number }}</span></h3>
+      </div>
+    </section>
+    <!-- victim section -->
+    {% for victim, parent in list_victim_decrypted %}
+      <hr class="mt-3">
+          <div>
+            <h3 class="fs-1 title">Victim-Survivor Info</h3>
+          </div>
+      <hr>
+      <section>
+          <div class="row row-start">
+            <h3 class="thin-font fs-3" style="font-weight: bold;"><strong>Name:</strong></h3>
+            <div class="person-name" style="margin-top:11px; margin-left: 20px;">
+                <h3 class="thin-font fs-3">
+                  &nbsp;<span>{{ victim.last_name|default:"Missing Input" }}</span>&nbsp;
+                </h3>
+                <span class="indicator">Last Name</span>
+            </div>
+            <div class="person-name">
+                <h3 class="thin-font fs-3" style="margin-top:11px; margin-left: 25px !important;">
+                  &nbsp;<span>{{ victim.first_name|default:"Missing Input" }}</span>&nbsp;
+                </h3>
+                <span class="indicator" style="margin-left: 25px !important;">First Name</span>
+            </div>
+            <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+                <h3 class="thin-font fs-3">
+                    <span>{{ victim.middle_name|default:"Missing Input" }}</span>
+                </h3>
+                <span class="indicator">Middle Name</span>
+            </div>
+            <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+              <h3 class="thin-font fs-3">
+                  <span>{{ victim.suffix|default:"Missing Input" }}</span>
+              </h3>
+              <span class="indicator">Suffix</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="disability-container">
+              <div class="disability-section">
+                  <div {% if victim.type_of_disability == 'With Disability' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+                  <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 7px">With Disability: </h3>
+                  <div {% if victim.type_of_disability == 'Permanent Disability' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 7px"></div>
+                  <h3 class="thin-font fs-3" style="margin-left: 5px">Permanent Disability</h3>
+                  <div {% if victim.type_of_disability == 'Temporary Disability' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 7px"></div>
+                  <h3 class="thin-font fs-3" style="margin-left: 7px">Temporary Disability</h3>
+              </div>
+              <div class="disability-section">
+                  <div {% if victim.type_of_disability == 'none' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+                  <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 7px">Without Disability</h3>
+              </div>
+            </div>
+          </div>
+          <div class="row row-start">
+            <h3 class="thin-font fs-3" style="font-weight: bold;">Sex:</h3>
+            <div {% if victim.sex == 'Male' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 10px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Male</h3>
+            <div {% if victim.sex == 'Female' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 10px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Female</h3>
+
+            <h3 class="thin-font fs-3" style="margin-left:70px"><span style="font-weight: bold;">Date of Birth: </span> 
+              <span class="underline">
+              {% if victim.date_of_birth %}
+                {{ victim.date_of_birth|slice:"5:7" }}/{{ victim.date_of_birth|slice:"-2:" }}/{{ victim.date_of_birth|slice:"0:4" }}
+              {% else %}
+              Missing Input
+              {% endif %}
+              </span> (MM/DD/Year)
+            </h3>
+            <h3 class="thin-font fs-3" style="margin-left:30px"><span style="font-weight: bold;">Age: </span> 
+              <span class="underline">
+                &nbsp;{{ victim.age }}&nbsp;
+              </span>
+            </h3>
+          </div>
+          <div class="row row-start">
+            <div style="width: 200px; margin-top: 10px;">
+              <h3 class="thin-font fs-3" style="font-weight: bold; width: 200px;">Civil Status:</h3>
+              <div style="display: flex; margin-top: 3px;">
+                <div {% if victim.civil_status == 'single' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Single</h3>
+                <div {% if victim.civil_status == 'live-in' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 57.5px"></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Live-In</h3>
+              </div>
+
+              <div style="display: flex;">
+                <div {% if victim.civil_status == 'married' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Married</h3>
+                <div {% if victim.civil_status == 'widowed' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 50px"></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Widowed</h3>
+              </div>
+
+              <div style="display: flex;">
+                <div {% if victim.civil_status == 'separated' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Separated</h3>
+              </div>
+            </div>
+
+            <div style="width: 550px; ;margin-left:10px; margin-top: 10px;">
+              <h3 class="thin-font fs-3" style="font-weight: bold; width: 200px;">Higest Educational Attainment:</h3>
+              <div style="display: flex; margin-top: 3px; justify-content: start;">
+                <div {% if victim.educational_attainment == 'none' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">No Formal Education</h3>
+                <div {% if victim.educational_attainment == 'married' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 10px;"></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Elementary Level / Graduated</h3>
+                <div {% if victim.educational_attainment == 'highschool' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 7px;"></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">High-School Level / Graduated</h3>
+              </div>
+
+              <div style="display: flex; justify-content: start;">
+                <div {% if victim.educational_attainment == 'vocational' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Vocational</h3>
+                <div {% if victim.educational_attainment == 'collegeLevel' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 72.5px;"></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">College Level / Graduated</h3>
+                <div {% if victim.educational_attainment == 'post-grad' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 28.5px;"></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Post Graduate</h3>
+              </div>
+
+              <div style="display: flex; justify-content: start;">
+                <div {% if victim.educational_attainment == 'no-response' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">No Response</h3>
+                <div {% if victim.educational_attainment == 'educt-others' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 54px;"></div>
+                <h3 class="thin-font fs-3" style="margin-left: 5px">Ohters</h3>
+              </div>
+            </div>
+          </div>
+          <div class="row row-start" style="margin-top: 15px;">
+            <div class="row mt-2">
+              <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Nationality: </span><span class="underline">{{ victim.nationality|default:"Missing Input" }}</span></h3>
+            </div>
+            <div class="row mt-2" style="margin-left: 50px;">
+              <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Occupation: </span><span class="underline">{{ victim.occupation|default:"Missing Input" }}</span></h3>
+            </div>
+          </div>
+          <div class="row row-start" style="margin-top: 15px;">
+            <h3 class="thin-font fs-3" style="font-weight: bold;">Religion:</h3>
+            <div {% if victim.religion == 'roman-catholic' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 10px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Roman Catholic</h3>
+            <div {% if victim.religion == 'islam' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Islam</h3>
+            <div {% if victim.religion == 'protestant' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Protestant</h3>
+            <div {% if victim.religion == 'iglesia-ni-kristo' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Iglesia ni Kristo</h3>
+            <div {% if victim.religion == 'aglipayan' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Aglipayan</h3>
+            <div {% if victim.religion == 'other-religion' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Others</h3>
+          </div>
+          <div class="row row-start" style="margin-top: 13px;">
+            <div class="row mt-2">
+              <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Address: </span><span class="underline">{{ victim.house_information|default:"Missing Input" }}</span></h3>
+            </div>
+          </div>
+          <div class="row row-start mt-3">
+            <h3 class="thin-font fs-3">Region: 
+              <span class="underline">
+                {% if victim.region == 'region-I' %}
+                    Region I
+                {% elif victim.region == 'region-II' %}
+                    Region II
+                {% elif victim.region == 'region-III' %}
+                    Region III
+                {% elif victim.region == 'region-IV' %}
+                    Region IV‑A
+                {% elif victim.region == 'mimaropa' %}
+                    MIMAROPA Region
+                {% elif victim.region == 'region-V' %}
+                    Region V
+                {% elif victim.region == 'region-VI' %}
+                    Region VI
+                {% elif victim.region == 'region-VII' %}
+                    Region VII
+                {% elif victim.region == 'region-VIII' %}
+                    Region VIII
+                {% elif victim.region == 'region-IX' %}
+                    Region IX
+                {% elif victim.region == 'region-X' %}
+                    Region X
+                {% elif victim.region == 'region-XI' %}
+                    Region XI
+                {% elif victim.region == 'region-XII' %}
+                    Region XII
+                {% elif victim.region == 'region-XIII' %}
+                    Region XIII
+                {% elif victim.region == 'ncr' %}
+                    NCR
+                {% elif victim.region == 'car' %}
+                    CAR
+                {% elif victim.region == 'barmm' %}
+                    BARMM
+                {% endif %}
+              </span>
+            </h3>
+            <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Province: <span class="underline">{{ victim.province|default:"Missing Input" }}</span></h3>
+            <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">City / Mun: <span class="underline">{{ victim.city|default:"Missing Input" }}</span></h3>
+            <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Barangay: <span class="underline">{{ victim.barangay|default:"Missing Input" }}</span></h3>
+          </div>
+          <div class="row row-start" style="margin-top: 13px;">
+              <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Number of Children (if any): </span><span class="underline">&nbsp;{{ victim.number_of_children|default:"Missing Input" }}&nbsp;</span></h3>
+              <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px; margin-left: 40px;">Ages of Children: </span><span class="underline">&nbsp;{{ victim.ages_of_children|default:"Missing Input" }}&nbsp;</span></h3>
+          </div>
+      </section>
+      <!-- start parent victim section -->
+        {% if parent %}
+          <hr style="margin-top: 15px;">
+              <div>
+                <h3 class="fs-1 title">If Victim-Survivor is a Child</h3>
+              </div>
+          <hr>
+          <section>
+            <div class="row row-start">
+              <h3 class="thin-font fs-3" style="font-weight: bold;"><strong>Name of Parent / Guardian:</strong></h3>
+              <div class="person-name" style="margin-top:11px; margin-left: 20px;">
+                  <h3 class="thin-font fs-3">
+                    &nbsp;<span>{{ parent.last_name|default:"Missing Input" }}</span>&nbsp;
+                  </h3>
+                  <span class="indicator">Last Name</span>
+              </div>
+              <div class="person-name">
+                  <h3 class="thin-font fs-3" style="margin-top:11px; margin-left: 25px !important;">
+                    &nbsp;<span>{{ parent.first_name|default:"Missing Input" }}</span>&nbsp;
+                  </h3>
+                  <span class="indicator" style="margin-left: 25px !important;">First Name</span>
+              </div>
+              <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+                  <h3 class="thin-font fs-3">
+                      <span>{{ parent.middle_name|default:"Missing Input" }}</span>
+                  </h3>
+                  <span class="indicator">Middle Name</span>
+              </div>
+              <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+                <h3 class="thin-font fs-3">
+                    <span>{{ parent.suffix|default:"Missing Input" }}</span>
+                </h3>
+                <span class="indicator">Suffix</span>
+              </div>
+            </div>
+            <div class="row row-start" style="margin-top: 6px;">
+              <div class="row mt-1">
+                <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Relationship of Guardian to Victim-Survivor: </span><span class="underline">&nbsp;{{ parent.relationship_to|default:"Missing Input" }}&nbsp;</span></h3>
+              </div>
+            </div>
+            <div class="row row-start" style="margin-top: 6px;">
+              <div class="row mt-1">
+                <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Address: </span><span class="underline">&nbsp;{{ parent.house_information|default:"Missing Input" }}&nbsp;</span></h3>
+              </div>
+            </div>
+            <div class="row row-start mt-3">
+              <h3 class="thin-font fs-3">Region: 
+                <span class="underline">
+                  {% if parent.region == 'region-I' %}
+                      Region I
+                  {% elif parent.region == 'region-II' %}
+                      Region II
+                  {% elif parent.region == 'region-III' %}
+                      Region III
+                  {% elif parent.region == 'region-IV' %}
+                      Region IV‑A
+                  {% elif parent.region == 'mimaropa' %}
+                      MIMAROPA Region
+                  {% elif parent.region == 'region-V' %}
+                      Region V
+                  {% elif parent.region == 'region-VI' %}
+                      Region VI
+                  {% elif parent.region == 'region-VII' %}
+                      Region VII
+                  {% elif parent.region == 'region-VIII' %}
+                      Region VIII
+                  {% elif parent.region == 'region-IX' %}
+                      Region IX
+                  {% elif parent.region == 'region-X' %}
+                      Region X
+                  {% elif parent.region == 'region-XI' %}
+                      Region XI
+                  {% elif parent.region == 'region-XII' %}
+                      Region XII
+                  {% elif parent.region == 'region-XIII' %}
+                      Region XIII
+                  {% elif parent.region == 'ncr' %}
+                      NCR
+                  {% elif parent.region == 'car' %}
+                      CAR
+                  {% elif parent.region == 'barmm' %}
+                      BARMM
+                  {% endif %}
+                </span>
+              </h3>
+              <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Province: <span class="underline">{{ parent.province|default:"Missing Input" }}</span></h3>
+              <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">City / Mun: <span class="underline">{{ parent.city|default:"Missing Input" }}</span></h3>
+              <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Barangay: <span class="underline">{{ parent.barangay|default:"Missing Input" }}</span></h3>
+            </div>
+            <div class="row row-start" style="margin-top: 6px;">
+              <div class="row mt-1">
+                <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Contact No. of Parent / Guardian: </span><span class="underline">&nbsp;{{ parent.house_information|default:"Missing Input" }}&nbsp;</span></h3>
+              </div>
+            </div>
+          </section>
+          <!-- Other parent information -->
+        {% else %}
+            <p>No parent information available for this victim.</p>
+        {% endif %}
+      <!-- end end parent victim section -->
+    {% endfor %}
+    <!-- end victim section -->
+
+    <!-- perpetrator section -->
+    {% for perpetrator, parent_perpetrator in list_perpetrator_decrypted %}
+    <section>
+      <hr class="mt-3">
+        <div>
+          <h3 class="fs-1 title">Perpetrator Info</h3>
+        </div>
+      <hr>
+      <div class="row row-start">
+        <h3 class="thin-font fs-3" style="font-weight: bold;"><strong>Name:</strong></h3>
+        <div class="person-name" style="margin-top:11px; margin-left: 20px;">
+            <h3 class="thin-font fs-3">
+              &nbsp;<span>{{ perpetrator.last_name|default:"Missing Input" }}</span>&nbsp;
+            </h3>
+            <span class="indicator">Last Name</span>
+        </div>
+        <div class="person-name">
+            <h3 class="thin-font fs-3" style="margin-top:11px; margin-left: 25px !important;">
+              &nbsp;<span>{{ perpetrator.first_name|default:"Missing Input" }}</span>&nbsp;
+            </h3>
+            <span class="indicator" style="margin-left: 25px !important;">First Name</span>
+        </div>
+        <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+            <h3 class="thin-font fs-3">
+                <span>{{ perpetrator.middle_name|default:"Missing Input" }}</span>
+            </h3>
+            <span class="indicator">Middle Name</span>
+        </div>
+        <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+          <h3 class="thin-font fs-3">
+              <span>{{ perpetrator.suffix|default:"Missing Input" }}</span>
+          </h3>
+          <span class="indicator">Suffix</span>
+        </div>
+        <h3 class="thin-font fs-2"><span style="font-weight: bold; width: 200px; margin-left: 40px;">Alias: </span><span class="underline">&nbsp;{{ perpetrator.alias|default:"Missing Input" }}&nbsp;</span></h3>
+      </div>
+      <div class="row row-start">
+        <h3 class="thin-font fs-3" style="font-weight: bold;">Sex:</h3>
+        <div {% if perpetrator.sex == 'Male' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 10px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Male</h3>
+        <div {% if perpetrator.sex == 'Female' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 10px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Female</h3>
+
+        <h3 class="thin-font fs-3" style="margin-left:70px"><span style="font-weight: bold;">Date of Birth: </span> 
+          <span class="underline">
+          {% if perpetrator.date_of_birth %}
+            {{ perpetrator.date_of_birth|slice:"5:7" }}/{{ perpetrator.date_of_birth|slice:"-2:" }}/{{ perpetrator.date_of_birth|slice:"0:4" }}
+          {% else %}
+          Missing Input
+          {% endif %}
+          </span> (MM/DD/Year)
+        </h3>
+        <h3 class="thin-font fs-3" style="margin-left:30px"><span style="font-weight: bold;">Age: </span> 
+          <span class="underline">
+            &nbsp;{{ perpetrator.age }}&nbsp;
+          </span>
+        </h3>
+      </div>
+      <div class="row row-start">
+        <div style="width: 200px; margin-top: 10px;">
+          <h3 class="thin-font fs-3" style="font-weight: bold; width: 200px;">Civil Status:</h3>
+          <div style="display: flex; margin-top: 3px;">
+            <div {% if perpetrator.civil_status == 'single' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Single</h3>
+            <div {% if perpetrator.civil_status == 'live-in' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 57.5px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Live-In</h3>
+          </div>
+
+          <div style="display: flex;">
+            <div {% if perpetrator.civil_status == 'married' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Married</h3>
+            <div {% if perpetrator.civil_status == 'widowed' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 50px"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Widowed</h3>
+          </div>
+
+          <div style="display: flex;">
+            <div {% if perpetrator.civil_status == 'separated' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Separated</h3>
+          </div>
+        </div>
+
+        <div style="width: 550px; margin-left:10px; margin-top: 10px;">
+          <h3 class="thin-font fs-3" style="font-weight: bold; width: 200px;">Higest Educational Attainment:</h3>
+          <div style="display: flex; margin-top: 3px; justify-content: start;">
+            <div {% if perpetrator.educational_attainment == 'none' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">No Formal Education</h3>
+            <div {% if perpetrator.educational_attainment == 'married' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 10px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Elementary Level / Graduated</h3>
+            <div {% if perpetrator.educational_attainment == 'highschool' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 7px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">High-School Level / Graduated</h3>
+          </div>
+
+          <div style="display: flex; justify-content: start;">
+            <div {% if perpetrator.educational_attainment == 'vocational' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Vocational</h3>
+            <div {% if perpetrator.educational_attainment == 'collegeLevel' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 72.5px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">College Level / Graduated</h3>
+            <div {% if perpetrator.educational_attainment == 'post-grad' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 28.5px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Post Graduate</h3>
+          </div>
+
+          <div style="display: flex; justify-content: start;">
+            <div {% if perpetrator.educational_attainment == 'no-response' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">No Response</h3>
+            <div {% if perpetrator.educational_attainment == 'educt-others' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 54px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Ohters</h3>
+          </div>
+        </div>
+      </div>
+      <div class="row row-start" style="margin-top: 15px;">
+        <div class="row mt-2">
+          <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Nationality: </span><span class="underline">&nbsp;{{ perpetrator.nationality|default:"Missing Input" }}&nbsp;</span></h3>
+        </div>
+        <div class="row mt-2" style="margin-left: 50px;">
+          <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Occupation: </span><span class="underline">&nbsp;{{ perpetrator.occupation|default:"Missing Input" }}&nbsp;</span></h3>
+        </div>
+        <div class="row mt-2" style="margin-left: 50px;">
+          <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Identifying Marks: </span><span class="underline">&nbsp;{{ perpetrator.identifying_marks|default:"Missing Input" }}&nbsp;</span></h3>
+        </div>
+      </div>
+      <div class="row row-start" style="margin-top: 15px;">
+        <h3 class="thin-font fs-3" style="font-weight: bold;">Religion:</h3>
+        <div {% if perpetrator.religion == 'roman-catholic' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 10px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Roman Catholic</h3>
+        <div {% if perpetrator.religion == 'islam' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Islam</h3>
+        <div {% if perpetrator.religion == 'protestant' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Protestant</h3>
+        <div {% if perpetrator.religion == 'iglesia-ni-kristo' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Iglesia ni Kristo</h3>
+        <div {% if perpetrator.religion == 'aglipayan' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Aglipayan</h3>
+        <div {% if perpetrator.religion == 'other-religion' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Others</h3>
+      </div>
+      <div class="row row-start" style="margin-top: 13px;">
+        <div class="row mt-2">
+          <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Address: </span><span class="underline">&nbsp;{{ perpetrator.house_information|default:"Missing Input" }}&nbsp;</span></h3>
+        </div>
+      </div>
+      <div class="row row-start mt-3">
+        <h3 class="thin-font fs-3">Region: 
+          <span class="underline">&nbsp;
+            {% if perpetrator.region == 'region-I' %}
+                Region I
+            {% elif perpetrator.region == 'region-II' %}
+                Region II
+            {% elif perpetrator.region == 'region-III' %}
+                Region III
+            {% elif perpetrator.region == 'region-IV' %}
+                Region IV‑A
+            {% elif perpetrator.region == 'mimaropa' %}
+                MIMAROPA Region
+            {% elif perpetrator.region == 'region-V' %}
+                Region V
+            {% elif perpetrator.region == 'region-VI' %}
+                Region VI
+            {% elif perpetrator.region == 'region-VII' %}
+                Region VII
+            {% elif perpetrator.region == 'region-VIII' %}
+                Region VIII
+            {% elif perpetrator.region == 'region-IX' %}
+                Region IX
+            {% elif perpetrator.region == 'region-X' %}
+                Region X
+            {% elif perpetrator.region == 'region-XI' %}
+                Region XI
+            {% elif perpetrator.region == 'region-XII' %}
+                Region XII
+            {% elif perpetrator.region == 'region-XIII' %}
+                Region XIII
+            {% elif perpetrator.region == 'ncr' %}
+                NCR
+            {% elif perpetrator.region == 'car' %}
+                CAR
+            {% elif perpetrator.region == 'barmm' %}
+                BARMM
+            {% endif %}&nbsp;
+          </span>
+        </h3>
+        <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Province: <span class="underline">&nbsp;{{ perpetrator.province|default:"Missing Input" }}&nbsp;</span></h3>
+        <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">City / Mun: <span class="underline">&nbsp;{{ perpetrator.city|default:"Missing Input" }}&nbsp;</span></h3>
+        <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Barangay: <span class="underline">&nbsp;{{ perpetrator.barangay|default:"Missing Input" }}&nbsp;</span></h3>
+      </div>
+      <div class="row row-start mt-3">
+        <div style="width: 100%;">
+          <h3 class="thin-font fs-3" style="font-weight: bold; width: 500px;">Relationship of Perpetrator to Victim:</h3>
+          <div style="display: flex; margin-top: 3px; justify-content: start;">
+            <div {% if perpetrator.relationship_to_victim == 'currentSpouse' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Current Spouse / Partner</h3>
+            <div {% if perpetrator.relationship_to_victim == 'formerSpouse' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 65px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Former Spouse / Partner</h3>
+            <div {% if perpetrator.relationship_to_victim == 'currentFiance' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 87.5px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Current fiance / dating relationship</h3>
+          </div>
+
+          <div style="display: flex; justify-content: start;">
+            <div {% if perpetrator.relationship_to_victim == 'formerFiance' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Former fiance / dating relationship</h3>
+            <div {% if perpetrator.relationship_to_victim == 'employer' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left:13.2px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Employer / manager / supervisor</h3>
+            <div {% if perpetrator.relationship_to_victim == 'agentOfEmployer' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 42.5px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Agent of Employer</h3>
+          </div>
+
+          <div style="display: flex; justify-content: start;">
+            <div {% if perpetrator.relationship_to_victim == 'teacher' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Teacher / instructor / professor</h3>
+            <div {% if perpetrator.relationship_to_victim == 'coach' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 34.5px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Coach / trainer</h3>
+            <div {% if perpetrator.relationship_to_victim == 'immediateFamily' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 145.5px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Immediate family</h3>
+          </div>
+
+          <div style="display: flex; justify-content: start;">
+            <div {% if perpetrator.relationship_to_victim == 'otherRelatives' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Other relatives</h3>
+            <div {% if perpetrator.relationship_to_victim == 'peopleOfAuthority' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 125.5px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">People of authority / service provider</h3>
+            <div {% if perpetrator.relationship_to_victim == 'neighbors' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 20px;"></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Neighbors / peers / coworkers / classmates</h3>
+          </div>
+
+          <div style="display: flex; justify-content: start;">
+            <div {% if perpetrator.relationship_to_victim == 'stranger' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+            <h3 class="thin-font fs-3" style="margin-left: 5px">Stranger</h3>
+          </div>
+        </div>
+      </div>
+      {% if parent_perpetrator %}
+      <hr style="margin-top: 15px;">
+      <div>
+        <h3 class="fs-1 title">If Perpetrator is a Child</h3>
+      </div>
+      <hr>
+      <section>
+        <div class="row row-start">
+          <h3 class="thin-font fs-3" style="font-weight: bold;"><strong>Name of Parent / Guardian:</strong></h3>
+          <div class="person-name" style="margin-top:11px; margin-left: 20px;">
+              <h3 class="thin-font fs-3">
+                &nbsp;<span>{{ parent_perpetrator.last_name|default:"Missing Input" }}</span>&nbsp;
+              </h3>
+              <span class="indicator">Last Name</span>
+          </div>
+          <div class="person-name">
+              <h3 class="thin-font fs-3" style="margin-top:11px; margin-left: 25px !important;">
+                &nbsp;<span>{{ parent_perpetrator.first_name|default:"Missing Input" }}</span>&nbsp;
+              </h3>
+              <span class="indicator" style="margin-left: 25px !important;">First Name</span>
+          </div>
+          <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+              <h3 class="thin-font fs-3">
+                  <span>{{ parent_perpetrator.middle_name|default:"Missing Input" }}</span>
+              </h3>
+              <span class="indicator">Middle Name</span>
+          </div>
+          <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+            <h3 class="thin-font fs-3">
+                <span>{{ parent_perpetrator.suffix|default:"Missing Input" }}</span>
+            </h3>
+            <span class="indicator">Suffix</span>
+          </div>
+        </div>
+        <div class="row row-start" style="margin-top: 6px;">
+          <div class="row mt-1">
+            <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Relationship of Guardian to Victim-Survivor: </span><span class="underline">&nbsp;{{ parent_perpetrator.relationship_of_guardian|default:"Missing Input" }}&nbsp;</span></h3>
+          </div>
+        </div>
+        <div class="row row-start" style="margin-top: 6px;">
+          <div class="row mt-1">
+            <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Address: </span><span class="underline">&nbsp;{{ parent_perpetrator.house_information|default:"Missing Input" }}&nbsp;</span></h3>
+          </div>
+        </div>
+        <div class="row row-start mt-3">
+          <h3 class="thin-font fs-3">Region: 
+            <span class="underline">
+              {% if parent_perpetrator.region == 'region-I' %}
+                  Region I
+              {% elif parent_perpetrator.region == 'region-II' %}
+                  Region II
+              {% elif parent_perpetrator.region == 'region-III' %}
+                  Region III
+              {% elif parent_perpetrator.region == 'region-IV' %}
+                  Region IV‑A
+              {% elif parent_perpetrator.region == 'mimaropa' %}
+                  MIMAROPA Region
+              {% elif parent_perpetrator.region == 'region-V' %}
+                  Region V
+              {% elif parent_perpetrator.region == 'region-VI' %}
+                  Region VI
+              {% elif parent_perpetrator.region == 'region-VII' %}
+                  Region VII
+              {% elif parent_perpetrator.region == 'region-VIII' %}
+                  Region VIII
+              {% elif parent_perpetrator.region == 'region-IX' %}
+                  Region IX
+              {% elif parent_perpetrator.region == 'region-X' %}
+                  Region X
+              {% elif parent_perpetrator.region == 'region-XI' %}
+                  Region XI
+              {% elif parent_perpetrator.region == 'region-XII' %}
+                  Region XII
+              {% elif parent_perpetrator.region == 'region-XIII' %}
+                  Region XIII
+              {% elif parent_perpetrator.region == 'ncr' %}
+                  NCR
+              {% elif parent_perpetrator.region == 'car' %}
+                  CAR
+              {% elif parent_perpetrator.region == 'barmm' %}
+                  BARMM
+              {% endif %}
+            </span>
+          </h3>
+          <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Province: <span class="underline">{{ parent_perpetrator.province|default:"Missing Input" }}</span></h3>
+          <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">City / Mun: <span class="underline">{{ parent_perpetrator.city|default:"Missing Input" }}</span></h3>
+          <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Barangay: <span class="underline">{{ parent_perpetrator.barangay|default:"Missing Input" }}</span></h3>
+        </div>
+        <div class="row row-start" style="margin-top: 6px;">
+          <div class="row mt-1">
+            <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Contact No. of Parent / Guardian: </span><span class="underline">&nbsp;{{ parent_perpetrator.house_information|default:"Missing Input" }}&nbsp;</span></h3>
+          </div>
+        </div>
+      </section>
+      {% else %}
+          <p>No parent perpetrator information available.</p>
+      {% endif %}
+    </section>
+    {% endfor %}
+    <!-- end perpetrator section -->
+  </div>
+  <div class="container break">
+    <hr>
+      <div>
+        <h3 class="fs-1 title">Incident Information</h3>
+      </div>
+    <hr>
+    <section>
+      <div class="row row-start mt-3">
+        <div {% if case.checkbox_ra_9262 %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 6px;">RA 9262: Anti Violence Against Women and Their Children Act</h3>
+      </div>
+      <div class="row row-start" style="margin-left: 15px;">
+          <div {% if case.checkbox_sexual_abuse  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Sexual Abuse</h3>
+          <div {% if case.checkbox_psychological_abuse  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left:25px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Psychological</h3>
+          <div {% if case.checkbox_physical_abuse  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Physical</h3>
+          <div {% if case.checkbox_economic_abuse  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Economic</h3>
+          <div {% if case.checkbox_others  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Others</h3>
+          <span class="underline fs-3" style="margin-left: 5px">&nbsp;{{ case.others_input|default:"Missing Input" }}&nbsp;</span>
+      </div>
+
+      <div class="row row-start mt-3">
+        <div {% if case.checkbox_ra_8353 %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 6px;">RA 8353: Anti-Rape Law of 1995</h3>
+      </div>
+      <div class="row row-start" style="margin-left: 15px;">
+          <div {% if case.checkbox_rape_by_sexual_intercourse %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Rape by Sexual Intercourse</h3>
+          <div {% if case.checkbox_rape_by_sexual_assault %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left:25px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Rape by Sexual Assault</h3>
+      </div>
+
+      <div class="row row-start mt-3">
+        <div {% if case.checkbox_art_336 %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 6px;">Art 336 of the Revised Penal Code</h3>
+      </div>
+      <div class="row row-start" style="margin-left: 15px;">
+          <div {% if case.checkbox_acts_of_lasciviousness %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Acts of lasciviousness</h3>
+      </div>
+
+      <div class="row row-start mt-3">
+        <div {% if case.checkbox_ra_7877 %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 6px;">RA 7877: Anti-Sexual Harassment Act</h3>
+      </div>
+      <div class="row row-start" style="margin-left: 15px;">
+          <div {% if case.checkbox_verbal %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Verbal</h3>
+          <div {% if case.checkbox_physical %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Physical</h3>
+          <div {% if case.checkbox_use_of_objects %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Use of objects, pictures, letters or notes with sexual under-pinnings</h3>
+      </div>
+
+      <div class="row row-start mt-3">
+        <div {% if case.checkbox_a_7610 %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 6px;">RA 7610: Special Protection of Children Against Child Abuse, Exploitation and Discrimination Act</h3>
+      </div>
+      <div class="row row-start" style="margin-left: 15px;">
+          <div {% if case.checkbox_engage_prostitution %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Engage, facilitate, promote or attempt to commit prostitution</h3>
+          <div {% if case.checkbox_sexual_lascivious_conduct %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 25px"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Sexual intercourse or lascivious conduct</h3>
+      </div>
+      <div class="row row-start mt-3">
+        <div {% if case.checkbox_ra_9775 %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 6px;">RA 9775 Anti-Child Pornography Act</h3>
+      </div>
+      <div class="row row-start" style="margin-top:10px;">
+        <h3 class="thin-font fs-3" style="font-weight: bold;">Description of Incident:</h3>
+      </div>
+      <div class="row row-start" style="width: 100%; text-align: justify; text-justify: inter-word;">
+        <span class="thin-font fs-3 underline">&nbsp;{{ case_decrypted.description_of_incident }}&nbsp;</span>
+      </div>
+      <div class="row row-start" style="margin-top: 10px;">
+        <h3 class="thin-font fs-3"><span style="font-weight: bold;">Date of Latest Incident: </span> 
+          <span class="underline">
+          {% if case_decrypted.date_latest_incident %}
+            {{ case_decrypted.date_latest_incident|slice:"5:7" }}/{{ case_decrypted.date_latest_incident|slice:"-2:" }}/{{ case_decrypted.date_latest_incident|slice:"0:4" }}
+          {% else %}
+          Missing Input
+          {% endif %}
+          </span> (MM/DD/Year)
+        </h3>
+        <div {% if case_decrypted.incomplete_date %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 35px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 6px;">Incomplete Date</h3>
+      </div>
+      <div class="row row-start" style="margin-top:10px;">
+        <h3 class="thin-font fs-3" style="font-weight: bold;">Place of Incident:</h3>
+      </div>
+      <div class="row row-start">
+        <div {% if case_decrypted.place_of_incident == 'house' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Home</h3>
+        <div {% if case_decrypted.place_of_incident == 'work'  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left:55px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Work</h3>
+        <div {% if case_decrypted.place_of_incident == 'school'  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 55px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">School</h3>
+        <div {% if case_decrypted.place_of_incident == 'commercialPlaces'  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 55px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Commercial Places</h3>
+        <div {% if case_decrypted.place_of_incident == 'religion'  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 55px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Religious Institutions</h3>
+      </div>
+      <div class="row row-start">
+        <div {% if case_decrypted.place_of_incident == 'placeOfMedicalTreatment' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Place of Medical Treatment</h3>
+        <div {% if case_decrypted.place_of_incident == 'transport'  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left:35px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Transport & Connecting Sites</h3>
+        <div {% if case_decrypted.place_of_incident == 'brothles'  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 35px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Brothels and Similar Establishments</h3>
+      </div>
+      <div class="row row-start">
+        <div {% if case_decrypted.place_of_incident == 'others' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Others</h3>
+        <div {% if case_decrypted.place_of_incident == 'noResponse'  %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left:51.5px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">No Response</h3>
+      </div>
+      <hr style="margin-top: 5px;">
+    </section>
+    
+    <section>
+      <div class="row row-start">
+        <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Witness/es</span><span>&nbsp;(Use additional paper if Necessary)&nbsp;</span> (<span style="color: #6ac5fe;">Not to be encoded in system</span>)</h3>
+      </div>
+      {% if witnesses  %}
+        {% for witness in witnesses  %}
+          <div class="row row-start">
+                <span class="thin-font fs-3">{{ forloop.counter }})</span>
+                <div class="person-name">
+                    <h3 class="thin-font fs-3" style="margin-top:10px; margin-left:8px !important;">
+                      &nbsp;<span> {{ witness.name }} </span>&nbsp;
+                    </h3>
+                    <span class="indicator" style="margin-left: 8px !important;">Name</span>
+                </div>
+                <div class="person-name" style="margin-top:10px; margin-left: 25px !important;">
+                    <h3 class="thin-font fs-3">
+                      &nbsp;<span>{{ witness.address }}</span>&nbsp;
+                    </h3>
+                    <span class="indicator" style="">Address</span>
+                </div>
+                <div class="person-name" style="margin-top:10px; margin-left: 25px !important;">
+                  <h3 class="thin-font fs-3">
+                    &nbsp;<span>{{ witness.contact_number }}</span>&nbsp;
+                  </h3>
+                  <span class="indicator">Contact Number</span>
+                </div>
+          </div>
+          <div class="row row-start mt-2" style="width: 100%; text-align: justify; text-justify: inter-word;">
+            <h3 class="thin-font fs-3">Eye-Witness Account:&nbsp;&nbsp;<span class="underline">{{ witness.email }}</span></h3>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="row row-start">
+            <span class="thin-font fs-3">1)</span>
+            <div class="person-name">
+                <h3 class="thin-font fs-3" style="margin-top:6px; margin-left:8px !important;">
+                  &nbsp;<span>No Information</span>&nbsp;
+                </h3>
+                <span class="indicator" style="margin-left: 8px !important;">Name</span>
+            </div>
+            <div class="person-name" style="margin-top:6px; margin-left: 25px !important;">
+                <h3 class="thin-font fs-3">
+                  &nbsp;<span>No Information</span>&nbsp;
+                </h3>
+                <span class="indicator" style="">Address</span>
+            </div>
+            <div class="person-name" style="margin-top:6px; margin-left: 25px !important;">
+              <h3 class="thin-font fs-3">
+                &nbsp;<span>{{ witness.contact_number }}</span>&nbsp;
+              </h3>
+              <span class="indicator">No Information</span>
+            </div>
+        </div>
+        <div class="row row-start mt-2" style="width: 100%; text-align: justify; text-justify: inter-word;">
+          <h3 class="thin-font fs-3">Eye-Witness Account:&nbsp;&nbsp;<span class="underline">No Information</span></h3>
+        </div>
+      {% endif %}
+
+      
+    </section>
+    <hr class="mt-3">
+    <section class="mt-3">
+      <div class="row row-start">
+        <h3 class="thin-font fs-3">Date: <span class="underline">{{ case.date_added|date:"m/d/Y" }}</span></h3>
+      </div>
+      <div class="row row-start">
+        <div {% if case.service_information == 'crisis' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Crisis Intervention Including Rescue</h3>
+        <div {% if case.service_information == 'issuance' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left:25px;"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Issuance / Enforcement of Barangay Protection Order</h3>
+      </div>
+      <div class="row row-start" style="margin-top: 20px;">
+        <div {% if case.refers_to_social_welfare %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 8px;"><span style="font-weight: bold;">Refer to Social Welfare and Development Office: </span>
+          <span style="margin-left: 15px;">Date:</span>
+          <span class="underline">
+          {% if case.refer_social_date %}
+            {{ case.refer_social_date|date:"m/d/Y" }}
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+          </span> (MM/DD/Year)
+        </h3>
+      </div>
+      <div class="row row-start">
+          <div {% if case.psychosocial_services %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+          <h3 class="thin-font fs-3" style="margin-left: 8px">Psychosocial services</h3>
+          <div {% if case.emergency_shelter %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 65px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Emergency Shelter</h3>
+          <div {% if case.economic_assistance %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 87.5px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Economic Assistance</h3>
+      </div>
+
+      <div class="row row-start" style="margin-top: 20px;">
+        <div {% if case.refers_to_healthcare_provider %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 8px;"><span style="font-weight: bold;">Refer to Healthcare provider: </span>
+          <span style="margin-left: 15px;">Date:</span>
+          <span class="underline">
+          {% if case.refer_healthcare_date %}
+            {{ case.refer_healthcare_date|date:"m/d/Y" }}
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+          </span> (MM/DD/Year)
+        </h3>
+        <h3 class="thin-font fs-3" style="margin-left: 40px">Name of Healthcare Provider: <span class="underline">
+          {% if case.healthcare_provider_name %}
+            {{ case.healthcare_provider_name }}
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}</span></h3>
+      </div>
+      <div class="row row-start">
+          <div {% if case.provision_of_appropriate_medical_treatment %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+          <h3 class="thin-font fs-3" style="margin-left: 8px">Provision of appropriate medical treatment</h3>
+          <div {% if case.issuance_of_medical_certificate %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 65px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Issuance of medical certificate</h3>
+          <div {% if case.medico_legal_exam %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 40px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Medico-legal Exam</h3>
+      </div>
+      <div class="row row-start" style="margin-top: 20px;">
+        <div {% if case.refers_to_law_enforcement %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 8px;"><span style="font-weight: bold;">Refer to Law Enforcement: </span>
+          <span style="margin-left: 15px;">Date:</span>
+          <span class="underline">
+          {% if case.refer_law_enforcement_date %}
+            {{ case.refer_law_enforcement_date|date:"m/d/Y" }}
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+          </span> (MM/DD/Year)
+        </h3>
+        <h3 class="thin-font fs-3" style="margin-left: 40px">Agency: <span class="underline">
+          {% if case.law_enforcement_agency_name %}
+            {{ case.law_enforcement_agency_name }}
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+        </span></h3>
+      </div>
+      <div class="row row-start">
+          <div {% if case.receipt_and_recording_of_complaints %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+          <h3 class="thin-font fs-3" style="margin-left: 8px">Receipt and recording of Complaints</h3>
+          <div {% if case.rescue_operations_of_vaw_cases %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 30px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Rescue Operations of VAW Cases</h3>
+          <div {% if case.forensic_interview_and_investigation %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 30px;"></div>
+          <h3 class="thin-font fs-3" style="margin-left: 5px">Forensic Interview and Investigation</h3>
+      </div>
+      <div class="row row-start">
+        <div {% if case.enforcement_of_protection_order %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 8px">Enforcement of Protection Order</h3>
+      </div>
+
+      <div class="row row-start" style="margin-top: 20px;">
+        <div {% if case.refers_to_other_service_provider %} class="circle_selected" {% else %} class="circle_unselected" {% endif %}></div>
+        <h3 class="thin-font fs-3" style="margin-left: 8px;"><span style="font-weight: bold;">Refer to Other Service Provider: </span>
+          <span style="margin-left: 15px;">Date:</span>
+          <span class="underline">
+          {% if case.refer_other_service_date %}
+            {{ case.refer_other_service_date|date:"m/d/Y" }}
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+          </span> (MM/DD/Year)
+        </h3>
+        <h3 class="thin-font fs-3" style="margin-left: 40px">Type of Service: <span class="underline">
+          {% if case.type_of_service %}
+            {{ case.type_of_service }}
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+
+        </span></h3>
+      </div>
+      <div class="row row-start">
+        <h3 class="thin-font fs-3" style="margin-left: 20px">Name of Service Provider: <span class="underline">
+          {% if case.other_service_provider_name %}
+            {{ case.case.other_service_provider_name }}
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+      </div>
+      <div class="row row-start" style="margin-top: 40px;">
+        <h3 class="thin-font fs-3" style="font-weight: bold; margin-left: 17px">Case Closed:</h3>
+        <div {% if case.status == 'Active' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 15px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">No</h3>
+        <div {% if case.status == 'Close' %} class="circle_selected" {% else %} class="circle_unselected" {% endif %} style="margin-left: 15px"></div>
+        <h3 class="thin-font fs-3" style="margin-left: 5px">Yes</h3>
+      </div>
+      <div class="row row-start">
+        <span class="thin-font fs-3" style="margin-left: 165px;">Date:</span> 
+          <span class="underline thin-font fs-3">
+          {% if case.date_closed %}
+          &nbsp;&nbsp;{{ case.date_closed|date:"m/d/Y" }}&nbsp;&nbsp;
+          {% else %}
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          {% endif %}
+          </span> <span class="thin-font fs-3">(MM/DD/Year)</span>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

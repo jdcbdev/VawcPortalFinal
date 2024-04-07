@@ -1,0 +1,109 @@
+{% extends "../base/base.html" %}
+{% block title %}Forgot Password | Change{% endblock %}
+{% load static %}
+{% block content %}
+<div class="container pt-5 pb-5">
+    <div class="card">
+        <div class="card-body">
+            <a href="{% url 'login' %}"><button type="button" class="btn-close d-flex ms-auto" aria-label="Close"></button></a>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
+                    <img src= "{% static '/img/login.png' %}" class="img-fluid" alt="image">
+                </div>
+            <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
+                <h2 class="text-center pt-3 pb-3">Forgot Password</h2>
+                <div class="alert alert-danger text-danger fw-bold" role="alert" style="display:none;"></div>
+                    <form method="POST" action="{% url 'process_change_password' uidb64=uidb64 token=token %}">
+                        {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="newpassword" name="new_password1" placeholder="New Password">
+                            <label for="newpassword">New Password</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="confirmnewpassword" name="new_password2" placeholder="Confirm New Password">
+                            <label for="confirmnewpassword">Confirm New Password</label>
+                        </div>
+                        <div class="form-check pb-4">
+                            <input class="form-check-input" type="checkbox" id="showPassword">
+                            <label class="form-check-label" for="showPassword">
+                            Show Password
+                            </label>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="confirmPasswordBtn" disabled>Confirm New Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+      </div>
+    </div>
+</div>
+
+{% endblock content %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const showPasswordCheckbox = document.getElementById('showPassword');
+        const newPasswordInput = document.getElementById('newpassword');
+        const confirmNewPasswordInput = document.getElementById('confirmnewpassword');
+        const alertDiv = document.querySelector('.alert');
+        const confirmPasswordBtn = document.getElementById('confirmPasswordBtn');
+    
+        showPasswordCheckbox.addEventListener('change', function() {
+            const type = showPasswordCheckbox.checked ? 'text' : 'password';
+            newPasswordInput.type = type;
+            confirmNewPasswordInput.type = type;
+        });
+    
+        const updateAlert = () => {
+            alertDiv.textContent = '';
+            alertDiv.style.display = 'none';
+        };
+    
+        const validatePassword = () => {
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmNewPasswordInput.value;
+    
+            // Password length validation
+            if (newPassword.length < 8) {
+                alertDiv.textContent = 'Password should be at least 8 characters.';
+                alertDiv.style.display = 'block';
+                confirmPasswordBtn.disabled = true;
+                return;
+            }
+    
+            // Password match validation
+            if (newPassword !== confirmPassword) {
+                alertDiv.textContent = 'Passwords do not match.';
+                alertDiv.style.display = 'block';
+                confirmPasswordBtn.disabled = true;
+                return;
+            }
+    
+            // Special character validation
+            const specialCharacterRegex = /[!@#$%^&*(),.?":{}|<>_]/;
+            if (!specialCharacterRegex.test(newPassword)) {
+                alertDiv.textContent = 'Password should have at least one special character.';
+                alertDiv.style.display = 'block';
+                confirmPasswordBtn.disabled = true;
+                return;
+            }
+            // Uppercase letter validation
+            const uppercaseLetterRegex = /[A-Z]/;
+            if (!uppercaseLetterRegex.test(newPassword)) {
+                alertDiv.textContent = 'Password should have at least one uppercase letter.';
+                alertDiv.style.display = 'block';
+                confirmPasswordBtn.disabled = true;
+                return;
+            }
+    
+            // All validations passed
+            updateAlert();
+            confirmPasswordBtn.disabled = false;
+        };
+    
+        newPasswordInput.addEventListener('input', validatePassword);
+        confirmNewPasswordInput.addEventListener('input', validatePassword);
+    });
+</script>
+{% endblock scripts %}
