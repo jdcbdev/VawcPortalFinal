@@ -1,6 +1,16 @@
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-djangoenv/Scripts/activate 
-cd vawc
-python manage.py runserver
-python manage.py makemigrations
-python manage.py migrate
+#Running Locally
+
+1. Run: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+2. Install virtualenv (if you haven't already): pip install virtualenv
+3. Create a virtual environment: virtualenv env
+4. Activate the virtual environment: .\env\Scripts\activate
+5. Navigate to the project directory: cd vawc
+6. Install dependencies: pip install -r requirements.txt
+7. On windows, you have to install GTK3. Follow instructions here: https://github.com/GtkSharp/GtkSharp/wiki/Installing-Gtk-on-Windows
+8. python manage.py migrate
+9. python manage.py runserver
+10. create a superuser: python manage.py createsuperuser
+11. login to django/admin and fill in the account details
+12. Setup Email service
+13. Setup Google Captcha
+14. Setup Twilio Account

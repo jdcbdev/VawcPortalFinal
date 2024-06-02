@@ -1,5 +1,9 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+vawc/account/__pycache__/
+vawc/case/__pycache__/
+vawc/pages/__pycache__/
+vawc/vawc/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -86,8 +90,8 @@ pytest_cache/
 # Django specific
 *.log
 local_settings.py
-db.sqlite3
-db.sqlite3-journal
+/vawc/db.sqlite3
+/vawc/db.sqlite3-journal
 media
 
 # Flask stuff:
@@ -152,6 +156,3 @@ venv.bak/
 .vscode
 
 # End of the list
-
-#database
-db.sqlite3
