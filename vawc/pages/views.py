@@ -30,6 +30,7 @@ from collections import defaultdict
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.hashers import make_password
+from account.utils import load_settings
 # Create your views here.
 
 from .utils import encrypt_data, decrypt_data
@@ -802,10 +803,12 @@ def send_otp_email(email, otp):
         f'--------------------------\n'
         f'This email was sent automatically. Please do not reply.'
     )
+    load_settings()
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
     
 
 def send_email(receiver, subject, message):
+    load_settings()
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [receiver])
 
 def generate_otp():

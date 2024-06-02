@@ -3,3 +3,4 @@ djangoenv/Lib/site-packages/pip/_internal/build_env.py
 /djangoenv
 /newdjangoenv
 vawc/account/__pycache__/models.cpython-312.pyc
+.vscode

@@ -48,4 +48,13 @@ class Account(models.Model):
 class Passkey_Reset(models.Model):
     email = models.CharField(max_length=250, null=True, blank=True)
     status = models.CharField(max_length=250, null=True, blank=True)
-    date = models.DateTimeField(default=timezone.now)   
+    date = models.DateTimeField(default=timezone.now)
+
+class Email(models.Model):
+    email = models.EmailField()
+    host = models.CharField(max_length=250)
+    port = models.PositiveBigIntegerField()
+    password = models.CharField(max_length=250)
+
+    def __str__(self):
+        return f"Email: {self.email} - Host: {self.host} - Port: {self.port}"
