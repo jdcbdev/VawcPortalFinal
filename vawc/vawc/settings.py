@@ -112,14 +112,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-DEFAULT_FROM_EMAIL = 'vawcdilg@gmail.com'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = None
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = None
+EMAIL_PORT = None
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'vawcdilg@gmail.com'
-EMAIL_HOST_PASSWORD = 'bnig oujr iwfv ivjj'
+EMAIL_HOST_USER = None
+EMAIL_HOST_PASSWORD = None
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

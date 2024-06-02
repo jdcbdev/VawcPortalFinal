@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.core.mail import send_mail 
 from django.conf import settings
+from .utils import load_settings
 
 from account.models import *
 from case.models import *
@@ -85,6 +86,7 @@ def update_passkey(request):
   return JsonResponse({'success': True})
 
 def send_email(receiver, subject, message):
+    load_settings()
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [receiver])
   
 def generate_passkey(length=12):
