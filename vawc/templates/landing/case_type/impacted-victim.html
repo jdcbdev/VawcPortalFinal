@@ -885,6 +885,7 @@
                         <input type="email" class="form-control" id="email-confirm" name="email-confirm" placeholder="name@example.com">
                         <label for="floatingInput">Email address</label>
                     </div>
+                    <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" id="send_email_confirmation">Confirm Email</button>
@@ -1171,6 +1172,12 @@
         $('#emailConfirmationForm').submit(function(e) {
             e.preventDefault(); // Prevent the default form submission
 
+            // Check recaptcha if puzzle is solved
+            const captchaRes = grecaptcha.getResponse()
+            if(!captchaRes.length > 0) {
+                throw new Error('reCAPTCHA validation failed')
+            }
+
             // Check if the input is email address
             var emailValue = $('#email-confirm').val();
 
@@ -1180,13 +1187,18 @@
             $.ajax({
                 url: '{% url 'email_confirm'  %}', // Modify the URL to point to your Django view endpoint
                 type: 'POST',
-                data: { emailConfirm: emailValue }, // Pass the email value in the data object
+                data: { emailConfirm: emailValue, 'g-recaptcha-response': grecaptcha.getResponse() }, // Pass the email value in the data object
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                 },
                 success: function(response) {
                     // Handle success response
                     console.log(response); // Log the response to the console
+
+                    // Check if reCAPTCHA serverside validation is not successful
+                    if (!response.success) {
+                        throw new Error('reCaptcha validation failed')
+                    }
 
                     // Hide the email modal
                     $('#sendEmail').modal('hide');

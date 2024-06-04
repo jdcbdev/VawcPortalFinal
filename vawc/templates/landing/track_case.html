@@ -24,9 +24,10 @@
                                 <!--invalid feedback-->
                             </div>
                         </div><!--First row-->
-                        <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2">
-                            <button id="submitButton" class="btn btn-primary w-100" type="submit">Track Case</button>
+                        <div class="col-12 col-md-12 col-sm-8 pt-2">
+                            <button id="submitButton" class="btn btn-primary w-100n mb-4" type="submit">Track Case</button>
                             </button>
+                            <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
                         </div>
                     </form>
                 </div>
@@ -126,16 +127,28 @@
         
                     if (response.success) {
                         // If email exists in the database, proceed with email confirmation
+
+                        // Check recaptcha if puzzle is solved
+                        const captchaRes = grecaptcha.getResponse()
+                        if(!captchaRes.length > 0) {
+                            throw new Error('reCAPTCHA validation failed')
+                        }
+
                         $.ajax({
                             url: '{% url 'email_confirm' %}', // Modify the URL to point to your Django view endpoint
                             type: 'POST',
-                            data: { emailConfirm: emailValue }, // Pass the email value in the data object
+                            data: { emailConfirm: emailValue, 'g-recaptcha-response': grecaptcha.getResponse() }, // Pass the email value in the data object
                             headers: {
                                 'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                             },
                             success: function(response) {
                                 // Handle success response
                                 console.log(response); // Log the response to the console
+
+                                // Check if reCAPTCHA serverside validation is not successful
+                                if (!response.success) {
+                                    throw new Error('reCaptcha validation failed')
+                                }
 
                                 // Show the OTP modal
                                 $('#otpModal').modal('show');
