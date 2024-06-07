@@ -58,3 +58,10 @@ class Email(models.Model):
 
     def __str__(self):
         return f"Email: {self.email} - Host: {self.host} - Port: {self.port}"
+    
+class Recaptcha(models.Model):
+    site_key = models.CharField(max_length=150)
+    secret_key = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"Site key: {self.site_key} - Secret key: {self.secret_key}"

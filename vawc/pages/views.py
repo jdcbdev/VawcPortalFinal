@@ -30,7 +30,8 @@ from collections import defaultdict
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.hashers import make_password
-from account.utils import load_settings
+from account.utils import *
+import requests
 # Create your views here.
 
 from .utils import encrypt_data, decrypt_data
@@ -131,7 +132,8 @@ def success_reset_view (request):
     return render(request, 'login/forgot-pass-success.html')
 
 def track_case_view (request):
-    return render(request, 'landing/track_case.html')
+    recaptcha = load_recaptcha_settings()
+    return render(request, 'landing/track_case.html', {'site_key': recaptcha['site_key']})
 
 def check_email_case(request):
     if request.method == 'POST':
@@ -911,6 +913,19 @@ def resend_otp(request):
 
 def email_confirm(request):
     if request.method == 'POST':
+
+        # reCAPTCHA server side validation
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        data = {
+            'secret': settings.RECAPTCHA_SECRET_KEY,
+            'response': recaptcha_response
+        }
+        r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+        result = r.json()
+        # return JsonResponse({'result': result})
+        if not result['success']:
+            return JsonResponse({'success': False, 'error': 'reCAPTCHA validation failed'})
+        
         email = request.POST.get('emailConfirm')
         print('Email Inputted:',email)
 
@@ -965,10 +980,12 @@ def report_violence_view (request):
     return render(request, 'landing/report_violence.html')
 
 def impact_victim_view (request):
-    return render(request, 'landing/case_type/impacted-victim.html')
+    recaptcha = load_recaptcha_settings()
+    return render(request, 'landing/case_type/impacted-victim.html', {'site_key': recaptcha['site_key']})
 
 def behalf_victim_view (request):
-    return render(request, 'landing/case_type/behalf-victim.html')
+    recaptcha = load_recaptcha_settings()
+    return render(request, 'landing/case_type/behalf-victim.html', {'site_key': recaptcha['site_key']})
 
 def add_case(request):
     
@@ -2637,6 +2654,3 @@ def encrypt_decrypt(request):
             return JsonResponse({'success': False, 'message': 'Invalid passkey.'})
     else:
         return JsonResponse({'success': False, 'message': 'User not found.'})
-
-    
-    

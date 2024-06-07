@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from account.models import Account, CustomUser, Passkey_Reset, Email
+from account.models import Account, CustomUser, Passkey_Reset, Email, Recaptcha
 from account.forms import CustomUserCreationForm, CustomUserChangeForm
 
 # Define inline admin for Account model
@@ -24,3 +24,4 @@ class Passkey_ResetAdmin(admin.ModelAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Passkey_Reset, Passkey_ResetAdmin)
 admin.site.register(Email)
+admin.site.register(Recaptcha)

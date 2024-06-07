@@ -121,6 +121,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = None
 EMAIL_HOST_PASSWORD = None
 
+RECAPTCHA_SITE_KEY = None
+RECAPTCHA_SECRET_KEY = None
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 

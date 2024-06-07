@@ -134,6 +134,8 @@ env.bak/
 venv.bak/
 /djangoenv
 /newdjangoenv
+vawc/account/__pycache__/models.cpython-312.pyc
+.vscode
 
 # Spyder project settings
 .spyderproject
