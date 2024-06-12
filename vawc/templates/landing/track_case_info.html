@@ -12,7 +12,12 @@
         <div class="card-body">
             <a href="{% url 'track_case' %}"><button type="button" class="btn-close d-flex ms-auto" aria-label="Close"></button></a>
             <br>
-            <p class="h4 ms-lg-5">Email: <span class="lead">{{ user_email }}</span></p>
+            {% if contact_type == 'email' %}
+                <p   p class="h4 ms-lg-5">Email: <span class="lead">{{ user_contact }}</span></p>
+            {% else %}
+                <p   p class="h4 ms-lg-5">Phone: <span class="lead">+63{{ user_contact }}</span></p>
+            {% endif %}
+
             <div class="d-lg-flex align-items-start px-xl-5 px-lg-5 px-0">
                 <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     {% for case in cases %}

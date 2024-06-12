@@ -25,6 +25,7 @@
                 <input type="hidden" id="victim_count" name="victim_count" value="1">
                 <input type="hidden" id="perpetrator_count" name="perpetrator_count" value="1">
                 <input type="hidden" id="email-confirmed" name="email-confirmed">
+                <input type="hidden" id="phone-confirmed" name="phone-confirmed">
                 <!--single form panel-->
                 <div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="slideHorz">
                     <div class="multisteps-form__content">
@@ -874,21 +875,45 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Email Confirmation</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Contact Verification</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="emailConfirmationForm">
+            <form id="contactConfirmationForm">
                 <div class="modal-body">
-                    <h3 class="text-center">Before We Can Process Your Case.</h3>
-                    <p class="py-1 fs-4 text-center">Please Enter Your Email First</p>
-                    <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="email-confirm" name="email-confirm" placeholder="name@example.com">
-                        <label for="floatingInput">Email address</label>
+                    <div class="container col-lg-12 col-md-12 col-sm-8">
+                        <h3 class="text-center">Before We Can Process Your Case.</h3>
+                        <div class="form-label mb-4 text-center">Please enter your email or phone number first.</div>
+                        <ul class="nav nav-underline mb-3" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="email-tab" data-bs-toggle="tab" data-bs-target="#email-panel" type="button" role="tab" aria-controls="email" aria-selected="true">Email</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="phone-tab" data-bs-toggle="tab" data-bs-target="#phone-panel" type="button" role="tab" aria-controls="phone" aria-selected="false">Phone</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content mb-3" id="myTabContent">
+                            <div class="tab-pane fade show active" id="email-panel" role="tabpanel" aria-labelledby="email-tab">
+                                <input type="email" class="form-control" id="email-confirm" name="email-confirm" aria-describedby="emailFeedback" placeholder="example@email.com">
+                                <div id="emailFeedback" class="invalid-feedback err-msg-email">
+                                    No Account Associated with any Case.
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="phone-panel" role="tabpanel" aria-labelledby="phone-tab">
+                                <div class="input-group" aria-describedby="phoneFeedback">
+                                    <span class="input-group-text">+63</span>
+                                    <input type="text" class="form-control" id="phone-confirm" name="phone-confirm" placeholder="987 654 3210" maxlength="10">
+                                </div>
+                                <div id="phoneFeedback" class="invalid-feedback err-msg-phone">
+                                    No Account Associated with any Case.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="g-recaptcha d-flex justify-content-center" data-sitekey="{{ site_key }}" data-callback="err_captcha_reset"></div>
+                        <div class="err-msg-recaptcha fs-7 text-danger mb-3"></div>
                     </div>
-                    <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="send_email_confirmation">Confirm Email</button>
+                    <button type="submit" class="btn btn-primary " id="send_email_confirmation">Confirm</button>
                 </div>
             </form>
         </div>
@@ -1169,25 +1194,44 @@
         });
 
         // email confirmation
-        $('#emailConfirmationForm').submit(function(e) {
+        $('#contactConfirmationForm').submit(function(e) {
             e.preventDefault(); // Prevent the default form submission
+
+
+            // Check if the input is email address
+            var emailValue = $('#email-confirm').val();
+            var phoneValue = $('#phone-confirm').val();
+            let contactValue = ''
+
+            // For example, you can log it to the console
+            console.log("Email entered: " + emailValue);
+            console.log("Phone entered: " + phoneValue);
+
+            requestURL = ''
+            if(document.querySelector('#email-tab').classList.contains('active')) {
+                console.log('email is selected type')
+                requestURL = '{% url 'email_confirm'  %}'
+                contactValue = isvalid_email(emailValue)
+            } else if (document.querySelector('#phone-tab').classList.contains('active')) {
+                console.log('phone number is selected type')
+                requestURL = '{% url 'phone_confirm'  %}'
+                contactValue = isvalid_phone_number(phoneValue)
+            } else {
+                throw new Error('No contact type selected')
+            }
 
             // Check recaptcha if puzzle is solved
             const captchaRes = grecaptcha.getResponse()
             if(!captchaRes.length > 0) {
+                $('.g-recaptcha').children().css('border', '1px solid red')
+                $('.err-msg-recaptcha').text('You need to solve captcha first')
                 throw new Error('reCAPTCHA validation failed')
             }
 
-            // Check if the input is email address
-            var emailValue = $('#email-confirm').val();
-
-            // For example, you can log it to the console
-            console.log("Email entered: " + emailValue);
-
             $.ajax({
-                url: '{% url 'email_confirm'  %}', // Modify the URL to point to your Django view endpoint
+                url: requestURL, // Modify the URL to point to your Django view endpoint
                 type: 'POST',
-                data: { emailConfirm: emailValue, 'g-recaptcha-response': grecaptcha.getResponse() }, // Pass the email value in the data object
+                data: { 'contactConfirm': contactValue, 'g-recaptcha-response': grecaptcha.getResponse() }, // Pass the email value in the data object
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                 },
@@ -1195,9 +1239,17 @@
                     // Handle success response
                     console.log(response); // Log the response to the console
 
-                    // Check if reCAPTCHA serverside validation is not successful
+                    // Server-side validation response
                     if (!response.success) {
-                        throw new Error('reCaptcha validation failed')
+                        if(get_contact_type() == 'email') {
+                            $('#email-confirm').addClass('is-invalid')
+                            $('.err-msg-email').text(response.message)
+                        } else if (get_contact_type() == 'phone') {
+                            $('#phone-confirm').addClass('is-invalid')
+                            $('#phone-confirm').parent().addClass('is-invalid')
+                            $('.err-msg-phone').text(response.message)
+                        }
+                        throw new Error(response.message)
                     }
 
                     // Hide the email modal
@@ -1218,9 +1270,21 @@
         $('#otpForm').submit(function(e) {
             e.preventDefault(); // Prevent the default form submission
             var formData = $(this).serialize();
+
+            requestURL = ''
+            if(document.querySelector('#email-tab').classList.contains('active')) {
+                console.log('email is selected type')
+                requestURL = '{% url 'verify_otp_email'  %}'
+            } else if (document.querySelector('#phone-tab').classList.contains('active')) {
+                console.log('phone number is selected type')
+                requestURL = '{% url 'verify_otp_phone'  %}'
+            } else {
+                throw new Error('No contact type selected')
+            }
+
             $.ajax({
                 type: 'POST',
-                url: '{% url "verify_otp_email" %}',
+                url: requestURL,
                 data: formData,
                 success: function(response) {
                     if (response.success) {
@@ -1228,8 +1292,11 @@
                         // hide otp modal
                         $('#otpModal').modal('hide');
                         var emailValue = $('#email-confirm').val();
+                        var phoneValue = $('#phone-confirm').val();
                         console.log("Email entered(OTP): " + emailValue);
+                        console.log("Phone entered(OTP): " + phoneValue);
                         $('#email-confirmed').val(emailValue);
+                        $('#phone-confirmed').val(phoneValue);
                         goForSubmission = true
 
                         // to trigger button of main form
@@ -1300,10 +1367,54 @@
             });
         }
 
+        // Client side validation
+        function isvalid_phone_number(number) {
+            console.log(typeof number)
+            if(/^\d+$/.test(number) && number.length === 10) {
+                console.log('Phone number isvalid')
+                return number
+            } else if (number.trim().length <= 0) {
+                $('.err-msg-phone').text('Please enter your phone number')
+                $('#phone-confirm').parent().addClass('is-invalid')
+                throw new Error('No input detected')
+            } else {
+                console.log(number)
+                $('.err-msg-phone').text('Invalid phone number')
+                $('#phone-confirm').parent().addClass('is-invalid')
+                throw new Error('Invalid phone number')
+            }
+        }
+        function isvalid_email(email) {
+            if(email.trim().length <= 0) {
+                $('.err-msg-email').text('Please enter your email')
+                $('#email-confirm').addClass('is-invalid')
+                throw new Error('No input detected')
+            } else {
+                return email
+            }
+        }
+
+        function get_contact_type() {
+            if(document.querySelector('#email-tab').classList.contains('active')) {
+                return 'email'
+            } else if (document.querySelector('#phone-tab').classList.contains('active')) {
+                return 'phone'
+            } else {
+                return false
+            }
+        }
+        
+
         // Click event handler for the resend button
         $('#resendButton').click(function(event) {
             event.preventDefault();
             resendOTP();
+        });
+
+        // Prevent character inputs other than numbers in the phone input element
+        $('#phone-confirm').on('input', function() {
+            // Remove any non-numeric character
+            $(this).val($(this).val().replace(/[^0-9]/g, ''));
         });
 
         // Get the current date
@@ -1315,6 +1426,11 @@
         // Set the value of the input field to the current date
         $('#date-latest-incident').val(formattedDate);
     });
+
+    function err_captcha_reset() {
+        $('.g-recaptcha').children().css('border', 'none')
+        $('.err-msg-recaptcha').text('')
+    }
 
 </script>
 {% endblock scripts %}

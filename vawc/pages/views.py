@@ -32,6 +32,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.hashers import make_password
 from account.utils import *
 import requests
+from twilio.rest import Client
 # Create your views here.
 
 from .utils import encrypt_data, decrypt_data
@@ -137,7 +138,7 @@ def track_case_view (request):
 
 def check_email_case(request):
     if request.method == 'POST':
-        email = request.POST.get('email', None)  # Get the email from the POST data
+        email = request.POST.get('contact', None)  # Get the email from the POST data
         if email:
             # Check if there is any case associated with the given email
             if Case.objects.filter(email=email).exists():
@@ -146,6 +147,23 @@ def check_email_case(request):
                 return JsonResponse({'success': False, 'message': 'There is no Email associated with any case.'})
         else:
             return JsonResponse({'success': False, 'message': 'No email provided.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+def check_phone_case(request):
+    if request.method == 'POST':
+        phone = request.POST.get('contact', None)  # Get the phone from the POST data
+        # checks if phone number is still in invalid format
+        if not phone.isdigit() or not len(phone) == 10:
+            return JsonResponse({'success': False, 'message': 'Invalid phone number'})
+        if phone:
+            # Check if there is any case associated with the given email
+            if Case.objects.filter(phone=phone).exists():
+                return JsonResponse({'success': True, 'message': 'There is a Phone number associated with at least one case.'})
+            else:
+                return JsonResponse({'success': False, 'message': 'No Account Associated with any Case.'})
+        else:
+            return JsonResponse({'success': False, 'message': 'No phone provided.'})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
@@ -180,6 +198,34 @@ def verify_otp_email_track_case(request):
                 return JsonResponse({'success': False, 'message': 'OTP has expired.'})
         return JsonResponse({'success': False, 'message': 'Incorrect OTP.', 'user_email': user_email})
 
+def verify_otp_phone_track_case(request):
+    if request.method == 'POST':
+        otp_entered = ''
+        for i in range(1, 7):  # Iterate through OTP fields from 1 to 6
+            otp_entered += request.POST.get(f'otp_{i}', '')
+
+        otp_saved = request.session.get('otp')
+        otp_expiry_str = request.session.get('otp_expiry')
+        user_phone = request.session.get('user_phone')  # Retrieving user phone from session
+        print(user_phone)
+
+        if otp_saved and otp_expiry_str and user_phone:  # Check if user_phone exists
+            otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
+            if timezone.now() < otp_expiry and otp_entered == otp_saved:
+                # Clear session data after successful OTP verification
+                request.session.pop('otp')
+                request.session.pop('otp_expiry')
+                request.session.pop('user_phone')
+                print('OTP Verified Succesfully, Used Phone:', user_phone)
+
+                # Generate a unique token for password reset using Django's default_token_generator
+                token = generate_token(user_phone)
+
+                return JsonResponse({'success': True, 'message': 'OTP verified successfully.', 'user_phone': user_phone, 'token': token})
+            elif timezone.now() >= otp_expiry:
+                return JsonResponse({'success': False, 'message': 'OTP has expired.'})
+        return JsonResponse({'success': False, 'message': 'Incorrect OTP.', 'user_phone': user_phone})
+
 def generate_token(user_email):
     # Create a temporary user object with the email address
     temp_user = User(email=user_email)
@@ -189,10 +235,15 @@ def generate_token(user_email):
     timestamp = timezone.now()
     return token
 
-def track_case_info_view(request, user_email, token):
+def track_case_info_view(request, contact_type, user_contact, token):
     try:
         # Create a temporary user object with the email address
-        temp_user = User(email=user_email)
+        temp_user = None
+        if contact_type == 'email':
+            temp_user = User(email=user_contact)
+        elif contact_type == 'phone':
+            temp_user = User(email=user_contact)
+
     except User.DoesNotExist:
         return redirect('error_view')
 
@@ -200,11 +251,17 @@ def track_case_info_view(request, user_email, token):
     if not default_token_generator.check_token(temp_user, token):
         return redirect('error_view')
 
-    # Fetch cases related to the user_email and prefetch related status history
-    cases = Case.objects.filter(email=user_email).prefetch_related('status_history')
+    # Fetch cases related to the user_contact and prefetch related status history
+    cases = None
+    if contact_type == 'email':
+        cases = Case.objects.filter(email=user_contact).prefetch_related('status_history')
+    elif contact_type == 'phone':
+        print('contact type: phone')
+        cases = Case.objects.filter(phone=user_contact).prefetch_related('status_history')
 
+    print(cases)
     # Token is valid, render the template
-    return render(request, 'landing/track_case_info.html', {'user_email': user_email, 'token': token, 'cases': cases})
+    return render(request, 'landing/track_case_info.html', {'contact_type': contact_type, 'user_contact': user_contact, 'token': token, 'cases': cases})
 
 @login_required
 def logout_view(request):
@@ -807,11 +864,35 @@ def send_otp_email(email, otp):
     )
     load_settings()
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+
+def send_otp_phone(phone, otp):
+    message = (
+        # f'One-Time Password Verification\n\n'
+        # f'Your One-Time Password (OTP) is: {otp}\n'
+        # f'Please use this OTP to verify your account.\n'
+        # f'This OTP will expire in 5 minutes.\n'
+        f'Your VAWC One-Time Password (OTP) code is: {otp}\n'
+        # f'Please use this OTP to verify your account.\n'
+    )
+    send_phone(phone, message)
     
 
 def send_email(receiver, subject, message):
     load_settings()
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [receiver])
+
+def send_phone(receiver, message_body):
+    load_twilio_settings()
+    account_sid = settings.TWILIO_ACCOUNT_SID
+    auth_token = settings.TWILIO_AUTH_TOKEN
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+    from_= settings.TWILIO_PHONE_NUMBER,
+    body= message_body,
+    to=f'+63{receiver}'
+    )
+    print(message.sid)
 
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
@@ -924,9 +1005,9 @@ def email_confirm(request):
         result = r.json()
         # return JsonResponse({'result': result})
         if not result['success']:
-            return JsonResponse({'success': False, 'error': 'reCAPTCHA validation failed'})
+            return JsonResponse({'success': False, 'message': 'reCAPTCHA validation failed, please try again'})
         
-        email = request.POST.get('emailConfirm')
+        email = request.POST.get('contactConfirm')
         print('Email Inputted:',email)
 
         otp = generate_otp()
@@ -936,6 +1017,37 @@ def email_confirm(request):
         request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
         send_otp_email(email, otp)
         return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
+
+def phone_confirm(request):
+    if request.method == 'POST':
+
+        # reCAPTCHA server side validation
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        data = {
+            'secret': settings.RECAPTCHA_SECRET_KEY,
+            'response': recaptcha_response
+        }
+        r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+        result = r.json()
+        if not result['success']:
+            return JsonResponse({'success': False, 'message': 'reCAPTCHA validation failed, please try again'})
+        
+        phone = request.POST.get('contactConfirm')
+        print('Phone Inputted:',phone)
+
+        # checks if phone number is still in invalid format
+        if not phone.isdigit() or not len(phone) == 10:
+            return JsonResponse({'success': False, 'message': 'Invalid phone number'})
+
+        otp = generate_otp()
+        request.session['otp'] = otp
+        request.session['user_phone'] = phone  # Store user email in session for later retrieval
+        otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
+        request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
+
+
+        send_otp_phone(phone, otp)
+        return JsonResponse({'success': True, 'message': 'OTP has been sent to your phone number.'})
 
 
 def verify_otp_email(request):
@@ -961,6 +1073,29 @@ def verify_otp_email(request):
                 return JsonResponse({'success': False, 'message': 'OTP has expired.'})
         return JsonResponse({'success': False, 'message': 'Incorrect OTP.', 'user_email': user_email})
 
+def verify_otp_phone(request):
+    if request.method == 'POST':
+        otp_entered = ''
+        for i in range(1, 7):  # Iterate through OTP fields from 1 to 6
+            otp_entered += request.POST.get(f'otp_{i}', '')
+
+        otp_saved = request.session.get('otp')
+        otp_expiry_str = request.session.get('otp_expiry')
+        user_phone = request.session.get('user_phone')  # Retrieving user email from session
+        print(user_phone)
+
+        if otp_saved and otp_expiry_str and user_phone:  # Check if user_email exists
+            otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
+            if timezone.now() < otp_expiry and otp_entered == otp_saved:
+                # Clear session data after successful OTP verification
+                request.session.pop('otp')
+                request.session.pop('otp_expiry')
+                request.session.pop('user_phone')
+                return JsonResponse({'success': True, 'message': 'OTP verified successfully.', 'user_phone': user_phone})
+            elif timezone.now() >= otp_expiry:
+                return JsonResponse({'success': False, 'message': 'OTP has expired.'})
+        return JsonResponse({'success': False, 'message': 'Incorrect OTP.', 'user_phone': user_phone})
+
 
 
 def resend_otp_email(request):
@@ -971,6 +1106,17 @@ def resend_otp_email(request):
         otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
         request.session['otp_expiry'] = otp_expiry.isoformat()
         send_otp_email(user_email, otp)  # Assuming you have a function to send OTP email
+        return JsonResponse({'success': True, 'message': 'OTP resent successfully.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+def resend_otp_phone(request):
+    if request.method == 'GET':
+        user_phone = request.session.get('user_phone')  # Corrected key
+        otp = generate_otp()  # Assuming you have a function to generate OTP
+        request.session['otp'] = otp
+        otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
+        request.session['otp_expiry'] = otp_expiry.isoformat()
+        send_otp_phone(user_phone, otp)  # Assuming you have a function to send OTP phone
         return JsonResponse({'success': True, 'message': 'OTP resent successfully.'})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method.'})
@@ -996,6 +1142,7 @@ def add_case(request):
     print('service:',temp_service_info)
     if request.method == 'POST':
         email = request.POST.get('email-confirmed')
+        phone = request.POST.get('phone-confirmed')
         print('Entered Email:', email)
 
         # Create a new QueryDict object
@@ -1029,6 +1176,7 @@ def add_case(request):
         case_data = {
             'case_number': get_next_case_number(),
             'email':email,
+            'phone':phone,
             'date_latest_incident': request.POST.get('date-latest-incident'),
             'incomplete_date': request.POST.get('incomplete-date'),
             'place_of_incident': request.POST.get('place-incident'),

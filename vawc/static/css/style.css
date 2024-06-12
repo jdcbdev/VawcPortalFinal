@@ -7,6 +7,9 @@ body {
 main {
     flex: 1;
 }
+input::placeholder {
+    opacity: .5 !important; /* Example color for placeholder text */
+}
 .dataTables_wrapper .dataTables_length {
     float: left;    
 }
@@ -144,7 +147,15 @@ main {
 }
 
 
-
+.nav-item > .nav-link[role="tab"] {
+    color: slategray !important;
+}
+.nav-item > .active[role="tab"] {
+    color: #8a2be2 !important;
+}
+.fs-7 {
+    font-size: 14px !important;
+}
 .cust-bg {
     background-color: blueviolet;
 }
