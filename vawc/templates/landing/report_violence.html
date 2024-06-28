@@ -2,25 +2,38 @@
 {% block title %}Report Violence{% endblock %}
 {% load static %}
 {% block content %}
-<div class="container pt-5 pb-5">
-    <div class="card pt-3">
-        <div class="card-body">
-        <h1 class="text-center pt-5"><strong>File a VAWC Report</strong></h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 p-4 mx-auto ">
+            <div class="container my-3 p-4 py-5 border rounded-2">
+                <h1 class="text-center mb-5"><strong>File a VAWC Report</strong></h1>
+                <div class="row g-4 row-cols-1 row-cols-md-2">
+                    <div class="col">
+                        <a href="{% url 'impact victim' %}" class="card shadow-sm p-4 h-100 card-link text-center">
+                            <div class="card-title flex-column">
+                                <span>
+                                    <i class="fa-solid fa-hands-bound"></i>
+                                </span>
+                                <h2 class="fw-bold fs-3">I am a victim</h2>
+                            </div>
 
-        <h1 class="text-center pt-5 pb-3"><strong>I am:</strong></h1>
-
-        <div class="row pt-3 pb-3">
-            <div class="col-lg-6 col-md-6 col-sm-8 pb-3">
-            <a class="btn btn-outline-primary w-100" href="{% url 'impact victim' %}" role="button">The Impacted Victim</a>
-            </div><!--end of column-->
-            <div class="col-lg-6 col-md-6 col-sm-8 pb-3">
-            <a class="btn btn-outline-primary w-100" href="{% url 'behalf impact victim' %}" role="button">Reporting on Behalf of Impacted Victim</a>
-            </div><!--end of column-->
-        </div><!--end of row-->
-
-        </div><!--end of card body-->
-    </div><!--end of card-->
-</div><!--end of container-->
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="{% url 'behalf impact victim' %}" class="card shadow-sm p-4 h-100 card-link text-center">
+                            <div class="card-title flex-column">
+                                <span>
+                                    <i class="fa-solid fa-handshake-angle"></i>
+                                </span>
+                                <h2 class="fw-bold fs-3">I am reporting for a victim</h2>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
 {% block scripts %}
 {% endblock scripts %}

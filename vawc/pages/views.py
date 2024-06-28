@@ -1141,8 +1141,8 @@ def add_case(request):
     
     print('service:',temp_service_info)
     if request.method == 'POST':
-        email = request.POST.get('email-confirmed')
-        phone = request.POST.get('phone-confirmed')
+        email = request.POST.get('email-confirmed') or None
+        phone = request.POST.get('phone-confirmed') or None
         print('Entered Email:', email)
 
         # Create a new QueryDict object

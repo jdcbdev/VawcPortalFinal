@@ -6,6 +6,7 @@ body {
 
 main {
     flex: 1;
+    overflow: hidden;
 }
 input::placeholder {
     opacity: .5 !important; /* Example color for placeholder text */
@@ -86,6 +87,8 @@ input::placeholder {
     background-color: #6717b2; /* Custom color when selected */
     border-color: #6717b2; /* Border color when selected */
 }
+
+.service-option input[type="radio"].btn-check:checked
 
 .wrapper {
     height: 50px;
@@ -232,4 +235,46 @@ input::placeholder {
 
 .image-link:hover img {
     transform: scale(1.1); /* Adjust scale as needed */
+}
+
+.card-link {
+    text-decoration: none;
+    transition: all .3s ease;
+    color: slategray  !important;
+}
+.card-link:hover {
+    border-color: #6717b2;
+    outline: 1px solid #6717b2;
+    background-color: rgb(250, 246, 255);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+.card-link:hover .card-title {
+    color: #6717b2 !important;
+}
+.card-title {
+    display: flex;
+    align-items: center;
+}
+.card-title span{
+    min-width: 75px;
+    font-size: 3.5rem;
+    /* color: #6717b2; */
+}
+.card-hover {
+    border-color: #6717b2;
+    outline: 1px solid #6717b2 !important;
+    background-color: rgb(250, 246, 255) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+.card-hover .card-title {
+    color: #6717b2 !important;
+}
+
+.btn i {
+    pointer-events: none !important;
+}
+
+span.required::before {
+    content: '*';
+    color: red;
 }

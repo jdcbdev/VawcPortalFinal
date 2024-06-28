@@ -84,10 +84,10 @@ const DOMstrings = {
     //show active panel
     DOMstrings.stepFormPanels.forEach((elem, index) => {
       if (index === activePanelNum) {
-  
+        console.log(elem)
         elem.classList.add('js-active');
   
-        setFormHeight(elem);
+        //setFormHeight(elem);
   
       }
     });
@@ -95,19 +95,19 @@ const DOMstrings = {
   };
   
   //set form height equal to current panel height
-  const formHeight = activePanel => {
+  // const formHeight = activePanel => {
   
-    const activePanelHeight = activePanel.offsetHeight;
+  //   const activePanelHeight = activePanel.offsetHeight;
   
-    DOMstrings.stepsForm.style.height = `${activePanelHeight}px`;
+  //   //DOMstrings.stepsForm.style.height = `${activePanelHeight}px`;
   
-  };
+  // };
   
-  const setFormHeight = () => {
-    const activePanel = getActivePanel();
+  // const setFormHeight = () => {
+  //   const activePanel = getActivePanel();
   
-    formHeight(activePanel);
-  };
+  //   formHeight(activePanel);
+  // };
   
   //STEPS BAR CLICK FUNCTION
   DOMstrings.stepsBar.addEventListener('click', e => {
@@ -158,13 +158,14 @@ const DOMstrings = {
     setActiveStep(activePanelNum);
     setActivePanel(activePanelNum);
   
+    window.scrollTo({top: 0})
   });
   
   //SETTING PROPER FORM HEIGHT ONLOAD
-  window.addEventListener('load', setFormHeight, false);
+  //window.addEventListener('load', setFormHeight, false);
   
   //SETTING PROPER FORM HEIGHT ONRESIZE
-  window.addEventListener('resize', setFormHeight, false);
+ // window.addEventListener('resize', setFormHeight, false);
   
   //changing animation via animation select !!!YOU DON'T NEED THIS CODE (if you want to change animation type, just change form panels data-attr)
   
@@ -173,6 +174,30 @@ const DOMstrings = {
       elem.dataset.animation = newType;
     });
   };
+
+  window.addEventListener('load', () => {
+    document.querySelector('.multiform-loading').style.display = 'none';
+  })
+
+  document.getElementById('incident-evidence').addEventListener('input', function(event) {
+
+    const files = event.target.files;
+    const imageContainer = document.getElementById('photo-evidence-container');
+    imageContainer.innerHTML = ''; // Clear any existing images
+    
+    Array.from(files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.alt = 'evidence_' + (index + 1);
+            img.style.height = '100%';
+            img.style.border = '1px solid #dcdcdc';
+            imageContainer.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+  });
   
   //selector onchange - changing animation
   const animationSelect = document.querySelector('.pick-animation__select');
@@ -182,3 +207,4 @@ const DOMstrings = {
   
     setAnimationType(newAnimationType);
   });
+  
