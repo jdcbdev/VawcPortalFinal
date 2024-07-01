@@ -35,7 +35,7 @@
                 <div class="">
                     <form class="multisteps-form__form" id="impact-victim-form" method="POST" action="{% url 'add_case' %}" enctype="multipart/form-data">
                     {% csrf_token %}
-                        <input type="hidden" name="type_of_case" value="Impacted">
+                        <input type="hidden" name="type_of_case" value="Behalf">
                         <input type="hidden" id="victim_count" name="victim_count" value="1">
                         <input type="hidden" id="perpetrator_count" name="perpetrator_count" value="1">
                         <input type="hidden" id="email-confirmed" name="email-confirmed">
@@ -1577,6 +1577,10 @@
                 $('#sendEmail').modal('show');
             } else {
                 // Submitting form to database
+
+                // reseting count inputs to actual count.
+                document.querySelector('#victim_count').value = victimCount
+                document.querySelector('#perpetrator_count').value = perpetratorCount
 
                 var formData = new FormData(this); // Create FormData object from the form
                 $.ajax({

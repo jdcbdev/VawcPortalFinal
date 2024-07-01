@@ -59,6 +59,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 const newId = id.replace(/_\d+$/, match => `_${count}`);
                 input.setAttribute('id', newId);
             }
+            const label = clone.querySelector(`[for="${id}"]`);
+            if (label) {
+                label.setAttribute('for', id.replace(/_\d+$/, match => `_${count}`));
+            }
         });
         //navtabClone.innerText = (count + 1) + '. Victim'
         navtabClone.querySelector('.tab-name').innerText = 'Victim'

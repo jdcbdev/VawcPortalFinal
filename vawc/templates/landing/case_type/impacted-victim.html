@@ -1225,6 +1225,10 @@
             } else {
                 // Submitting form to database
 
+                // reseting count inputs to actual count.
+                document.querySelector('#victim_count').value = victimCount
+                document.querySelector('#perpetrator_count').value = perpetratorCount
+
                 var formData = new FormData(this); // Create FormData object from the form
                 $.ajax({
                     type: 'POST',
