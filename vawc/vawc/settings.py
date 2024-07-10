@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ph_geography',
     
     'pages',
     'vawc',
@@ -187,4 +188,5 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
 # for development only
-DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+if DEBUG:
+    DATA_UPLOAD_MAX_NUMBER_FIELDS = None

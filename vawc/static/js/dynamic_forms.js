@@ -76,6 +76,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 feedback.setAttribute('class', `invalid-feedback ${newId}`);
             }
         });
+
+        // add event listeners to geograpy inputs
+        addAddressListener(clone, 'victim', count)
     
         const victimElement = clone.querySelector('#victim_counter')
         const countplusone = count + 1;
@@ -249,6 +252,9 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
+        // add event listeners to geograpy inputs
+        addAddressListener(clone, 'perp', count)
+
         const perpetratorElement = clone.querySelector('#perpetrator_counter')
         const countplusone = count + 1;
         perpetratorElement.innerHTML = perpetratorCount
@@ -392,10 +398,81 @@ serviceOption.forEach((element) => {
     })
 })
 
+function addAddressListener(formElement, formType, count = 0) {
+    let barangay = null
+    let city = null
+    let province = null
+
+    if(formType === 'perp' || formType === 'victim') {
+        barangay = formElement.querySelector(`#${formType}-barangay_${count}`)
+        city = formElement.querySelector(`#${formType}-city_${count}`)
+        province = formElement.querySelector(`#${formType}-province_${count}`)
+    } else {
+        barangay = formElement.querySelector(`#${formType}-barangay`)
+        city = formElement.querySelector(`#${formType}-city`)
+        province = formElement.querySelector(`#${formType}-province`)
+    }
+
+    city.addEventListener('change', (e) => {
+
+        const cityId = e.target.options[e.target.selectedIndex].dataset.code
+        setGeoSelect(barangay, {
+            filter: cityId,
+            action: 'barangay',
+            csrfmiddlewaretoken: csrf_token,
+        })
+    })
+    province.addEventListener('change', (e) => {
+
+        const provinceId = e.target.options[e.target.selectedIndex].dataset.code
+        setGeoSelect(city, {
+            filter: provinceId,
+            action: 'city',
+            csrfmiddlewaretoken: csrf_token,
+        })
+
+    })
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    addAddressListener(document.querySelector('#victim-form_0'), 'victim', 0)
+    addAddressListener(document.querySelector('#perpetrator-form_0'), 'perp', 0)
+    addAddressListener(document.querySelector('.multisteps-form__form'), 'incident')
+    if (document.querySelector('#contact-firstname')) {
+        addAddressListener(document.querySelector('.multisteps-form__form'), 'contact')
+    }
+})
 
 
+async function setGeoSelect(geoTypeInput, formData) {
 
+    const res = await fetch('/pages/select-address/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrf_token
+        },
+        body: JSON.stringify(formData),
+    })
 
+    const data = await res.json()
+
+    const blankOption = document.createElement('option')
+    blankOption.textContent = '--Select Option--'
+    // clear all options in select element
+    geoTypeInput.replaceChildren()
+
+    // apend blank option as the first selected options
+    geoTypeInput.appendChild(blankOption)
+    // apped data to respective inputs
+    data.forEach(item => {
+        const option = document.createElement('option')
+        option.dataset.code = item.code
+        option.value = item.name
+        option.textContent = item.name
+        geoTypeInput.appendChild(option)
+    })
+}
 
 
 

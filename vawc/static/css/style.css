@@ -162,6 +162,12 @@ input::placeholder {
 .cust-bg {
     background-color: blueviolet;
 }
+div.bg-light {
+    background-color: rgba(100, 100, 100, 0.02) !important;
+}
+.text-color-primary {
+    color: #8a2be2 !important;
+}
 .btn-primary {
     background-color: #8a2be2 !important;
     border-color: #8a2be2 !important;

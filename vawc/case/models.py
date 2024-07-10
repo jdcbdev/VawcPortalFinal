@@ -27,7 +27,7 @@ REGION_CHOICES = [
 class Case(models.Model):
     case_number = models.IntegerField(null=True, blank=True)
     email = models.EmailField(null=True, blank=True, default=None)
-    phone = models.IntegerField(null=True, blank=True, default=None)
+    phone = models.CharField(max_length=30, null=True, blank=True, default=None)
     TYPE_IMPACTED_VICTIM = 'Impacted'
     TYPE_REPORTING_BEHALF = 'Behalf'
     TYPE_CHOICES = [

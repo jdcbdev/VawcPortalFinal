@@ -104,7 +104,11 @@ urlpatterns = [
     #user
     path('custom_password_change/', views.custom_password_change_view, name='custom_password_change'),
 
-    path('encrypt_decrypt/', views.encrypt_decrypt, name='encrypt_decrypt')
+    path('encrypt_decrypt/', views.encrypt_decrypt, name='encrypt_decrypt'),
+
+
+    #misc
+    path('pages/select-address/', views.ph_address, name='ph_address')
 ]
 
 # Serve media files during development

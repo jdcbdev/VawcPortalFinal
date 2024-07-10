@@ -39,11 +39,13 @@ from .utils import encrypt_data, decrypt_data
 import base64
 import random
 import string
+import json
 
 #models
 from case.models import *
 from account.models import *
 from .forms import *
+from ph_geography.models import Region, Province, Municipality, Barangay
 
 def home_view (request):
     return render(request, 'landing/home.html')
@@ -272,8 +274,22 @@ def logout_view(request):
 def admin_dashboard_view (request):
     cases = Case.objects.all()
 
-    total_cases = cases.count()
-
+    total_cases = cases.count() or 0
+    ongoing_cases = Case.objects.filter(status='Active').count() or 0
+    resolved_cases = Case.objects.filter(status='Close').count() or 0
+    services_provided = 0
+    tpo_count = 0
+    ppo_count = 0
+    cases_per_geography = []
+    ra_9262 = 0
+    ra_8353 = 0
+    ra_7877 = 0
+    ra_7610 = 0
+    ra_9775 = 0
+    annual_cases = defaultdict(lambda:defaultdict(int))
+    cases_w_criminal_cases = 0
+    
+                
     # Initialize minor victim count
     minor_victim_count = 0
     minor_perp_count = 0
@@ -297,6 +313,40 @@ def admin_dashboard_view (request):
             if age is not None and age < 18:
                 minor_perp_count += 1
 
+        # count all the services of resolved case
+
+        if (case.status == 'Close'):
+            services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
+
+        # count tpo or ppo
+        if case.enforcement_of_protection_order == 1 and case.service_information == 'issuance':
+            ppo_count += 1
+        elif(case.service_information == 'issuance'):
+            tpo_count += 1
+
+        # count RAs
+        ra_9262 += case.checkbox_ra_9262
+        ra_8353 += case.checkbox_ra_8353
+        ra_7877 += case.checkbox_ra_7877
+        ra_7610 += case.checkbox_a_7610
+        ra_9775 += case.checkbox_ra_9775
+        
+        # no of cases with criminal case
+        if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
+            cases_w_criminal_cases += 1
+        
+        year = case.date_added.year
+        month = case.date_added.strftime('%b')
+
+        if year not in annual_cases:
+            all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            for month_temp in all_months:
+                annual_cases[year][month_temp] = 0 
+
+        annual_cases[year][month] += 1
+
+          
+
 
 
         # Count the number of impacted and behalf cases
@@ -310,9 +360,57 @@ def admin_dashboard_view (request):
         crisis_count = len(list(filter(lambda case: case.service_information == Case.CRISIS_INTERVENTION, cases)))
         bpo_count = len(list(filter(lambda case: case.service_information == Case.ISSUANCE_ENFORCEMENT, cases)))
     
+    
+
+    annual_cases = dict(annual_cases)
+
+    region_name = 'REGION IX (ZAMBOANGA PENINSULA)'
+    delsur_count = Case.objects.filter(province = 'ZAMBOANGA DEL SUR').count()
+    delsur_cities = Case.objects.filter(province = 'ZAMBOANGA DEL SUR')
+
+    provinces = Province.objects.filter(region_id=10) # 10 is region 9
+
+    for province in provinces:
+
+        province_data = {
+            'name': province.name,
+            'count': 0,
+            'cities': []
+        }
+        # Get all cities in the province
+        cities = Municipality.objects.filter(province=province)
+
+        for city in cities:
+
+            # Count cases for each city
+            city_case_count = Case.objects.filter(city=city.name).count()
+            city_data = {
+                'name': city.name,
+                'count': city_case_count
+            }
+
+            province_data['cities'].append(city_data) # Add list of cities in province_data
+            province_data['count'] += city_case_count  # Add to province count
+        cases_per_geography.append(province_data) # Add province_data to list of provinces
+
+
+    republic_acts = {
+        'RA 9262': ra_9262,
+        'RA 8353': ra_8353,
+        'RA 7877': ra_7877,
+        'RA 7610': ra_7610,
+        'RA 9775': ra_9775
+    }
+
+
     return render (request, 'super-admin/dashboard.html',{
         'cases': cases,
         'total_cases': total_cases,
+        'ongoing_cases': ongoing_cases,
+        'resolved_cases': resolved_cases,
+        'services_provided': services_provided,
+        'ppo_count': ppo_count,
+        'tpo_count': tpo_count,
         'impacted_count': impacted_count,
         'behalf_count': behalf_count,
         'active_count': active_count,
@@ -321,6 +419,10 @@ def admin_dashboard_view (request):
         'minor_perp_count':minor_perp_count,
         'crisis_count': crisis_count,
         'bpo_count': bpo_count,
+        'cases_per_geography': json.dumps(cases_per_geography),
+        'republic_acts': json.dumps(republic_acts),
+        'annual_cases': json.dumps(annual_cases),
+        'cases_w_criminal_cases': cases_w_criminal_cases
     })
 
 @login_required
@@ -332,19 +434,42 @@ def admin_manage_passkey_view (request):
 def admin_manage_account_view(request):
     # Emails to exclude
     excluded_emails = ['admin@gmail.com', 'vawcdilg@gmail.com']
+
+     # default/initial data to use when page loads
+    region_id = 10 # region 9
+    province_id = 50 # zamboanga del sur
+    municipality_id = 1133 # zamboanga city
     
     # Exclude the specified emails from the queryset
     users = CustomUser.objects.exclude(email__in=excluded_emails)
     accounts = Account.objects.filter(user__in=users)
     
-    return render(request, 'super-admin/account.html', {'users': users, 'accounts': accounts})
+    return render(request, 'super-admin/account.html', {
+        'users': users,
+        'accounts': accounts,
+        'default_regions': Region.objects.filter(id=region_id),
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_cities': Municipality.objects.filter(province_id=province_id),
+        'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+
+    })
 
 def edit_account_view(request, account_id):
     if request.method == 'GET':
-        try:
+        try: 
+            
+            
+
             print(account_id)
             account = get_object_or_404(Account, user__id=account_id)
-            return JsonResponse({'success': True,
+            regions = list(Region.objects.filter(name=account.region).values())
+            provinces = list(Province.objects.filter(region_id = Province.objects.filter(name=account.province).values('region_id').first()['region_id']).values())
+            cities = list(Municipality.objects.filter(province_id = Municipality.objects.filter(name=account.city).values('province_id').first()['province_id']).values())
+            barangays = list(Barangay.objects.filter(municipality_id = Barangay.objects.filter(name=account.barangay).values('municipality_id').first()['municipality_id']).values())
+            
+
+            return JsonResponse({
+                'success': True,
                 'account_id': account_id,               
                 'first_name': account.first_name,
                 'middle_name': account.middle_name,
@@ -354,6 +479,10 @@ def edit_account_view(request, account_id):
                 'province': account.province,
                 'city': account.city,
                 'barangay': account.barangay,
+                'default_regions': regions,
+                'default_provinces': provinces,
+                'default_cities': cities,
+                'default_barangays': barangays,
             })
         except Account.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'Account not found'})
@@ -1037,7 +1166,7 @@ def phone_confirm(request):
         request.session['user_phone'] = phone  # Store user email in session for later retrieval
         otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
         request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
-
+        print('OTP: ' + otp)
 
         send_otp_phone(phone, otp)
         return JsonResponse({'success': True, 'message': 'OTP has been sent to your phone number.'})
@@ -1120,11 +1249,36 @@ def report_violence_view (request):
 
 def impact_victim_view (request):
     recaptcha = load_recaptcha_settings()
-    return render(request, 'landing/case_type/impacted-victim.html', {'site_key': recaptcha['site_key']})
+
+    # default/initial data to use when page loads
+    region_id = 10 # region 9
+    province_id = 50 # zamboanga del sur
+    municipality_id = 1133 # zamboanga city
+    
+    return render(request, 'landing/case_type/impacted-victim.html', {
+        'site_key': recaptcha['site_key'],
+        'default_regions': Region.objects.filter(id=region_id),
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_cities': Municipality.objects.filter(province_id=province_id),
+        'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+        })
 
 def behalf_victim_view (request):
     recaptcha = load_recaptcha_settings()
-    return render(request, 'landing/case_type/behalf-victim.html', {'site_key': recaptcha['site_key']})
+
+    # default/initial data to use when page loads
+    region_id = 10 # region 9
+    province_id = 50 # zamboanga del sur
+    municipality_id = 1133 # zamboanga city
+
+
+    return render(request, 'landing/case_type/behalf-victim.html', {
+        'site_key': recaptcha['site_key'],
+        'default_regions': Region.objects.filter(id=region_id),
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_cities': Municipality.objects.filter(province_id=province_id),
+        'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+        })
 
 def add_case(request):
     
@@ -2802,3 +2956,30 @@ def encrypt_decrypt(request):
             return JsonResponse({'success': False, 'message': 'Invalid passkey.'})
     else:
         return JsonResponse({'success': False, 'message': 'User not found.'})
+
+
+def ph_address(request):
+    if request.method == 'POST':
+
+        data = json.loads(request.body)
+
+        if data.get('action') == 'province':
+            filter_value = data.get('filter')
+            region = Region.objects.get(code=filter_value)
+            provinces = Province.objects.filter(region=region).order_by('name').values('code', 'name')
+            return JsonResponse(list(provinces), safe=False)
+        elif data.get('action') == 'city':
+            filter_value = data.get('filter')
+            province = Province.objects.get(code=filter_value)
+            cities = Municipality.objects.filter(province=province).order_by('name').values('code', 'name')
+            return JsonResponse(list(cities), safe=False)
+        elif data.get('action') == 'barangay':
+            filter_value = data.get('filter')
+            city = Municipality.objects.get(code=filter_value)
+            brgy = Barangay.objects.filter(municipality=city).order_by('name').values('code', 'name')
+            return JsonResponse(list(brgy), safe=False)
+        else:
+            region = Region.objects.values('code', 'name').order_by('name')
+            return JsonResponse(list(region), safe=False)
+    else:
+        return 

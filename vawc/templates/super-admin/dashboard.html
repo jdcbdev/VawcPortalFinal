@@ -3,75 +3,403 @@
 {% load static %}
 {% block content %}
 <div class="container-fluid">
-    <h1 class="pt-5">DASHBOARD</h1>
-    <div class="row d-flex align-items-center pt-3">
-        <div class="col-lg-6 col-12">
-          <canvas id="myBarChart"></canvas>
+    <h1 class="mb-4">Dashboard</h1>
+
+    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 mb-4 align-items-stretch">
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>Reported Cases</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ total_cases }}</div>
         </div>
-        <div class="col-lg-6 col-12">
-            <canvas id="myPieChart"></canvas>
-        </div>
-      </div><!--End of row-->
-      <div class="col-lg-12 col-12">
-        <div class="row">
-          <div class="col-lg-4 col-6">
-            <div class="card">
-              <div class="card-body">
-                Total Cases: <span>{{ total_cases }}</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-6">
-              <div class="card">
-                  <div class="card-body">
-                    Total Impacted: <span>{{ impacted_count }}</span>
-                  </div>
-                </div>
-          </div>
-            <div class="col-lg-4 col-6">
-              <div class="card">
-                  <div class="card-body">
-                    Total Behalf: <span>{{ behalf_count }}</span>
-                  </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-          
-          <div class="col-lg-3 col-6">
-              <div class="card">
-                  <div class="card-body">
-                    Active Cases: <span>{{ active_count }}</span>
-                  </div>
-                </div>
-          </div>
-          <div class="col-lg-3 col-6">
-              <div class="card">
-                  <div class="card-body">
-                    Close Cases: <span>{{ closed_count }}</span>
-                  </div>
-                </div>
-          </div>
-          <div class="col-lg-3 col-6">
-            <div class="card">
-                <div class="card-body">
-                  Total Crisis: <span>{{ crisis_count }}</span>
-                </div>
-              </div>
-          </div>
-          <div class="col-lg-3 col-6">
-            <div class="card">
-                <div class="card-body">
-                  Total BPO: <span>{{ bpo_count }}</span>
-                </div>
-              </div>
-          </div>
-        </div><!--End of row-->
       </div>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>Ongoing Cases</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ ongoing_cases }}</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>Resolved Cases</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ resolved_cases }}</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>w/ Criminal Cases</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ cases_w_criminal_cases }}</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100 d-flex justify-content-between">
+            <div>
+                <span>w/ PO</span>
+                
+            </div>
+            <div class="">
+                <div class="fw-bold fs-2 text-color-primary">BPO: {{ bpo_count }}</div>
+                <div class="fw-bold fs-2 text-warning">TPO: {{ tpo_count }}</div>
+                <div class="fw-bold fs-2 text-success">PPO: {{ ppo_count }}</div>
+            </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>Services Provided</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ services_provided }}</div>
+        </div>
+      </div>
+
+
+
+    </div>
+    <div class="row mb-4">
+      <div class="col-4">
+        <h2 class="fs-4 mb-3 text-center">No. of cases per province</h2>
+        <canvas id="pie-cases-per-province"></canvas>
+      </div>
+      <div class="col-8">
+        <h2 class="fs-4 mb-3">No. of cases per RA</h2>
+        <canvas id="bar-cases-per-ra"></canvas>
+      </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 mb-4">
+		<div class="col mb-3">
+			<h2 class="fs-4 mb-3">Cases by City</h2>
+			<canvas id="bar-cases-by-city"></canvas>
+		</div>
+		<div class="col mb-3">
+			<h2 class="fs-4 mb-3 d-flex">
+				<span>Cases by Month</span>
+				<span class="ms-auto" id="year-data"></span>
+			</h2>
+        	<canvas id="bar-cases-by-month"></canvas>
+      	</div>
+    </div>
+    <h2>Cases</h2>
+	<!-- Cases Table -->
+    <div class="row">
+      	<div class="col-12">
+			<div class="row row-cols-2 row-cols-md-auto ">
+				<div class="col ">
+					<label for="barangay" class="form-label">Barangay</label>
+					<select name="case_type" id="barangay" class="form-select me-md-2">
+						<option value="">All Barangay</option>
+						<option value="">Tumaga</option>
+						<option value="">Tumaga</option>
+						<option value="">Tumaga</option>
+						<option value="">Tumaga</option>
+					</select>
+				</div>
+				<div class="form-group col ">
+					<label for="case_type" class="form-label">RA</label>
+					<select name="case_type" id="case_type" class="form-select me-md-2">
+						<option value="">All RA</option>
+						<option value="ra_123">RA 123</option>
+						<option value="ra_123">RA 123</option>
+						<option value="ra_123">RA 123</option>
+						<option value="ra_123">RA 123</option>
+						<option value="ra_123">RA 123</option>
+					</select>
+				</div>
+				<div class="form-group col ">
+					<label for="gender" class="form-label">Gender</label>
+					<select name="service" id="service" class="form-select me-md-2">
+						<option value="">All sex</option>
+						<option value="Rescue">Male</option>
+						<option value="Issuance">Female</option>
+					</select>
+				</div>
+				<div class="form-group col ">
+					<label for="age-range" class="form-label">Age range</label>
+					<select name="status" id="status" class="form-select me-md-2">
+						<option value="">All Ages</option>
+						<option value="0-3">0-3</option>
+						<option value="4-13">4-12</option>
+						<option value="14-17">13-17</option>
+						<option value="18+">18+</option>
+					</select>
+				</div>
+			</div>
+		
+			<div class="pt-4 overflow-auto">
+				<table class="table table-striped nowrap" id="table-case" style="width:100%">
+					<thead class="border-bottom border-dark border-2 border-opacity-50">
+						<tr>
+							<th scope="col" class="text-center">Case #</th>
+							<th scope="col">Victim</th>
+							<th scope="col">Adslkjal</th>
+							<th scope="col">Perpetrator</th>
+							<th scope="col">lskdjfls</th>
+							<th scope="col">RA Violation</th>
+							<th scope="col">Victim age</th>
+							<th scope="col">Victim sex</th>
+						</tr>
+					</thead>
+					<tbody class="table-group-divider">
+						{% for case in cases %} 
+						<tr class="border-bottom border-2">
+							<td class="text-center">{{ case.case_number }}</td>
+							<td>0</td>
+							<td></td>
+							<td>0</td>
+							<td></td>
+							<td></td>
+							<td>8 - 12</td>
+							<td>4 Female | 2 Male</td>
+						</tr>
+						{% empty %}
+						<tr>
+							<td></td>
+							<td></td>
+							<td>No cases found</td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div><!--end of div of table-->
+      	</div>
+    </div>
 </div>
 {% endblock content %}
 {% block scripts %}
 <script>
+    const currentYear = new Date().getFullYear();
+    document.querySelector('#year-data').textContent = currentYear
+
+    var ctx = document.getElementById('pie-cases-per-province').getContext('2d');
+    const cases_per_geography = JSON.parse('{{ cases_per_geography|escapejs }}')
+    const pieLabels = cases_per_geography.map(province => province.name)
+    const pieData = cases_per_geography.map(province => province.count)
+    let casePerProvince = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: pieLabels,
+            datasets: [{
+                label: 'Cases',
+                data: pieData,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+                //backgroundColor: [
+                //    'rgba(255, 99, 132, 0.2)',
+                //    'rgba(54, 162, 235, 0.2)',
+                //    'rgba(255, 206, 86, 0.2)',
+                //],
+                //borderColor: [
+                //    'rgba(255, 99, 132, 1)',
+                //    'rgba(54, 162, 235, 1)',
+                //    'rgba(255, 206, 86, 1)',
+                //],
+                //borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: false,
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    var ctx = document.getElementById('bar-cases-per-ra').getContext('2d');
+    let barLabels = Object.keys(JSON.parse('{{ republic_acts|escapejs }}'))
+    let barData = Object.values(JSON.parse('{{ republic_acts|escapejs }}'))
+    var casePerRa = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: barLabels,
+            datasets: [{
+                label: 'Cases',
+                data: barData,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true,
+            plugins: {
+                legend: false,
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+    var ctx = document.getElementById('bar-cases-by-city').getContext('2d');
+    let allCities = {}
+    cases_per_geography.forEach(province => {
+        province.cities.forEach(city => {
+            if(city.count > 0) {
+                allCities[city.name] = city.count
+            }
+        })
+        //allCities = allCities.concat(province.cities)
+    })
+    const entries = Object.entries(allCities)
+    entries.sort((a, b) => b[1] - a[1])
+    allCities = Object.fromEntries(entries)
+    barLabels = Object.keys(allCities)
+    barData = Object.values(allCities)
+
+
+    var casesByCity = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: barLabels,
+            datasets: [{
+                label: 'Cases',
+                data: barData,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true,
+            plugins: {
+                legend: false,
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    var ctx = document.getElementById('bar-cases-by-month').getContext('2d');
+    const annualCases = JSON.parse('{{ annual_cases|escapejs }}')
+    const default_months = {"Jan": 0, "Feb": 0, "Mar": 0, "Apr": 0, "May": 0, "Jun": 0, "Jul": 0, "Aug": 0, "Sep": 0, "Oct": 0, "Nov": 0, "Dec": 0}
+    let lineLabels = Object.keys(annualCases[`${currentYear}`] ?? default_months)
+    let lineData = Object.values(annualCases[`${currentYear}`] ?? default_months)
+    var casesByMonth = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: lineLabels,
+            datasets: [{
+                label: 'Cases',
+                fill: true,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                data: lineData,
+                borderWidth: 1,
+                pointStyle: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true,
+            plugins: {
+                legend: false,
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     var ctx = document.getElementById('myPieChart').getContext('2d');
   
     var myPieChart = new Chart(ctx, {
