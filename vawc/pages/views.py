@@ -40,6 +40,7 @@ import base64
 import random
 import string
 import json
+import datetime
 
 #models
 from case.models import *
@@ -272,15 +273,22 @@ def logout_view(request):
 
 @login_required
 def admin_dashboard_view (request):
-    cases = Case.objects.all()
+    #cases = Case.objects.all()
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
+
+    if request.method == 'GET':
+        print('oke')
+
+
+    current_year = datetime.now().year
 
     total_cases = cases.count() or 0
     ongoing_cases = Case.objects.filter(status='Active').count() or 0
     resolved_cases = Case.objects.filter(status='Close').count() or 0
+    cases_per_geography = []
     services_provided = 0
     tpo_count = 0
     ppo_count = 0
-    cases_per_geography = []
     ra_9262 = 0
     ra_8353 = 0
     ra_7877 = 0
@@ -296,25 +304,24 @@ def admin_dashboard_view (request):
     # Iterate through filtered cases
     for case in cases:
         # Filter victims for the current case
-        victims = Victim.objects.filter(case_victim=case)
+        all_victims = Victim.objects.filter(case_victim=case)
 
         # Filter perpetrators for the current case
-        perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
+        all_perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
 
         # Iterate through victims
-        for victim in victims:
+        for victim in all_victims:
             age = calculate_age(victim.date_of_birth)
             if age is not None and age < 18:
                 minor_victim_count += 1
 
         # Iterate through perpetrators
-        for perpetrator in perpetrators:
+        for perpetrator in all_perpetrators:
             age = calculate_age(perpetrator.date_of_birth)
             if age is not None and age < 18:
                 minor_perp_count += 1
 
         # count all the services of resolved case
-
         if (case.status == 'Close'):
             services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
 
@@ -338,11 +345,10 @@ def admin_dashboard_view (request):
         year = case.date_added.year
         month = case.date_added.strftime('%b')
 
-        if year not in annual_cases:
+        if year not in annual_cases or current_year not in annual_cases:
             all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
             for month_temp in all_months:
                 annual_cases[year][month_temp] = 0 
-
         annual_cases[year][month] += 1
 
           
@@ -350,47 +356,44 @@ def admin_dashboard_view (request):
 
 
         # Count the number of impacted and behalf cases
-        impacted_count = len(list(filter(lambda case: case.type_of_case == Case.TYPE_IMPACTED_VICTIM, cases)))
-        behalf_count = len(list(filter(lambda case: case.type_of_case == Case.TYPE_REPORTING_BEHALF, cases)))
+        # impacted_count = len(list(filter(lambda case: case.type_of_case == Case.TYPE_IMPACTED_VICTIM, cases)))
+        # behalf_count = len(list(filter(lambda case: case.type_of_case == Case.TYPE_REPORTING_BEHALF, cases)))
 
-        # Count the number of active and closed cases
-        active_count = len(list(filter(lambda case: case.status == Case.STATUS_ACTIVE, cases)))
-        closed_count = len(list(filter(lambda case: case.status == Case.STATUS_CLOSE, cases)))
-
-        crisis_count = len(list(filter(lambda case: case.service_information == Case.CRISIS_INTERVENTION, cases)))
         bpo_count = len(list(filter(lambda case: case.service_information == Case.ISSUANCE_ENFORCEMENT, cases)))
     
     
-
-    annual_cases = dict(annual_cases)
-
-    region_name = 'REGION IX (ZAMBOANGA PENINSULA)'
-    delsur_count = Case.objects.filter(province = 'ZAMBOANGA DEL SUR').count()
-    delsur_cities = Case.objects.filter(province = 'ZAMBOANGA DEL SUR')
-
+    # Get all provinces within the region
     provinces = Province.objects.filter(region_id=10) # 10 is region 9
-
     for province in provinces:
-
+        province_case_count = Case.objects.filter(province=province.name).count()
         province_data = {
             'name': province.name,
-            'count': 0,
+            'count': province_case_count,
             'cities': []
         }
-        # Get all cities in the province
+
+        # Get all cities within the province
         cities = Municipality.objects.filter(province=province)
-
         for city in cities:
-
-            # Count cases for each city
             city_case_count = Case.objects.filter(city=city.name).count()
             city_data = {
                 'name': city.name,
-                'count': city_case_count
+                'count': city_case_count,
+                'barangays': []
             }
 
+            # Get all barangays within the city
+            barangays = Barangay.objects.filter(municipality=city)
+            for barangay in barangays:
+                barangay_case_count = Case.objects.filter(barangay=barangay.name, city=city.name).count()
+                barangay_data = {
+                    'name': barangay.name,
+                    'count': barangay_case_count
+                }
+                city_data['barangays'].append(barangay_data)
+
             province_data['cities'].append(city_data) # Add list of cities in province_data
-            province_data['count'] += city_case_count  # Add to province count
+
         cases_per_geography.append(province_data) # Add province_data to list of provinces
 
 
@@ -411,19 +414,28 @@ def admin_dashboard_view (request):
         'services_provided': services_provided,
         'ppo_count': ppo_count,
         'tpo_count': tpo_count,
-        'impacted_count': impacted_count,
-        'behalf_count': behalf_count,
-        'active_count': active_count,
-        'closed_count': closed_count,
-        'minor_victim_count': minor_victim_count,
-        'minor_perp_count':minor_perp_count,
-        'crisis_count': crisis_count,
         'bpo_count': bpo_count,
         'cases_per_geography': json.dumps(cases_per_geography),
         'republic_acts': json.dumps(republic_acts),
         'annual_cases': json.dumps(annual_cases),
-        'cases_w_criminal_cases': cases_w_criminal_cases
+        'cases_w_criminal_cases': cases_w_criminal_cases,
     })
+@login_required
+def admin_dashboard_data (request):
+
+    # cases data with victim and perpetrator data
+    filtered_cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
+    cases_list = []
+
+    for case in filtered_cases:
+        case_dict = {
+            'data': Case.objects.filter(id=case.id).values().first(),
+            'victims': list(case.victim_set.values()),
+            'perpetrators': list(case.perpetrator.values())
+        }
+        cases_list.append(case_dict)
+
+    return JsonResponse(cases_list, safe=False)
 
 @login_required
 def admin_manage_passkey_view (request):
@@ -848,11 +860,40 @@ def barangay_dashboard_view (request):
         barangay = None
     cases = Case.objects.all()  # Retrieve all cases from the database\
 
+    services_provided = 0
+    tpo_count = 0
+    ppo_count = 0
+    current_year = datetime.now().year
+    ra_9262 = 0
+    ra_8353 = 0
+    ra_7877 = 0
+    ra_7610 = 0
+    ra_9775 = 0
+    annual_cases = defaultdict(lambda:defaultdict(int))
+    cases_w_criminal_cases = 0
+
     filtered_cases = []
 
     for case in cases:
         if case.barangay == barangay:
             filtered_cases.append(case)
+
+
+    # cases data with victim and perpetrator data
+    barangay_case_records = Case.objects.filter(barangay=barangay).prefetch_related('victim_set', 'perpetrator')
+    barangay_case_list = []
+
+    for case in barangay_case_records:
+        case_dict = {
+            'data': list(Case.objects.filter(id=case.id).values())[0],
+            'victims': list(case.victim_set.values()),
+            'perpetrators': list(case.perpetrator.values())
+        }
+        barangay_case_list.append(case_dict)
+
+
+       
+
     
     # Count the filtered cases
     filtered_cases_count = len(filtered_cases)
@@ -860,6 +901,8 @@ def barangay_dashboard_view (request):
     # Initialize minor victim count
     minor_victim_count = 0
     minor_perp_count = 0
+
+
     # Iterate through filtered cases
     for case in filtered_cases:
         # Filter victims for the current case
@@ -880,6 +923,36 @@ def barangay_dashboard_view (request):
             if age is not None and age < 18:
                 minor_perp_count += 1
 
+        # count all the services of resolved case
+        if (case.status == 'Close'):
+            services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
+
+        # count tpo or ppo
+        if case.enforcement_of_protection_order == 1 and case.service_information == 'issuance':
+            ppo_count += 1
+        elif(case.service_information == 'issuance'):
+            tpo_count += 1
+
+         # count RAs
+        ra_9262 += case.checkbox_ra_9262
+        ra_8353 += case.checkbox_ra_8353
+        ra_7877 += case.checkbox_ra_7877
+        ra_7610 += case.checkbox_a_7610
+        ra_9775 += case.checkbox_ra_9775
+
+        # no of cases with criminal case
+        if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
+            cases_w_criminal_cases += 1
+
+
+        year = case.date_added.year
+        month = case.date_added.strftime('%b')
+
+        if year not in annual_cases or current_year not in annual_cases:
+            all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            for month_temp in all_months:
+                annual_cases[year][month_temp] = 0 
+        annual_cases[year][month] += 1
 
 
     # Count the number of impacted and behalf cases
@@ -893,6 +966,14 @@ def barangay_dashboard_view (request):
     crisis_count = len(list(filter(lambda case: case.service_information == Case.CRISIS_INTERVENTION, filtered_cases)))
     bpo_count = len(list(filter(lambda case: case.service_information == Case.ISSUANCE_ENFORCEMENT, filtered_cases)))
 
+
+    republic_acts = {
+        'RA 9262': ra_9262,
+        'RA 8353': ra_8353,
+        'RA 7877': ra_7877,
+        'RA 7610': ra_7610,
+        'RA 9775': ra_9775
+    }
 
     return render(request, 'barangay-admin/dashboard.html', {
         'cases': filtered_cases,
@@ -909,6 +990,13 @@ def barangay_dashboard_view (request):
         'minor_perp_count':minor_perp_count,
         'crisis_count': crisis_count,
         'bpo_count': bpo_count,
+        'barangay_case_list': json.dumps(barangay_case_list, default = str),
+        'republic_acts': json.dumps(republic_acts),
+        'annual_cases': json.dumps(annual_cases),
+        'cases_w_criminal_cases': cases_w_criminal_cases,
+        'ppo_count': ppo_count,
+        'tpo_count': tpo_count,
+        'services_provided': services_provided,
     })
 
 def calculate_age(date_of_birth_str):
