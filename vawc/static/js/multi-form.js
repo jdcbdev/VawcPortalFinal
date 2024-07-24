@@ -150,7 +150,10 @@ const DOMstrings = {
       activePanelNum--;
   
     } else {
-  
+      const activeForm = getActivePanel()
+      if (!validateInputs(activeForm)) {
+        return
+      }
       activePanelNum++;
   
     }
@@ -200,11 +203,73 @@ const DOMstrings = {
   });
   
   //selector onchange - changing animation
-  const animationSelect = document.querySelector('.pick-animation__select');
+  // const animationSelect = document.querySelector('.pick-animation__select');
   
-  animationSelect.addEventListener('change', () => {
-    const newAnimationType = animationSelect.value;
+  // animationSelect.addEventListener('change', () => {
+  //   const newAnimationType = animationSelect.value;
   
-    setAnimationType(newAnimationType);
-  });
+  //   setAnimationType(newAnimationType);
+  // });
   
+function validateInputs(formElement) {
+
+  const required_inputs = formElement.querySelectorAll('.req-inp')
+  const max_length = 50;
+  let all_valid = true
+
+  required_inputs.forEach(input => {
+    const feedback = input.nextElementSibling;
+    
+    if (input.value.length <= 0) {
+  
+      feedback.textContent = "This is a required input.";
+      input.classList.add('is-invalid');
+
+      all_valid = false
+    } else {
+      feedback.textContent = "";
+      input.classList.remove('is-invalid');
+    }
+
+  })
+
+  return all_valid
+
+}
+
+
+
+function setCustomGender(selectInput) {
+  const customInput = selectInput.parentElement.querySelector('.custom-gender')
+  // retrieve the element with custom as option
+  const customGenderOption = (() => {
+    for(let i = 0; i < selectInput.options.length; i++){
+      if (selectInput.options[i].textContent == 'Custom') {
+        return selectInput.options[i]
+      }
+    }
+    return null
+  })();
+
+  customInput.style.display = 'none'
+
+  // change visibility of custom input
+  selectInput.addEventListener('change', () => {
+    if(selectInput.options[selectInput.selectedIndex].textContent == 'Custom') {
+      customInput.style.display = 'block'
+    } else {
+      customInput.style.display = 'none'
+    } 
+  })
+
+  
+
+  // update the value of the <option>custom based on sibling custom input
+  customInput.addEventListener('input', () => {
+    customGenderOption.value = customInput.value
+    console.log(customInput.value)
+    console.log(customGenderOption.value)
+  })
+}
+
+setCustomGender(document.querySelector('#victim-sex_0'))

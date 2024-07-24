@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     // Add event listeners to text fields for initial validation
-    const initialTextFields = document.querySelectorAll('#victim-form_0 input[type="text"]');
+    // const initialTextFields = document.querySelectorAll('#victim-form_0 input[type="text"]');
+    const initialTextFields = document.querySelectorAll('#victim-form_0 .req-inp');
     initialTextFields.forEach(field => {
         field.addEventListener('input', validateVictimInput);
         field.addEventListener('focusout', validateVictimInput);
@@ -63,6 +64,9 @@ document.addEventListener("DOMContentLoaded", function() {
             if (label) {
                 label.setAttribute('for', id.replace(/_\d+$/, match => `_${count}`));
             }
+            if(input.classList.contains('is-invalid')) {
+                input.classList.remove('is-invalid')
+            }
         });
         //navtabClone.innerText = (count + 1) + '. Victim'
         navtabClone.querySelector('.tab-name').innerText = 'Victim'
@@ -79,6 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // add event listeners to geograpy inputs
         addAddressListener(clone, 'victim', count)
+        setCustomGender(clone.querySelector('.gender-input'))
     
         const victimElement = clone.querySelector('#victim_counter')
         const countplusone = count + 1;
@@ -98,7 +103,8 @@ document.addEventListener("DOMContentLoaded", function() {
         addVictimButton.disabled = false;
     
         // Reapply event listeners to text fields for validation
-        const newTextFields = clone.querySelectorAll('input[type="text"]');
+        // const newTextFields = clone.querySelectorAll('input[type="text"]');
+        const newTextFields = clone.querySelectorAll('.req-inp');
         newTextFields.forEach(field => {
             field.addEventListener('input', validateVictimInput);
             field.addEventListener('focusout', validateVictimInput);
@@ -112,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const nextButton = document.querySelector('.next-perpetrator-button');
         if (progressButton && nextButton) {
             progressButton.disabled = true;
-            nextButton.disabled = true;
+            //nextButton.disabled = true;
         }
     });
 
@@ -125,9 +131,9 @@ document.addEventListener("DOMContentLoaded", function() {
         const isHouseInfoField = fieldName && fieldName.includes('victim-house-info');
 
         // Exclude numerical validation for house information field
-        if (!isHouseInfoField && /[\d]/.test(input.value)) {
-            input.value = input.value.replace(/\d/g, ''); // Remove numerical characters
-        }
+        // if (!isHouseInfoField && /[\d]/.test(input.value)) {
+        //     input.value = input.value.replace(/\d/g, ''); // Remove numerical characters
+        // }
 
         // Set maximum length to 150 for house information field
         const maxLength = isHouseInfoField ? 150 : 50;
@@ -161,7 +167,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     
         // Check if there are any invalid inputs
-        const allInputs = document.querySelectorAll('[id^="victim-form_"] input[type="text"]');
+        // const allInputs = document.querySelectorAll('[id^="victim-form_"] input[type="text"]');
+        const allInputs = document.querySelectorAll('[id^="victim-form_"] .req-inp');
         const hasErrors = document.querySelectorAll('.is-invalid').length > 0;
         const hasEmptyInputs = Array.from(allInputs).some(input => input.value.trim() === '');
     
@@ -172,15 +179,15 @@ document.addEventListener("DOMContentLoaded", function() {
             progressButton.disabled = hasErrors; // Disable the progress button if there are errors
             progressButton.disabled = hasEmptyInputs;
         }
-        if (nextButton) {
-            nextButton.disabled = hasErrors; // Disable the next button if there are errors
-            nextButton.disabled = hasEmptyInputs;
-        }
+        // if (nextButton) {
+        //     nextButton.disabled = hasErrors; // Disable the next button if there are errors
+        //     nextButton.disabled = hasEmptyInputs;
+        // }
     }
 
 
     function clearInputFields(form) {
-        const inputs = form.querySelectorAll('input[type="text"], input[type="number"]');
+        const inputs = form.querySelectorAll('input[type="text"], input[type="number"], input[type="date"]');
         inputs.forEach(input => {
             input.value = ''; // Clear input value
         });
@@ -197,7 +204,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const perpetratorCountInput = document.getElementById("perpetrator_count");
 
     // Add event listeners to text fields for initial validation
-    const initialTextFields = document.querySelectorAll('#perpetrator-form_0 input[type="text"]');
+    // const initialTextFields = document.querySelectorAll('#perpetrator-form_0 input[type="text"]');
+    const initialTextFields = document.querySelectorAll('#perpetrator-form_0 .req-inp');
     initialTextFields.forEach(field => {
         field.addEventListener('input', validatePerpetratorInput);
         field.addEventListener('focusout', validatePerpetratorInput);
@@ -239,6 +247,9 @@ document.addEventListener("DOMContentLoaded", function() {
             if (label) {
                 label.setAttribute('for', id.replace(/_\d+$/, match => `_${count}`));
             }
+            if(input.classList.contains('is-invalid')) {
+                input.classList.remove('is-invalid')
+            }
         });
         navtabClone.querySelector('.tab-name').innerText = 'Perpetrator'
 
@@ -254,6 +265,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // add event listeners to geograpy inputs
         addAddressListener(clone, 'perp', count)
+        setCustomGender(clone.querySelector('.gender-input'))
 
         const perpetratorElement = clone.querySelector('#perpetrator_counter')
         const countplusone = count + 1;
@@ -272,7 +284,8 @@ document.addEventListener("DOMContentLoaded", function() {
         addPerpetratorButton.disabled = false;
 
         // Reapply event listeners to text fields for validation
-        const newTextFields = clone.querySelectorAll('input[type="text"]');
+        // const newTextFields = clone.querySelectorAll('input[type="text"]');
+        const newTextFields = clone.querySelectorAll('.req-inp');
         newTextFields.forEach(field => {
             field.addEventListener('input', validatePerpetratorInput);
             field.addEventListener('focusout', validatePerpetratorInput);
@@ -285,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const nextButton = document.querySelector('.next-incident-button');
         if (progressButton && nextButton) {
             progressButton.disabled = true;
-            nextButton.disabled = true;
+            //nextButton.disabled = true;
         }
     });
 
@@ -297,9 +310,9 @@ document.addEventListener("DOMContentLoaded", function() {
         // Check if the field is a house information field
         const isHouseInfoField = fieldName && fieldName.includes('perp-address-info');
         // Exclude numerical validation for house information field
-        if (!isHouseInfoField && /[\d]/.test(input.value)) {
-            input.value = input.value.replace(/\d/g, ''); // Remove numerical characters
-        }
+        // if (!isHouseInfoField && /[\d]/.test(input.value)) {
+        //     input.value = input.value.replace(/\d/g, ''); // Remove numerical characters
+        // }
 
         // Set maximum length to 150 for house information field
         const maxLength = isHouseInfoField ? 150 : 50;
@@ -333,7 +346,8 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         // Check if there are any invalid inputs
-        const allInputs = document.querySelectorAll('[id^="perpetrator-form_"] input[type="text"]');
+        // const allInputs = document.querySelectorAll('[id^="perpetrator-form_"] input[type="text"]');
+        const allInputs = document.querySelectorAll('[id^="perpetrator-form_"] .req-inp');
         const hasErrors = document.querySelectorAll('.is-invalid').length > 0;
         const hasEmptyInputs = Array.from(allInputs).some(input => input.value.trim() === '');
     
@@ -344,15 +358,15 @@ document.addEventListener("DOMContentLoaded", function() {
             progressButton.disabled = hasErrors; // Disable the progress button if there are errors
             progressButton.disabled = hasEmptyInputs;
         }
-        if (nextButton) {
-            nextButton.disabled = hasErrors; // Disable the next button if there are errors
-           nextButton.disabled = hasEmptyInputs;
-        }
+        // if (nextButton) {
+        //     nextButton.disabled = hasErrors; // Disable the next button if there are errors
+        //    nextButton.disabled = hasEmptyInputs;
+        // }
     }
 
 
     function clearInputFields(form) {
-        const inputs = form.querySelectorAll('input[type="text"], input[type="number"]');
+        const inputs = form.querySelectorAll('input[type="text"], input[type="number"], input[type="date"]');
         inputs.forEach(input => {
             input.value = '';
         });
@@ -412,24 +426,33 @@ function addAddressListener(formElement, formType, count = 0) {
         city = formElement.querySelector(`#${formType}-city`)
         province = formElement.querySelector(`#${formType}-province`)
     }
+    barangay.disabled = true
+    city.disabled = true
 
     city.addEventListener('change', (e) => {
 
         const cityId = e.target.options[e.target.selectedIndex].dataset.code
-        setGeoSelect(barangay, {
-            filter: cityId,
-            action: 'barangay',
-            csrfmiddlewaretoken: csrf_token,
-        })
+        if(cityId) {
+            setGeoSelect(barangay, {
+                filter: cityId,
+                action: 'barangay',
+                csrfmiddlewaretoken: csrf_token,
+            }, {passive: true})
+            barangay.disabled=false
+        }
     })
     province.addEventListener('change', (e) => {
 
         const provinceId = e.target.options[e.target.selectedIndex].dataset.code
-        setGeoSelect(city, {
-            filter: provinceId,
-            action: 'city',
-            csrfmiddlewaretoken: csrf_token,
-        })
+
+        if(provinceId) {
+            setGeoSelect(city, {
+                filter: provinceId,
+                action: 'city',
+                csrfmiddlewaretoken: csrf_token,
+            }, {passive: true})
+            city.disabled=false
+        }
 
     })
 }
@@ -441,6 +464,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('#contact-firstname')) {
         addAddressListener(document.querySelector('.multisteps-form__form'), 'contact')
     }
+    setCustomGender(document.querySelector('#victim-form_0 .gender-input'))
+    setCustomGender(document.querySelector('#perpetrator-form_0 .gender-input'))
 })
 
 
@@ -459,6 +484,7 @@ async function setGeoSelect(geoTypeInput, formData) {
 
     const blankOption = document.createElement('option')
     blankOption.textContent = '--Select Option--'
+    blankOption.value = ''
     // clear all options in select element
     geoTypeInput.replaceChildren()
 

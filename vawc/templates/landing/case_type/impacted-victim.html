@@ -64,17 +64,17 @@
                                             </div>
                                             <div class="col-sm-6 mb-3">
                                                 <label for="victim-firstname_0" class="form-label">First Name <span class="required"></span></label>
-                                                <input type="text" class="form-control" id="victim-firstname_0" name="victim-firstname_0">
+                                                <input type="text" class="form-control req-inp" id="victim-firstname_0" name="victim-firstname_0">
                                                 <div class="invalid-feedback victim-firstname_0" ></div>
                                             </div>
                                             <div class="col-sm-6 mb-3">
-                                                <label for="victim-middlename_0" class="form-label">Middle Name <span class="required"></label>
+                                                <label for="victim-middlename_0" class="form-label">Middle Name</label>
                                                 <input type="text" class="form-control" id="victim-middlename_0" name="victim-middlename_0">
                                                 <div class="invalid-feedback victim-middlename_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--lastname-->
-                                                <label for="victim-lastname_0" class="form-label">Last Name <span class="required"></label>
-                                                <input type="text" class="form-control victim-lastname" id="victim-lastname_0" name="victim-lastname_0">
+                                                <label for="victim-lastname_0" class="form-label">Last Name <span class="required"></span></label>
+                                                <input type="text" class="form-control victim-lastname req-inp" id="victim-lastname_0" name="victim-lastname_0">
                                                 <div class="invalid-feedback victim-lastname_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--suffix-->
@@ -88,18 +88,25 @@
                                                     <option value="iv">IV</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="victim-sex_0" class="form-label">Sex</label>
-                                                <select id="victim-sex_0" name="victim-sex_0" class="form-select">
-                                                    <option value="Male">Male</option>
-                                                    <option value="Female">Female</option>
+                                            <div class="col-sm-6 mb-3"> <!-- Gender -->
+                                                <label for="victim-sex_0" class="form-label">Gender <span class="required"></span></label>
+                                                <select id="victim-sex_0" name="victim-sex_0" class="form-select req-inp gender-input">
+                                                    <option value="">--Select Option--</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="rather_not_say">Rather not say</option>
+                                                    <option>Custom</option>
                                                 </select>
+                                                <div class="invalid-feedback victim-sex_0"></div>
+                                                <input type="text" class="form-control mt-2 custom-gender" placeholder="Specify" style="display: none;">
                                             </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="victim-date-of-birth_0" class="form-label">Date of Birth</label>
-                                                <input type="date" class="form-control" id="victim-date-of-birth_0" name="victim-date-of-birth_0" value="2024-03-01">
+                                            <div class="col-sm-6 mb-3"> <!-- Date of Birth -->
+                                                <label for="victim-date-of-birth_0" class="form-label">Date of Birth <span class="required"></span></label>
+                                                <input type="date" class="form-control req-inp" id="victim-date-of-birth_0" name="victim-date-of-birth_0">
+                                                <div class="invalid-feedback victim-date-of-birth_0" ></div>
+                                                {% comment %} <input type="date" class="form-control req-inp" id="victim-date-of-birth_0" name="victim-date-of-birth_0" value="2024-03-01"> {% endcomment %}
                                             </div>
-                                            <div class="col-sm-6 mb-3">
+                                            <div class="col-sm-6 mb-3"> <!-- Civil Status-->
                                                 <label for="victim-civilstatus_0" class="form-label">Civil Status</label>
                                                 <select id="victim-civilstatus_0" name="victim-civilstatus_0"  class="form-select">
                                                     <option value="single">Single</option>
@@ -109,7 +116,7 @@
                                                     <option value="separated">Separated</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-6 mb-3">
+                                            <div class="col-sm-6 mb-3"> <!-- Nationality -->
                                                 <label for="victim-nationality_0" class="form-label">Nationality</label>
                                                 <select class="form-select" id="victim-nationality_0" name="victim-nationality_0">
                                                     <option value="Filipino" selected>Filipino</option>
@@ -131,66 +138,72 @@
                                             </div>
     
                                             <h3 class="fs-5 col-12 my-3">Local Address</h3>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="victim-house-info_0" class="form-label">Address <span class="required"></label>
-                                                <input type="text" class="form-control" name="victim-house-info_0" id="victim-house-info_0">
-                                                <div class="invalid-feedback victim-house-info_0"></div>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="victim-street_0" class="form-label">Street <span class="required"></label>
-                                                <input type="text" class="form-control" id="victim-street_0" name="victim-street_0">
-                                                <div class="invalid-feedback victim-street_0"></div>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="victim-barangay_0" class="form-label">Barangay</label>
-                                                <select id="victim-barangay_0" name="victim-barangay_0" class="form-select">
-                                                    <option>--Select Option--</option>
-                                                    {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
-                                                    {% empty %}
-                                                        <option>No data found</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="victim-city_0" class="form-label">City/Municipality</label>
-                                                <select id="victim-city_0" name="victim-city_0" class="form-select">
-                                                    <option>--Select Option--</option>
-                                                    {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
-                                                    {% empty %}
-                                                        <option>No data found</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="victim-province_0" class="form-label">Province</label>
-                                                <select id="victim-province_0" name="victim-province_0" class="form-select">
-                                                    <option>--Select Option--</option>
-                                                    {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
-                                                    {% empty %}
-                                                        <option>No data found</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
+                                            
+                                            <div class="col-sm-6 mb-3"> <!-- Region -->
                                                 <label for="victim-region_0" class="form-label">Region</label>
-                                                <select id="victim-region_0" name="victim-region_0" class="form-select">
-                                                    <option>--Select Option--</option>
+                                                <select id="victim-region_0" name="victim-region_0" class="form-select req-inp" disabled>
+                                                    {% comment %} <option>--Select Option--</option> {% endcomment %}
                                                     {% for region in default_regions %}
                                                         <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
+                                                <div class="invalid-feedback victim-region_0"></div>
                                             </div>
+                                            <div class="col-sm-6 mb-3"> <!-- Province -->
+                                                <label for="victim-province_0" class="form-label">Province <span class="required"></span></label>
+                                                <select id="victim-province_0" name="victim-province_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for province in default_provinces %}
+                                                    <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                                    {% empty %}
+                                                    <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback victim-province_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!-- City -->
+                                                <label for="victim-city_0" class="form-label">City/Municipality <span class="required"></span></label>
+                                                <select id="victim-city_0" name="victim-city_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for city in default_cities %}
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback victim-city_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!-- Barangay -->
+                                                <label for="victim-barangay_0" class="form-label">Barangay <span class="required"></span></label>
+                                                <select id="victim-barangay_0" name="victim-barangay_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for barangay in default_barangays %}
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback victim-barangay_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!-- Street -->
+                                                <label for="victim-street_0" class="form-label">Street <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="victim-street_0 req-inp" name="victim-street_0">
+                                                <div class="invalid-feedback victim-street_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!-- Address -->
+                                                <label for="victim-house-info_0" class="form-label">Address <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" name="victim-house-info_0" id="victim-house-info_0">
+                                                <div class="invalid-feedback victim-house-info_0"></div>
+                                            </div>
+                                                  
                                         </div>
                                     </div><!--end of victim form-->
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-end mt-4">
-                                    <button class="btn btn-primary ml-auto next-perpetrator-button js-btn-next" type="button" title="Next" disabled>Next</button>
+                                    <button class="btn btn-primary ml-auto next-perpetrator-button js-btn-next" type="button" title="Next">Next</button>
                                 </div>
                             </div>
 
@@ -198,7 +211,7 @@
                         <!--single form panel--><!--perpetrator-->
                         <div class="multisteps-form__panel" data-animation="slideVert">
 
-                            <h2 class="text-center mb-4 mb-md-5"><strong>Perpetration Information</strong></h2>
+                            <h2 class="text-center mb-4 mb-md-5"><strong>Perpetrator Information</strong></h2>
 
                             <!--perpetrators navigation tabs-->
                             <div class="col-md-11 mx-auto mb-2 d-flex flex-nowrap gap-2 overflow-auto nav nav-pills" id="perpetrator-navtabs-container">
@@ -230,18 +243,18 @@
                                                 <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--Firstname-->
-                                                <label for="perp-firstname_0" class="form-label">First name <span class="required"></label>
-                                                <input type="text" class="form-control" id="perp-firstname_0" name="perp-firstname_0">
+                                                <label for="perp-firstname_0" class="form-label">First name <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-firstname_0" name="perp-firstname_0">
                                                 <div class="invalid-feedback perp-firstname_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--middlename-->
-                                                <label for="perp-middlename_0" class="form-label">Middle name <span class="required"></label>
+                                                <label for="perp-middlename_0" class="form-label">Middle name</label>
                                                 <input type="text" class="form-control" id="perp-middlename_0" name="perp-middlename_0">
                                                 <div class="invalid-feedback perp-middlename_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--lastname-->
-                                                <label for="perp-lastname_0" class="form-label ">Last name <span class="required"></label>
-                                                <input type="text" class="form-control perpetrator-lastname" id="perp-lastname_0" name="perp-lastname_0">
+                                                <label for="perp-lastname_0" class="form-label ">Last name <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp perpetrator-lastname" id="perp-lastname_0" name="perp-lastname_0">
                                                 <div class="invalid-feedback perp-lastname_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--suffix-->
@@ -257,19 +270,25 @@
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--alias-->
                                                 <label for="perp-alias_0" class="form-label">Alias <span class="required"></label>
-                                                <input type="text" class="form-control" id="perp-alias_0" name="perp-alias_0">
+                                                <input type="text" class="form-control req-inp" id="perp-alias_0" name="perp-alias_0">
                                                 <div class="invalid-feedback perp-alias_0"></div>
                                             </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="perp-sex_0" class="form-label">Sex</label>
-                                                <select id="perp-sex_0" name="perp-sex_0" class="form-select">
-                                                    <option value="Male">Male</option>
-                                                    <option value="Female">Female</option>
+                                            <div class="col-sm-6 mb-3"> <!-- gender -->
+                                                <label for="perp-sex_0" class="form-label">Gender <span class="required"></span></label>
+                                                <select id="perp-sex_0" name="perp-sex_0" class="form-select req-inp gender-input">
+                                                    <option value="">--Select Option--</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="rather_not_say">Rather not say</option>
+                                                    <option>Custom</option>
                                                 </select>
+                                                <div class="invalid-feedback perp-sex_0"></div>
+                                                <input type="text" class="form-control mt-2 custom-gender" placeholder="Specify" style="display: none;">
                                             </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="perp-date-of-birth_0" class="form-label">Date of Birth</label>
-                                                <input type="date" class="form-control" id="perp-date-of-birth_0" name="perp-date-of-birth_0" value="2024-03-01">
+                                            <div class="col-sm-6 mb-3"> <!--date of birth-->
+                                                <label for="perp-date-of-birth_0" class="form-label">Date of Birth <span class="required"></span></label>
+                                                <input type="date" class="form-control req-inp" id="perp-date-of-birth_0" name="perp-date-of-birth_0" value="">
+                                                <div class="invalid-feedback perp-date-of-birth_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3">
                                                 <label for="perp-nationality_0" class="form-label">Nationality</label>
@@ -292,13 +311,13 @@
                                                 </select>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--Identifying remarks-->
-                                                <label for="perp-identifying-marks_0" class="form-label">Identifying Marks <span class="required"></label>
-                                                <input type="text" class="form-control" id="perp-identifying-marks_0" name="perp-identifying-marks_0">
+                                                <label for="perp-identifying-marks_0" class="form-label">Identifying Marks <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-identifying-marks_0" name="perp-identifying-marks_0">
                                                 <div class="invalid-feedback perp-identifying-marks_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3">
-                                                <label for="perp-relationsip-victim_0" class="form-label">Relation to Victim</label>
-                                                <select id="perp-relationsip-victim_0" name="perp-relationsip-victim_0" class="form-select">
+                                                <label for="perp-relationsip-victim_0" class="form-label">Relationship to Victim <span class="required"></span></label>
+                                                {% comment %} <select id="perp-relationsip-victim_0" name="perp-relationsip-victim_0" class="form-select">
                                                     <option value="currentSpouse">Current spouse / partner</option>
                                                     <option value="formerSpouse">Former spouse / partner</option>
                                                     <option value="currentFiance">Current fiance / dating relationship</option>
@@ -312,73 +331,78 @@
                                                     <option value="peopleOfAuthority">People of authority / service provider</option>
                                                     <option value="neighbors">Neighbors / peers / coworkers / classmates</option>
                                                     <option value="Stranger">Stranger</option>
-                                                </select>
+                                                </select> {% endcomment %}
+                                                <input id="perp-relationsip-victim_0" name="perp-relationsip-victim_0" class="form-control req-inp">
+                                                <div class="invalid-feedback perp-relationship-victim_0"></div>
                                             </div>
 
                                             <h3 class="fs-5 col-12 my-3">Local Address</h3>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="perp-address-info_0" class="form-label">Address <span class="required"></label>
-                                                <input type="text" class="form-control" id="perp-address-info_0" name="perp-address-info_0">
-                                                <div class="invalid-feedback perp-address-info_0" >
-        
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="perp-street_0" class="form-label">Street <span class="required"></label>
-                                                <input type="text" class="form-control" id="perp-street_0" name="perp-street_0">
-                                                <div class="invalid-feedback perp-street_0"></div>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="perp-barangay_0" class="form-label">Barangay</label>
-                                                <select id="perp-barangay_0" name="perp-barangay_0" class="form-select">
-                                                    <option>--Select Option--</option>
-                                                    {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
-                                                    {% empty %}
-                                                        <option>No data found</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="perp-city_0" class="form-label">City/Municipality</label>
-                                                <select id="perp-city_0" name="perp-city_0" class="form-select">
-                                                    <option>--Select Option--</option>
-                                                    {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
-                                                    {% empty %}
-                                                        <option>No data found</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
-                                                <label for="perp-province_0" class="form-label">Province</label>
-                                                <select id="perp-province_0" name="perp-province_0" class="form-select">
-                                                    <option>--Select Option--</option>
-                                                    {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
-                                                    {% empty %}
-                                                        <option>No data found</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-6 mb-3">
+                                            <div class="col-sm-6 mb-3"> <!-- Region -->
                                                 <label for="perp-region_0" class="form-label">Region</label>
-                                                <select id="perp-region_0" name="perp-region_0" class="form-select">
-                                                    <option>--Select Option--</option>
+                                                <select id="perp-region_0" name="perp-region_0" class="form-select req-inp" disabled>
+                                                    {% comment %} <option>--Select Option--</option> {% endcomment %}
                                                     {% for region in default_regions %}
                                                         <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
+                                                <div class="invalid-feedback perp-region_0"></div>
                                             </div>
+                                            <div class="col-sm-6 mb-3"> <!-- Province -->
+                                                <label for="perp-province_0" class="form-label">Province <span class="required"></span></label>
+                                                <select id="perp-province_0" name="perp-province_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for province in default_provinces %}
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback perp-province_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!-- City -->
+                                                <label for="perp-city_0" class="form-label">City/Municipality <span class="required"></span></label>
+                                                <select id="perp-city_0" name="perp-city_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for city in default_cities %}
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback perp-city_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!-- Barangay -->
+                                                <label for="perp-barangay_0" class="form-label">Barangay <span class="required"></span></label>
+                                                <select id="perp-barangay_0" name="perp-barangay_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for barangay in default_barangays %}
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback perp-barangay_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!-- Street -->
+                                                <label for="perp-street_0" class="form-label">Street <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-street_0" name="perp-street_0">
+                                                <div class="invalid-feedback perp-street_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!-- Address -->
+                                                <label for="perp-address-info_0" class="form-label">Address <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-address-info_0" name="perp-address-info_0">
+                                                <div class="invalid-feedback perp-address-info_0" ></div>
+                                            </div>
+                                            
                                         </div>
                                     </div> <!--end of perpetrator form-->
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between mt-4">
                                     <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
-                                    <button class="btn btn-primary ml-auto next-incident-button js-btn-next" type="button" title="Next" disabled>Next</button>
+                                    <button class="btn btn-primary ml-auto next-incident-button js-btn-next" type="button" title="Next">Next</button>
                                 </div>
                             </div>
                         </div>
@@ -389,18 +413,18 @@
 
                             <div class="multisteps-form__content col-12 col-md-11 border rounded p-4 mx-auto">
 
-                                <div class="row">
+                                <div class="row incident-form-panel">
 
                                     <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
                                         <h3 class="fs-5 mb-3">Incident Details</h3>
                                         <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
                                     </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="incident-desc" class="form-label">Description <span class="required"></label>
-                                        <textarea class="form-control" name="incident-desc" id="incident-desc" rows="3"></textarea>
-                                        <div class="invalid-feedback incident-street"></div>
+                                    <div class="col-12 mb-3"><!--description-->
+                                        <label for="incident-desc" class="form-label">Description <span class="required"></span></label>
+                                        <textarea class="form-control req-inp" name="incident-desc" id="incident-desc" rows="3"></textarea>
+                                        <div class="invalid-feedback incident-desc"></div>
                                     </div>
-                                    <div class="col-12 mb-3">
+                                    <div class="col-12 mb-3"><!--evidence-->
                                         <label for="incident-evidence" class="form-label">Upload Photo Evidences</label>
                                         <input class="form-control mb-2" type="file" id="incident-evidence" name="evidence_file" accept="image/*" multiple>
                                         <div class="invalid-feedback incident-street"></div>
@@ -409,11 +433,12 @@
                                         
                                     </div>
 
-                                    <div class="col-sm-6 mb-3">
+                                    <div class="col-sm-6 mb-3"> <!--date of latest incident-->
                                         <label for="date-latest-incident" class="form-label">Date of Latest Incident</label>
-                                        <input type="date" class="form-control" name="date-latest-incident" id="date-latest-incident" value="2024-03-01">
+                                        <input type="date" class="form-control" name="date-latest-incident" id="date-latest-incident" value="">
+                                        {% comment %} <input type="date" class="form-control" name="date-latest-incident" id="date-latest-incident" value="2024-03-01"> {% endcomment %}
                                     </div>
-                                    <div class="col-sm-6 mb-3">
+                                    <div class="col-sm-6 mb-3"> <!--incomplete date-->
                                         <label for="incomplete-date" class="form-label">Incomplete Date</label>
                                         <div class="d-flex align-items-center gap-2 pt-1">
                                             <input type="hidden" name="incomplete-date" value="False"> <!-- Hidden input with value False -->
@@ -423,10 +448,62 @@
                                     </div>
                                     
                                     <h3 class="fs-5 col-12 my-3">Place of Incident</h3>
-                                    <div class="col-sm-6 mb-3">
-                                        <label for="place-incident" class="form-label">Type of Place</label>
-                                        <select id="place-incident" name="place-incident" class="form-select">
-                                            <option selected>---Select Place of Incident---</option>
+                                    <div class="col-sm-6 mb-3"> <!-- Region -->
+                                        <label for="incident-region" class="form-label">Region <span class="required"></span></label>
+                                        <select id="incident-region" name="incident-region" class="form-select" disabled>
+                                            {% comment %} <option>--Select Option--</option> {% endcomment %}
+                                            {% for region in default_regions %}
+                                                <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!-- Province -->
+                                        <label for="incident-province" class="form-label">Province <span class="required"></span></label>
+                                        <select id="incident-province" name="incident-province" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for province in default_provinces %}
+                                                <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback incident-province"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!-- City -->
+                                        <label for="incident-city" class="form-label">City/Municipality <span class="required"></span></label>
+                                        <select id="incident-city" name="incident-city" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for city in default_cities %}
+                                                <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback incident-city"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!-- Barangay -->
+                                        <label for="incident-barangay" class="form-label">Barangay <span class="required"></span></label>
+                                        <select id="incident-barangay" name="incident-barangay" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for barangay in default_barangays %}
+                                                <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback incident-barangay"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!-- Street -->
+                                        <label for="incident-street" class="form-label">Street <span class="required"></span></label>
+                                        <input type="text" class="form-control req-inp" id="incident-street" name="incident-street">
+                                        <div class="invalid-feedback incident-street"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!-- Type of place -->
+                                        <label for="place-incident" class="form-label">Type of Place <span class="required"></span></label>
+                                        <select id="place-incident" name="place-incident" class="form-select req-inp">
+                                            <option value="" selected>--Select Place of Incident--</option>
                                             <option value="house">House</option>
                                             <option value="work">Work</option>
                                             <option value="school">School</option>
@@ -438,62 +515,14 @@
                                             <option value="others">Others</option>
                                             <option value="noResponse">No Response</option>
                                         </select>
-                                    </div>
-                                    <div class="col-sm-6 mb-3">
-                                        <label for="incident-street" class="form-label">Street <span class="required"></label>
-                                        <input type="text" class="form-control" id="incident-street" name="incident-street">
-                                        <div class="invalid-feedback incident-street"></div>
-                                    </div>
-                                    <div class="col-sm-6 mb-3">
-                                        <label for="incident-barangay" class="form-label">Barangay</label>
-                                        <select id="incident-barangay" name="incident-barangay" class="form-select">
-                                            <option>--Select Option--</option>
-                                            {% for barangay in default_barangays %}
-                                                <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
-                                            {% empty %}
-                                                <option>No data found</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-6 mb-3">
-                                        <label for="incident-city" class="form-label">City/Municipality</label>
-                                        <select id="incident-city" name="incident-city" class="form-select">
-                                            <option>--Select Option--</option>
-                                            {% for city in default_cities %}
-                                                <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
-                                            {% empty %}
-                                                <option>No data found</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-6 mb-3">
-                                        <label for="incident-province" class="form-label">Province</label>
-                                        <select id="incident-province" name="incident-province" class="form-select">
-                                            <option>--Select Option--</option>
-                                            {% for province in default_provinces %}
-                                                <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
-                                            {% empty %}
-                                                <option>No data found</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-6 mb-3">
-                                        <label for="incident-region" class="form-label">Region</label>
-                                        <select id="incident-region" name="incident-region" class="form-select">
-                                            <option>--Select Option--</option>
-                                            {% for region in default_regions %}
-                                                <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
-                                            {% empty %}
-                                                <option>No data found</option>
-                                            {% endfor %}
-                                        </select>
+                                        <div class="invalid-feedback place-incident"></div>
                                     </div>
 
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between mt-4 col-12">
                                     <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
-                                    <button class="btn btn-primary ml-auto btn-next-service js-btn-next" type="button" title="Next" disabled>Next</button>
+                                    <button class="btn btn-primary ml-auto btn-next-service js-btn-next" type="button" title="Next">Next</button>
                                 </div>
                             </div>
                         </div>
@@ -732,11 +761,11 @@
             if (isStreetValid && isDescriptionValid) {
                 console.log("Okay: All inputs are valid.");
                 progressButton.prop('disabled', false);
-                nextButton.prop('disabled', false);
+                //nextButton.prop('disabled', false);
             } else {
                 console.log("No: Some inputs are not valid.");
                 progressButton.prop('disabled', true);
-                nextButton.prop('disabled', true);
+                //nextButton.prop('disabled', true);
             }
         }
 
@@ -854,6 +883,25 @@
 
         // Add event listener to upload evidence input for validation
         $("#incident-evidence").on('change', validateUploadEvidence);
+
+
+        // add eventlisteners to incidents required inputs to add or remove validation messages when changing values
+        const incidentForm = document.querySelector('.incident-form-panel')
+        const requiredIncidentInputs = incidentForm.querySelectorAll('.req-inp')
+        requiredIncidentInputs.forEach(input => {
+            
+            const feedback = input.nextElementSibling;
+            input.addEventListener('change', () => {
+                if (input.value.length <= 0) {
+                  feedback.textContent = "This is a required input.";
+                  input.classList.add('is-invalid');
+                } else {
+                  feedback.textContent = "";
+                  input.classList.remove('is-invalid');
+                }
+
+            })
+        })
 
 
         const form = document.querySelector("#impact-victim-form")
