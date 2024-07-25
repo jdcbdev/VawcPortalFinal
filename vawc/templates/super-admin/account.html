@@ -137,174 +137,45 @@
                 </div>
                 <div class="form-floating mb-3">
                     <select class="form-select" id="account_region" name="account_region">
-                        <option value="region-I">Region I – Ilocos Region</option>
-                        <option value="region-II">Region II – Cagayan Valley</option>
-                        <option value="region-III">Region III – Central Luzon</option>
-                        <option value="region-IV">Region IV‑A – CALABARZON</option>
-                        <option value="mimaropa">MIMAROPA Region</option>
-                        <option value="region-V">Region V – Bicol Region</option>
-                        <option value="region-VI">Region VI – Western Visayas</option>
-                        <option value="region-VII">Region VII – Central Visayas</option>
-                        <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                        <option value="region-IX" selected>Region IX – Zamboanga Peninsula</option>
-                        <option value="region-X">Region X – Northern Mindanao</option>
-                        <option value="region-XI">Region XI – Davao Region</option>
-                        <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                        <option value="region-XIII">Region XIII – Caraga</option>
-                        <option value="ncr">NCR – National Capital Region</option>
-                        <option value="car">CAR – Cordillera Administrative Region</option>
-                        <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
+                        <option>--Select Option--</option>
+                        {% for region in default_regions %}
+                            <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
                     </select>
                     <label for="victim_region">Region</label>
                 </div>
                 <div class="form-floating mb-3">
                     <select class="form-select" id="account_province" name="account_province" aria-label="Province">
-                    <option value="Zamboanga del Norte">Zamboanga del Norte</option>
-                    <option value="Zamboanga del Sur" selected>Zamboanga del Sur</option>
-                    <option value="Zamboanga Sibugay">Zamboanga Sibugay</option>
+                        <option>--Select Option--</option>
+                        {% for province in default_provinces %}
+                            <option value="{{ province.name }}" data-code="{{  province.code }}">{{ province.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
                     </select>
                     <label for="account_province">Province</label>
                 </div>
                 <div class="form-floating mb-3">
                     <select class="form-select" id="account_city" name="account_city" aria-label="City/Municipality">
-                        <option value="" selected>Select City/Municipality</option>
-                        <option value="Aurora">Aurora</option>
-                        <option value="Bayog">Bayog</option>
-                        <option value="Dimataling">Dimataling</option>
-                        <option value="Dinas">Dinas</option>
-                        <option value="Dumalinao">Dumalinao</option>
-                        <option value="Dumingag">Dumingag</option>
-                        <option value="Guipos">Guipos</option>
-                        <option value="Josefina">Josefina</option>
-                        <option value="Kumalarang">Kumalarang</option>
-                        <option value="Labangan">Labangan</option>
-                        <option value="Lakewood">Lakewood</option>
-                        <option value="Lapuyan">Lapuyan</option>
-                        <option value="Mahayag">Mahayag</option>
-                        <option value="Margosatubig">Margosatubig</option>
-                        <option value="Midsalip">Midsalip</option>
-                        <option value="Molave">Molave</option>
-                        <option value="Pagadian">Pagadian (Capital)</option>
-                        <option value="Pitogo">Pitogo</option>
-                        <option value="Ramon Magsaysay">Ramon Magsaysay</option>
-                        <option value="San Miguel">San Miguel</option>
-                        <option value="San Pablo">San Pablo</option>
-                        <option value="Sominot">Sominot</option>
-                        <option value="Tabina">Tabina</option>
-                        <option value="Tambulig">Tambulig</option>
-                        <option value="Tigbao">Tigbao</option>
-                        <option value="Tukuran">Tukuran</option>
-                        <option value="Vincenzo A. Sagun">Vincenzo A. Sagun</option>
-                        <option value="Zamboanga City" selected>Zamboanga City</option>
+                        <option>--Select Option--</option>
+                        {% for city in default_cities %}
+                            <option value="{{ city.name }}" data-code="{{  city.code }}">{{ city.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
                     </select>
                     <label for="account_city">City/Municipality</label>
                 </div>
                 <div class="form-floating mb-3">
                     <select id="account_barangay" name="account_barangay" class="form-select">
-                        <option selected>---Select Barangay---</option>
-                        <option value="Aplaya">Aplaya</option>
-                        <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
-                        <option value="Ayala">Ayala</option>
-                        <option value="Bagong Calarian">Bagong Calarian</option>
-                        <option value="Baluno">Baluno</option>
-                        <option value="Baliwasan">Baluno</option>
-                        <option value="Boalan">Boalan</option>
-                        <option value="Bolong">Bolong</option>
-                        <option value="Buenavista">Buenavista</option>
-                        <option value="Bunguiao">Bunguiao</option>
-                        <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
-                        <option value="Cabaluay">Cabaluay</option>
-                        <option value="Cabatangan">Cabatangan</option>
-                        <option value="Cacao">Cacao</option>
-                        <option value="Calabasa">Calabasa</option>
-                        <option value="Calarian">Calarian</option>
-                        <option value="Camino Nuevo">Camino Nuevo</option>
-                        <option value="Campo Islam">Campo Islam</option>
-                        <option value="Canelar">Canelar</option>
-                        <option value="Capisan">Capisan</option>
-                        <option value="Cawit">Cawit</option>
-                        <option value="Culianan">Culianan</option>
-                        <option value="Curuan">Curuan</option>
-                        <option value="Dita">Dita</option>
-                        <option value="Divisoria">Divisoria</option>
-                        <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
-                        <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
-                        <option value="Guisao">Guisao</option>
-                        <option value="Guiwan">Guiwan</option>
-                        <option value="Kasanyangan">Kasanyangan</option>
-                        <option value="La Paz">La Paz</option>
-                        <option value="Labuan">Labuan</option>
-                        <option value="Lamisahan">Lamisahan</option>
-                        <option value="Landang Gua">Landang Gua</option>
-                        <option value="Landang Laum">Landang Laum</option>
-                        <option value="Lanzones">Lanzones</option>
-                        <option value="Lapakan">Lapakan</option>
-                        <option value="Lapuyan">Lapuyan</option>
-                        <option value="Latuan Curuan">Latuan Curuan</option>
-                        <option value="Licomo">Licomo</option>
-                        <option value="Limaong">Limaong</option>
-                        <option value="Limpapa">Limpapa</option>
-                        <option value="Luba">Luba</option>
-                        <option value="Lumayang">Lumayang</option>
-                        <option value="Lunzuran">Lunzuran</option>
-                        <option value="Maasin">Maasin</option>
-                        <option value="Malagutay">Malagutay</option>
-                        <option value="Mampang">Mampang</option>
-                        <option value="Manalipa">Manalipa</option>
-                        <option value="Mangusu">Mangusu</option>
-                        <option value="Manicahan">Manicahan</option>
-                        <option value="Mariki">Mariki</option>
-                        <option value="Mercedes">Mercedes</option>
-                        <option value="Mutong">Mutong</option>
-                        <option value="Pamucutan">Pamucutan</option>
-                        <option value="Panubigan">Panubigan</option>
-                        <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
-                        <option value="Pasobolong">Pasobolong</option>
-                        <option value="Pasonanca">Pasonanca</option>
-                        <option value="Patalon">Patalon</option>
-                        <option value="Putsan">Putsan</option>
-                        <option value="Quiniput">Quiniput</option>
-                        <option value="Recodo">Recodo</option>
-                        <option value="Rio Hondo">Rio Hondo</option>
-                        <option value="Salaan">Salaan</option>
-                        <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
-                        <option value="San Jose Gusu">San Jose Gusu</option>
-                        <option value="San Ramon">San Ramon</option>
-                        <option value="San Roque">San Roque</option>
-                        <option value="Sangali">Sangali</option>
-                        <option value="Santa Barbara">Santa Barbara</option>
-                        <option value="Santa Catalina">Santa Catalina</option>
-                        <option value="Santa Maria">Santa Maria</option>
-                        <option value="Santa Roza">Santa Roza</option>
-                        <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
-                        <option value="Sinubong">Sinubong</option>
-                        <option value="Sinunuc">Sinunuc</option>
-                        <option value="Sta. Cruz">Sta. Cruz</option>
-                        <option value="Sta. Maria">Sta. Maria</option>
-                        <option value="Sta. Catalina">Sta. Catalina</option>
-                        <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
-                        <option value="Sta. Maria">Sta. Maria</option>
-                        <option value="Sto. Niño">Sto. Niño</option>
-                        <option value="Tagasilay">Tagasilay</option>
-                        <option value="Taguiti">Taguiti</option>
-                        <option value="Talabaan">Talabaan</option>
-                        <option value="Talisayan">Talisayan</option>
-                        <option value="Talon-Talon">Talon-Talon</option>
-                        <option value="Taluksangay">Taluksangay</option>
-                        <option value="Talungon">Talungon</option>
-                        <option value="Tetuan">Tetuan</option>
-                        <option value="Tictapul">Tictapul</option>
-                        <option value="Tigbalabag">Tigbalabag</option>
-                        <option value="Tigtabon">Tigtabon</option>
-                        <option value="Tolosa">Tolosa</option>
-                        <option value="Tugbungan">Tugbungan</option>
-                        <option value="Tulungatung">Tulungatung</option>
-                        <option value="Tumaga">Tumaga</option>
-                        <option value="Tumalutab">Tumalutab</option>
-                        <option value="Tumitus">Tumitus</option>
-                        <option value="Victoria">Victoria</option>
-                        <option value="Vitali">Vitali</option>
-                        <option value="Zambowood">Zambowood</option>
+                        <option>--Select Option--</option>
+                        {% for barangay in default_barangays %}
+                            <option value="{{ barangay.name }}" data-code="{{  barangay.code }}">{{ barangay.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
                     </select>
                     <label for="account_barangay">Barangay</label>
                 </div><!--End of col-->
@@ -358,174 +229,46 @@
                 </div>
                 <div class="form-floating mb-3">
                     <select class="form-select" id="edit_account_region" name="edit_account_region">
-                        <option value="region-I">Region I – Ilocos Region</option>
-                        <option value="region-II">Region II – Cagayan Valley</option>
-                        <option value="region-III">Region III – Central Luzon</option>
-                        <option value="region-IV">Region IV‑A – CALABARZON</option>
-                        <option value="mimaropa">MIMAROPA Region</option>
-                        <option value="region-V">Region V – Bicol Region</option>
-                        <option value="region-VI">Region VI – Western Visayas</option>
-                        <option value="region-VII">Region VII – Central Visayas</option>
-                        <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                        <option value="region-IX">Region IX – Zamboanga Peninsula</option>
-                        <option value="region-X">Region X – Northern Mindanao</option>
-                        <option value="region-XI">Region XI – Davao Region</option>
-                        <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                        <option value="region-XIII">Region XIII – Caraga</option>
-                        <option value="ncr">NCR – National Capital Region</option>
-                        <option value="car">CAR – Cordillera Administrative Region</option>
-                        <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
+                        <option>--Select Option--</option>
+                        {% for region in default_regions %}
+                            <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
                     </select>
                     <label for="edit_victim_region">Region</label>
                 </div>
                 
                 <div class="form-floating mb-3">
                     <select class="form-select" id="edit_account_province" name="edit_account_province" aria-label="Province">
-                    <option value="Zamboanga del Norte">Zamboanga del Norte</option>
-                    <option value="Zamboanga del Sur" selected>Zamboanga del Sur</option>
-                    <option value="Zamboanga Sibugay">Zamboanga Sibugay</option>
+                        <option>--Select Option--</option>
+                        {% for province in default_provinces %}
+                            <option value="{{ province.name }}" data-code="{{  province.code }}">{{ province.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
                     </select>
                     <label for="edit_account_province">Province</label>
                 </div>
                 <div class="form-floating mb-3">
                     <select class="form-select" id="edit_account_city" name="edit_account_city" aria-label="City/Municipality">
-                        <option value="" selected>Select City/Municipality</option>
-                        <option value="Aurora">Aurora</option>
-                        <option value="Bayog">Bayog</option>
-                        <option value="Dimataling">Dimataling</option>
-                        <option value="Dinas">Dinas</option>
-                        <option value="Dumalinao">Dumalinao</option>
-                        <option value="Dumingag">Dumingag</option>
-                        <option value="Guipos">Guipos</option>
-                        <option value="Josefina">Josefina</option>
-                        <option value="Kumalarang">Kumalarang</option>
-                        <option value="Labangan">Labangan</option>
-                        <option value="Lakewood">Lakewood</option>
-                        <option value="Lapuyan">Lapuyan</option>
-                        <option value="Mahayag">Mahayag</option>
-                        <option value="Margosatubig">Margosatubig</option>
-                        <option value="Midsalip">Midsalip</option>
-                        <option value="Molave">Molave</option>
-                        <option value="Pagadian">Pagadian (Capital)</option>
-                        <option value="Pitogo">Pitogo</option>
-                        <option value="Ramon Magsaysay">Ramon Magsaysay</option>
-                        <option value="San Miguel">San Miguel</option>
-                        <option value="San Pablo">San Pablo</option>
-                        <option value="Sominot">Sominot</option>
-                        <option value="Tabina">Tabina</option>
-                        <option value="Tambulig">Tambulig</option>
-                        <option value="Tigbao">Tigbao</option>
-                        <option value="Tukuran">Tukuran</option>
-                        <option value="Vincenzo A. Sagun">Vincenzo A. Sagun</option>
-                        <option value="Zamboanga City" selected>Zamboanga City</option>
+                        <option>--Select Option--</option>
+                        {% for city in default_cities %}
+                            <option value="{{ city.name }}" data-code="{{  city.code }}">{{ city.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
                     </select>
                     <label for="edit_account_city">City/Municipality</label>
                 </div>
                 <div class="form-floating mb-3">
                     <select id="edit_account_barangay" name="edit_account_barangay" class="form-select">
-                        <option value="Aplaya">Aplaya</option>
-                        <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
-                        <option value="Ayala">Ayala</option>
-                        <option value="Bagong Calarian">Bagong Calarian</option>
-                        <option value="Baluno">Baluno</option>
-                        <option value="Baliwasan">Baluno</option>
-                        <option value="Boalan">Boalan</option>
-                        <option value="Bolong">Bolong</option>
-                        <option value="Buenavista">Buenavista</option>
-                        <option value="Bunguiao">Bunguiao</option>
-                        <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
-                        <option value="Cabaluay">Cabaluay</option>
-                        <option value="Cabatangan">Cabatangan</option>
-                        <option value="Cacao">Cacao</option>
-                        <option value="Calabasa">Calabasa</option>
-                        <option value="Calarian">Calarian</option>
-                        <option value="Camino Nuevo">Camino Nuevo</option>
-                        <option value="Campo Islam">Campo Islam</option>
-                        <option value="Canelar">Canelar</option>
-                        <option value="Capisan">Capisan</option>
-                        <option value="Cawit">Cawit</option>
-                        <option value="Culianan">Culianan</option>
-                        <option value="Curuan">Curuan</option>
-                        <option value="Dita">Dita</option>
-                        <option value="Divisoria">Divisoria</option>
-                        <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
-                        <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
-                        <option value="Guisao">Guisao</option>
-                        <option value="Guiwan">Guiwan</option>
-                        <option value="Kasanyangan">Kasanyangan</option>
-                        <option value="La Paz">La Paz</option>
-                        <option value="Labuan">Labuan</option>
-                        <option value="Lamisahan">Lamisahan</option>
-                        <option value="Landang Gua">Landang Gua</option>
-                        <option value="Landang Laum">Landang Laum</option>
-                        <option value="Lanzones">Lanzones</option>
-                        <option value="Lapakan">Lapakan</option>
-                        <option value="Lapuyan">Lapuyan</option>
-                        <option value="Latuan Curuan">Latuan Curuan</option>
-                        <option value="Licomo">Licomo</option>
-                        <option value="Limaong">Limaong</option>
-                        <option value="Limpapa">Limpapa</option>
-                        <option value="Luba">Luba</option>
-                        <option value="Lumayang">Lumayang</option>
-                        <option value="Lunzuran">Lunzuran</option>
-                        <option value="Maasin">Maasin</option>
-                        <option value="Malagutay">Malagutay</option>
-                        <option value="Mampang">Mampang</option>
-                        <option value="Manalipa">Manalipa</option>
-                        <option value="Mangusu">Mangusu</option>
-                        <option value="Manicahan">Manicahan</option>
-                        <option value="Mariki">Mariki</option>
-                        <option value="Mercedes">Mercedes</option>
-                        <option value="Mutong">Mutong</option>
-                        <option value="Pamucutan">Pamucutan</option>
-                        <option value="Panubigan">Panubigan</option>
-                        <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
-                        <option value="Pasobolong">Pasobolong</option>
-                        <option value="Pasonanca">Pasonanca</option>
-                        <option value="Patalon">Patalon</option>
-                        <option value="Putsan">Putsan</option>
-                        <option value="Quiniput">Quiniput</option>
-                        <option value="Recodo">Recodo</option>
-                        <option value="Rio Hondo">Rio Hondo</option>
-                        <option value="Salaan">Salaan</option>
-                        <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
-                        <option value="San Jose Gusu">San Jose Gusu</option>
-                        <option value="San Ramon">San Ramon</option>
-                        <option value="San Roque">San Roque</option>
-                        <option value="Sangali">Sangali</option>
-                        <option value="Santa Barbara">Santa Barbara</option>
-                        <option value="Santa Catalina">Santa Catalina</option>
-                        <option value="Santa Maria">Santa Maria</option>
-                        <option value="Santa Roza">Santa Roza</option>
-                        <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
-                        <option value="Sinubong">Sinubong</option>
-                        <option value="Sinunuc">Sinunuc</option>
-                        <option value="Sta. Cruz">Sta. Cruz</option>
-                        <option value="Sta. Maria">Sta. Maria</option>
-                        <option value="Sta. Catalina">Sta. Catalina</option>
-                        <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
-                        <option value="Sta. Maria">Sta. Maria</option>
-                        <option value="Sto. Niño">Sto. Niño</option>
-                        <option value="Tagasilay">Tagasilay</option>
-                        <option value="Taguiti">Taguiti</option>
-                        <option value="Talabaan">Talabaan</option>
-                        <option value="Talisayan">Talisayan</option>
-                        <option value="Talon-Talon">Talon-Talon</option>
-                        <option value="Taluksangay">Taluksangay</option>
-                        <option value="Talungon">Talungon</option>
-                        <option value="Tetuan">Tetuan</option>
-                        <option value="Tictapul">Tictapul</option>
-                        <option value="Tigbalabag">Tigbalabag</option>
-                        <option value="Tigtabon">Tigtabon</option>
-                        <option value="Tolosa">Tolosa</option>
-                        <option value="Tugbungan">Tugbungan</option>
-                        <option value="Tulungatung">Tulungatung</option>
-                        <option value="Tumaga">Tumaga</option>
-                        <option value="Tumalutab">Tumalutab</option>
-                        <option value="Tumitus">Tumitus</option>
-                        <option value="Victoria">Victoria</option>
-                        <option value="Vitali">Vitali</option>
-                        <option value="Zambowood">Zambowood</option>
+                        <option>--Select Option--</option>
+                        {% for barangay in default_barangays %}
+                            <option value="{{ barangay.name }}" data-code="{{  barangay.code }}">{{ barangay.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
                     </select>
                     <label for="edit_account_barangay">Barangay</label>
                 </div><!--End of col-->
@@ -561,6 +304,7 @@
 {% endblock content %}
 {% block scripts %}
 <script>
+    const csrf_token = '{{ csrf_token }}'
     $(document).ready(function() {
         $('#table-account').DataTable({
             dom: 'Brt <"bottom"lp>',
@@ -617,6 +361,37 @@
                 method: 'GET',
                 success: function(response) {
                     console.log(response);
+
+                    setGeoSelect($('#edit_account_region'), 'region', 'default_regions')
+                    setGeoSelect($('#edit_account_province'), 'province', 'default_provinces')
+                    setGeoSelect($('#edit_account_city'), 'city', 'default_cities')
+                    setGeoSelect($('#edit_account_barangay'), 'barangay', 'default_barangays')
+
+                    function setGeoSelect(geoTypeInput, geoType, key) {
+
+                        const blankOption = document.createElement('option')
+                        blankOption.textContent = '--Select Option--'
+                        // clear all options in select element
+    
+                        // apend blank option as the first selected options
+                        geoTypeInput.empty().append(blankOption)
+                        // apped data to respective inputs
+                        console.log(response[key])
+                        response[key].forEach(item => {
+                            const option = document.createElement('option')
+                            option.dataset.code = item.code
+                            option.value = item.name
+                            option.textContent = item.name
+    
+                            if(option.value == response.geoType) {
+                                console.log(okeeeee)
+                            }
+                            geoTypeInput.append(option)
+                        })
+                    }
+
+
+
                     // Populate the modal with the data from the response
                     $('#account_id').val(response.account_id);
                     $('#edit_account_fname').val(response.first_name);
@@ -774,5 +549,77 @@
         });
 
     });
+
+    function addAddressListener(formElement, formType, count = 0) {
+        let barangay = null
+        let city = null
+        let province = null
+    
+        if(formType === 'perp' || formType === 'victim') {
+            barangay = formElement.querySelector(`#${formType}-barangay_${count}`)
+            city = formElement.querySelector(`#${formType}-city_${count}`)
+            province = formElement.querySelector(`#${formType}-province_${count}`)
+        } else {
+            barangay = formElement.querySelector(`#${formType}_barangay`)
+            city = formElement.querySelector(`#${formType}_city`)
+            province = formElement.querySelector(`#${formType}_province`)
+        }
+    
+        city.addEventListener('change', (e) => {
+    
+            const cityId = e.target.options[e.target.selectedIndex].dataset.code
+            setGeoSelect(barangay, {
+                filter: cityId,
+                action: 'barangay',
+                csrfmiddlewaretoken: csrf_token,
+            })
+        })
+        province.addEventListener('change', (e) => {
+    
+            const provinceId = e.target.options[e.target.selectedIndex].dataset.code
+            setGeoSelect(city, {
+                filter: provinceId,
+                action: 'city',
+                csrfmiddlewaretoken: csrf_token,
+            })
+    
+        })
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        addAddressListener(document.querySelector('#addAccountForm'), 'account')
+        addAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
+    })
+    
+    
+    async function setGeoSelect(geoTypeInput, formData) {
+    
+        const res = await fetch('/pages/select-address/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify(formData),
+        })
+    
+        const data = await res.json()
+    
+        const blankOption = document.createElement('option')
+        blankOption.textContent = '--Select Option--'
+        // clear all options in select element
+        geoTypeInput.replaceChildren()
+    
+        // apend blank option as the first selected options
+        geoTypeInput.appendChild(blankOption)
+        // apped data to respective inputs
+        data.forEach(item => {
+            const option = document.createElement('option')
+            option.dataset.code = item.code
+            option.value = item.name
+            option.textContent = item.name
+            geoTypeInput.appendChild(option)
+        })
+    }
 </script>
 {% endblock scripts %}

@@ -233,7 +233,7 @@
 
             // Send AJAX request to resend OTP
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: '{% url "resend_otp" %}',
                 headers: { 'X-CSRFToken': '{{ csrf_token }}' }, // Include CSRF token in the headers
                 success: function(response) {

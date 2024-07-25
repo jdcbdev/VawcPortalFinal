@@ -20,8 +20,10 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('track_case/', views.track_case_view, name='track_case'),
     path('check_email_case/', views.check_email_case, name='check_email_case'),
+    path('check_phone_case/', views.check_phone_case, name='check_phone_case'),
     path('verify-otp-email-case/', views.verify_otp_email_track_case, name='verify_otp_email_track_case'),
-    path('track_case_info/<str:user_email>/<str:token>/', views.track_case_info_view, name='track_case_info'),
+    path('verify-otp-phone-case/', views.verify_otp_phone_track_case, name='verify_otp_phone_track_case'),
+    path('track_case_info/<str:contact_type>/<str:user_contact>/<str:token>/', views.track_case_info_view, name='track_case_info'),
     path('error_404/', views.error_view, name='error_view'),
     
     #anonymouse side
@@ -30,11 +32,15 @@ urlpatterns = [
     path('behalf-victim-survivor/', views.behalf_victim_view, name='behalf impact victim'),
     path('add-case/', views.add_case, name='add_case'),
     path('email-confrim/', views.email_confirm, name='email_confirm'),
+    path('phone-confirm/', views.phone_confirm, name='phone_confirm'),
     path('verify-otp-email/', views.verify_otp_email, name='verify_otp_email'),
+    path('verify-otp-phone/', views.verify_otp_phone, name='verify_otp_phone'),
     path('resend-otp-email/', views.resend_otp_email, name='resend_otp_email'),
+    path('resend-otp-phone/', views.resend_otp_phone, name='resend_otp_phone'),
 
     #super admin side
     path('admin-vawc/dashboard/', views.admin_dashboard_view, name='admin dashboard'),
+    path('admin-vawc/admin-dashboard-data', views.admin_dashboard_data, name='admin dashboard data'),
     path('admin-vawc/graph-report/', views.admin_graph_view, name='admin graph'),
     path('admin-vawc/manage/account/', views.admin_manage_account_view, name='admin account'),
     path('admin-vawc/manage/passkey/', views.admin_manage_passkey_view, name='admin passkey'),
@@ -99,7 +105,11 @@ urlpatterns = [
     #user
     path('custom_password_change/', views.custom_password_change_view, name='custom_password_change'),
 
-    path('encrypt_decrypt/', views.encrypt_decrypt, name='encrypt_decrypt')
+    path('encrypt_decrypt/', views.encrypt_decrypt, name='encrypt_decrypt'),
+
+
+    #misc
+    path('pages/select-address/', views.ph_address, name='ph_address')
 ]
 
 # Serve media files during development

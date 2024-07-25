@@ -1,129 +1,428 @@
 {% extends "../base/base_barangay.html" %}
 {% block title %}Home | Dashboard{% endblock %}
 {% load static %}
+{% block styles %}
+<link href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.bootstrap5.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/fixedheader/4.0.1/css/fixedHeader.bootstrap5.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.bootstrap5.min.css" rel="stylesheet">
+{% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <h1 class="pt-5">DASHBOARD BARANGAY: {{ barangay }}</h1>
-    <div class="col-lg-12 col-12">
-      <div class="row">
-        <div class="col-lg-4 col-6">
-          <div class="card">
-            <div class="card-body">
-              Total Cases: <span>{{ filtered_cases_count }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4 col-6">
-            <div class="card">
-                <div class="card-body">
-                  Total Impacted: <span>{{ impacted_count }}</span>
-                </div>
-              </div>
-        </div>
-        <div class="col-lg-4 col-6">
-            <div class="card">
-                <div class="card-body">
-                  Total Behalf: <span>{{ behalf_count }}</span>
-                </div>
-              </div>
-        </div>
-      </div>
-      <div class="row">
-        
-        <div class="col-lg-3 col-6">
-            <div class="card">
-                <div class="card-body">
-                  Active Cases: <span>{{ active_count }}</span>
-                </div>
-              </div>
-        </div>
-        <div class="col-lg-3 col-6">
-            <div class="card">
-                <div class="card-body">
-                  Close Cases: <span>{{ closed_count }}</span>
-                </div>
-              </div>
-        </div>
-        <div class="col-lg-3 col-6">
-          <div class="card">
-              <div class="card-body">
-                Total Crisis: <span>{{ crisis_count }}</span>
-              </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-6">
-          <div class="card">
-              <div class="card-body">
-                Total BPO: <span>{{ bpo_count }}</span>
-              </div>
-            </div>
-        </div>
-      </div><!--End of row-->
+    <div class="d-flex align-items-center mb-3">
+      <h1 class="pe-3 mb-0" style="border-right: 1px solid #dcdcdc;">Dashboard</h1>
+      <h2 class="ms-3 mb-0 fs-5 text-primary">{{ barangay }}</h2>
     </div>
-    <div class="row d-flex align-items-center pt-3">
-      <div class="col-lg-6 col-12">
-        <canvas id="myBarChart"></canvas>
+    
+    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 mb-4 align-items-stretch">
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>Reported Cases</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ filtered_cases_count }}</div>
+        </div>
       </div>
-      <div class="col-lg-6 col-12">
-          <canvas id="myPieChart"></canvas>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>Ongoing Cases</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ active_count }}</div>
+        </div>
       </div>
-    </div><!--End of row-->
-  
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>Resolved Cases</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ closed_count }}</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>w/ Criminal Cases</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ cases_w_criminal_cases }}</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100 d-flex justify-content-between">
+            <div>
+                <span>w/ PO</span>
+                
+            </div>
+            <div class="">
+                <div class="fw-bold fs-2 text-color-primary">BPO: {{ bpo_count }}</div>
+                <div class="fw-bold fs-2 text-warning">TPO: {{ tpo_count }}</div>
+                <div class="fw-bold fs-2 text-success">PPO: {{ ppo_count }}</div>
+            </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="border rounded p-2 shadow-sm h-100">
+          <span>Services Provided</span>
+          <div class="fw-bold fs-6 text-color-primary">{{ services_provided }}</div>
+        </div>
+      </div>
+
+    </div>
+
+
+    
+    <div class="row row-cols-1 row-cols-md-2 mb-4">
+      <div class="col mb-3">
+        <h2 class="fs-4 mb-3">No. of cases per RA</h2>
+        <canvas id="bar-cases-per-ra"></canvas>
+      </div>
+      <div class="col mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="fs-4">Cases by Month</h2>
+          <select class="form-select fs-1 w-auto" id="year-filter"> 
+                  </select>
+              </div>
+            <canvas id="bar-cases-by-month"></canvas>
+          </div>
+      </div>
+
+<!-- Cases Table -->
+<div class="row">
+  <div class="col-12">
+      <div class="row">
+          <div class="col-12 col-lg-auto d-flex align-items-center mb-2">Filter by</div>
+          <div class="col-6 col-md-2 mb-2">
+              <select id="filter-ra-select" class="form-select">
+                  <option value="">All RA</option>
+                  <option value="RA 9262">RA 9262</option>
+                  <option value="RA 8353">RA 8353</option>
+                  <option value="RA 7877">RA 7877</option>
+                  <option value="RA 7610">RA 7610</option>
+                  <option value="RA 9775">RA 9775</option>
+              </select>
+          </div>
+          <div class="col-6 col-md-2 mb-2">
+              <select id="gender-filter" class="form-select">
+                  <option value="">All sex</option>
+              </select>
+          </div>
+          <div class="col-6 col-md-2 mb-2">
+              <select id="age-filter" class="form-select">
+                  <option value="0-999">All Ages</option>
+                  <option value="0-12">0-12</option>
+                  <option value="13-17">13-17</option>
+                  <option value="18-999">18+</option>
+              </select>
+          </div>
+      </div>
+
+      <div class="pt-4 ">
+        <table class="table table-striped table-hover responsive nowrap" id="cases-table" style="width: 100%">
+          <thead class="">
+            <tr>
+              <th scope="col" class="all text-center">Case #</th>
+              <th scope="col" class="all">Victim</th>
+              <th scope="col" class="all">Vicitim Address</th>
+              <th scope="col" class="all">Perpetrator</th>
+              <th scope="col" class="all">Perpetrator Address</th>
+              <th scope="col" class="all">RA Violation</th>
+              <th scope="col" class="all">Victim Age</th>
+              <th scope="col" class="all">Victim Gender</th>
+              <th scope="col" class="none">Incident Address</th>
+              <th scope="col" class="none">Incident Date</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider" id="cases-table-content">
+          </tbody>
+          <tfoot>
+              <tr>
+                  <td>Total</td>
+                  <td id="table-total-victim"></td>
+                  <td></td>
+                  <td id="table-total-perpetrator"></td>
+                  <td></td>
+                  <td id="table-total-ra"></td>
+                  <td></td>
+                  <td id="table-total-gender"></td>
+                  <td></td>
+                  <td></td>
+              </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock content %}
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.0.8/b-3.0.2/b-html5-3.0.2/fh-4.0.1/r-3.0.2/sc-2.4.3/sp-2.3.1/datatables.min.js"></script>
+
 <script>
-  var ctx = document.getElementById('myPieChart').getContext('2d');
+$(document).ready(function() {
+  const current_year = new Date().getFullYear();
 
-  var myPieChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-          labels: ['Impacted', 'Behalf'],
-          datasets: [{
-              label: 'Reported',
-              data: [{{ impacted_count }}, {{ behalf_count }}], // Impacted and Behalf data
-              backgroundColor: [
-                  'rgba(255, 99, 132, 0.5)', // Red for Impacted
-                  'rgba(54, 162, 235, 0.5)', // Blue for Behalf
-              ],
-              borderWidth: 1
-          }]
-      },
-      options: {
-          responsive: true,
-          maintainAspectRatio: false,
-      }
-  });
-
-  var ctx = document.getElementById('myBarChart').getContext('2d');
-
-  var myBarChart = new Chart(ctx, {
+  // RA bar chart
+  var ctx = document.getElementById('bar-cases-per-ra').getContext('2d');
+  let barLabels = Object.keys(JSON.parse('{{ republic_acts|escapejs }}'))
+  let barData = Object.values(JSON.parse('{{ republic_acts|escapejs }}'))
+  var casePerRa = new Chart(ctx, {
       type: 'bar',
       data: {
-          labels: ['Victim (Minor)', 'Perpetrator (Minor)'],
+          labels: barLabels,
           datasets: [{
-            label: 'Number of Minor',
-              data: [{{ minor_victim_count }}, {{ minor_perp_count }}], // Data retrieved from the server
+              label: 'Cases',
+              data: barData,
               backgroundColor: [
-                  'rgba(63, 72, 222, 0.8)', // Red for Victim (Minor)
-                  'rgba(54, 162, 235, 0.5)', // Blue for Perpetrator (Minor)
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
               ],
               borderWidth: 1
           }]
       },
       options: {
-          responsive: true,
-          maintainAspectRatio: false,
+          indexAxis: 'y',
           scales: {
               y: {
                   beginAtZero: true
+              }
+          },
+          responsive: true,
+          plugins: {
+              legend: false,
+              tooltip: {
+                  callbacks: {
+                      label: function(tooltipItem) {
+                          return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                      }
+                  }
               }
           }
       }
   });
 
+  // Monthly cases line chart
+  var ctx = document.getElementById('bar-cases-by-month').getContext('2d');
+  const annualCases = JSON.parse('{{ annual_cases|escapejs }}')
+  const yearList = Object.entries(annualCases).map(([key, value]) => {
+      return key;
+  });
+  yearList.sort((a, b) => b - a);
+  let lineLabels = Object.keys(annualCases[`${current_year}`])
+  let lineData = Object.values(annualCases[`${current_year}`])
+  var casesByMonth = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels: lineLabels,
+          datasets: [{
+              label: 'Cases',
+              fill: true,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              data: lineData,
+              borderWidth: 1,
+              pointStyle: false
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          },
+          responsive: true,
+          plugins: {
+              legend: false,
+              tooltip: {
+                  callbacks: {
+                      label: function(tooltipItem) {
+                          return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                      }
+                  }
+              }
+          }
+      }
+  });
+  const yearFilter = document.querySelector('#year-filter')
+  yearList.forEach(year => {
+      yearFilter.innerHTML += `<option value=${year}>${year}</option>`
+  })
+  document.querySelector('#year-filter').addEventListener('change', (e) => {
+      const selected_year = e.target.value
+      yearList.forEach(year => {
+          if(selected_year == year) {
+              casesByMonth.config.data.labels = Object.keys(annualCases[year])
+              casesByMonth.config.data.datasets[0].data = Object.values(annualCases[year])
+              casesByMonth.config.data.datasets[0].label = 'City Total'
+              casesByMonth.update()
+          }
+      })
+  })
   
+  const caseTable = document.getElementById('cases-table-content');
+  let gender_types = []
+  const barangay_case_table = JSON.parse('{{barangay_case_list|escapejs}}')
+  const today = new Date()
 
+  console.log(barangay_case_table)
+
+  barangay_case_table.forEach(case_item => {
+    let victims = {
+        names: [],
+        addresses: [],
+        genders: [],
+        ages: [],
+    }
+    let perpetrators = {
+        names: [],
+        addresses: [],
+    }
+    let ra_violations = []
+    
+    if(case_item.data.checkbox_ra_8353) {
+        ra_violations.push('RA 8353')
+    }
+    if(case_item.data.checkbox_ra_9262) {
+        ra_violations.push('RA 9262')
+    }
+    if(case_item.data.checkbox_ra_7877) {
+        ra_violations.push('RA 7877')
+    }
+    if(case_item.data.checkbox_ra_9775) {
+        ra_violations.push('RA 9775')
+    }
+    if(case_item.data.checkbox_a_7610) {
+        ra_violations.push('RA 7610')
+    }
+    
+    case_item.victims.forEach((victim, index) => {
+
+        victims.names.push(`${victim.first_name} ${victim.middle_name} ${victim.last_name}`)
+        const birthDate = new Date(victim.date_of_birth);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDifference = today.getMonth() - birthDate.getMonth();
+        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if(!gender_types.includes(victim.sex)) {
+            gender_types.push(victim.sex)
+        }
+        victims.ages.push(age);
+        victims.addresses.push(`${victim.barangay}-${victim.city}-${victim.province}`)
+        victims.genders.push(victim.sex)
+    })
+    case_item.perpetrators.forEach((perpetrator, index) => {
+
+        perpetrators.names.push(`${perpetrator.first_name} ${perpetrator.middle_name} ${perpetrator.last_name}`)
+        perpetrators.addresses.push(`${perpetrator.barangay}-${perpetrator.city}-${perpetrator.province}`)
+        if(!gender_types.includes(perpetrator.sex)) {
+            gender_types.push(perpetrator.sex)
+        }
+    })
+
+    caseTable.innerHTML += `
+    <tr class="border-bottom border-2">
+        <td class="text-center">${case_item.data.case_number}</td>
+        <td>${victims.names}</td>
+        <td>${victims.addresses}</td>
+        <td>${perpetrators.names}</td>
+        <td>${perpetrators.addresses}</td>
+        <td>${ra_violations}</td>
+        <td>${victims.ages}</td>
+        <td>${victims.genders}</td> 
+        <td>${case_item.data.barangay}-${case_item.data.city}-${case_item.data.province}</td> 
+        <td>${case_item.data.date_latest_incident}</td> 
+    </tr>
+    `
+})
+
+
+
+  const casesTable = $('#cases-table').DataTable({
+    dom: '<"d-flex justify-content-between align-items-center flex-column flex-md-row gap-3"<f><B>>' + 'tr' + '<"d-flex justify-content-between pt-3 align-items-center flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
+    scrollX: true,
+    responsive: true,
+    fixedHeader: true,
+    lengthMenu: [5, 10, 25, 50],
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            title: 'VAWC Cases',
+            text: 'Excel',
+        },
+        {
+            extend: 'pdfHtml5',
+            title: 'VAWC Cases',
+            text: 'PDF',
+            orientation: 'landscape'
+        }
+    ],
+    layout: {
+        topStart: {
+            buttons: [
+                'copy', 'excel', 'pdf'
+            ]
+        }
+    },
+});
+
+casesTable.on('draw.dt', () => {
+
+    function countTotal(arr) {
+        counts = arr.map(data => {
+            if(data.length == 0) {
+                return 0
+            }
+            return data.split(',').length
+        })
+        return counts.reduce((accu, curr) => accu + curr, 0)
+    }
+
+    const victim_rows = casesTable.column(1, { filter: 'applied' }).data().toArray()
+    const perpetrator_rows = casesTable.column(3, { filter: 'applied' }).data().toArray()
+    const ra_rows = casesTable.column(5, { filter: 'applied' }).data().toArray()
+    const gender_rows = casesTable.column(7, { filter: 'applied' }).data().toArray()
+
+
+    $('#table-total-victim').text(countTotal(victim_rows))
+    $('#table-total-perpetrator').text(countTotal(perpetrator_rows))
+    $('#table-total-ra').text(countTotal(ra_rows))
+    $('#table-total-gender').text(countTotal(gender_rows))
+
+
+})
+casesTable.draw()
+
+$('select#filter-ra-select').on('change', function(e){
+    var search_term = $(this).val();
+    $('#cases-table').DataTable().columns([5]).search(search_term).draw();
+});
+$('select#gender-filter').on('change', function(e){
+    var search_term = $(this).val();
+    const regex = search_term ? `(?=.*${search_term})(?=.*\\b${search_term}\\b)` : ''
+    $('#cases-table').DataTable().columns([7]).search(regex, true, false).draw();
+});
+$('select#age-filter').on('change', function(e){
+    var search_term = $(this).val();
+    //$('#cases-table').DataTable().columns([5]).search(search_term).draw();
+    var range = document.querySelector('select#age-filter').value.split('-')
+    var min = parseInt(range[0]);
+    var max = parseInt(range[1]);
+
+    casesTable.column(6).search(function(value, index, rowData, node) {
+        var age = parseFloat(value) || 0;
+        return (age >= min && age <= max);
+    }).draw();
+});
+
+});
 </script>
+
+
 {% endblock scripts %}

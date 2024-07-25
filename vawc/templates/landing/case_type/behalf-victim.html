@@ -2,349 +2,671 @@
 {% block title %}Behalf of Victim{% endblock %}
 {% load static %}
 {% block content %}
-<div class="container overflow-hidden py-4">
-    <!--multisteps-form-->
-    <div class="multisteps-form">
-      <!--progress bar-->
-      <div class="row d-flex justify-content-center">
-        <div class="col-12 col-lg-8 ml-auto mr-auto mb-4">
-          <div class="multisteps-form__progress">
-            <button class="multisteps-form__progress-btn js-active" type="button" title="Victim-Survivor Info">Victim-Survivor Info</button>
-            <button class="multisteps-form__progress-btn" type="button" title="Perpetrator Information" disabled>Perpetrator Information</button>
-            <button class="multisteps-form__progress-btn" type="button" title="Incident Information" disabled>Incident Information</button>
-            <button class="multisteps-form__progress-btn" type="button" title="Contact Person Information" disabled>Contact Person Information</button>
-            <button class="multisteps-form__progress-btn" type="button" title="Service Information" disabled>Service Information</button>
-          </div>
-        </div>
-      </div>
-      <!--form panels-->
-      <div class="row py-3">
-        <div class="col-12 col-lg-12">
-          <form class="multisteps-form__form" id="impact-victim-form" method="POST" action="{% url 'add_case' %}" enctype="multipart/form-data">
-            {% csrf_token %}
-                <input type="hidden" name="type_of_case" value="Behalf">
-                <input type="hidden" id="victim_count" name="victim_count" value="1">
-                <input type="hidden" id="perpetrator_count" name="perpetrator_count" value="1">
-                <input type="hidden" id="email-confirmed" name="email-confirmed">
-                <!--single form panel-->
-                <div class="multisteps-form__panel shadow p-4 rounded bg-white js-active" data-animation="slideHorz">
-                    <div class="multisteps-form__content">
-                        <h1 class="text-center pt-3"><strong>Victim-Survivor Information</strong></h1>
-                        <div class="container-fluid scroll overflow-auto" style="max-height: 500px;">
-                            <div class="individual-form" id="victim-form_0">
-                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-1 border-bottom border-3"></div>
-                                <div class="row"><!--First Row-->
-                                    <div class="col-lg-11 col-6">
-                                        <h5 class="user_counter" id="victim_counter">Victim 1 <span></span></h5>
-                                    </div>
-                                    <div class="col-lg-1 col-6">
-                                        <a href="#" class="delete-individual-form btn btn-danger d-flex align-items-center justify-content-center">Delete</a>
-                                    </div>
-
-                                    <h5 class="pt-1"><strong>Name:</strong></h5>
-
-                                    <div class="col-lg-3 col-md-6 col-sm-12 pb-2"> <!--Firstname-->
-                                    <label for="victim-firstname_0" class="form-label">First name: </label>
-                                    <input type="text" class="form-control" id="victim-firstname_0" name="victim-firstname_0">
-                                    <div class="invalid-feedback victim-firstname_0" >
-
-                                    </div>
-                                    </div>
-
-                                    <div class="col-lg-3 col-md-6 col-sm-12 pb-2"> <!--middlename-->
-                                    <label for="victim-middlename_0" class="form-label">Middle name: </label>
-                                    <input type="text" class="form-control" id="victim-middlename_0" name="victim-middlename_0">
-                                    <div class="invalid-feedback victim-middlename_0" >
-
-                                    </div>
-                                    </div>
-
-                                    <div class="col-lg-3 col-md-6 col-sm-12 pb-2"> <!--lastname-->
-                                    <label for="victim-lastname_0" class="form-label">Last name: </label>
-                                    <input type="text" class="form-control" id="victim-lastname_0" name="victim-lastname_0">
-                                    <div class="invalid-feedback victim-lastname_0" >
-
-                                    </div>
-                                    </div>
-
-                                    <div class="col-lg-3 col-md-6 col-sm-12 pb-2"> <!--suffix-->
-                                    <label for="victim-Suffix_0" class="form-label">Suffix: </label>
-                                    <select id="victim-Suffix_0" name="victim-Suffix_0" class="form-select">
-                                        <option value="none">N/A</option>
-                                        <option value="sr">Sr</option>
-                                        <option value="jr">Jr</option>
-                                        <option value="ii">II</option>
-                                        <option value="iii">III</option>
-                                        <option value="iv">IV</option>
-                                    </select>
-                                    </div>
-                                </div><!--End of First row-->
-
-                                <div class="row pt-3"><!--Start of second row-->
-                                    <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                    <label for="victim-sex_0" class="form-label">Sex: </label>
-                                        <select id="victim-sex_0" name="victim-sex_0" class="form-select">
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-lg-4 col-md-4 col-sm-12 mt-2 pb-3">
-                                        <label for="victim-date-of-birth_0">Date of Birth: </label>
-                                        <input type="date" class="form-control" id="victim-date-of-birth_0" name="victim-date-of-birth_0" value="2024-03-01">
-                                    </div>
-
-                                    <div class="col-lg-4 col-md-4 col-sm-12">
-                                        <label for="victim-civilstatus_0" class="form-label">Civil Status: </label>
-                                        <select id="victim-civilstatus_0" name="victim-civilstatus_0"  class="form-select">
-                                            <option value="single">Single</option>
-                                            <option value="married">Married</option>
-                                            <option value="live-in">Live-In</option>
-                                            <option value="widowed">Widowed</option>
-                                            <option value="separated">Separated</option>
-                                        </select>
-                                    </div>
-
-                                </div><!--End of second row-->
-
-                                <div class="row pt-3 pb-3"><!--Start of third row-->
-                                    <div class="col-lg-6 col-md-4 col-12 pb-2">
-                                        <label for="victim-nationality_0" class="form-label">Nationality: </label>
-                                        <select class="form-select" id="victim-nationality_0" name="victim-nationality_0">
-                                            <option value="Filipino" selected>Filipino</option>
-                                            <option value="Aeta">Aeta</option>
-                                            <option value="Agta">Agta</option>
-                                            <option value="Bicolano">Bicolano</option>
-                                            <option value="Bisaya">Bisaya</option>
-                                            <option value="Ilokano">Ilokano</option>
-                                            <option value="Igorot">Igorot</option>
-                                            <option value="Ilonggo">Ilonggo</option>
-                                            <option value="Kapampangan">Kapampangan</option>
-                                            <option value="Mangyan">Mangyan</option>
-                                            <option value="Moros">Moros</option>
-                                            <option value="Pangasinense">Pangasinense</option>
-                                            <option value="Tagalog">Tagalog</option>
-                                            <option value="Waray">Waray</option>
-                                            <!-- Add more options for other nationalities in the Philippines -->
-                                        </select>
-                                    </div>
-
-                                    <div class="col-lg-6 col-md-8 col-12">
-                                        <label for="victim-region_0" class="form-label">Region: </label>
-                                        <select id="victim-region_0" name="victim-region_0" class="form-select">
-                                            <option value="region-I">Region I – Ilocos Region</option>
-                                            <option value="region-II">Region II – Cagayan Valley</option>
-                                            <option value="region-III">Region III – Central Luzon</option>
-                                            <option value="region-IV">Region IV‑A – CALABARZON</option>
-                                            <option value="mimaropa">MIMAROPA Region</option>
-                                            <option value="region-V">Region V – Bicol Region</option>
-                                            <option value="region-VI">Region VI – Western Visayas</option>
-                                            <option value="region-VII">Region VII – Central Visayas</option>
-                                            <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                                            <option value="region-IX" selected>Region IX – Zamboanga Peninsula</option>
-                                            <option value="region-X">Region X – Northern Mindanao</option>
-                                            <option value="region-XI">Region XI – Davao Region</option>
-                                            <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                                            <option value="region-XIII">Region XIII – Caraga</option>
-                                            <option value="ncr">NCR – National Capital Region</option>
-                                            <option value="car">CAR – Cordillera Administrative Region</option>
-                                            <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
-                                        </select>
-                                    </div><!--end of row-->
-                                </div><!--End of third row-->
-
-                                <div class="row pb-lg-0 pb-0"><!--Start of fourth row-->
-                                    <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                        <label for="victim-province_0" class="form-label">Province: </label>
-                                        <select id="victim-province_0" name="victim-province_0" class="form-select">
-                                            <option value="Zamboanga Del Sur" selected>Zamboanga Del Sur</option>
-                                            <option value="Zamboanga Del Norte">Zamboanga Del Norte</option>
-                                        </select>
-                                    </div><!--end of col-->
-                                    <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                        <label for="victim-city_0" class="form-label">City / Mun: </label>
-                                        <select id="victim-city_0" name="victim-city_0" class="form-select">
-                                            <option value="Zamboanga City" selected>Zamboanga City</option>
-                                            <option value="Pagadian City">Pagadian City</option>
-                                        </select>
-                                    </div><!--emd of col-->
-                                    <div class="col-lg-4 col-md-4 col-sm-12">
-                                        <label for="victim-barangay_0" class="form-label">Barangay: </label>
-                                        <select id="victim-barangay_0" name="victim-barangay_0" class="form-select">
-                                            <option value="Aplaya" selected>Aplaya</option>
-                                            <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
-                                            <option value="Ayala">Ayala</option>
-                                            <option value="Bagong Calarian">Bagong Calarian</option>
-                                            <option value="Baluno">Baluno</option>
-                                            <option value="Boalan">Boalan</option>
-                                            <option value="Bolong">Bolong</option>
-                                            <option value="Buenavista">Buenavista</option>
-                                            <option value="Bunguiao">Bunguiao</option>
-                                            <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
-                                            <option value="Cabaluay">Cabaluay</option>
-                                            <option value="Cabatangan">Cabatangan</option>
-                                            <option value="Cacao">Cacao</option>
-                                            <option value="Calabasa">Calabasa</option>
-                                            <option value="Calarian">Calarian</option>
-                                            <option value="Camino Nuevo">Camino Nuevo</option>
-                                            <option value="Campo Islam">Campo Islam</option>
-                                            <option value="Canelar">Canelar</option>
-                                            <option value="Capisan">Capisan</option>
-                                            <option value="Cawit">Cawit</option>
-                                            <option value="Culianan">Culianan</option>
-                                            <option value="Curuan">Curuan</option>
-                                            <option value="Dita">Dita</option>
-                                            <option value="Divisoria">Divisoria</option>
-                                            <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
-                                            <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
-                                            <option value="Guisao">Guisao</option>
-                                            <option value="Guiwan">Guiwan</option>
-                                            <option value="Kasanyangan">Kasanyangan</option>
-                                            <option value="La Paz">La Paz</option>
-                                            <option value="Labuan">Labuan</option>
-                                            <option value="Lamisahan">Lamisahan</option>
-                                            <option value="Landang Gua">Landang Gua</option>
-                                            <option value="Landang Laum">Landang Laum</option>
-                                            <option value="Lanzones">Lanzones</option>
-                                            <option value="Lapakan">Lapakan</option>
-                                            <option value="Lapuyan">Lapuyan</option>
-                                            <option value="Latuan Curuan">Latuan Curuan</option>
-                                            <option value="Licomo">Licomo</option>
-                                            <option value="Limaong">Limaong</option>
-                                            <option value="Limpapa">Limpapa</option>
-                                            <option value="Luba">Luba</option>
-                                            <option value="Lumayang">Lumayang</option>
-                                            <option value="Lunzuran">Lunzuran</option>
-                                            <option value="Maasin">Maasin</option>
-                                            <option value="Malagutay">Malagutay</option>
-                                            <option value="Mampang">Mampang</option>
-                                            <option value="Manalipa">Manalipa</option>
-                                            <option value="Mangusu">Mangusu</option>
-                                            <option value="Manicahan">Manicahan</option>
-                                            <option value="Mariki">Mariki</option>
-                                            <option value="Mercedes">Mercedes</option>
-                                            <option value="Mutong">Mutong</option>
-                                            <option value="Pamucutan">Pamucutan</option>
-                                            <option value="Panubigan">Panubigan</option>
-                                            <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
-                                            <option value="Pasobolong">Pasobolong</option>
-                                            <option value="Pasonanca">Pasonanca</option>
-                                            <option value="Patalon">Patalon</option>
-                                            <option value="Putsan">Putsan</option>
-                                            <option value="Quiniput">Quiniput</option>
-                                            <option value="Recodo">Recodo</option>
-                                            <option value="Rio Hondo">Rio Hondo</option>
-                                            <option value="Salaan">Salaan</option>
-                                            <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
-                                            <option value="San Jose Gusu">San Jose Gusu</option>
-                                            <option value="San Ramon">San Ramon</option>
-                                            <option value="San Roque">San Roque</option>
-                                            <option value="Sangali">Sangali</option>
-                                            <option value="Santa Barbara">Santa Barbara</option>
-                                            <option value="Santa Catalina">Santa Catalina</option>
-                                            <option value="Santa Maria">Santa Maria</option>
-                                            <option value="Santa Roza">Santa Roza</option>
-                                            <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
-                                            <option value="Sinubong">Sinubong</option>
-                                            <option value="Sinunuc">Sinunuc</option>
-                                            <option value="Sta. Cruz">Sta. Cruz</option>
-                                            <option value="Sta. Maria">Sta. Maria</option>
-                                            <option value="Sta. Catalina">Sta. Catalina</option>
-                                            <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
-                                            <option value="Sta. Maria">Sta. Maria</option>
-                                            <option value="Sto. Niño" selected>Sto. Niño</option>
-                                            <option value="Tagasilay">Tagasilay</option>
-                                            <option value="Taguiti">Taguiti</option>
-                                            <option value="Talabaan">Talabaan</option>
-                                            <option value="Talisayan">Talisayan</option>
-                                            <option value="Talon-Talon">Talon-Talon</option>
-                                            <option value="Taluksangay">Taluksangay</option>
-                                            <option value="Talungon">Talungon</option>
-                                            <option value="Tetuan">Tetuan</option>
-                                            <option value="Tictapul">Tictapul</option>
-                                            <option value="Tigbalabag">Tigbalabag</option>
-                                            <option value="Tigtabon">Tigtabon</option>
-                                            <option value="Tolosa">Tolosa</option>
-                                            <option value="Tugbungan">Tugbungan</option>
-                                            <option value="Tulungatung">Tulungatung</option>
-                                            <option value="Tumaga">Tumaga</option>
-                                            <option value="Tumalutab">Tumalutab</option>
-                                            <option value="Tumitus">Tumitus</option>
-                                            <option value="Victoria">Victoria</option>
-                                            <option value="Vitali">Vitali</option>
-                                            <option value="Zambowood">Zambowood</option>
-                                        </select>
-                                    </div><!--End of col-->
-                                </div><!--end of fourth row-->
-
-                                <div class="row pt-3 pb-3"><!--Start of fifth row-->
-                                    
-                                    <div class="col-lg-2 col-md-4 col-sm-12 pb-2">
-                                        <label for="victim-street_0" class="form-label">Street: </label>
-                                        <input type="text" class="form-control" id="victim-street_0" name="victim-street_0">
-                                        <div class="invalid-feedback victim-street_0" >
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-10 col-md-8 col-sm-12 pb-2">
-                                        <label for="victim-house-info_0" class="form-label">Address:</label>
-                                        <input type="text" class="form-control" name="victim-house-info_0" id="victim-house-info_0">
-                                        <div class="invalid-feedback victim-house-info_0" >
-
-                                        </div>
-                                    </div>
-                                </div><!--end of fifth row-->
-                            </div> <!--end of victim form-->
-                        </div>
-                        <div class="row pt-3">
-                            <div class="col">
-                                <button class="btn btn-primary w-100" id="add-victim-form"><i class='bx bx-plus-circle'></i> Add Victim</button>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end mt-4">
-                        <button class="btn btn-primary ml-auto next-perpetrator-button js-btn-next" type="button" title="Next" disabled>Next</button>
-                        </div>
+<div class="container-fluid py-4">
+    <div class="row"> 
+        <!--multisteps-form-->
+        <div class="multisteps-form col-md-10 p-4 mx-auto">
+            <!--progress bar-->
+            <div class="row d-flex justify-content-center">
+                <div class="col-12 col-lg-8 mx-auto my-1 my-md-4 mb-md-5">
+                    <div class="multisteps-form__progress">
+                        <button class="multisteps-form__progress-btn js-active" type="button" title="Victim-Survivor Info">Victim</button>
+                        <button class="multisteps-form__progress-btn" type="button" title="Perpetrator Information" disabled>Perpetrator</button>
+                        <button class="multisteps-form__progress-btn" type="button" title="Incident Information" disabled>Incident</button>
+                        <button class="multisteps-form__progress-btn" type="button" title="Contact Person Information" disabled>Contact Person</button>
+                        <button class="multisteps-form__progress-btn" type="button" title="Service Information" disabled>Service</button>
                     </div>
                 </div>
-                <!--single form panel-->
-                <div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="slideHorz">
-                    <div class="multisteps-form__content">
-                        <h1 class="text-center pt-3"><strong>Perpetrator Information</strong></h1>
-                        <div class="container-fluid scroll overflow-auto" style="max-height: 500px;">
-                            <div class="individual-form" id="perpetrator-form_0">
-                                <div class="row"><!--First Row-->
-                                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-1 border-bottom border-3"></div>
-                                    <div class="col-lg-11 col-6">
-                                        <h5 class="user_counter" id="perpetrator_counter">Perpetrator 1<span></span></h5>
-                                    </div>
-                                    <div class="col-lg-1 col-6">
-                                        <a href="#" class="delete-individual-form btn btn-danger d-flex align-items-center justify-content-center">Delete</a>
-                                    </div>
-                                    <h5 class="pt-3"><strong>Name:</strong></h5>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-12 pb-2"> <!--Firstname-->
-                                        <label for="perp-firstname_0" class="form-label">First name: </label>
-                                        <input type="text" class="form-control" id="perp-firstname_0" name="perp-firstname_0">
-                                        <div class="invalid-feedback perp-firstname_0" >
+            </div>
+            {% comment %} <div class="row d-flex justify-content-center">
+                <div class="col-12 col-lg-8 ml-auto mr-auto mb-4">
+                <div class="multisteps-form__progress">
+                    <button class="multisteps-form__progress-btn js-active" type="button" title="Victim-Survivor Info">Victim-Survivor Info</button>
+                    <button class="multisteps-form__progress-btn" type="button" title="Perpetrator Information" disabled>Perpetrator Information</button>
+                    <button class="multisteps-form__progress-btn" type="button" title="Incident Information" disabled>Incident Information</button>
+                    <button class="multisteps-form__progress-btn" type="button" title="Contact Person Information" disabled>Contact Person Information</button>
+                    <button class="multisteps-form__progress-btn" type="button" title="Service Information" disabled>Service Information</button>
+                </div>
+                </div>
+            </div> {% endcomment %}
+    
+            <!--form panels-->
+            <div class="row">
+                <div class="">
+                    <form class="multisteps-form__form" id="impact-victim-form" method="POST" action="{% url 'add_case' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <input type="hidden" name="type_of_case" value="Behalf">
+                        <input type="hidden" id="victim_count" name="victim_count" value="1">
+                        <input type="hidden" id="perpetrator_count" name="perpetrator_count" value="1">
+                        <input type="hidden" id="email-confirmed" name="email-confirmed">
+                        <input type="hidden" id="phone-confirmed" name="phone-confirmed">
+                        <!--single form panel--> <!--victim-->
+                        <div class="multisteps-form__panel js-active" data-animation="slideVert">
 
+                            <h2 class="text-center mb-4 mb-md-5"><strong>Victim Information</strong></h2>
+
+                            <!--victims navigation tabs-->
+                            <div class="col-md-11 mx-auto mb-2 d-flex flex-nowrap gap-2 overflow-auto nav nav-pills" id="victim-navtabs-container">
+                                <div class="border rounded p-2 text-nowrap nav-link active d-flex align-items-center" data-toggle="tab" data-target="#victim-form_0">
+                                    <i class="fa-solid fa-user me-1"></i>
+                                    <span class="tab-name">
+                                        Victim
+                                    </span>
+                                </div>
+                                <button class="btn btn-outline-primary text-nowrap" id="add-victim-form" title="Add a new form"><i class="fa-solid fa-plus px-1"></i></button>
+                            </div>
+                            <div class="multisteps-form__content col-12 col-md-11 border rounded p-4 mx-auto">
+                                
+                                <div class="tab-content">
+                                    <!--victim form-->
+                                    <div class="tab-pane fade show active individual-form victim-form" id="victim-form_0">
+                                        <div class="row">
+                                            <div class="col-12 d-flex align-items-center mb-3">
+                                                <h4 class="user_counter fw-bold border rounded py-1 px-3 text-muted " id="victim_counter">
+                                                    1
+                                                </h4>
+                                                <button class="delete-individual-form btn btn-outline-danger ms-auto" type="button" title="Delete this form">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </div>
+                                            
+                                            <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
+                                                <h3 class="fs-5 mb-3">Personal Information</h3>
+                                                <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--firstname-->
+                                                <label for="victim-firstname_0" class="form-label">First Name <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="victim-firstname_0" name="victim-firstname_0">
+                                                <div class="invalid-feedback victim-firstname_0" ></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--middlename-->
+                                                <label for="victim-middlename_0" class="form-label">Middle</label>
+                                                <input type="text" class="form-control" id="victim-middlename_0" name="victim-middlename_0">
+                                                <div class="invalid-feedback victim-middlename_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--lastname-->
+                                                <label for="victim-lastname_0" class="form-label">Last Name <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp victim-lastname" id="victim-lastname_0" name="victim-lastname_0">
+                                                <div class="invalid-feedback victim-lastname_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--suffix-->
+                                                <label for="victim-Suffix_0" class="form-label">Suffix</label>
+                                                <select id="victim-Suffix_0" name="victim-Suffix_0" class="form-select">
+                                                    <option value="none">N/A</option>
+                                                    <option value="sr">Sr</option>
+                                                    <option value="jr">Jr</option>
+                                                    <option value="ii">II</option>
+                                                    <option value="iii">III</option>
+                                                    <option value="iv">IV</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--gender-->
+                                                <label for="victim-sex_0" class="form-label">Gender </label>
+                                                <select id="victim-sex_0" name="victim-sex_0" class="form-select req-inp gender-input">
+                                                    <option value="">--Select Option--</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="rather_not_say">Rather not say</option>
+                                                    <option>Custom</option>
+                                                </select>
+                                                <div class="invalid-feedback victim-sex_0"></div>
+                                                <input type="text" class="form-control mt-2 custom-gender" placeholder="Specify" style="display: none;">
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--date of birth-->
+                                                <label for="victim-date-of-birth_0" class="form-label">Date of Birth <span class="required"></span></label>
+                                                <input type="date" class="form-control req-inp" id="victim-date-of-birth_0" name="victim-date-of-birth_0" value="">
+                                                <div class="invalid-feedback victim-date-of-birth_0"></div>
+                                                {% comment %} <input type="date" class="form-control" id="victim-date-of-birth_0" name="victim-date-of-birth_0" value="2024-03-01"> {% endcomment %}
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--civil status-->
+                                                <label for="victim-civilstatus_0" class="form-label">Civil Status</label>
+                                                <select id="victim-civilstatus_0" name="victim-civilstatus_0"  class="form-select">
+                                                    <option value="single">Single</option>
+                                                    <option value="married">Married</option>
+                                                    <option value="live-in">Live-In</option>
+                                                    <option value="widowed">Widowed</option>
+                                                    <option value="separated">Separated</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--nationality-->
+                                                <label for="victim-nationality_0" class="form-label">Nationality</label>
+                                                <select class="form-select" id="victim-nationality_0" name="victim-nationality_0">
+                                                    <option value="Filipino" selected>Filipino</option>
+                                                    <option value="Aeta">Aeta</option>
+                                                    <option value="Agta">Agta</option>
+                                                    <option value="Bicolano">Bicolano</option>
+                                                    <option value="Bisaya">Bisaya</option>
+                                                    <option value="Ilokano">Ilokano</option>
+                                                    <option value="Igorot">Igorot</option>
+                                                    <option value="Ilonggo">Ilonggo</option>
+                                                    <option value="Kapampangan">Kapampangan</option>
+                                                    <option value="Mangyan">Mangyan</option>
+                                                    <option value="Moros">Moros</option>
+                                                    <option value="Pangasinense">Pangasinense</option>
+                                                    <option value="Tagalog">Tagalog</option>
+                                                    <option value="Waray">Waray</option>
+                                                    <!-- Add more options for other nationalities in the Philippines -->
+                                                </select>
+                                            </div>
+    
+                                            <h3 class="fs-5 col-12 my-3">Local Address</h3>
+                                            <div class="col-sm-6 mb-3"> <!--region-->
+                                                <label for="victim-region_0" class="form-label">Region</label>
+                                                <select id="victim-region_0" name="victim-region_0" class="form-select req-inp" disabled>
+                                                    {% for region in default_regions %}
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback victim-region_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--province-->
+                                                <label for="victim-province_0" class="form-label">Province <span class="required"></span></label>
+                                                <select id="victim-province_0" name="victim-province_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for province in default_provinces %}
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback victim-province_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--city-->
+                                                <label for="victim-city_0" class="form-label">City/Municipality <span class="required"></span></label>
+                                                <select id="victim-city_0" name="victim-city_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for city in default_cities %}
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback victim-city_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--barangay-->
+                                                <label for="victim-barangay_0" class="form-label">Barangay <span class="required"></span></label>
+                                                <select id="victim-barangay_0" name="victim-barangay_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for barangay in default_barangays %}
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback victim-barangay_0"></div>
+                                                {% comment %} <select id="victim-barangay_0" name="victim-barangay_0" class="form-select">
+                                                    <option value="Aplaya" selected>Aplaya</option>
+                                                    <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
+                                                    <option value="Ayala">Ayala</option>
+                                                    <option value="Bagong Calarian">Bagong Calarian</option>
+                                                    <option value="Baluno">Baluno</option>
+                                                    <option value="Boalan">Boalan</option>
+                                                    <option value="Bolong">Bolong</option>
+                                                    <option value="Buenavista">Buenavista</option>
+                                                    <option value="Bunguiao">Bunguiao</option>
+                                                    <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
+                                                    <option value="Cabaluay">Cabaluay</option>
+                                                    <option value="Cabatangan">Cabatangan</option>
+                                                    <option value="Cacao">Cacao</option>
+                                                    <option value="Calabasa">Calabasa</option>
+                                                    <option value="Calarian">Calarian</option>
+                                                    <option value="Camino Nuevo">Camino Nuevo</option>
+                                                    <option value="Campo Islam">Campo Islam</option>
+                                                    <option value="Canelar">Canelar</option>
+                                                    <option value="Capisan">Capisan</option>
+                                                    <option value="Cawit">Cawit</option>
+                                                    <option value="Culianan">Culianan</option>
+                                                    <option value="Curuan">Curuan</option>
+                                                    <option value="Dita">Dita</option>
+                                                    <option value="Divisoria">Divisoria</option>
+                                                    <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
+                                                    <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
+                                                    <option value="Guisao">Guisao</option>
+                                                    <option value="Guiwan">Guiwan</option>
+                                                    <option value="Kasanyangan">Kasanyangan</option>
+                                                    <option value="La Paz">La Paz</option>
+                                                    <option value="Labuan">Labuan</option>
+                                                    <option value="Lamisahan">Lamisahan</option>
+                                                    <option value="Landang Gua">Landang Gua</option>
+                                                    <option value="Landang Laum">Landang Laum</option>
+                                                    <option value="Lanzones">Lanzones</option>
+                                                    <option value="Lapakan">Lapakan</option>
+                                                    <option value="Lapuyan">Lapuyan</option>
+                                                    <option value="Latuan Curuan">Latuan Curuan</option>
+                                                    <option value="Licomo">Licomo</option>
+                                                    <option value="Limaong">Limaong</option>
+                                                    <option value="Limpapa">Limpapa</option>
+                                                    <option value="Luba">Luba</option>
+                                                    <option value="Lumayang">Lumayang</option>
+                                                    <option value="Lunzuran">Lunzuran</option>
+                                                    <option value="Maasin">Maasin</option>
+                                                    <option value="Malagutay">Malagutay</option>
+                                                    <option value="Mampang">Mampang</option>
+                                                    <option value="Manalipa">Manalipa</option>
+                                                    <option value="Mangusu">Mangusu</option>
+                                                    <option value="Manicahan">Manicahan</option>
+                                                    <option value="Mariki">Mariki</option>
+                                                    <option value="Mercedes">Mercedes</option>
+                                                    <option value="Mutong">Mutong</option>
+                                                    <option value="Pamucutan">Pamucutan</option>
+                                                    <option value="Panubigan">Panubigan</option>
+                                                    <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
+                                                    <option value="Pasobolong">Pasobolong</option>
+                                                    <option value="Pasonanca">Pasonanca</option>
+                                                    <option value="Patalon">Patalon</option>
+                                                    <option value="Putsan">Putsan</option>
+                                                    <option value="Quiniput">Quiniput</option>
+                                                    <option value="Recodo">Recodo</option>
+                                                    <option value="Rio Hondo">Rio Hondo</option>
+                                                    <option value="Salaan">Salaan</option>
+                                                    <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
+                                                    <option value="San Jose Gusu">San Jose Gusu</option>
+                                                    <option value="San Ramon">San Ramon</option>
+                                                    <option value="San Roque">San Roque</option>
+                                                    <option value="Sangali">Sangali</option>
+                                                    <option value="Santa Barbara">Santa Barbara</option>
+                                                    <option value="Santa Catalina">Santa Catalina</option>
+                                                    <option value="Santa Maria">Santa Maria</option>
+                                                    <option value="Santa Roza">Santa Roza</option>
+                                                    <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
+                                                    <option value="Sinubong">Sinubong</option>
+                                                    <option value="Sinunuc">Sinunuc</option>
+                                                    <option value="Sta. Cruz">Sta. Cruz</option>
+                                                    <option value="Sta. Maria">Sta. Maria</option>
+                                                    <option value="Sta. Catalina">Sta. Catalina</option>
+                                                    <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
+                                                    <option value="Sta. Maria">Sta. Maria</option>
+                                                    <option value="Sto. Niño" selected>Sto. Niño</option>
+                                                    <option value="Tagasilay">Tagasilay</option>
+                                                    <option value="Taguiti">Taguiti</option>
+                                                    <option value="Talabaan">Talabaan</option>
+                                                    <option value="Talisayan">Talisayan</option>
+                                                    <option value="Talon-Talon">Talon-Talon</option>
+                                                    <option value="Taluksangay">Taluksangay</option>
+                                                    <option value="Talungon">Talungon</option>
+                                                    <option value="Tetuan">Tetuan</option>
+                                                    <option value="Tictapul">Tictapul</option>
+                                                    <option value="Tigbalabag">Tigbalabag</option>
+                                                    <option value="Tigtabon">Tigtabon</option>
+                                                    <option value="Tolosa">Tolosa</option>
+                                                    <option value="Tugbungan">Tugbungan</option>
+                                                    <option value="Tulungatung">Tulungatung</option>
+                                                    <option value="Tumaga">Tumaga</option>
+                                                    <option value="Tumalutab">Tumalutab</option>
+                                                    <option value="Tumitus">Tumitus</option>
+                                                    <option value="Victoria">Victoria</option>
+                                                    <option value="Vitali">Vitali</option>
+                                                    <option value="Zambowood">Zambowood</option>
+                                                </select> {% endcomment %}
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--street-->
+                                                <label for="victim-street_0" class="form-label">Street <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="victim-street_0" name="victim-street_0">
+                                                <div class="invalid-feedback victim-street_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--addresss-->
+                                                <label for="victim-house-info_0" class="form-label">Address <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" name="victim-house-info_0" id="victim-house-info_0">
+                                                <div class="invalid-feedback victim-house-info_0"></div>
+                                            </div>
+                                        </div>
+                                    </div><!--end of victim form-->
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button class="btn btn-primary ml-auto next-perpetrator-button js-btn-next" type="button" title="Next">Next</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!--single form panel--><!--perpetrator-->
+                        <div class="multisteps-form__panel" data-animation="slideVert">
+
+                            <h2 class="text-center mb-4 mb-md-5"><strong>Perpetrator Information</strong></h2>
+
+                            <!--perpetrators navigation tabs-->
+                            <div class="col-md-11 mx-auto mb-2 d-flex flex-nowrap gap-2 overflow-auto nav nav-pills" id="perpetrator-navtabs-container">
+                                <div class="border rounded p-2 text-nowrap nav-link active d-flex align-items-center" data-toggle="tab" data-target="#perpetrator-form_0">
+                                    <i class="fa-solid fa-user me-1"></i>
+                                    <span class="tab-name">
+                                        Perpetrator
+                                    </span>
+                                </div>
+                                <button class="btn btn-outline-primary text-nowrap" id="add-perpetrator-form" title="Add a new form"><i class="fa-solid fa-plus px-1"></i></button>
+                            </div>
+                            <div class="multisteps-form__content col-12 col-md-11 border rounded p-4 mx-auto">
+
+                                <div class="tab-content">
+                                    <!--perpetrator form-->
+                                    <div class="tab-pane fade show active individual-form perpetrator-form" id="perpetrator-form_0">
+                                        <div class="row">
+                                            <div class="col-12 d-flex align-items-center mb-3">
+                                                <h4 class="user_counter fw-bold border rounded py-1 px-3 text-muted " id="perpetrator_counter">
+                                                    1
+                                                </h4>
+                                                <button class="delete-individual-form btn btn-outline-danger ms-auto" type="button" title="Delete this form">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
+                                                <h3 class="fs-5 mb-3">Personal Information</h3>
+                                                <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--Firstname-->
+                                                <label for="perp-firstname_0" class="form-label">First name <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-firstname_0" name="perp-firstname_0">
+                                                <div class="invalid-feedback perp-firstname_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--middlename-->
+                                                <label for="perp-middlename_0" class="form-label">Middle name</label>
+                                                <input type="text" class="form-control" id="perp-middlename_0" name="perp-middlename_0">
+                                                <div class="invalid-feedback perp-middlename_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--lastname-->
+                                                <label for="perp-lastname_0" class="form-label ">Last name <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp perpetrator-lastname" id="perp-lastname_0" name="perp-lastname_0">
+                                                <div class="invalid-feedback perp-lastname_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--suffix-->
+                                                <label for="perp-Suffix_0" class="form-label">Suffix</label>
+                                                <select id="perp-Suffix_0" name="perp-Suffix_0" class="form-select">
+                                                    <option value="none">N/A</option>
+                                                    <option value="sr">Sr</option>
+                                                    <option value="jr">Jr</option>
+                                                    <option value="ii">II</option>
+                                                    <option value="iii">III</option>
+                                                    <option value="iv">IV</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--alias-->
+                                                <label for="perp-alias_0" class="form-label">Alias <span class="required"></label>
+                                                <input type="text" class="form-control req-inp" id="perp-alias_0" name="perp-alias_0">
+                                                <div class="invalid-feedback perp-alias_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--gender-->
+                                                <label for="perp-sex_0" class="form-label">Gender <span class="required"></span></label>
+                                                <select id="perp-sex_0" name="perp-sex_0" class="form-select req-inp gender-input">
+                                                    <option value="">--Select Option--</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="rather_not_say">Rather not say</option>
+                                                    <option>Custom</option>
+                                                </select>
+                                                <div class="invalid-feedback perp-sex_0"></div>
+                                                <input type="text" class="form-control mt-2 custom-gender" placeholder="Specify" style="display: none;">
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--date of birth-->
+                                                <label for="perp-date-of-birth_0" class="form-label">Date of Birth <span class="required"></span></label>
+                                                <input type="date" class="form-control req-inp" id="perp-date-of-birth_0" name="perp-date-of-birth_0" value="">
+                                                <div class="invalid-feedback perp-date-of-birth_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--nationality-->
+                                                <label for="perp-nationality_0" class="form-label">Nationality</label>
+                                                <select class="form-select" id="perp-nationality_0" name="perp-nationality_0">
+                                                    <option value="Filipino" selected>Filipino</option>
+                                                    <option value="Aeta">Aeta</option>
+                                                    <option value="Agta">Agta</option>
+                                                    <option value="Bicolano">Bicolano</option>
+                                                    <option value="Bisaya">Bisaya</option>
+                                                    <option value="Ilokano">Ilokano</option>
+                                                    <option value="Igorot">Igorot</option>
+                                                    <option value="Ilonggo">Ilonggo</option>
+                                                    <option value="Kapampangan">Kapampangan</option>
+                                                    <option value="Mangyan">Mangyan</option>
+                                                    <option value="Moros">Moros</option>
+                                                    <option value="Pangasinense">Pangasinense</option>
+                                                    <option value="Tagalog">Tagalog</option>
+                                                    <option value="Waray">Waray</option>
+                                                    <!-- Add more options for other nationalities in the Philippines -->
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--Identifying remarks-->
+                                                <label for="perp-identifying-marks_0" class="form-label">Identifying Marks <span class="required"></label>
+                                                <input type="text" class="form-control req-inp" id="perp-identifying-marks_0" name="perp-identifying-marks_0">
+                                                <div class="invalid-feedback perp-identifying-marks_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--relation to victim-->
+                                                <label for="perp-relationsip-victim_0" class="form-label">Relationship to Victim <span class="required"></span></label>
+                                                {% comment %} <select id="perp-relationsip-victim_0" name="perp-relationsip-victim_0" class="form-select">
+                                                    <option value="currentSpouse">Current spouse / partner</option>
+                                                    <option value="formerSpouse">Former spouse / partner</option>
+                                                    <option value="currentFiance">Current fiance / dating relationship</option>
+                                                    <option value="formerFiance">Former fiance / dating relationship</option>
+                                                    <option value="employer">Employer / manager / supervisor</option>
+                                                    <option value="agentOfEmployer">Agent of Employer</option>
+                                                    <option value="teacher">Teacher / instructor / professor</option>
+                                                    <option value="coach">Coach / trainer</option>
+                                                    <option value="immediate family">Immediate family</option>
+                                                    <option value="otherRelatives">Other relatives</option>
+                                                    <option value="peopleOfAuthority">People of authority / service provider</option>
+                                                    <option value="neighbors">Neighbors / peers / coworkers / classmates</option>
+                                                    <option value="Stranger">Stranger</option>
+                                                </select> {% endcomment %}
+                                                <input id="perp-relationsip-victim_0" name="perp-relationsip-victim_0" class="form-control req-inp">
+                                                <div class="invalid-feedback perp-relationsip-victim_0"></div>
+                                            </div>
+
+                                            <h3 class="fs-5 col-12 my-3">Local Address</h3>
+                                            <div class="col-sm-6 mb-3"> <!--region-->
+                                                <label for="perp-region_0" class="form-label">Region <span class="required"></span></label>
+                                                <select id="perp-region_0" name="perp-region_0" class="form-select req-inp" disabled>
+                                                    {% for region in default_regions %}
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback perp-region_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--province-->
+                                                <label for="perp-province_0" class="form-label">Province <span class="required"></span></label>
+                                                <select id="perp-province_0" name="perp-province_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for province in default_provinces %}
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback perp-province_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--city-->
+                                                <label for="perp-city_0" class="form-label">City/Municipality <span class="required"></span></label>
+                                                <select id="perp-city_0" name="perp-city_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for city in default_cities %}
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback perp-city_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--barangay-->
+                                                <label for="perp-barangay_0" class="form-label">Barangay <span class="required"></span></label>
+                                                <select id="perp-barangay_0" name="perp-barangay_0" class="form-select req-inp">
+                                                    <option value="">--Select Option--</option>
+                                                    {% for barangay in default_barangays %}
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="invalid-feedback perp-barangay_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--street-->
+                                                <label for="perp-street_0" class="form-label">Street <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-street_0" name="perp-street_0">
+                                                <div class="invalid-feedback perp-street_0"></div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3"> <!--address-->
+                                                <label for="perp-address-info_0" class="form-label">Address <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-address-info_0" name="perp-address-info_0">
+                                                <div class="invalid-feedback perp-address-info_0" ></div>
+                                            </div>
+                                        </div>
+                                    </div> <!--end of perpetrator form-->
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
+                                    <button class="btn btn-primary ml-auto next-incident-button js-btn-next" type="button" title="Next">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!--single form panel--><!--incident-->
+                        <div class="multisteps-form__panel" data-animation="slideVert">
+                            
+                            <h2 class="text-center mb-4 mb-md-5"><strong>Incident Information</strong></h2>
+
+                            <div class="multisteps-form__content col-12 col-md-11 border rounded p-4 mx-auto">
+
+                                <div class="row incident-form-panel">
+
+                                    <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
+                                        <h3 class="fs-5 mb-3">Incident Details</h3>
+                                        <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="incident-desc" class="form-label">Description <span class="required"></span></label>
+                                        <textarea class="form-control req-inp" name="incident-desc" id="incident-desc" rows="3"></textarea>
+                                        <div class="invalid-feedback incident-street"></div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <label for="incident-evidence" class="form-label">Upload Photo Evidences</label>
+                                        <input class="form-control mb-2" type="file" id="incident-evidence" name="evidence_file" accept="image/*" multiple>
+                                        <div class="invalid-feedback incident-street"></div>
+                                        <div class="d-flex p-2 border rounded gap-2 overflow-auto" id="photo-evidence-container" style="height: 100px;">
+                                        </div>
+                                        
+                                    </div>
+
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="date-latest-incident" class="form-label">Date of Latest Incident</label>
+                                        <input type="date" class="form-control" name="date-latest-incident" id="date-latest-incident" value="">
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="incomplete-date" class="form-label">Incomplete Date</label>
+                                        <div class="d-flex align-items-center gap-2 pt-1">
+                                            <input type="hidden" name="incomplete-date" value="False"> <!-- Hidden input with value False -->
+                                            <input class="form-check-input form-check" type="checkbox" id="incomplete-date" name="incomplete-date" value="True"> <!-- Checkbox input with value True -->
+                                            <label for="incomplete-date" class="fs-7">(Check if date is not complete)</label>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-12 pb-2"> <!--middlename-->
-                                        <label for="perp-middlename_0" class="form-label">Middle name: </label>
-                                        <input type="text" class="form-control" id="perp-middlename_0" name="perp-middlename_0">
-                                        <div class="invalid-feedback perp-middlename_0" >
-
-                                        </div>
+                                    
+                                    <h3 class="fs-5 col-12 my-3">Place of Incident</h3>
+                                    <div class="col-sm-6 mb-3"> <!--region-->
+                                        <label for="incident-region" class="form-label">Region <span class="required"></span></label>
+                                        <select id="incident-region" name="incident-region" class="form-select req-inp" disabled>
+                                            {% for region in default_regions %}
+                                                <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback incident-region"></div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-12 pb-2"> <!--lastname-->
-                                        <label for="perp-lastname_0" class="form-label">Last name: </label>
-                                        <input type="text" class="form-control" id="perp-lastname_0" name="perp-lastname_0">
-                                        <div class="invalid-feedback perp-lastname_0" >
-
-                                        </div>
+                                    <div class="col-sm-6 mb-3"> <!--province-->
+                                        <label for="incident-province" class="form-label">Province <span class="required"></span></label>
+                                        <select id="incident-province" name="incident-province" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for province in default_provinces %}
+                                                <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback incident-province"></div>
                                     </div>
-                                    <div class="col-lg-3 col-md-6 col-sm-6 col-12 pb-2"> <!--suffix-->
-                                        <label for="perp-Suffix_0" class="form-label">Suffix: </label>
-                                        <select id="perp-Suffix_0" name="perp-Suffix_0" class="form-select">
+                                    <div class="col-sm-6 mb-3"> <!--city-->
+                                        <label for="incident-city" class="form-label">City/Municipality <span class="required"></span></label>
+                                        <select id="incident-city" name="incident-city" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for city in default_cities %}
+                                                <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback incident-city"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!--barangay-->
+                                        <label for="incident-barangay" class="form-label">Barangay <span class="required"></span></label>
+                                        <select id="incident-barangay" name="incident-barangay" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for barangay in default_barangays %}
+                                                <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback incident-barangay"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!--street-->
+                                        <label for="incident-street" class="form-label">Street <span class="required"></span></label>
+                                        <input type="text" class="form-control req-inp" id="incident-street" name="incident-street">
+                                        <div class="invalid-feedback incident-street"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!--place of incident-->
+                                        <label for="place-incident" class="form-label">Type of Place <span class="required"></span></label>
+                                        <select id="place-incident" name="place-incident" class="form-select req-inp">
+                                            <option value="" selected>--Select Place of Incident--</option>
+                                            <option value="house">House</option>
+                                            <option value="work">Work</option>
+                                            <option value="school">School</option>
+                                            <option value="commercialPlaces">Commercial Places</option>
+                                            <option value="religion">Religious Institutions</option>
+                                            <option value="placeOfMedicalTreatment">Place of Medical Treatment</option>
+                                            <option value="transport">Transport & Connecting Sites</option>
+                                            <option value="brothles">Brothels and Similar Establishments</option>
+                                            <option value="others">Others</option>
+                                            <option value="noResponse">No Response</option>
+                                        </select>
+                                        <div class="invalid-feedback place-incident"></div>
+                                    </div>
+
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between mt-4 col-12">
+                                    <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
+                                    <button class="btn btn-primary ml-auto btn-next-contact-person js-btn-next" type="button" title="Next">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!--single form panel--><!--contact person-->
+                        <div class="multisteps-form__panel" data-animation="slideVert">
+                            
+                            <h2 class="text-center mb-4 mb-md-5"><strong>Contact Person Information</strong></h2>
+
+                            <div class="multisteps-form__content col-12 col-md-11 border rounded p-4 mx-auto">
+
+                                <div class="row contact-form-panel">
+
+                                    <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
+                                        <h3 class="fs-5 mb-3">Personal Information</h3>
+                                        <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="contact-firstname" class="form-label">First Name <span class="required"></span></label>
+                                        <input type="text" class="form-control req-inp" id="contact-firstname" name="contact-firstname">
+                                        <div class="invalid-feedback contact-firstname" ></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="contact-midname" class="form-label">Middle Name</label>
+                                        <input type="text" class="form-control" id="contact-midname" name="contact-midname">
+                                        <div class="invalid-feedback contact-midname" ></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="contact-lastname" class="form-label">Last Name <span class="required"></span></label>
+                                        <input type="text" class="form-control req-inp" id="contact-lastname" name="contact-lastname">
+                                        <div class="invalid-feedback contact-lastname" ></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="contact-Suffix" class="form-label">Suffix</label>
+                                        <select id="contact-Suffix" name="contact-Suffix" class="form-select">
                                             <option value="none">N/A</option>
                                             <option value="sr">Sr</option>
                                             <option value="jr">Jr</option>
@@ -353,724 +675,142 @@
                                             <option value="iv">IV</option>
                                         </select>
                                     </div>
-                                </div><!--End of First row-->
-                                <div class="row pt-3"><!--Start of second row-->
-                                    <div class="col-lg-3 col-md-3 col-sm-12 pb-2"> <!--lastname-->
-                                        <label for="perp-alias_0" class="form-label">Alias: </label>
-                                        <input type="text" class="form-control" id="perp-alias_0" name="perp-alias_0">
-                                        <div class="invalid-feedback perp-alias_0" >
-
-                                        </div>
-                                    </div><!--Ennd of col-->
-    
-                                    <div class="col-lg-3 col-md-3 col-sm-12 pb-2">
-                                        <label for="perp-sex_0" class="form-label">Sex: </label>
-                                        <select id="perp-sex_0" name="perp-sex_0" class="form-select">
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                        </select>
-                                    </div><!--End of col-->
-    
-                                    <div class="col-lg-3 col-md-3 col-sm-6 pb-2">
-                                        <label for="perp-date-of-birth_0" class="form-label">Date of Birth: </label>
-                                        <input type="date" class="form-control" id="perp-date-of-birth_0" name="perp-date-of-birth_0" value="2024-03-01">
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="relationship" class="form-label">Relationship to the Victim <span class="required"></span></label>
+                                        <input type="text" class="form-control req-inp" id="relationship" name="relationship">
+                                        <div class="invalid-feedback relationship" ></div>
                                     </div>
-    
-                                    <div class="col-lg-3 col-md-3 col-sm-6 pb-2">
-                                        <label for="perp-nationality_0" class="form-label">Nationality: </label>
-                                        <select class="form-select" id="perp-nationality_0" name="perp-nationality_0">
-                                            <option value="Filipino" selected>Filipino</option>
-                                            <option value="Aeta">Aeta</option>
-                                            <option value="Agta">Agta</option>
-                                            <option value="Bicolano">Bicolano</option>
-                                            <option value="Bisaya">Bisaya</option>
-                                            <option value="Ilokano">Ilokano</option>
-                                            <option value="Igorot">Igorot</option>
-                                            <option value="Ilonggo">Ilonggo</option>
-                                            <option value="Kapampangan">Kapampangan</option>
-                                            <option value="Mangyan">Mangyan</option>
-                                            <option value="Moros">Moros</option>
-                                            <option value="Pangasinense">Pangasinense</option>
-                                            <option value="Tagalog">Tagalog</option>
-                                            <option value="Waray">Waray</option>
-                                            <!-- Add more options for other nationalities in the Philippines -->
-                                        </select>
-                                    </div><!--end of col-->
-                                </div><!--End of second row-->
-                                <div class="row"><!--Start of third row-->
-                                    <div class="col-lg-6 col-md-12 col-sm-12 pb-2"> <!--lastname-->
-                                        <label for="perp-identifying-marks_0" class="form-label">Identifying Marks: </label>
-                                        <input type="text" class="form-control" id="perp-identifying-marks_0" name="perp-identifying-marks_0">
-                                        <div class="invalid-feedback perp-identifying-marks_0" >
 
-                                        </div>
-                                    </div><!--End of col-->
-                                    <div class="col-lg-6 col-md-12 col-sm-12 pb-2">
-                                        <label for="perp-region_0" class="form-label">Region: </label>
-                                        <select id="perp-region_0" name="perp-region_0" class="form-select">
-                                            <option value="region-I">Region I – Ilocos Region</option>
-                                            <option value="region-II">Region II – Cagayan Valley</option>
-                                            <option value="region-III">Region III – Central Luzon</option>
-                                            <option value="region-IV">Region IV‑A – CALABARZON</option>
-                                            <option value="mimaropa">MIMAROPA Region</option>
-                                            <option value="region-V">Region V – Bicol Region</option>
-                                            <option value="region-VI">Region VI – Western Visayas</option>
-                                            <option value="region-VII">Region VII – Central Visayas</option>
-                                            <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                                            <option value="region-IX" selected>Region IX – Zamboanga Peninsula</option>
-                                            <option value="region-X">Region X – Northern Mindanao</option>
-                                            <option value="region-XI">Region XI – Davao Region</option>
-                                            <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                                            <option value="region-XIII">Region XIII – Caraga</option>
-                                            <option value="ncr">NCR – National Capital Region</option>
-                                            <option value="car">CAR – Cordillera Administrative Region</option>
-                                            <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
+                                    <h3 class="fs-5 my-3">Contact Details</h3>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="contact-number" class="form-label">Mobile No.</label>
+                                        <input type="number" class="form-control" id="contact-number" name="contact-number" value="0">
+                                    </div>
+                                    <div class="col-sm-6 mb-3">
+                                        <label for="contact-tel" class="form-label">Telephone No.</label>
+                                        <input type="number" class="form-control" id="contact-tel" name="contact-tel" value="0">
+                                    </div>
+                                    
+                                    <h3 class="fs-5 my-3">Local Address</h3>
+                                    <div class="col-sm-6 mb-3"> <!--region-->
+                                        <label for="contact-region" class="form-label">Region <span class="required"></span></label>
+                                        <select id="contact-region" name="contact-region" class="form-select req-inp" disabled>
+                                            {% for region in default_regions %}
+                                                <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
                                         </select>
-                                    </div><!--end of col-->
-                                </div><!--End of third row-->
-                                <div class="row pt-3 pb-3"><!--Start of fourth row-->
-                                    <div class="col-lg-4 col-md-4 col-sm-12">
-                                        <label for="perp-province_0" class="form-label">Province: </label>
-                                        <select id="perp-province_0" name="perp-province_0" class="form-select">
-                                            <option value="Zamboanga Del Sur" selected>Zamboanga Del Sur</option>
-                                            <option value="Zamboanga Del Norte">Zamboanga Del Norte</option>
+                                        <div class="invalid-feedback contact-region"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!--province-->
+                                        <label for="contact-province" class="form-label">Province <span class="required"></span></label>
+                                        <select id="contact-province" name="contact-province" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for province in default_provinces %}
+                                                <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
                                         </select>
-                                    </div><!--end of col-->
-                                    <div class="col-lg-4 col-md-4 col-sm-12">
-                                        <label for="perp-city_0" class="form-label">City / Mun: </label>
-                                        <select id="perp-city_0" name="perp-city_0" class="form-select">
-                                            <option value="Zamboanga City" selected>Zamboanga City</option>
-                                            <option value="Pagadian City">Pagadian City</option>
+                                        <div class="invalid-feedback contact-province"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!--city-->
+                                        <label for="contact-city" class="form-label">City/Municipality <span class="required"></span></label>
+                                        <select id="contact-city" name="contact-city" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for city in default_cities %}
+                                                <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
                                         </select>
-                                    </div><!--emd of col-->
-                                    <div class="col-lg-4 col-md-4 col-sm-12">
-                                        <label for="perp-barangay_0" class="form-label">Barangay: </label>
-                                        <select id="perp-barangay_0" name="perp-barangay_0" class="form-select">
-                                            <option value="Aplaya" selected>Aplaya</option>
-                                            <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
-                                            <option value="Ayala">Ayala</option>
-                                            <option value="Bagong Calarian">Bagong Calarian</option>
-                                            <option value="Baluno">Baluno</option>
-                                            <option value="Boalan">Boalan</option>
-                                            <option value="Bolong">Bolong</option>
-                                            <option value="Buenavista">Buenavista</option>
-                                            <option value="Bunguiao">Bunguiao</option>
-                                            <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
-                                            <option value="Cabaluay">Cabaluay</option>
-                                            <option value="Cabatangan">Cabatangan</option>
-                                            <option value="Cacao">Cacao</option>
-                                            <option value="Calabasa">Calabasa</option>
-                                            <option value="Calarian">Calarian</option>
-                                            <option value="Camino Nuevo">Camino Nuevo</option>
-                                            <option value="Campo Islam">Campo Islam</option>
-                                            <option value="Canelar">Canelar</option>
-                                            <option value="Capisan">Capisan</option>
-                                            <option value="Cawit">Cawit</option>
-                                            <option value="Culianan">Culianan</option>
-                                            <option value="Curuan">Curuan</option>
-                                            <option value="Dita">Dita</option>
-                                            <option value="Divisoria">Divisoria</option>
-                                            <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
-                                            <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
-                                            <option value="Guisao">Guisao</option>
-                                            <option value="Guiwan">Guiwan</option>
-                                            <option value="Kasanyangan">Kasanyangan</option>
-                                            <option value="La Paz">La Paz</option>
-                                            <option value="Labuan">Labuan</option>
-                                            <option value="Lamisahan">Lamisahan</option>
-                                            <option value="Landang Gua">Landang Gua</option>
-                                            <option value="Landang Laum">Landang Laum</option>
-                                            <option value="Lanzones">Lanzones</option>
-                                            <option value="Lapakan">Lapakan</option>
-                                            <option value="Lapuyan">Lapuyan</option>
-                                            <option value="Latuan Curuan">Latuan Curuan</option>
-                                            <option value="Licomo">Licomo</option>
-                                            <option value="Limaong">Limaong</option>
-                                            <option value="Limpapa">Limpapa</option>
-                                            <option value="Luba">Luba</option>
-                                            <option value="Lumayang">Lumayang</option>
-                                            <option value="Lunzuran">Lunzuran</option>
-                                            <option value="Maasin">Maasin</option>
-                                            <option value="Malagutay">Malagutay</option>
-                                            <option value="Mampang">Mampang</option>
-                                            <option value="Manalipa">Manalipa</option>
-                                            <option value="Mangusu">Mangusu</option>
-                                            <option value="Manicahan">Manicahan</option>
-                                            <option value="Mariki">Mariki</option>
-                                            <option value="Mercedes">Mercedes</option>
-                                            <option value="Mutong">Mutong</option>
-                                            <option value="Pamucutan">Pamucutan</option>
-                                            <option value="Panubigan">Panubigan</option>
-                                            <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
-                                            <option value="Pasobolong">Pasobolong</option>
-                                            <option value="Pasonanca">Pasonanca</option>
-                                            <option value="Patalon">Patalon</option>
-                                            <option value="Putsan">Putsan</option>
-                                            <option value="Quiniput">Quiniput</option>
-                                            <option value="Recodo">Recodo</option>
-                                            <option value="Rio Hondo">Rio Hondo</option>
-                                            <option value="Salaan">Salaan</option>
-                                            <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
-                                            <option value="San Jose Gusu">San Jose Gusu</option>
-                                            <option value="San Ramon">San Ramon</option>
-                                            <option value="San Roque">San Roque</option>
-                                            <option value="Sangali">Sangali</option>
-                                            <option value="Santa Barbara">Santa Barbara</option>
-                                            <option value="Santa Catalina">Santa Catalina</option>
-                                            <option value="Santa Maria">Santa Maria</option>
-                                            <option value="Santa Roza">Santa Roza</option>
-                                            <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
-                                            <option value="Sinubong">Sinubong</option>
-                                            <option value="Sinunuc">Sinunuc</option>
-                                            <option value="Sta. Cruz">Sta. Cruz</option>
-                                            <option value="Sta. Maria">Sta. Maria</option>
-                                            <option value="Sta. Catalina">Sta. Catalina</option>
-                                            <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
-                                            <option value="Sta. Maria">Sta. Maria</option>
-                                            <option value="Sto. Niño" selected>Sto. Niño</option>
-                                            <option value="Tagasilay">Tagasilay</option>
-                                            <option value="Taguiti">Taguiti</option>
-                                            <option value="Talabaan">Talabaan</option>
-                                            <option value="Talisayan">Talisayan</option>
-                                            <option value="Talon-Talon">Talon-Talon</option>
-                                            <option value="Taluksangay">Taluksangay</option>
-                                            <option value="Talungon">Talungon</option>
-                                            <option value="Tetuan">Tetuan</option>
-                                            <option value="Tictapul">Tictapul</option>
-                                            <option value="Tigbalabag">Tigbalabag</option>
-                                            <option value="Tigtabon">Tigtabon</option>
-                                            <option value="Tolosa">Tolosa</option>
-                                            <option value="Tugbungan">Tugbungan</option>
-                                            <option value="Tulungatung">Tulungatung</option>
-                                            <option value="Tumaga">Tumaga</option>
-                                            <option value="Tumalutab">Tumalutab</option>
-                                            <option value="Tumitus">Tumitus</option>
-                                            <option value="Victoria">Victoria</option>
-                                            <option value="Vitali">Vitali</option>
-                                            <option value="Zambowood">Zambowood</option>
+                                        <div class="invalid-feedback contact-city"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!--barangay-->
+                                        <label for="contact-barangay" class="form-label">Barangay <span class="required"></span></label>
+                                        <select id="contact-barangay" name="contact-barangay" class="form-select req-inp">
+                                            <option value="">--Select Option--</option>
+                                            {% for barangay in default_barangays %}
+                                                <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %}
                                         </select>
-                                    </div><!--End of col-->
-                                </div><!--End of row-->
-                                <div class="row pt-3 pb-lg-0"><!--Start of fifth row-->
-                                    <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                        <label for="perp-street_0" class="form-label">Street: </label>
-                                        <input type="text" class="form-control" id="perp-street_0" name="perp-street_0">
-                                        <div class="invalid-feedback perp-street_0" >
-
-                                        </div>
-                                    </div><!--end of col-->
-                                    <div class="col-lg-8 col-md-4 col-sm-12 pb-2">
-                                        <label for="perp-address-info_0" class="form-label">Address: </label>
-                                        <input type="text" class="form-control" id="perp-address-info_0" name="perp-address-info_0">
-                                        <div class="invalid-feedback perp-address-info_0" >
-
-                                        </div>
-                                    </div><!--End of col-->
-                                </div><!--end of fifth row-->
-                                <div class="row pt-3 pb-3"><!--Start of sixth row-->
-                                    <div class="col-lg-12 col-md-12 col-sm-12 pb-2">
-                                        <label for="perp-relationsip-victim_0" class="form-label">Relationship of Perpetrator to the Victim: </label>
-                                        <select id="perp-relationsip-victim_0" name="perp-relationsip-victim_0" class="form-select">
-                                            <option value="currentSpouse">Current spouse / partner</option>
-                                            <option value="formerSpouse">Former spouse / partner</option>
-                                            <option value="currentFiance">Current fiance / dating relationship</option>
-                                            <option value="formerFiance">Former fiance / dating relationship</option>
-                                            <option value="employer">Employer / manager / supervisor</option>
-                                            <option value="agentOfEmployer">Agent of Employer</option>
-                                            <option value="teacher">Teacher / instructor / professor</option>
-                                            <option value="coach">Coach / trainer</option>
-                                            <option value="immediate family">Immediate family</option>
-                                            <option value="otherRelatives">Other relatives</option>
-                                            <option value="peopleOfAuthority">People of authority / service provider</option>
-                                            <option value="neighbors">Neighbors / peers / coworkers / classmates</option>
-                                            <option value="Stranger">Stranger</option>
-                                        </select>
-                                    </div><!--end of row-->
-                                </div><!--end of sixth row -->
+                                        <div class="invalid-feedback contact-baarangay"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!--street-->
+                                        <label for="contact-street" class="form-label">Street <span class="required"></span></label>
+                                        <input type="text" class="form-control  req-inp" id="contact-street" name="contact-street">
+                                        <div class="invalid-feedback contact-street"></div>
+                                    </div>
+                                    <div class="col-sm-6 mb-3"> <!--address-->
+                                        <label for="contact-bldg-no" class="form-label">Address <span class="required"></span></label>
+                                        <input type="text" class="form-control req-inp" name="contact-bldg-no" id="contact-bldg-no">
+                                        <div class="invalid-feedback contact-bldg-no"></div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between mt-4 col-12">
+                                    <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
+                                    <button class="btn btn-primary ml-auto btn-next-service js-btn-next" type="button" title="Next">Next</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <button class="btn btn-primary w-100" id="add-perpetrator-form" role="button"><i class='bx bx-plus-circle'></i> Add Perpetrator</button>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between mt-4">
-                        <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Prev</button>
-                        <button class="btn btn-primary ml-auto next-incident-button js-btn-next" type="button" title="Next" disabled>Next</button>
-                        </div>
-                    </div>
-                </div>
-                <!--single form panel-->
-                <div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="slideHorz">
-                    <div class="multisteps-form__content">
-                            <h1 class="text-center pt-3"><strong>Incident Information</strong></h1>
+                        <!--single form panel--><!--service-->
+                        <div class="multisteps-form__panel" data-animation="slideVert">
+                            <div class="multisteps-form__content col-12 col-md-11 mx-auto">
 
-                            <div class="row pt-5 pb-3">
-                                <div class="col-lg-4 col-md-4 col-sm-12">
-                                    <label for="date-latest-incident" class="form-label"><strong>Date of Latest Incident: </strong></label>
-                                </div><!--end of col-->
-                                <div class="col-lg-4 col-md-4 col-sm-12">
-                                    <input type="date" class="form-control" name="date-latest-incident" id="date-latest-incident" value="2024-03-01">
-                                </div><!--emd of col-->
-                                <div class="col-lg-4 col-md-4 col-sm-12 pt-2">
-                                    <div class="form-check">
-                                        <input type="hidden" name="incomplete-date" value="False"> <!-- Hidden input with value False -->
-                                        <input class="form-check-input" type="checkbox" id="incomplete-date" name="incomplete-date" value="True"> <!-- Checkbox input with value True -->
-                                        <label class="form-check-label" for="incomplete-date">
-                                            Incomplete Date
+                                <h2 class="text-center mb-4 mb-md-5"><strong>Service Information</strong></h2>
+
+                                <div class="label-form border rounded p-4 mb-4">
+                                    <div class="row g-4 row-cols-1 row-cols-lg-2">
+                                        {% comment %} <div class="col-6">
+                                            <input type="radio" class="btn-check" name="service" id="crisis" value="crisis" autocomplete="off" checked>
+                                            <label class="btn custom-btn" for="crisis">Crisis Intervention Including Rescue</label>
+                                        </div> {% endcomment %}
+                                        <label for="crisis" class="col">
+                                            <div class="service-option form-check card shadow-sm p-4 h-100 card-link">
+                                                <div class="card-title">
+                                                    <span>
+                                                        <i class="fa-solid fa-life-ring"></i>
+                                                    </span>
+                                                    <h3 class="fw-bold fs-5">Crisis Intervention Including Rescue</h3>
+                                                </div>
+                                                <p class="fw-light">Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate maiores a aliquid optio vel facere praesentium ipsam rem. Error</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <input type="radio" class="form-check-input" name="service" id="crisis" value="crisis" autocomplete="off">
+                                                </div>
+                                            </div>
                                         </label>
-                                    </div>
-                                </div><!--emd of col-->
-                            </div><!--end of row-->
-
-                            <div class="row pt-3 pb-lg-3">
-                                <h5 class="pb-3"><strong>Place of Incident</strong></h5>
-                                <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                    <label for="place-incident" class="form-label">Type of Place of incident: </label>
-                                    <select id="place-incident" name="place-incident" class="form-select">
-                                        <option selected>---Select Place of Incident---</option>
-                                        <option value="house">House</option>
-                                        <option value="work">Work</option>
-                                        <option value="school">School</option>
-                                        <option value="commercialPlaces">Commercial Places</option>
-                                        <option value="religion">Religious Institutions</option>
-                                        <option value="placeOfMedicalTreatment">Place of Medical Treatment</option>
-                                        <option value="transport">Transport & Connecting Sites</option>
-                                        <option value="brothles">Brothels and Similar Establishments</option>
-                                        <option value="others">Others</option>
-                                        <option value="noResponse">No Response</option>
-                                    </select>
-                                </div><!--end of col-->
-                                <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                    <label for="incident-region" class="form-label">Region: </label>
-                                    <select id="incident-region" name="incident-region" class="form-select">
-                                        <option value="region-I">Region I – Ilocos Region</option>
-                                        <option value="region-II">Region II – Cagayan Valley</option>
-                                        <option value="region-III">Region III – Central Luzon</option>
-                                        <option value="region-IV">Region IV‑A – CALABARZON</option>
-                                        <option value="mimaropa">MIMAROPA Region</option>
-                                        <option value="region-V">Region V – Bicol Region</option>
-                                        <option value="region-VI">Region VI – Western Visayas</option>
-                                        <option value="region-VII">Region VII – Central Visayas</option>
-                                        <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                                        <option value="region-IX" selected>Region IX – Zamboanga Peninsula</option>
-                                        <option value="region-X">Region X – Northern Mindanao</option>
-                                        <option value="region-XI">Region XI – Davao Region</option>
-                                        <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                                        <option value="region-XIII">Region XIII – Caraga</option>
-                                        <option value="ncr">NCR – National Capital Region</option>
-                                        <option value="car">CAR – Cordillera Administrative Region</option>
-                                        <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
-                                    </select>
-                                </div><!--end of col-->
-
-                                <div class="col-lg-4 col-md-4 col-sm-12">
-                                    <label for="incident-province" class="form-label">Province:</label>
-                                    <select id="incident-province" name="incident-province" class="form-select">
-                                        <option value="Zamboanga Del Sur" selected>Zamboanga Del Sur</option>
-                                        <option value="Zamboanga Del Norte">Zamboanga Del Norte</option>
-                                    </select>
-                                </div><!--end of col-->
-                            </div><!--end of row-->
-
-                            <div class="row pt-3 pb-lg-3">
-                                <div class="col-lg-4 col-md-4 col-sm-12 pb-lg-0 pb-2">
-                                    <label for="incident-city" class="form-label">City / Mun:</label>
-                                    <select id="incident-city" name="incident-city" class="form-select">
-                                        <option value="Zamboanga City" selected>Zamboanga City</option>
-                                        <option value="Pagadian City">Pagadian City</option>
-                                    </select>
-                                </div><!--emd of col-->
-
-                                <div class="col-lg-4 col-md-4 col-sm-12 pb-lg-0 pb-3">
-                                    <label for="incident-barangay" class="form-label">Barangay:</label>
-                                    <select id="incident-barangay" name="incident-barangay" class="form-select">
-                                        <option>---Select Barangay---</option>
-                                        <option value="Aplaya">Aplaya</option>
-                                        <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
-                                        <option value="Ayala">Ayala</option>
-                                        <option value="Bagong Calarian">Bagong Calarian</option>
-                                        <option value="Baluno">Baluno</option>
-                                        <option value="Boalan">Boalan</option>
-                                        <option value="Bolong">Bolong</option>
-                                        <option value="Buenavista">Buenavista</option>
-                                        <option value="Bunguiao">Bunguiao</option>
-                                        <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
-                                        <option value="Cabaluay">Cabaluay</option>
-                                        <option value="Cabatangan">Cabatangan</option>
-                                        <option value="Cacao">Cacao</option>
-                                        <option value="Calabasa">Calabasa</option>
-                                        <option value="Calarian">Calarian</option>
-                                        <option value="Camino Nuevo">Camino Nuevo</option>
-                                        <option value="Campo Islam">Campo Islam</option>
-                                        <option value="Canelar">Canelar</option>
-                                        <option value="Capisan">Capisan</option>
-                                        <option value="Cawit">Cawit</option>
-                                        <option value="Culianan">Culianan</option>
-                                        <option value="Curuan">Curuan</option>
-                                        <option value="Dita">Dita</option>
-                                        <option value="Divisoria">Divisoria</option>
-                                        <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
-                                        <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
-                                        <option value="Guisao">Guisao</option>
-                                        <option value="Guiwan">Guiwan</option>
-                                        <option value="Kasanyangan">Kasanyangan</option>
-                                        <option value="La Paz">La Paz</option>
-                                        <option value="Labuan">Labuan</option>
-                                        <option value="Lamisahan">Lamisahan</option>
-                                        <option value="Landang Gua">Landang Gua</option>
-                                        <option value="Landang Laum">Landang Laum</option>
-                                        <option value="Lanzones">Lanzones</option>
-                                        <option value="Lapakan">Lapakan</option>
-                                        <option value="Lapuyan">Lapuyan</option>
-                                        <option value="Latuan Curuan">Latuan Curuan</option>
-                                        <option value="Licomo">Licomo</option>
-                                        <option value="Limaong">Limaong</option>
-                                        <option value="Limpapa">Limpapa</option>
-                                        <option value="Luba">Luba</option>
-                                        <option value="Lumayang">Lumayang</option>
-                                        <option value="Lunzuran">Lunzuran</option>
-                                        <option value="Maasin">Maasin</option>
-                                        <option value="Malagutay">Malagutay</option>
-                                        <option value="Mampang">Mampang</option>
-                                        <option value="Manalipa">Manalipa</option>
-                                        <option value="Mangusu">Mangusu</option>
-                                        <option value="Manicahan">Manicahan</option>
-                                        <option value="Mariki">Mariki</option>
-                                        <option value="Mercedes">Mercedes</option>
-                                        <option value="Mutong">Mutong</option>
-                                        <option value="Pamucutan">Pamucutan</option>
-                                        <option value="Panubigan">Panubigan</option>
-                                        <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
-                                        <option value="Pasobolong">Pasobolong</option>
-                                        <option value="Pasonanca">Pasonanca</option>
-                                        <option value="Patalon">Patalon</option>
-                                        <option value="Putsan">Putsan</option>
-                                        <option value="Quiniput">Quiniput</option>
-                                        <option value="Recodo">Recodo</option>
-                                        <option value="Rio Hondo">Rio Hondo</option>
-                                        <option value="Salaan">Salaan</option>
-                                        <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
-                                        <option value="San Jose Gusu">San Jose Gusu</option>
-                                        <option value="San Ramon">San Ramon</option>
-                                        <option value="San Roque">San Roque</option>
-                                        <option value="Sangali">Sangali</option>
-                                        <option value="Santa Barbara">Santa Barbara</option>
-                                        <option value="Santa Catalina">Santa Catalina</option>
-                                        <option value="Santa Maria">Santa Maria</option>
-                                        <option value="Santa Roza">Santa Roza</option>
-                                        <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
-                                        <option value="Sinubong">Sinubong</option>
-                                        <option value="Sinunuc">Sinunuc</option>
-                                        <option value="Sta. Cruz">Sta. Cruz</option>
-                                        <option value="Sta. Maria">Sta. Maria</option>
-                                        <option value="Sta. Catalina">Sta. Catalina</option>
-                                        <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
-                                        <option value="Sta. Maria">Sta. Maria</option>
-                                        <option value="Sto. Niño" selected>Sto. Niño</option>
-                                        <option value="Tagasilay">Tagasilay</option>
-                                        <option value="Taguiti">Taguiti</option>
-                                        <option value="Talabaan">Talabaan</option>
-                                        <option value="Talisayan">Talisayan</option>
-                                        <option value="Talon-Talon">Talon-Talon</option>
-                                        <option value="Taluksangay">Taluksangay</option>
-                                        <option value="Talungon">Talungon</option>
-                                        <option value="Tetuan">Tetuan</option>
-                                        <option value="Tictapul">Tictapul</option>
-                                        <option value="Tigbalabag">Tigbalabag</option>
-                                        <option value="Tigtabon">Tigtabon</option>
-                                        <option value="Tolosa">Tolosa</option>
-                                        <option value="Tugbungan">Tugbungan</option>
-                                        <option value="Tulungatung">Tulungatung</option>
-                                        <option value="Tumaga">Tumaga</option>
-                                        <option value="Tumalutab">Tumalutab</option>
-                                        <option value="Tumitus">Tumitus</option>
-                                        <option value="Victoria">Victoria</option>
-                                        <option value="Vitali">Vitali</option>
-                                        <option value="Zambowood">Zambowood</option>
-                                    </select>
-                                </div><!--End of col-->
-
-                                <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                    <label for="incident-street" class="form-label">Street: </label>
-                                    <input type="text" class="form-control" id="incident-street" name="incident-street">
-                                    <div class="invalid-feedback incident-street">
+                                        <label for="issuance" class="col">
+                                            <div class="service-option form-check card shadow-sm p-4 h-100 card-link">
+                                                <div class="card-title">
+                                                    <span>
+                                                        <i class="fa-solid fa-shield-halved"></i>
+                                                    </span>
+                                                    <h3 class="fw-bold fs-5">Issuance / Enforcement of Barangay Protection Order</h3>
+                                                </div>
+                                                <p class="fw-light">Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate maiores a aliquid optio vel facere praesentium ipsam rem. Error sit odit sint dignissimo.</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <input type="radio" class="form-check-input" name="service" id="issuance" value="issuance" autocomplete="off">
+                                                </div>
+                                            </div>
+                                        </label>
 
                                     </div>
-                                </div><!--end of col-->
-                            </div><!--end of row-->
-
-                            <div class="row pt-3 pb-3">
-                                <div class="mb-3">
-                                    <label for="incident-desc" class="form-label"><strong>Description of Incident:</strong></label>
-                                    <textarea class="form-control" name="incident-desc" id="incident-desc" rows="3"></textarea>
-                                    <div class="invalid-feedback incident-street">
-
-                                    </div>
-                                </div><!--for textbox-->
-                            </div><!--End or row-->
-
-                            <div class="row pt-3">
-                                <div class="mb-3">
-                                    <label for="incident-evidence" class="form-label"><strong>Upload Evidences:</strong></label>
-                                    <input class="form-control" type="file" id="incident-evidence" name="evidence_file" accept="image/*" multiple>
-                                </div><!--form to upload-->
-                            </div><!--End or row-->
-                        <div class="row">
-                            <div class="d-flex justify-content-between mt-4 col-12">
-                                <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Prev</button>
-                                <button class="btn btn-primary ml-auto btn-next-contact-person js-btn-next" type="button" title="Next" disabled>Next</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--single form panel-->
-                <div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="slideHorz">
-                    <div class="multisteps-form__content">
-                        <h1 class="text-center pt-3"><strong>Contact Person Information</strong></h1>
-                        <div class="row pt-5">
-                            <div class="col-lg-3 col-md-3 col-sm-12 pb-2">
-                                <label for="contact-firstname" class="form-label">First Name: </label>
-                                <input type="text" class="form-control" id="contact-firstname" name="contact-firstname">
-                                <div class="invalid-feedback contact-firstname" >
-
                                 </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-3 col-md-3 col-sm-12 pb-2">
-                                <label for="contact-midname" class="form-label">Middle Name: </label>
-                                <input type="text" class="form-control" id="contact-midname" name="contact-midname">
-                                <div class="invalid-feedback contact-midname" >
-
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-3 col-md-3 col-sm-12 pb-2">
-                                <label for="contact-lastname" class="form-label">Last Name: </label>
-                                <input type="text" class="form-control" id="contact-lastname" name="contact-lastname">
-                                <div class="invalid-feedback contact-lastname" >
-
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-3 col-md-3 col-sm-12 pb-2">
-                                <label for="contact-Suffix" class="form-label">Suffix: </label>
-                                <select id="contact-Suffix" name="contact-Suffix" class="form-select">
-                                    <option value="none">N/A</option>
-                                    <option value="sr">Sr</option>
-                                    <option value="jr">Jr</option>
-                                    <option value="ii">II</option>
-                                    <option value="iii">III</option>
-                                    <option value="iv">IV</option>
-                                </select>
-                            </div><!--end of col-->
-                        </div><!--End of row-->
-
-                        <div class="row pt-2">
-                            <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                <label for="relationship" class="form-label">Relationship to the Victim: </label>
-                                <input type="text" class="form-control" id="relationship" name="relationship">
-                                <div class="invalid-feedback relationship" >
-
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                <label for="contact-number" class="form-label">Contact No.: </label>
-                                <input type="number" class="form-control" id="contact-number" name="contact-number" value="0">
-                            </div><!--end of col-->
-                            <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                <label for="contact-tel" class="form-label">Telephone No.: </label>
-                                <input type="number" class="form-control" id="contact-tel" name="contact-tel" value="0">
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-
-                        <div class="row pt-2 pb-3">
-                            <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                <label for="contact-region" class="form-label">Region: </label>
-                                <select id="contact-region" name="contact-region" class="form-select">
-                                    <option value="region-I">Region I – Ilocos Region</option>
-                                    <option value="region-II">Region II – Cagayan Valley</option>
-                                    <option value="region-III">Region III – Central Luzon</option>
-                                    <option value="region-IV">Region IV‑A – CALABARZON</option>
-                                    <option value="mimaropa">MIMAROPA Region</option>
-                                    <option value="region-V">Region V – Bicol Region</option>
-                                    <option value="region-VI">Region VI – Western Visayas</option>
-                                    <option value="region-VII">Region VII – Central Visayas</option>
-                                    <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                                    <option value="region-IX" selected>Region IX – Zamboanga Peninsula</option>
-                                    <option value="region-X">Region X – Northern Mindanao</option>
-                                    <option value="region-XI">Region XI – Davao Region</option>
-                                    <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                                    <option value="region-XIII">Region XIII – Caraga</option>
-                                    <option value="ncr">NCR – National Capital Region</option>
-                                    <option value="car">CAR – Cordillera Administrative Region</option>
-                                    <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
-                                </select>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                <label for="contact-province" class="form-label">Province: </label>
-                                <select id="contact-province" name="contact-province" class="form-select">
-                                    <option value="Zamboanga Del Sur" selected>Zamboanga Del Sur</option>
-                                    <option value="Zamboanga Del Norte">Zamboanga Del Norte</option>
-                                </select>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                <label for="contact-city" class="form-label">City/ Mun: </label>
-                                <select id="contact-city" name="contact-city" class="form-select">
-                                    <option value="Zamboanga City" selected>Zamboanga City</option>
-                                    <option value="Pagadian City">Pagadian City</option>
-                                </select>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                <label for="contact-barangay" class="form-label">Barangay: </label>
-                                <select id="contact-barangay" name="contact-barangay" class="form-select">
-                                    <option value="Aplaya" selected>Aplaya</option>
-                                    <option value="Arena Blanco (Sauyo) ">Arena Blanco (Sauyo) </option>
-                                    <option value="Ayala">Ayala</option>
-                                    <option value="Bagong Calarian">Bagong Calarian</option>
-                                    <option value="Baluno">Baluno</option>
-                                    <option value="Boalan">Boalan</option>
-                                    <option value="Bolong">Bolong</option>
-                                    <option value="Buenavista">Buenavista</option>
-                                    <option value="Bunguiao">Bunguiao</option>
-                                    <option value="Busay (Tumaga Proper)">Busay (Tumaga Proper)</option>
-                                    <option value="Cabaluay">Cabaluay</option>
-                                    <option value="Cabatangan">Cabatangan</option>
-                                    <option value="Cacao">Cacao</option>
-                                    <option value="Calabasa">Calabasa</option>
-                                    <option value="Calarian">Calarian</option>
-                                    <option value="Camino Nuevo">Camino Nuevo</option>
-                                    <option value="Campo Islam">Campo Islam</option>
-                                    <option value="Canelar">Canelar</option>
-                                    <option value="Capisan">Capisan</option>
-                                    <option value="Cawit">Cawit</option>
-                                    <option value="Culianan">Culianan</option>
-                                    <option value="Curuan">Curuan</option>
-                                    <option value="Dita">Dita</option>
-                                    <option value="Divisoria">Divisoria</option>
-                                    <option value="Dulian (Upper Bunguiao)">Dulian (Upper Bunguiao)</option>
-                                    <option value="Dulian (Upper Pasonanca)">Dulian (Upper Pasonanca)</option>
-                                    <option value="Guisao">Guisao</option>
-                                    <option value="Guiwan">Guiwan</option>
-                                    <option value="Kasanyangan">Kasanyangan</option>
-                                    <option value="La Paz">La Paz</option>
-                                    <option value="Labuan">Labuan</option>
-                                    <option value="Lamisahan">Lamisahan</option>
-                                    <option value="Landang Gua">Landang Gua</option>
-                                    <option value="Landang Laum">Landang Laum</option>
-                                    <option value="Lanzones">Lanzones</option>
-                                    <option value="Lapakan">Lapakan</option>
-                                    <option value="Lapuyan">Lapuyan</option>
-                                    <option value="Latuan Curuan">Latuan Curuan</option>
-                                    <option value="Licomo">Licomo</option>
-                                    <option value="Limaong">Limaong</option>
-                                    <option value="Limpapa">Limpapa</option>
-                                    <option value="Luba">Luba</option>
-                                    <option value="Lumayang">Lumayang</option>
-                                    <option value="Lunzuran">Lunzuran</option>
-                                    <option value="Maasin">Maasin</option>
-                                    <option value="Malagutay">Malagutay</option>
-                                    <option value="Mampang">Mampang</option>
-                                    <option value="Manalipa">Manalipa</option>
-                                    <option value="Mangusu">Mangusu</option>
-                                    <option value="Manicahan">Manicahan</option>
-                                    <option value="Mariki">Mariki</option>
-                                    <option value="Mercedes">Mercedes</option>
-                                    <option value="Mutong">Mutong</option>
-                                    <option value="Pamucutan">Pamucutan</option>
-                                    <option value="Panubigan">Panubigan</option>
-                                    <option value="Pasilmanta (Sacol Island)">Pasilmanta (Sacol Island)</option>
-                                    <option value="Pasobolong">Pasobolong</option>
-                                    <option value="Pasonanca">Pasonanca</option>
-                                    <option value="Patalon">Patalon</option>
-                                    <option value="Putsan">Putsan</option>
-                                    <option value="Quiniput">Quiniput</option>
-                                    <option value="Recodo">Recodo</option>
-                                    <option value="Rio Hondo">Rio Hondo</option>
-                                    <option value="Salaan">Salaan</option>
-                                    <option value="San Jose Cawa-Cawa">San Jose Cawa-Cawa</option>
-                                    <option value="San Jose Gusu">San Jose Gusu</option>
-                                    <option value="San Ramon">San Ramon</option>
-                                    <option value="San Roque">San Roque</option>
-                                    <option value="Sangali">Sangali</option>
-                                    <option value="Santa Barbara">Santa Barbara</option>
-                                    <option value="Santa Catalina">Santa Catalina</option>
-                                    <option value="Santa Maria">Santa Maria</option>
-                                    <option value="Santa Roza">Santa Roza</option>
-                                    <option value="Sibulao (Talisayan)">Sibulao (Talisayan)</option>
-                                    <option value="Sinubong">Sinubong</option>
-                                    <option value="Sinunuc">Sinunuc</option>
-                                    <option value="Sta. Cruz">Sta. Cruz</option>
-                                    <option value="Sta. Maria">Sta. Maria</option>
-                                    <option value="Sta. Catalina">Sta. Catalina</option>
-                                    <option value="Sta. Catalina (Talisayan)">Sta. Catalina (Talisayan)</option>
-                                    <option value="Sta. Maria">Sta. Maria</option>
-                                    <option value="Sto. Niño" selected>Sto. Niño</option>
-                                    <option value="Tagasilay">Tagasilay</option>
-                                    <option value="Taguiti">Taguiti</option>
-                                    <option value="Talabaan">Talabaan</option>
-                                    <option value="Talisayan">Talisayan</option>
-                                    <option value="Talon-Talon">Talon-Talon</option>
-                                    <option value="Taluksangay">Taluksangay</option>
-                                    <option value="Talungon">Talungon</option>
-                                    <option value="Tetuan">Tetuan</option>
-                                    <option value="Tictapul">Tictapul</option>
-                                    <option value="Tigbalabag">Tigbalabag</option>
-                                    <option value="Tigtabon">Tigtabon</option>
-                                    <option value="Tolosa">Tolosa</option>
-                                    <option value="Tugbungan">Tugbungan</option>
-                                    <option value="Tulungatung">Tulungatung</option>
-                                    <option value="Tumaga">Tumaga</option>
-                                    <option value="Tumalutab">Tumalutab</option>
-                                    <option value="Tumitus">Tumitus</option>
-                                    <option value="Victoria">Victoria</option>
-                                    <option value="Vitali">Vitali</option>
-                                    <option value="Zambowood">Zambowood</option>
-                                </select>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
-                                <label for="contact-street" class="form-label">Street: </label>
-                                <input type="text" class="form-control" id="contact-street" name="contact-street">
-                                <div class="invalid-feedback contact-street" >
-
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 col-md-4 col-sm-8 pb-2">
-                                <label for="contact-bldg-no" class="form-label">Address:</label>
-                                <input type="text" class="form-control" name="contact-bldg-no" id="contact-bldg-no">
-                                <div class="invalid-feedback contact-bldg-no" >
-
+                                <hr>
+                                <div class="d-flex justify-content-between mt-4 col-12">
+                                    <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
+                                    <button class="btn btn-primary ml-auto btn-form-submit" type="submit" title="Send" id="submitBtn" disabled>Submit Report</button>
                                 </div>
                             </div>
-                        </div><!--end of row-->
-                        
-                        <div class="d-flex justify-content-between mt-4">
-                            <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Prev</button>
-                            <button class="btn btn-primary ml-auto btn-service-info js-btn-next" type="button" title="Next" disabled>Next</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
-                <!--single form panel-->
-                <div class="multisteps-form__panel shadow p-4 rounded bg-white" data-animation="slideHorz">
-                    <div class="multisteps-form__content">
-                        <h1 class="text-center pt-3"><strong>Service Information</strong></h1>
-                            <div class="label-form row pt-5 pb-3">
-                                <div class="col-6">
-                                    <input type="radio" class="btn-check" name="service" id="crisis" value="crisis" autocomplete="off" checked>
-                                    <label class="btn custom-btn" for="crisis">Crisis Intervention Including Rescue</label>
-                                </div>
-                                <div class="col-6">
-                                    <input type="radio" class="btn-check" name="service" id="issuance" value="issuance" autocomplete="off">
-                                    <label class="btn custom-btn" for="issuance">Issuance / Enforcement of Barangay Protection Order</label>
-                                </div>
-                            </div>
-
-                        <div class="d-flex justify-content-between mt-4">
-                            <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Prev</button>
-                            <button class="btn btn-primary ml-auto btn-form-submit" type="submit" title="Send" id="submitBtn">Submit</button>
-                        </div>
-                    </div>
-                </div>
-          </form>
+            </div>
         </div>
-      </div>
     </div>
 </div>
 <!-- Modal success -->
@@ -1098,21 +838,45 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Email Confirmation</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Contact Verification</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="emailConfirmationForm">
+            <form id="contactConfirmationForm">
                 <div class="modal-body">
-                    <h3 class="text-center">Before We Can Process Your Case.</h3>
-                    <p class="py-1 fs-4 text-center">Please Enter Your Email First</p>
-                    <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="email-confirm" name="email-confirm" placeholder="name@example.com">
-                        <label for="floatingInput">Email address</label>
+                    <div class="container col-lg-12 col-md-12 col-sm-8">
+                        <h3 class="text-center">Before We Can Process Your Case.</h3>
+                        <div class="form-label mb-4 text-center">Please enter your email or phone number first.</div>
+                        <ul class="nav nav-underline mb-3" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="email-tab" data-bs-toggle="tab" data-bs-target="#email-panel" type="button" role="tab" aria-controls="email" aria-selected="true">Email</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="phone-tab" data-bs-toggle="tab" data-bs-target="#phone-panel" type="button" role="tab" aria-controls="phone" aria-selected="false">Phone</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content mb-3" id="myTabContent">
+                            <div class="tab-pane fade show active" id="email-panel" role="tabpanel" aria-labelledby="email-tab">
+                                <input type="email" class="form-control" id="email-confirm" name="email-confirm" aria-describedby="emailFeedback" placeholder="example@email.com">
+                                <div id="emailFeedback" class="invalid-feedback err-msg-email">
+                                    No Account Associated with any Case.
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="phone-panel" role="tabpanel" aria-labelledby="phone-tab">
+                                <div class="input-group">
+                                    <span class="input-group-text">+63</span>
+                                    <input type="text" class="form-control" id="phone-confirm" name="phone-confirm" placeholder="987 654 3210" maxlength="10">
+                                </div>
+                                <div id="phoneFeedback" class="invalid-feedback err-msg-phone">
+                                    No Account Associated with any Case.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="g-recaptcha d-flex justify-content-center mb-3" data-sitekey="{{ site_key }}" data-callback="err_captcha_reset"></div>
+                        <div class="err-msg-recaptcha fs-7 text-danger mb-3"></div>
                     </div>
-                    <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="send_email_confirmation">Confirm Email</button>
+                    <button type="submit" class="btn btn-primary" id="send_email_confirmation">Confirm</button>
                 </div>
             </form>
         </div>
@@ -1175,11 +939,37 @@
     </div>
 </div>
 
+<!--loading skeleton-->
+<div class="multiform-loading">
+    <div class="container-fluid p-4">
+        <div class="row">
+            <div class="col-md-10 p-4 mx-auto placeholder-glow">
+                <div class="row">
+                    <div class="col-8 mx-auto mb-5">
+                        <div class="placeholder loading-box lb-1"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 mx-auto mb-5">
+                        <div class="placeholder loading-box lb-2"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 mx-auto">
+                        <div class="placeholder loading-box lb-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 {% block scripts %}
 <script src="{% static 'js/multi-form.js' %}"></script>
 <script src="{% static 'js/dynamic_forms.js' %}"></script>
 <script>
+    const csrf_token = '{{ csrf_token }}'
     function showToast(type, message) {
         var toastId = type === 'success' ? '#successToast' : '#errorToast';
         var toast = new bootstrap.Toast(document.querySelector(toastId));
@@ -1193,7 +983,7 @@
     $(document).ready(function() {
         function checkButtonsValidity() {
             const FirstNameValue = $("#contact-firstname").val().trim();
-            const MidNameValue = $("#contact-midname").val().trim();
+            //const MidNameValue = $("#contact-midname").val().trim();
             const LastNameValue = $("#contact-lastname").val().trim();
             const RelationshipValue = $("#relationship").val().trim();
             const StreetValue = $("#contact-street").val().trim();
@@ -1201,22 +991,22 @@
 
             const isStreetValid = !$("#contact-street").hasClass('is-invalid') && StreetValue !== "";
             const isFirstNameValid = !$("#contact-firstname").hasClass('is-invalid') && FirstNameValue !== "";
-            const isMidNameValid = !$("#contact-midname").hasClass('is-invalid') && MidNameValue !== "";
+            //const isMidNameValid = !$("#contact-midname").hasClass('is-invalid') && MidNameValue !== "";
             const isLastNameValid = !$("#contact-lastname").hasClass('is-invalid') && LastNameValue !== "";
             const isRelationshipValid = !$("#relationship").hasClass('is-invalid') && RelationshipValue !== "";
             const isAddressValid = !$("#contact-bldg-no").hasClass('is-invalid') && AddressValue !== "";
 
             const progressButton = $('button[title="Service Information"]');
-            const nextButton = $('.btn-service-info');
+            const nextButton = $('.btn-next-service');
         
-            if (isStreetValid && isFirstNameValid && isMidNameValid && isLastNameValid && isRelationshipValid && isAddressValid) {
+            if (isStreetValid && isFirstNameValid && isLastNameValid && isRelationshipValid && isAddressValid) {
                 console.log("Okay: All inputs are valid contact.");
                 progressButton.prop('disabled', false);
-                nextButton.prop('disabled', false);
+                //nextButton.prop('disabled', false);
             } else {
                 console.log("No: Some inputs are not valid contact.");
                 progressButton.prop('disabled', true);
-                nextButton.prop('disabled', true);
+                //nextButton.prop('disabled', true);
             }
         }
         
@@ -1256,13 +1046,13 @@
         }
 
         // Add event listeners for validation and required input error
-        $("#contact-firstname, #contact-midname, #contact-lastname, #relationship, #contact-street").on('input', function() {
+        $("#contact-firstname, #contact-lastname, #relationship, #contact-street").on('input', function() {
             validateTextInput($(this).attr('id'), 50, "");
             checkButtonsValidity();
         });
 
         // Add event listener for the "required input" error
-        $("#contact-firstname, #contact-midname, #contact-lastname, #relationship, #contact-street").on('blur', function() {
+        $("#contact-firstname, #contact-lastname, #relationship, #contact-street, #contact-bldg-no").on('blur', function() {
             const input = $(this);
             const feedback = input.next(".invalid-feedback");
             if (!input.val().trim()) {
@@ -1271,7 +1061,7 @@
                 checkButtonsValidity();
             }
         });
-        $("#contact-firstname, #contact-midname, #contact-lastname, #relationship, #contact-street").on('keydown', function(event) {
+        $("#contact-firstname, #contact-lastname, #relationship, #contact-street").on('keydown', function(event) {
             if (/\d/.test(event.key)) {
                 event.preventDefault();
             }
@@ -1312,6 +1102,24 @@
             validateAddressInput();
             checkButtonsValidity();
         });
+
+        const contactPersonForm = document.querySelector('.contact-form-panel')
+        const requiredContactInputs = contactPersonForm.querySelectorAll('.req-inp')
+        requiredContactInputs.forEach(input => {
+            
+            const feedback = input.nextElementSibling;
+            input.addEventListener('change', () => {
+                if (input.value.length <= 0) {
+                  feedback.textContent = "This is a required input.";
+                  input.classList.add('is-invalid');
+                } else {
+                  feedback.textContent = "";
+                  input.classList.remove('is-invalid');
+                }
+
+            })
+        })
+
         // Function to check if all inputs are valid and enable/disable buttons accordingly
         function checkInputsValidity() {
             const streetInputValue = $("#incident-street").val().trim();
@@ -1323,15 +1131,34 @@
             const nextButton = $('.btn-next-contact-person');
 
             if (isStreetValid && isDescriptionValid) {
+                console.log("Okay: All inputs are valid.");
                 progressButton.prop('disabled', false);
-                nextButton.prop('disabled', false);
+                //nextButton.prop('disabled', false);
             } else {
+                console.log("No: Some inputs are not valid.");
                 progressButton.prop('disabled', true);
-                nextButton.prop('disabled', true);
+                //nextButton.prop('disabled', true);
             }
         }
 
         checkInputsValidity();
+
+        const incidentForm = document.querySelector('.incident-form-panel')
+        const requiredIncidentInputs = incidentForm.querySelectorAll('.req-inp')
+        requiredIncidentInputs.forEach(input => {
+            
+            const feedback = input.nextElementSibling;
+            input.addEventListener('change', () => {
+                if (input.value.length <= 0) {
+                  feedback.textContent = "This is a required input.";
+                  input.classList.add('is-invalid');
+                } else {
+                  feedback.textContent = "";
+                  input.classList.remove('is-invalid');
+                }
+
+            })
+        })
 
         $("#incident-street, #incident-desc" ).on('input change', function() {
             checkInputsValidity();
@@ -1433,6 +1260,7 @@
                     break;
                 }
             }
+            const feedback = evidenceInput.next(".invalid-feedback");
             if (!isValidFileType) {
                 feedback.text("Only images are allowed to be uploaded.");
                 // Clear the uploaded files
@@ -1454,18 +1282,54 @@
             if(e.target.classList.contains("delete-individual-form")) {
 
                 const parentPage = e.target.closest(".multisteps-form__panel")
-                e.target.closest(".individual-form").remove();
+                const individualForm = parentPage.querySelectorAll(".individual-form")
+                const word = individualForm[0].querySelector(".user_counter").textContent.split(" ")
+                const victimNavtabsContainer = document.querySelector('#victim-navtabs-container')
+                const perpNavtabsContainer = document.querySelector('#perpetrator-navtabs-container')
+                
+                if (individualForm.length  < 2) {
+                    // showToast('error', `At least one {word[0]} form is required.`); 
+                    showToast('error', "At least one " + word[0].toLowerCase() + " form is required."); 
+                } else {
 
-                let counter = 1;
-                parentPage.querySelectorAll(".individual-form").forEach(function(element) {
-                    console.log(element)
+                    
 
+                    e.target.closest(".individual-form").remove();
+                    
 
-                    let word = element.querySelector(".user_counter").textContent.split(" ")
-                    element.querySelector(".user_counter").innerHTML = word[0] + " " + counter
+                    const victimActiveTab = victimNavtabsContainer.querySelector(`[data-target='#${e.target.closest(".individual-form").id}']`)
+                    const perpetratorActiveTab = perpNavtabsContainer.querySelector(`[data-target='#${e.target.closest(".individual-form").id}']`)
 
-                    counter++
-                });
+                    if(e.target.closest(".individual-form").classList.contains('victim-form')) {
+                        victimCount--
+                        if(victimActiveTab.nextElementSibling.classList.contains('nav-link')) {
+                            victimActiveTab.nextElementSibling.click();
+                        } else {
+                            victimActiveTab.previousElementSibling.click();
+                        }
+                        victimActiveTab.remove();
+                        recountVictims()
+                    }
+                    if(e.target.closest(".individual-form").classList.contains('perpetrator-form')) {
+                        perpetratorCount--
+                        if(perpetratorActiveTab.nextElementSibling.classList.contains('nav-link')) {
+                            perpetratorActiveTab.nextElementSibling.click();
+                        } else {
+                            perpetratorActiveTab.previousElementSibling.click();
+                        }
+                        perpetratorActiveTab.remove();
+                        recountPerpetrators()
+                    }
+                    
+                    
+                    
+                    let counter = 1;
+                    individualForm.forEach(function(element) {
+                        //element.querySelector(".user_counter").innerHTML = word[0] + " " + counter
+
+                        counter++
+                    });
+                }
 
             }
         })
@@ -1482,6 +1346,10 @@
                 $('#sendEmail').modal('show');
             } else {
                 // Submitting form to database
+
+                // reseting count inputs to actual count.
+                document.querySelector('#victim_count').value = victimCount
+                document.querySelector('#perpetrator_count').value = perpetratorCount
 
                 var formData = new FormData(this); // Create FormData object from the form
                 $.ajax({
@@ -1510,25 +1378,44 @@
         });
 
         // email confirmation
-        $('#emailConfirmationForm').submit(function(e) {
+        $('#contactConfirmationForm').submit(function(e) {
             e.preventDefault(); // Prevent the default form submission
+
+            // Check if the input is email address
+            var emailValue = $('#email-confirm').val();
+            var phoneValue = $('#phone-confirm').val();
+            let contactValue = ''
+
+            // For example, you can log it to the console
+            console.log("Email entered: " + emailValue);
+            console.log("Phone entered: " + phoneValue);
+
+            // Determine what url endpoint to use, either for email or phone
+            requestURL = ''
+            if(document.querySelector('#email-tab').classList.contains('active')) {
+                console.log('email is selected type')
+                requestURL = '{% url 'email_confirm'  %}'
+                contactValue = isvalid_email(emailValue)
+            } else if (document.querySelector('#phone-tab').classList.contains('active')) {
+                console.log('phone number is selected type')
+                requestURL = '{% url 'phone_confirm'  %}'
+                contactValue = isvalid_phone_number(phoneValue)
+            } else {
+                throw new Error('No contact type selected')
+            }
 
             // Check recaptcha if puzzle is solved
             const captchaRes = grecaptcha.getResponse()
             if(!captchaRes.length > 0) {
+                $('.g-recaptcha').children().css('border', '1px solid red')
+                $('.err-msg-recaptcha').text('You need to solve captcha first')
                 throw new Error('reCAPTCHA validation failed')
             }
 
-            // Check if the input is email address
-            var emailValue = $('#email-confirm').val();
-
-            // For example, you can log it to the console
-            console.log("Email entered: " + emailValue);
-
             $.ajax({
-                url: '{% url 'email_confirm'  %}', // Modify the URL to point to your Django view endpoint
+                url: requestURL, // Modify the URL to point to your Django view endpoint
                 type: 'POST',
-                data: { emailConfirm: emailValue, 'g-recaptcha-response': grecaptcha.getResponse() }, // Pass the email value in the data object
+                data: { 'contactConfirm': contactValue, 'g-recaptcha-response': grecaptcha.getResponse() }, // Pass the email value in the data object
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                 },
@@ -1536,11 +1423,20 @@
                     // Handle success response
                     console.log(response); // Log the response to the console
                     
-                    // Check if reCAPTCHA serverside validation is not successful
+                    // Server-side validation response
                     if (!response.success) {
-                        throw new Error('reCaptcha validation failed')
+                        if(get_contact_type() == 'email') {
+                            $('#email-confirm').addClass('is-invalid')
+                            $('.err-msg-email').text(response.message)
+                        } else if (get_contact_type() == 'phone') {
+                            $('#phone-confirm').addClass('is-invalid')
+                            $('#phone-confirm').parent().addClass('is-invalid')
+                            $('.err-msg-phone').text(response.message)
+                        }
+                        throw new Error(response.message)
                     }
 
+                    setContactModalMessage()
                     // Hide the email modal
                     $('#sendEmail').modal('hide');
 
@@ -1559,9 +1455,21 @@
         $('#otpForm').submit(function(e) {
             e.preventDefault(); // Prevent the default form submission
             var formData = $(this).serialize();
+
+            requestURL = ''
+            if(document.querySelector('#email-tab').classList.contains('active')) {
+                console.log('email is selected type')
+                requestURL = '{% url 'verify_otp_email'  %}'
+            } else if (document.querySelector('#phone-tab').classList.contains('active')) {
+                console.log('phone number is selected type')
+                requestURL = '{% url 'verify_otp_phone'  %}'
+            } else {
+                throw new Error('No contact type selected')
+            }
+
             $.ajax({
                 type: 'POST',
-                url: '{% url "verify_otp_email" %}',
+                url: requestURL,
                 data: formData,
                 success: function(response) {
                     if (response.success) {
@@ -1569,8 +1477,11 @@
                         // hide otp modal
                         $('#otpModal').modal('hide');
                         var emailValue = $('#email-confirm').val();
+                        var phoneValue = $('#phone-confirm').val();
                         console.log("Email entered(OTP): " + emailValue);
+                        console.log("Phone entered(OTP): " + phoneValue);
                         $('#email-confirmed').val(emailValue);
+                        $('#phone-confirmed').val(phoneValue);
                         goForSubmission = true
 
                         // to trigger button of main form
@@ -1597,6 +1508,98 @@
             e.preventDefault(); // Prevent the default action
         });
 
+        // Function to update the countdown timer
+        function updateTimer(seconds) {
+            $('#resendTimer').text(`Resend ${seconds}s`);
+        }
+
+        // Function to handle the resend action
+        function resendOTP() {
+            // Disable the resend button
+            $('#resendButton').prop('disabled', true);
+            // Hide the resend button
+            $('#resendButton').hide();
+
+            // Set the initial timer value
+            let secondsRemaining = 30;
+            updateTimer(secondsRemaining);
+
+            // Start the countdown
+            const timerInterval = setInterval(() => {
+                secondsRemaining--;
+                updateTimer(secondsRemaining);
+                if (secondsRemaining === 0) {
+                    // Enable the resend button and clear the timer
+                    clearInterval(timerInterval);
+                    $('#resendButton').prop('disabled', false);
+                    $('#resendButton').show(); // Show the resend button
+                    $('#resendTimer').text('');
+                }
+            }, 1000);
+
+            // Send AJAX request to resend OTP
+            $.ajax({
+                type: 'POST',
+                url: '{% url "resend_otp_email" %}',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }, // Include CSRF token in the headers
+                success: function(response) {
+                    // Handle success response if needed
+                },
+                error: function(xhr, errmsg, err) {
+                    console.error('Error occurred during OTP resend:', errmsg);
+                }
+            });
+        }
+        // Client side validation
+        function isvalid_phone_number(number) {
+            console.log(typeof number)
+            if(/^\d+$/.test(number) && number.length === 10) {
+                console.log('Phone number isvalid')
+                return number
+            } else if (number.trim().length <= 0) {
+                $('.err-msg-phone').text('Please enter your phone number')
+                $('#phone-confirm').parent().addClass('is-invalid')
+                throw new Error('No input detected')
+            } else {
+                console.log(number)
+                $('.err-msg-phone').text('Invalid phone number')
+                $('#phone-confirm').parent().addClass('is-invalid')
+                throw new Error('Invalid phone number')
+            }
+        }
+        function isvalid_email(email) {
+            if(email.trim().length <= 0) {
+                $('.err-msg-email').text('Please enter your email')
+                $('#email-confirm').addClass('is-invalid')
+                throw new Error('No input detected')
+            } else {
+                return email
+            }
+        }
+
+        function get_contact_type() {
+            if(document.querySelector('#email-tab').classList.contains('active')) {
+                return 'email'
+            } else if (document.querySelector('#phone-tab').classList.contains('active')) {
+                return 'phone'
+            } else {
+                return false
+            }
+        }
+        
+
+        // Click event handler for the resend button
+        $('#resendButton').click(function(event) {
+            event.preventDefault();
+            resendOTP();
+        });
+
+        // Prevent character inputs other than numbers in the phone input element
+        $('#phone-confirm').on('input', function() {
+            // Remove any non-numeric character
+            $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        });
+
         // Get the current date
         var currentDate = new Date();
 
@@ -1606,5 +1609,41 @@
         // Set the value of the input field to the current date
         $('#date-latest-incident').val(formattedDate);
     });
+
+    function err_captcha_reset() {
+        $('.g-recaptcha').children().css('border', 'none')
+        $('.err-msg-recaptcha').text('')
+    }
+
+    function recountVictims() {
+        victimForms = document.querySelectorAll('.victim-form')
+        victimForms.forEach((e, index) => {
+            e.querySelector('#victim_counter').innerText = index + 1
+        })
+    }
+    function recountPerpetrators() {
+        perpetratorForms = document.querySelectorAll('.perpetrator-form')
+        perpetratorForms.forEach((e, index) => {
+            e.querySelector('#perpetrator_counter').innerText = index + 1
+        })
+    }
+
+
+    document.querySelectorAll('[name="service"]').forEach(element => {
+        element.addEventListener('change', () => {
+            document.querySelector('.btn-form-submit').disabled = false
+        })
+    })
+
+    function setContactModalMessage() {
+        if(document.querySelector('#phone-tab').classList.contains('active')) {
+          document.querySelector('#hidden_email').textContent = '09*******' + (document.querySelector('#phone-confirm').value.toString()).slice(-2)
+      
+        } else if (document.querySelector('#email-tab').classList.contains('active')) {
+          email = document.querySelector('#email-confirm').value
+          document.querySelector('#hidden_email').textContent = email[0] + '*****' + email.slice(-10)
+        }
+    }
+
 </script>
 {% endblock scripts %}

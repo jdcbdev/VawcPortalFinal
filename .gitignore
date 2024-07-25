@@ -157,4 +157,7 @@ vawc/account/__pycache__/models.cpython-312.pyc
 #VSCode
 .vscode
 
+#db
+vawc/db.sqlite3
+
 # End of the list

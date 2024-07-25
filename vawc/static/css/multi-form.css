@@ -67,6 +67,9 @@
   outline: none !important;
   cursor: pointer;
 }
+.multisteps-form__content label {
+  font-weight: 300 !important;
+}
 @media (min-width: 500px) {
   .multisteps-form__progress-btn {
     text-indent: 0;
@@ -119,22 +122,24 @@
 }
 
 .multisteps-form__form {
-  position: relative;
+  /* position: relative; */
 }
 
 .multisteps-form__panel {
-  position: absolute;
+  /* position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 0;
+  width: 100%; */
+  /* height: 0; */
   opacity: 0;
   visibility: hidden;
+  display: none;
 }
 .multisteps-form__panel.js-active {
-  height: auto;
+  /* height: auto; */
   opacity: 1;
   visibility: visible;
+  display: block;
 }
 .multisteps-form__panel[data-animation="scaleOut"] {
   -webkit-transform: scale(1.1);
@@ -152,21 +157,33 @@
   left: 50px;
 }
 .multisteps-form__panel[data-animation="slideHorz"].js-active {
+  transition: all 1s;
   transition-property: all;
   transition-duration: 0.25s;
   transition-timing-function: cubic-bezier(0.2, 1.13, 0.38, 1.43);
   transition-delay: 0s;
   left: 0;
+  
 }
+
 .multisteps-form__panel[data-animation="slideVert"] {
-  top: 30px;
+  /* top: 30px; */
 }
 .multisteps-form__panel[data-animation="slideVert"].js-active {
-  transition-property: all;
+  /* transition-property: all;
   transition-duration: 0.2s;
   transition-timing-function: linear;
   transition-delay: 0s;
-  top: 0;
+  top: 0; */
+  animation: slideVert .25s cubic-bezier(0.2, 1.13, 0.38, 1.43);
+}
+@keyframes slideVert {
+  from {
+    transform: translateY(-30px);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 .multisteps-form__panel[data-animation="fadeIn"].js-active {
   transition-property: all;
@@ -185,4 +202,56 @@
   transition-delay: 0s;
   -webkit-transform: scale(1);
           transform: scale(1);
+}
+
+main {
+  /* temporary only */
+  position: relative;
+}
+.multiform-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100% !important;
+  z-index: 3;
+  background: rgba(245, 245, 245, 1);
+}
+.loading-box {
+  border-radius: .5rem;
+  background-color: #bd98e0 !important;
+  width: 100%;
+}
+.lb-1 {
+  height: 2rem;
+}
+.lb-2 {
+  height: 3rem;
+}
+.lb-3 {
+  height: 80vh;
+}
+
+.nav-pills .nav-link {
+  cursor: pointer;
+  color: rgb(175, 185, 196);
+  background-color: rgb(240, 240, 240) !important;
+  opacity: 0.5;
+}
+.nav-pills .nav-link:hover {
+  color: #8a2be2;
+}
+.nav-pills .nav-link.active {
+  cursor: pointer;
+  color: slategray !important;
+  background-color: rgb(255, 255, 255) !important;
+  border-color: #dee2e6 !important;
+  opacity: 1;
+}
+.nav-pills .nav-link span.tab-name {
+  max-width: 100px !important;
+  overflow: hidden;
+}
+.multisteps-form__content .tab-content {
+  min-height: 500px;
 }

@@ -1,5 +1,5 @@
 from django.conf import settings
-from account.models import Email, Recaptcha
+from account.models import Email, Recaptcha, Twilio
 
 # Set email settings config
 def load_settings():
@@ -21,3 +21,13 @@ def load_recaptcha_settings():
         return {'site_key': recaptcha.site_key, 'secret_key': recaptcha.secret_key}
     else:
         raise ValueError("No reCAPTCHA settings found in the database.")
+
+
+def load_twilio_settings():
+    twilio = Twilio.objects.all().first()
+    if twilio:
+        settings.TWILIO_ACCOUNT_SID = twilio.account_sid
+        settings.TWILIO_AUTH_TOKEN = twilio.auth_token
+        settings.TWILIO_PHONE_NUMBER = twilio.phone_number
+    else:
+        raise ValueError("No Twilio settings found in the database.")

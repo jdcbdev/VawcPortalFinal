@@ -84,10 +84,10 @@ const DOMstrings = {
     //show active panel
     DOMstrings.stepFormPanels.forEach((elem, index) => {
       if (index === activePanelNum) {
-  
+        console.log(elem)
         elem.classList.add('js-active');
   
-        setFormHeight(elem);
+        //setFormHeight(elem);
   
       }
     });
@@ -95,19 +95,19 @@ const DOMstrings = {
   };
   
   //set form height equal to current panel height
-  const formHeight = activePanel => {
+  // const formHeight = activePanel => {
   
-    const activePanelHeight = activePanel.offsetHeight;
+  //   const activePanelHeight = activePanel.offsetHeight;
   
-    DOMstrings.stepsForm.style.height = `${activePanelHeight}px`;
+  //   //DOMstrings.stepsForm.style.height = `${activePanelHeight}px`;
   
-  };
+  // };
   
-  const setFormHeight = () => {
-    const activePanel = getActivePanel();
+  // const setFormHeight = () => {
+  //   const activePanel = getActivePanel();
   
-    formHeight(activePanel);
-  };
+  //   formHeight(activePanel);
+  // };
   
   //STEPS BAR CLICK FUNCTION
   DOMstrings.stepsBar.addEventListener('click', e => {
@@ -150,7 +150,10 @@ const DOMstrings = {
       activePanelNum--;
   
     } else {
-  
+      const activeForm = getActivePanel()
+      if (!validateInputs(activeForm)) {
+        return
+      }
       activePanelNum++;
   
     }
@@ -158,13 +161,14 @@ const DOMstrings = {
     setActiveStep(activePanelNum);
     setActivePanel(activePanelNum);
   
+    window.scrollTo({top: 0})
   });
   
   //SETTING PROPER FORM HEIGHT ONLOAD
-  window.addEventListener('load', setFormHeight, false);
+  //window.addEventListener('load', setFormHeight, false);
   
   //SETTING PROPER FORM HEIGHT ONRESIZE
-  window.addEventListener('resize', setFormHeight, false);
+ // window.addEventListener('resize', setFormHeight, false);
   
   //changing animation via animation select !!!YOU DON'T NEED THIS CODE (if you want to change animation type, just change form panels data-attr)
   
@@ -173,12 +177,99 @@ const DOMstrings = {
       elem.dataset.animation = newType;
     });
   };
+
+  window.addEventListener('load', () => {
+    document.querySelector('.multiform-loading').style.display = 'none';
+  })
+
+  document.getElementById('incident-evidence').addEventListener('input', function(event) {
+
+    const files = event.target.files;
+    const imageContainer = document.getElementById('photo-evidence-container');
+    imageContainer.innerHTML = ''; // Clear any existing images
+    
+    Array.from(files).forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.alt = 'evidence_' + (index + 1);
+            img.style.height = '100%';
+            img.style.border = '1px solid #dcdcdc';
+            imageContainer.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    });
+  });
   
   //selector onchange - changing animation
-  const animationSelect = document.querySelector('.pick-animation__select');
+  // const animationSelect = document.querySelector('.pick-animation__select');
   
-  animationSelect.addEventListener('change', () => {
-    const newAnimationType = animationSelect.value;
+  // animationSelect.addEventListener('change', () => {
+  //   const newAnimationType = animationSelect.value;
   
-    setAnimationType(newAnimationType);
-  });
+  //   setAnimationType(newAnimationType);
+  // });
+  
+function validateInputs(formElement) {
+
+  const required_inputs = formElement.querySelectorAll('.req-inp')
+  const max_length = 50;
+  let all_valid = true
+
+  required_inputs.forEach(input => {
+    const feedback = input.nextElementSibling;
+    
+    if (input.value.length <= 0) {
+  
+      feedback.textContent = "This is a required input.";
+      input.classList.add('is-invalid');
+
+      all_valid = false
+    } else {
+      feedback.textContent = "";
+      input.classList.remove('is-invalid');
+    }
+
+  })
+
+  return all_valid
+
+}
+
+
+
+function setCustomGender(selectInput) {
+  const customInput = selectInput.parentElement.querySelector('.custom-gender')
+  // retrieve the element with custom as option
+  const customGenderOption = (() => {
+    for(let i = 0; i < selectInput.options.length; i++){
+      if (selectInput.options[i].textContent == 'Custom') {
+        return selectInput.options[i]
+      }
+    }
+    return null
+  })();
+
+  customInput.style.display = 'none'
+
+  // change visibility of custom input
+  selectInput.addEventListener('change', () => {
+    if(selectInput.options[selectInput.selectedIndex].textContent == 'Custom') {
+      customInput.style.display = 'block'
+    } else {
+      customInput.style.display = 'none'
+    } 
+  })
+
+  
+
+  // update the value of the <option>custom based on sibling custom input
+  customInput.addEventListener('input', () => {
+    customGenderOption.value = customInput.value
+    console.log(customInput.value)
+    console.log(customGenderOption.value)
+  })
+}
+
+setCustomGender(document.querySelector('#victim-sex_0'))
