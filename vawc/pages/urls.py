@@ -40,7 +40,7 @@ urlpatterns = [
 
     #super admin side
     path('admin-vawc/dashboard/', views.admin_dashboard_view, name='admin dashboard'),
-    path('admin-vawc/admin-dashboard-data', views.admin_dashboard_data, name='admin dashboard data'),
+    path('admin-vawc/admin-dashboard-data/<int:get_year>/', views.admin_dashboard_data, name='admin dashboard data'),
     path('admin-vawc/graph-report/', views.admin_graph_view, name='admin graph'),
     path('admin-vawc/manage/account/', views.admin_manage_account_view, name='admin account'),
     path('admin-vawc/manage/passkey/', views.admin_manage_passkey_view, name='admin passkey'),
@@ -53,6 +53,7 @@ urlpatterns = [
     
     #barangay admin side
     path('admin-barangay-vawc/dashboard/', views.barangay_dashboard_view, name='barangay dashboard'),
+    path('admin-barangay-vawc/barangay-dashboard-data/<int:get_year>/', views.barangay_dashboard_data, name='barangay dashboard data'),
     path('admin-barangay-vawc/settings/', views.barangay_settings_view, name='barangay settings'),
 
     path('add_status/<int:case_id>/', views.add_status, name='add_status'),

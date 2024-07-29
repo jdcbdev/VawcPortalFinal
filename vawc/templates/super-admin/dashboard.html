@@ -9,31 +9,44 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <h1 class="mb-4">Dashboard</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Dashboard</h1>
+        <div class="d-flex align-items-center gap-3">
+            <div class="spinner-border-sm test-primary" id="select-year-data-loading" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <select name="" id="select-year-data" class="form-select w-auto" disabled>
+                <option value="0">All year</option>
+                {% for year in year_list %}
+                <option value="{{year}}">{{year}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
 
     <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 mb-4 align-items-stretch">
       <div class="col">
         <div class="border rounded p-2 shadow-sm h-100">
           <span>Reported Cases</span>
-          <div class="fw-bold fs-6 text-color-primary">{{ total_cases }}</div>
+          <div class="fw-bold fs-6 text-color-primary" id="total-cases">-</div>
         </div>
       </div>
       <div class="col">
         <div class="border rounded p-2 shadow-sm h-100">
           <span>Ongoing Cases</span>
-          <div class="fw-bold fs-6 text-color-primary">{{ ongoing_cases }}</div>
+          <div class="fw-bold fs-6 text-color-primary" id="ongoing-cases">-</div>
         </div>
       </div>
       <div class="col">
         <div class="border rounded p-2 shadow-sm h-100">
           <span>Resolved Cases</span>
-          <div class="fw-bold fs-6 text-color-primary">{{ resolved_cases }}</div>
+          <div class="fw-bold fs-6 text-color-primary" id="resolved-cases">-</div>
         </div>
       </div>
       <div class="col">
         <div class="border rounded p-2 shadow-sm h-100">
           <span>w/ Criminal Cases</span>
-          <div class="fw-bold fs-6 text-color-primary">{{ cases_w_criminal_cases }}</div>
+          <div class="fw-bold fs-6 text-color-primary" id="cases-w-criminal-cases">-</div>
         </div>
       </div>
       <div class="col">
@@ -43,23 +56,23 @@
                 
             </div>
             <div class="">
-                <div class="fw-bold fs-2 text-color-primary">BPO: {{ bpo_count }}</div>
-                <div class="fw-bold fs-2 text-warning">TPO: {{ tpo_count }}</div>
-                <div class="fw-bold fs-2 text-success">PPO: {{ ppo_count }}</div>
+                <div class="fw-bold fs-2 text-color-primary">BPO: <span id="bpo">-</span></div>
+                <div class="fw-bold fs-2 text-warning">TPO: <span id="tpo">-</span></div>
+                <div class="fw-bold fs-2 text-success">PPO: <span id="ppo">-</span></div>
             </div>
         </div>
       </div>
       <div class="col">
         <div class="border rounded p-2 shadow-sm h-100">
           <span>Services Provided</span>
-          <div class="fw-bold fs-6 text-color-primary">{{ services_provided }}</div>
+          <div class="fw-bold fs-6 text-color-primary" id="services-provided">-</div>
         </div>
       </div>
 
     </div>
     <div class="row">
       <div class="col-6 col-md-4 mb-4 mx-auto">
-        <h2 class="fs-4 mb-3 text-center">No. of cases per province</h2>
+        <h2 class="fs-4 mb-3">No. of cases per province</h2>
         <canvas id="pie-cases-per-province"></canvas>
       </div>
       <div class="col-12 col-md-8 mb-4">
@@ -76,11 +89,7 @@
 			<canvas id="bar-cases-by-city"></canvas>
 		</div>
 		<div class="col mb-3">
-			<div class="d-flex justify-content-between align-items-center">
-				<h2 class="fs-4">Cases by Month</h2>
-				<select class="form-select fs-1 w-auto" id="year-filter"> 
-                </select>
-            </div>
+            <h2 class="fs-4">Cases by Month</h2>
         	<canvas id="bar-cases-by-month"></canvas>
       	</div>
     </div>
@@ -106,7 +115,7 @@
                 </div>
                 <div class="col-6 col-md-2 mb-2">
                     <select id="gender-filter" class="form-select">
-                        <option value="">All sex</option>
+                        <option value="">All Gender</option>
                     </select>
                 </div>
                 <div class="col-6 col-md-2 mb-2">
@@ -139,14 +148,15 @@
 					</tbody>
                     <tfoot>
                         <tr>
-                            <td>Total</td>
-                            <td id="table-total-victim"></td>
+                            <td><strong>Total Cases: </strong><span id="table-total-cases"></span></td>
+                            <td><strong>Total Victims: </strong><span id="table-total-victim"></span></td>
                             <td></td>
-                            <td id="table-total-perpetrator"></td>
+                            <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator"></span></td>
                             <td></td>
-                            <td id="table-total-ra"></td>
+                            <td><strong>Total RA Violations: </strong><span id="table-total-ra"></span></td>
                             <td></td>
-                            <td id="table-total-gender"></td>
+                            {% comment %} <td id="table-total-gender"></td> {% endcomment %}
+                            <td></td>
                             <td></td>
                             <td></td>
                         </tr>
@@ -166,8 +176,13 @@
 <script>
 $(document).ready(function() {
     // global vars
-    const cases_per_geography = JSON.parse('{{ cases_per_geography|escapejs }}')
     const current_year = new Date().getFullYear();
+    const caseTable = document.getElementById('cases-table-content');
+    let annualCases = {}//JSON.parse('{{ annual_cases|escapejs }}')
+    let cases_per_geography = [{name: '', count: '', cities: []}]//null //JSON.parse('{{ cases_per_geography|escapejs }}')
+    let republic_acts = ''//JSON.parse('{{ republic_acts|escapejs }}')
+    
+    get_dashboard_data()
 
     let gender_types = []
     let default_barangay_options = []
@@ -272,8 +287,9 @@ $(document).ready(function() {
 
     // RA bar chart
     var ctx = document.getElementById('bar-cases-per-ra').getContext('2d');
-    let barLabels = Object.keys(JSON.parse('{{ republic_acts|escapejs }}'))
-    let barData = Object.values(JSON.parse('{{ republic_acts|escapejs }}'))
+    //let republic_acts = null//JSON.parse('{{ republic_acts|escapejs }}')
+    let barLabels = Object.keys(republic_acts)
+    let barData = Object.values(republic_acts)
     var casePerRa = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -325,13 +341,13 @@ $(document).ready(function() {
     //var ctx = document.getElementById('bar-cases-by-city').getContext('2d');
     var ctx = document.getElementById('bar-cases-by-city');
     let all_cities_data = []
-    cases_per_geography.forEach(province => {
-        province.cities.forEach(city => {
-            if(city.count > 0) {
-                all_cities_data[city.name] = city.count
-            }
-        })
-    })
+    //cases_per_geography.forEach(province => {
+    //    province.cities.forEach(city => {
+    //        if(city.count > 0) {
+    //            all_cities_data[city.name] = city.count
+    //        }
+    //    })
+    //})
     const default_city_labels = Object.keys(all_cities_data)
     const default_city_data = Object.values(all_cities_data)
     let filtered_cities = all_cities_data
@@ -439,13 +455,13 @@ $(document).ready(function() {
 
     // Monthly cases line chart
     var ctx = document.getElementById('bar-cases-by-month').getContext('2d');
-    const annualCases = JSON.parse('{{ annual_cases|escapejs }}')
-    const yearList = Object.entries(annualCases).map(([key, value]) => {
-        return key;
-    });
-    yearList.sort((a, b) => b - a);
-    let lineLabels = Object.keys(annualCases[`${current_year}`])
-    let lineData = Object.values(annualCases[`${current_year}`])
+    //let annualCases = ''//JSON.parse('{{ annual_cases|escapejs }}')
+    //const yearList = Object.entries(annualCases).map(([key, value]) => {
+    //    return key;
+    //});
+    //yearList.sort((a, b) => b - a);
+    let lineLabels = Object.keys(annualCases)
+    let lineData = Object.values(annualCases)
     var casesByMonth = new Chart(ctx, {
         type: 'line',
         data: {
@@ -457,7 +473,8 @@ $(document).ready(function() {
                 borderColor: 'rgba(255, 99, 132, 1)',
                 data: lineData,
                 borderWidth: 1,
-                pointStyle: false
+                pointStyle: false,
+                cubicInterpolationMode: 'monotone'
             }]
         },
         options: {
@@ -479,7 +496,7 @@ $(document).ready(function() {
             }
         }
     });
-    const yearFilter = document.querySelector('#year-filter')
+    /* const yearFilter = document.querySelector('#year-filter')
     yearList.forEach(year => {
         yearFilter.innerHTML += `<option value=${year}>${year}</option>`
     })
@@ -493,17 +510,115 @@ $(document).ready(function() {
                 casesByMonth.update()
             }
         })
-    })
+    }) */
 
-    const caseTable = document.getElementById('cases-table-content');
 
-    (async () => {
+    function changeBarangayFilter(geo_type, geo = false) {
+        if(!cases_per_geography && !default_barangay_options) return;
+        let temp_barangay_list = []
 
-        const res = await fetch('/admin-vawc/admin-dashboard-data')
-        if(!res.ok) return
+        if(geo_type == 'province' && geo) {
+            cases_per_geography.forEach(province => {
+                if(province.name === geo) {
+                    province.cities.forEach(city => { 
+                        city.barangays.forEach(barangay => {
+                            if(barangay.count > 0) {
+                                temp_barangay_list.push(barangay.name)
+                            }
+                        })
+                    })
+                }
+            })
+        } else if(geo_type == 'city' && geo) {
+            cases_per_geography.forEach(province => {
+                province.cities.forEach(city => {
+                    if(city.name == geo) {
+                        city.barangays.forEach(barangay => {
+                            if(barangay.count > 0) {
+                                temp_barangay_list.push(barangay.name)
+                            }
+                        })
+                    }
+                })
+            })
+        } else {
+            temp_barangay_list = default_barangay_options
+        }
+        
+        const barangayFilter = document.querySelector('#barangay-filter')
+
+        barangayFilter.innerHTML = ''
+        barangayFilter.innerHTML += `<option value="">All Barangay</option>`
+        
+        temp_barangay_list.forEach(barangay => {
+            barangayFilter.innerHTML += `<option value="${barangay}">${barangay}</option>`
+        })
+    }
+
+    async function get_dashboard_data(get_year = 0) {
+
+        $('#select-year-data-loading').addClass('spinner-border')
+        $('#select-year-data').prop('disabled', true) 
+        const res = await fetch(`/admin-vawc/admin-dashboard-data/${get_year}/`)
+        if(!res.ok) {
+            return
+        }
         const data = await res.json()
+        $('#select-year-data-loading').removeClass('spinner-border')
+        $('#select-year-data').prop('disabled', false)
 
+        $('#total-cases').text(data.total_cases)
+        $('#ongoing-cases').text(data.ongoing_cases)
+        $('#resolved-cases').text(data.resolved_cases)
+        $('#services-provided').text(data.services_provided)
+        $('#services-provided').text(data.services_provided)
+        $('#bpo').text(data.bpo_count)
+        $('#tpo').text(data.tpo_count)
+        $('#ppo').text(data.ppo_count)
+        $('#cases-w-criminal-cases').text(data.cases_w_criminal_cases)
+
+        annualCases = data.annual_cases
+        cases_per_geography = data.cases_per_geography
+        republic_acts = data.republic_acts
+        all_cities_data = []
+
+        // Pie - cases per province
+        casePerProvince.config.data.datasets[0].data = cases_per_geography.map(province => province.count)
+        casePerProvince.config.data.labels = cases_per_geography.map(province => province.name)
+        casePerProvince.update()
+
+        // Bar Hor - 
+        casePerRa.config.data.datasets[0].data = Object.values(republic_acts)
+        casePerRa.config.data.labels = Object.keys(republic_acts)
+        casePerRa.update()
+
+        // Bar Ver - city cases
+        cases_per_geography.forEach(province => {
+            province.cities.forEach(city => {
+                if(city.count > 0) {
+                    all_cities_data[city.name] = city.count
+                }
+            })
+        })
+        filtered_cities = all_cities_data
+        casesByCity.config.data.datasets[0].data = Object.values(all_cities_data)
+        casesByCity.config.data.labels = Object.keys(all_cities_data)
+        casesByCity.update()
+
+        // Line - 
+        casesByMonth.config.data.datasets[0].data = Object.values(annualCases)
+        casesByMonth.config.data.labels = Object.keys(annualCases)
+        casesByMonth.update()
+
+        render_table(data.cases_list)
+    }
+    
+
+    function render_table(data) {
+
+        $('#cases-table').DataTable().destroy()
         caseTable.innerHTML = ''
+        default_barangay_options = []
         const today = new Date()
 
         data.forEach(case_item => {
@@ -566,33 +681,34 @@ $(document).ready(function() {
             caseTable.innerHTML += `
             <tr class="border-bottom border-2">
                 <td class="text-center">${case_item.data.case_number}</td>
-                <td>${victims.names}</td>
-                <td>${victims.addresses}</td>
-                <td>${perpetrators.names}</td>
-                <td>${perpetrators.addresses}</td>
+                <td>${victims.names.join(", ")}</td>
+                <td>${victims.addresses.join(", ")}</td>
+                <td>${perpetrators.names.join(", ")}</td>
+                <td>${perpetrators.addresses.join(", ")}</td>
                 <td>${ra_violations}</td>
                 <td>${victims.ages}</td>
                 <td>${victims.genders}</td> 
                 <td>${case_item.data.barangay}-${case_item.data.city}-${case_item.data.province}</td> 
-                <td>${case_item.data.date_latest_incident}</td> 
+                <td>${case_item.data.date_added}</td> 
             </tr>
             `
         })
         // sets initial data of barangay filter dropdown
-        if(default_barangay_options.length) {
+        if(default_barangay_options) {
             changeBarangayFilter()
         }
         // sets initial data of gender filter dropdown
         if(gender_types.length) {
             const genderFilter = document.querySelector('#gender-filter')
             genderFilter.innerHTML = ''
-            genderFilter.innerHTML += `<option value="">All sex</option>`
+            genderFilter.innerHTML += `<option value="">All Gender</option>`
             
             gender_types.forEach(gender => {
                 genderFilter.innerHTML += `<option value="${gender}">${gender}</option>`
             })
         }
 
+        
         const casesTable = $('#cases-table').DataTable({
             dom: '<"d-flex justify-content-between align-items-center flex-column flex-md-row gap-3"<f><B>>' + 'tr' + '<"d-flex justify-content-between pt-3 align-items-center flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
             scrollX: true,
@@ -629,6 +745,7 @@ $(document).ready(function() {
             //order: [[4, 'desc']],
             //order: [[0, 'desc']],
         });
+        
 
         casesTable.on('draw.dt', () => {
 
@@ -642,35 +759,37 @@ $(document).ready(function() {
                 return counts.reduce((accu, curr) => accu + curr, 0)
             }
 
+            const case_rows = casesTable.column(0, { filter: 'applied' }).data().toArray()
             const victim_rows = casesTable.column(1, { filter: 'applied' }).data().toArray()
             const perpetrator_rows = casesTable.column(3, { filter: 'applied' }).data().toArray()
             const ra_rows = casesTable.column(5, { filter: 'applied' }).data().toArray()
             const gender_rows = casesTable.column(7, { filter: 'applied' }).data().toArray()
 
 
+            $('#table-total-cases').text(countTotal(case_rows))
             $('#table-total-victim').text(countTotal(victim_rows))
             $('#table-total-perpetrator').text(countTotal(perpetrator_rows))
             $('#table-total-ra').text(countTotal(ra_rows))
-            $('#table-total-gender').text(countTotal(gender_rows))
+            //$('#table-total-gender').text(countTotal(gender_rows))
 
 
         })
         casesTable.draw()
         
-        $('select#filter-ra-select').on('change', function(e){
+        $('select#filter-ra-select').off('change').on('change', function(e){
             var search_term = $(this).val();
             $('#cases-table').DataTable().columns([5]).search(search_term).draw();
         });
-        $('select#gender-filter').on('change', function(e){
+        $('select#gender-filter').off('change').on('change', function(e){
             var search_term = $(this).val();
             const regex = search_term ? `(?=.*${search_term})(?=.*\\b${search_term}\\b)` : ''
             $('#cases-table').DataTable().columns([7]).search(regex, true, false).draw();
         });
-        $('select#barangay-filter').on('change', function(e){
+        $('select#barangay-filter').off('change').on('change', function(e){
             var search_term = $(this).val();
             $('#cases-table').DataTable().columns([8]).search(`${search_term}-`).draw();
         });
-        $('select#age-filter').on('change', function(e){
+        $('select#age-filter').off('change').on('change', function(e){
             var search_term = $(this).val();
             //$('#cases-table').DataTable().columns([5]).search(search_term).draw();
             var range = document.querySelector('select#age-filter').value.split('-')
@@ -681,58 +800,12 @@ $(document).ready(function() {
                 var age = parseFloat(value) || 0;
                 return (age >= min && age <= max);
             }).draw();
+            console.log('dra')
         });
-        
-    })()
-    /*
-    function sortCities(cities) {
-        const entries = Object.entries(cities)
-        entries.sort((a, b) => b[1] - a[1])
-        return Object.fromEntries(entries)
     }
-    */
-    function changeBarangayFilter(geo_type, geo = false) {
-        if(!cases_per_geography && !default_barangay_options) return;
-        let temp_barangay_list = []
-
-        if(geo_type == 'province' && geo) {
-            cases_per_geography.forEach(province => {
-                if(province.name === geo) {
-                    province.cities.forEach(city => { 
-                        city.barangays.forEach(barangay => {
-                            if(barangay.count > 0) {
-                                temp_barangay_list.push(barangay.name)
-                            }
-                        })
-                    })
-                }
-            })
-        } else if(geo_type == 'city' && geo) {
-            cases_per_geography.forEach(province => {
-                province.cities.forEach(city => {
-                    if(city.name == geo) {
-                        city.barangays.forEach(barangay => {
-                            if(barangay.count > 0) {
-                                temp_barangay_list.push(barangay.name)
-                            }
-                        })
-                    }
-                })
-            })
-        } else {
-            temp_barangay_list = default_barangay_options
-        }
-        
-        const barangayFilter = document.querySelector('#barangay-filter')
-
-        barangayFilter.innerHTML = ''
-        barangayFilter.innerHTML += `<option value="">All Barangay</option>`
-        
-        temp_barangay_list.forEach(barangay => {
-            barangayFilter.innerHTML += `<option value="${barangay}">${barangay}</option>`
-        })
-    }
-
+    $('#select-year-data').on('change', (e) => {
+        get_dashboard_data(e.target.value)
+    })
 })
 </script>
 {% endblock scripts %}
