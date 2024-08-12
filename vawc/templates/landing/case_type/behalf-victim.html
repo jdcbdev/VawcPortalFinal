@@ -101,7 +101,7 @@
                                                 </select>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--gender-->
-                                                <label for="victim-sex_0" class="form-label">Gender </label>
+                                                <label for="victim-sex_0" class="form-label">Gender <span class="required"></span></label>
                                                 <select id="victim-sex_0" name="victim-sex_0" class="form-select req-inp gender-input">
                                                     <option value="">--Select Option--</option>
                                                     <option value="male">Male</option>
@@ -151,7 +151,7 @@
     
                                             <h3 class="fs-5 col-12 my-3">Local Address</h3>
                                             <div class="col-sm-6 mb-3"> <!--region-->
-                                                <label for="victim-region_0" class="form-label">Region</label>
+                                                <label for="victim-region_0" class="form-label">Region <span class="required"></span></label>
                                                 <select id="victim-region_0" name="victim-region_0" class="form-select req-inp" disabled>
                                                     {% for region in default_regions %}
                                                         <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
@@ -777,7 +777,7 @@
                                                     </span>
                                                     <h3 class="fw-bold fs-5">Crisis Intervention Including Rescue</h3>
                                                 </div>
-                                                <p class="fw-light">Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate maiores a aliquid optio vel facere praesentium ipsam rem. Error</p>
+                                                <p class="fw-light">Provides immediate support in emergencies, including rescue operations, temporary shelter, and access to essential resources.</p>
                                                 <div class="d-flex justify-content-end">
                                                     <input type="radio" class="form-check-input" name="service" id="crisis" value="crisis" autocomplete="off">
                                                 </div>
@@ -791,7 +791,7 @@
                                                     </span>
                                                     <h3 class="fw-bold fs-5">Issuance / Enforcement of Barangay Protection Order</h3>
                                                 </div>
-                                                <p class="fw-light">Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate maiores a aliquid optio vel facere praesentium ipsam rem. Error sit odit sint dignissimo.</p>
+                                                <p class="fw-light">Issues and enforces protective orders at the barangay to ensure the safety of individuals facing domestic violence.</p>
                                                 <div class="d-flex justify-content-end">
                                                     <input type="radio" class="form-check-input" name="service" id="issuance" value="issuance" autocomplete="off">
                                                 </div>
