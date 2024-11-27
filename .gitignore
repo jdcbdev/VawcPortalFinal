@@ -93,6 +93,7 @@ local_settings.py
 /vawc/db.sqlite3
 /vawc/db.sqlite3-journal
 media
+/vawc/settings.py
 
 # Flask stuff:
 instance/
