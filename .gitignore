@@ -93,7 +93,7 @@ local_settings.py
 /vawc/db.sqlite3
 /vawc/db.sqlite3-journal
 media
-/vawc/settings.py
+/vawc/vawc/settings.py
 
 # Flask stuff:
 instance/
@@ -162,3 +162,4 @@ vawc/account/__pycache__/models.cpython-312.pyc
 vawc/db.sqlite3
 
 # End of the list
+vawc/vawc/settings.py
