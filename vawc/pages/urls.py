@@ -50,6 +50,13 @@ urlpatterns = [
     path('check_username_email/', views.check_username_email, name='check_username_email'),
     path('admin-vawc/settings/', views.admin_settings_view, name='admin settings'),
     path('admin-vawc/notification', views.super_admin_notification_view, name="notif admin"),
+
+    path('admin-vawc/case/', views.admin_case_view, name='admin case'),
+    path('add-new-case/', views.add_new_case, name='add_new_case'),
+    path('admin-vawc/view-case/behalf/<int:case_id>/', views.view_admin_case_behalf, name='admin case behalf view'),
+    path('admin-vawc/view-case/impacted/<int:case_id>/', views.view_admin_case_impact, name='admin case impacted view'),
+    path('admin-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
+    # path('process_service_info/', views.process_service_info, name='process_service_info'),
     
     #barangay admin side
     path('admin-barangay-vawc/dashboard/', views.barangay_dashboard_view, name='barangay dashboard'),

@@ -27,7 +27,12 @@
                         <div class="row pb-2">
                             <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
                                 <label for="barangay-passkey" class="form-label">Password: </label>
-                                <input type="password" class="form-control" id="barangay-passkey" name="barangay-passkey" aria-describedby="barangay-passkeyFeedback">
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="barangay-passkey" name="barangay-passkey" aria-describedby="barangay-passkeyFeedback">
+                                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                                        <i class='bx bx-show'></i>
+                                    </button>
+                                </div>
                                 <div id="barangay-passkeyFeedback" class="invalid-feedback">
                                     Your Passkey is invalid. Please try again.
                                 </div>
@@ -110,6 +115,19 @@
 <script>
     // JavaScript for login_with_otp.html
     $(document).ready(function() {
+        $('.toggle-password').click(function() {
+            const passwordField = $('#barangay-passkey');
+            const passwordFieldType = passwordField.attr('type');
+            const toggleIcon = $(this).find('i');
+
+            if (passwordFieldType === 'password') {
+                passwordField.attr('type', 'text');
+                toggleIcon.removeClass('bx-show').addClass('bx-hide');
+            } else {
+                passwordField.attr('type', 'password');
+                toggleIcon.removeClass('bx-hide').addClass('bx-show');
+            }
+        });
         // Initialize Bootstrap toast
         var toastElList = [].slice.call(document.querySelectorAll('.toast'));
         var toastList = toastElList.map(function (toastEl) {

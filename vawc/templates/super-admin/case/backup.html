@@ -1,0 +1,95 @@
+<hr style="margin-top: 15px;">
+    <div>
+      <h3 class="fs-1 title">If Victim-Survivor is a Child</h3>
+    </div>
+<hr>
+<section>
+    {% for parent_victim in list_parent_victim_decrypted %}
+      <div class="row row-start">
+        <h3 class="thin-font fs-3" style="font-weight: bold;"><strong>Name of Parent / Guardian:</strong></h3>
+        <div class="person-name" style="margin-top:11px; margin-left: 20px;">
+            <h3 class="thin-font fs-3">
+              &nbsp;<span>{{ parent_victim.last_name|default:"Missing Input" }}</span>&nbsp;
+            </h3>
+            <span class="indicator">Last Name</span>
+        </div>
+        <div class="person-name">
+            <h3 class="thin-font fs-3" style="margin-top:11px; margin-left: 25px !important;">
+              &nbsp;<span>{{ parent_victim.first_name|default:"Missing Input" }}</span>&nbsp;
+            </h3>
+            <span class="indicator" style="margin-left: 25px !important;">First Name</span>
+        </div>
+        <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+            <h3 class="thin-font fs-3">
+                <span>{{ parent_victim.middle_name|default:"Missing Input" }}</span>
+            </h3>
+            <span class="indicator">Middle Name</span>
+        </div>
+        <div class="person-name" style="margin-top:11px; margin-left: 25px !important;">
+          <h3 class="thin-font fs-3">
+              <span>{{ parent_victim.suffix|default:"Missing Input" }}</span>
+          </h3>
+          <span class="indicator">Suffix</span>
+        </div>
+      </div>
+      <div class="row row-start" style="margin-top: 6px;">
+        <div class="row mt-1">
+          <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Relationship of Guardian to Victim-Survivor: </span><span class="underline">&nbsp;{{ parent_victim.relationship_to_victim|default:"Missing Input" }}&nbsp;</span></h3>
+        </div>
+      </div>
+      <div class="row row-start" style="margin-top: 6px;">
+        <div class="row mt-1">
+          <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Address: </span><span class="underline">&nbsp;{{ parent_victim.house_information|default:"Missing Input" }}&nbsp;</span></h3>
+        </div>
+      </div>
+      <div class="row row-start mt-3">
+        <h3 class="thin-font fs-3">Region: 
+          <span class="underline">
+            {% if parent_victim.region == 'region-I' %}
+                Region I
+            {% elif parent_victim.region == 'region-II' %}
+                Region II
+            {% elif parent_victim.region == 'region-III' %}
+                Region III
+            {% elif parent_victim.region == 'region-IV' %}
+                Region IV‑A
+            {% elif parent_victim.region == 'mimaropa' %}
+                MIMAROPA Region
+            {% elif parent_victim.region == 'region-V' %}
+                Region V
+            {% elif parent_victim.region == 'region-VI' %}
+                Region VI
+            {% elif parent_victim.region == 'region-VII' %}
+                Region VII
+            {% elif parent_victim.region == 'region-VIII' %}
+                Region VIII
+            {% elif parent_victim.region == 'region-IX' %}
+                Region IX
+            {% elif parent_victim.region == 'region-X' %}
+                Region X
+            {% elif parent_victim.region == 'region-XI' %}
+                Region XI
+            {% elif parent_victim.region == 'region-XII' %}
+                Region XII
+            {% elif parent_victim.region == 'region-XIII' %}
+                Region XIII
+            {% elif parent_victim.region == 'ncr' %}
+                NCR
+            {% elif parent_victim.region == 'car' %}
+                CAR
+            {% elif parent_victim.region == 'barmm' %}
+                BARMM
+            {% endif %}
+          </span>
+        </h3>
+        <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Province: <span class="underline">{{ parent_victim.province|default:"Missing Input" }}</span></h3>
+        <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">City / Mun: <span class="underline">{{ parent_victim.city|default:"Missing Input" }}</span></h3>
+        <h3 class="thin-font fs-3" style="margin: 0px 20px 0 20px ;">Barangay: <span class="underline">{{ parent_victim.barangay|default:"Missing Input" }}</span></h3>
+      </div>
+      <div class="row row-start" style="margin-top: 6px;">
+        <div class="row mt-1">
+          <h3 class="thin-font fs-3"><span style="font-weight: bold; width: 200px;">Contact No. of Parent / Guardian: </span><span class="underline">&nbsp;{{ parent_victim.house_information|default:"Missing Input" }}&nbsp;</span></h3>
+        </div>
+      </div>
+    {% endfor %}
+</section>
