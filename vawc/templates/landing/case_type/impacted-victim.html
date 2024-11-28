@@ -193,7 +193,7 @@
                                                 <div class="invalid-feedback victim-street_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Address -->
-                                                <label for="victim-house-info_0" class="form-label">Address <span class="required"></span></label>
+                                                <label for="victim-house-info_0" class="form-label">Landmark <span class="required"></span></label>
                                                 <input type="text" class="form-control req-inp" name="victim-house-info_0" id="victim-house-info_0">
                                                 <div class="invalid-feedback victim-house-info_0"></div>
                                             </div>
@@ -211,7 +211,8 @@
                         <!--single form panel--><!--perpetrator-->
                         <div class="multisteps-form__panel" data-animation="slideVert">
 
-                            <h2 class="text-center mb-4 mb-md-5"><strong>Perpetrator Information</strong></h2>
+                            <h2 class="text-center"><strong>Perpetrator Information</strong></h2>
+                            <p class="text-center text-muted mb-4 mb-md-5">The person may be responsible for a wrongdoing.</p>
 
                             <!--perpetrators navigation tabs-->
                             <div class="col-md-11 mx-auto mb-2 d-flex flex-nowrap gap-2 overflow-auto nav nav-pills" id="perpetrator-navtabs-container">
@@ -391,7 +392,7 @@
                                                 <div class="invalid-feedback perp-street_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Address -->
-                                                <label for="perp-address-info_0" class="form-label">Address <span class="required"></span></label>
+                                                <label for="perp-address-info_0" class="form-label">Landmark <span class="required"></span></label>
                                                 <input type="text" class="form-control req-inp" id="perp-address-info_0" name="perp-address-info_0">
                                                 <div class="invalid-feedback perp-address-info_0" ></div>
                                             </div>
@@ -594,7 +595,7 @@
             </svg>
             </div>
             <h3 class="text-center">Success</h3>
-            <p class="py-1 fs-4 text-center">Thank you for reporting! Your report will help us maintain a safe and enjoyable environment for everyone. We'll review the issue promptly. If necessary, we'll take appropriate action. Your contribution is appreciate! You can check the Progress of Your Case in the Check Status.</p>
+            <p class="py-1 fs-4 text-center">Thank you for reporting! Your report will help us maintain a safe and enjoyable environment for everyone. We'll review the issue promptly. If necessary, we'll take appropriate action. Your contribution is appreciated! You can check the Progress of Your Case in the Check Status.</p>
         </div>
         <div class="modal-footer">
             <a type="button" class="btn btn-primary" href="{% url 'home' %}">Back to HomePage</a>
@@ -614,12 +615,16 @@
                 <div class="modal-body">
                     <div class="container col-lg-12 col-md-12 col-sm-8">
                         <h3 class="text-center">Before We Can Process Your Case.</h3>
-                        <div class="form-label mb-4 text-center">Please enter your email or phone number first.</div>
+                        {% if twilio_type == 'local' %}
+                            <div class="form-label mb-4">Use your Email that was Associated with the Case.</div>
+                        {% else %}
+                            <div class="form-label mb-4">Use your Email or Phone that was Associated with the Case.</div>
+                        {% endif %}
                         <ul class="nav nav-underline mb-3" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="email-tab" data-bs-toggle="tab" data-bs-target="#email-panel" type="button" role="tab" aria-controls="email" aria-selected="true">Email</button>
                             </li>
-                            <li class="nav-item" role="presentation">
+                            <li class="nav-item {% if twilio_type == 'local' %}d-none{% endif %}" role="presentation">
                                 <button class="nav-link" id="phone-tab" data-bs-toggle="tab" data-bs-target="#phone-panel" type="button" role="tab" aria-controls="phone" aria-selected="false">Phone</button>
                             </li>
                         </ul>
@@ -1069,6 +1074,16 @@
                     // Hide the email modal
                     $('#sendEmail').modal('hide');
 
+                    const userEmail = $('#email-confirm').val();
+                    if (userEmail) {
+                        // Hide part of the email
+                        const hiddenEmail = userEmail.replace(/^(.)(.*)(@.*)$/, (match, p1, p2, p3) => {
+                            return p1 + '*'.repeat(p2.length) + p3;
+                        });
+
+                        $('#hidden_email').text(hiddenEmail);
+                    }
+
                     // Show the OTP modal
                     $('#otpModal').modal('show');
                 },
@@ -1078,6 +1093,24 @@
                     showToast('error', 'An error occurred. Please try again.');
                 }
             });
+        });
+
+        $('#otp input').on('input', function () {
+            const value = $(this).val();
+            if (value && value.length === 1) {
+                // Move to the next input if there's a next one
+                $(this).next('input').focus();
+            } else if (!value) {
+                // Move to the previous input if backspacing
+                $(this).prev('input').focus();
+            }
+        });
+
+        $('#otp input').on('keydown', function (e) {
+            if (e.key === 'Backspace' && !$(this).val()) {
+                // Move to the previous input on backspace
+                $(this).prev('input').focus();
+            }
         });
 
         // otp checking

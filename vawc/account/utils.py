@@ -29,5 +29,7 @@ def load_twilio_settings():
         settings.TWILIO_ACCOUNT_SID = twilio.account_sid
         settings.TWILIO_AUTH_TOKEN = twilio.auth_token
         settings.TWILIO_PHONE_NUMBER = twilio.phone_number
+        settings.TWILIO_TYPE = twilio.type
+        return {'twilio_type': twilio.type}
     else:
         raise ValueError("No Twilio settings found in the database.")

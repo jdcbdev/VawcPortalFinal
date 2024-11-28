@@ -1127,7 +1127,7 @@
                     <hr>
                     </div>
 
-                    <h4 class="pt-3">Accident Information</h4>
+                    <h4 class="pt-3">Incident Information</h4>
 
                     <div class="row pt-2 pb-3">
                         <div class="col-lg-4 col-md-4 col-sm-8 pt-3">
@@ -1269,7 +1269,7 @@
                     <hr class="pt-3">
                     <div class="row">
                         <h3>Witness/es:</h3>
-                        <p class="opacity-50 pb-3">(This will not be showed to others)</p>
+                        <p class="opacity-50 pb-3">(This will not be shown to others)</p>
                         </div><!--End of row-->
                         {% if witnesses %}
                         <div id="witnessContainer">
@@ -1351,7 +1351,8 @@
                     <br>
                     <hr class="pt-3">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-3">
-                        <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
+                        <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
+                        <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
 
                 </form>

@@ -24,14 +24,19 @@
                                     invalid feedback
                                 </div> -->
                                 <div class="container col-lg-12 col-md-12 col-sm-8">
-                                    <div class="form-label mb-4">Use your Email or Phone that was Assocaited with the Case.</div>
+                                    {% if twilio_type == 'local' %}
+                                        <div class="form-label mb-4">Use your Email that was Associated with the Case.</div>
+                                    {% else %}
+                                        <div class="form-label mb-4">Use your Email or Phone that was Associated with the Case.</div>
+                                    {% endif %}
+
                                     <ul class="nav nav-underline mb-3" id="myTab" role="tablist">
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link active" id="email-tab" data-bs-toggle="tab" data-bs-target="#email-panel" type="button" role="tab" aria-controls="email" aria-selected="true">Email</button>
                                         </li>
-                                        <li class="nav-item" role="presentation">
+                                        <li class="nav-item {% if twilio_type == 'local' %}d-none{% endif %}" role="presentation">
                                             <button class="nav-link" id="phone-tab" data-bs-toggle="tab" data-bs-target="#phone-panel" type="button" role="tab" aria-controls="phone" aria-selected="false">Phone</button>
-                                        </li>
+                                        </li>                                        
                                     </ul>
                                     <div class="tab-content mb-3" id="myTabContent">
                                         <div class="tab-pane fade show active" id="email-panel" role="tabpanel" aria-labelledby="email-tab">
@@ -219,6 +224,16 @@
                                     throw new Error('reCaptcha validation failed')
                                 }
 
+                                const userEmail = $('#email').val();
+                                if (userEmail) {
+                                    // Hide part of the email
+                                    const hiddenEmail = userEmail.replace(/^(.)(.*)(@.*)$/, (match, p1, p2, p3) => {
+                                        return p1 + '*'.repeat(p2.length) + p3;
+                                    });
+
+                                    $('#hidden_email').text(hiddenEmail);
+                                }
+
                                 // Show the OTP modal
                                 $('#otpModal').modal('show');
                             },
@@ -247,6 +262,24 @@
                     showToast('error', 'An error occurred. Please try again.');
                 }
             });
+        });
+
+        $('#otp input').on('input', function () {
+            const value = $(this).val();
+            if (value && value.length === 1) {
+                // Move to the next input if there's a next one
+                $(this).next('input').focus();
+            } else if (!value) {
+                // Move to the previous input if backspacing
+                $(this).prev('input').focus();
+            }
+        });
+
+        $('#otp input').on('keydown', function (e) {
+            if (e.key === 'Backspace' && !$(this).val()) {
+                // Move to the previous input on backspace
+                $(this).prev('input').focus();
+            }
         });
 
         // otp checking

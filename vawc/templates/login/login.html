@@ -26,7 +26,7 @@
                         </div><!--First row-->
                         <div class="row pb-2">
                             <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                <label for="barangay-passkey" class="form-label">Passkey: </label>
+                                <label for="barangay-passkey" class="form-label">Password: </label>
                                 <input type="password" class="form-control" id="barangay-passkey" name="barangay-passkey" aria-describedby="barangay-passkeyFeedback">
                                 <div id="barangay-passkeyFeedback" class="invalid-feedback">
                                     Your Passkey is invalid. Please try again.
@@ -134,6 +134,17 @@
                         $('#barangay-passkey').removeClass('is-invalid');
                         $('#successMessage').text(response.message);
                         console.log(response.message);
+                        
+                            const userEmail = $('#barangay-email').val();
+                            if (userEmail) {
+                                // Hide part of the email
+                                const hiddenEmail = userEmail.replace(/^(.)(.*)(@.*)$/, (match, p1, p2, p3) => {
+                                    return p1 + '*'.repeat(p2.length) + p3;
+                                });
+
+                                $('#hidden_email').text(hiddenEmail);
+                            }
+
                         // Redirect or perform other actions after successful login
                         $('#otpModal').modal('show'); // Show the OTP modal after successful login
                     } else {
@@ -161,6 +172,24 @@
                     $('#errorMessage').text('Error occurred. Please try again.');
                 }
             });
+        });
+
+        $('#otp input').on('input', function () {
+            const value = $(this).val();
+            if (value && value.length === 1) {
+                // Move to the next input if there's a next one
+                $(this).next('input').focus();
+            } else if (!value) {
+                // Move to the previous input if backspacing
+                $(this).prev('input').focus();
+            }
+        });
+
+        $('#otp input').on('keydown', function (e) {
+            if (e.key === 'Backspace' && !$(this).val()) {
+                // Move to the previous input on backspace
+                $(this).prev('input').focus();
+            }
         });
 
         $('#otpForm').submit(function(event) {

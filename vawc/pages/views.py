@@ -138,7 +138,16 @@ def success_reset_view (request):
 
 def track_case_view (request):
     recaptcha = load_recaptcha_settings()
-    return render(request, 'landing/track_case.html', {'site_key': recaptcha['site_key']})
+    twl_settings = load_twilio_settings()
+    
+    # Safely retrieve 'twilio.type' from the dictionary, providing a default value if not found
+    twilio_type = twl_settings.get('twilio_type', 'local')  # Set a fallback value
+
+    # Render the template
+    return render(request, 'landing/track_case.html', {
+        'site_key': recaptcha.get('site_key', ''),  # Default empty string if not found
+        'twilio_type': twilio_type
+    })
 
 def check_email_case(request):
     if request.method == 'POST':
@@ -870,7 +879,7 @@ def barangay_dashboard_view (request):
     # Retrieve the Account object associated with the logged-in user
     try:
         account = logged_in_user.account
-        barangay = 'TUMAGA'
+        barangay = account.barangay
     except Account.DoesNotExist:
         barangay = None
 
@@ -888,7 +897,7 @@ def barangay_dashboard_data(request, get_year):
     # Retrieve the Account object associated with the logged-in user
     try:
         account = logged_in_user.account
-        barangay = 'TUMAGA'
+        barangay = account.barangay
     except Account.DoesNotExist:
         barangay = None
     
@@ -1163,7 +1172,7 @@ def verify_otp(request):
                         print("User logged in successfully")
                         print(account_type)
 
-                        request.session['security_status'] = "encrypted"
+                        request.session['security_status'] = "decrypted"
                         print(request.session['security_status'])
 
                         # Return success along with account type
@@ -1333,6 +1342,10 @@ def report_violence_view (request):
 
 def impact_victim_view (request):
     recaptcha = load_recaptcha_settings()
+    twl_settings = load_twilio_settings()
+    
+    # Safely retrieve 'twilio.type' from the dictionary, providing a default value if not found
+    twilio_type = twl_settings.get('twilio_type', 'local')  # Set a fallback value
 
     # default/initial data to use when page loads
     region_id = 10 # region 9
@@ -1341,6 +1354,7 @@ def impact_victim_view (request):
     
     return render(request, 'landing/case_type/impacted-victim.html', {
         'site_key': recaptcha['site_key'],
+        'twilio_type': twilio_type,
         'default_regions': Region.objects.filter(id=region_id),
         'default_provinces': Province.objects.filter(region_id=region_id),
         'default_cities': Municipality.objects.filter(province_id=province_id),
@@ -1349,15 +1363,19 @@ def impact_victim_view (request):
 
 def behalf_victim_view (request):
     recaptcha = load_recaptcha_settings()
+    twl_settings = load_twilio_settings()
+    
+    # Safely retrieve 'twilio.type' from the dictionary, providing a default value if not found
+    twilio_type = twl_settings.get('twilio_type', 'local')  # Set a fallback value
 
     # default/initial data to use when page loads
     region_id = 10 # region 9
     province_id = 50 # zamboanga del sur
     municipality_id = 1133 # zamboanga city
 
-
     return render(request, 'landing/case_type/behalf-victim.html', {
         'site_key': recaptcha['site_key'],
+        'twilio_type': twilio_type,
         'default_regions': Region.objects.filter(id=region_id),
         'default_provinces': Province.objects.filter(region_id=region_id),
         'default_cities': Municipality.objects.filter(province_id=province_id),
@@ -1489,11 +1507,17 @@ def add_case(request):
         
         receiver = email
         subject = "Submitted Succesfully"
+        
+        # Generate the track case URL
+        track_case_url = f"{request.scheme}://{request.get_host()}{reverse('track_case')}"
+
+        # Message with the dynamic URL
         message = (
             f'--------------------------\n'
             f'Your case #{case_id} has been submitted successfully\n'
             f'--------------------------\n\n'
-            f'You can check your case status LINK.\n\n'
+            f'You can check your case status here:\n'
+            f'{track_case_url}\n\n'
             f'--------------------------\n'
             f'This email was sent automatically. Please do not reply.'
         )
