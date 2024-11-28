@@ -2859,6 +2859,8 @@ def process_incident_form(request):
         }
         return JsonResponse(response_data)
 
+from datetime import datetime
+
 def process_service_info(request):
     if request.method == 'POST':
         case_id = request.POST.get('case_id')
@@ -2867,22 +2869,31 @@ def process_service_info(request):
         except Case.DoesNotExist:
             return JsonResponse({'error': 'Case not found.'}, status=404)
 
+        # Helper function to parse and validate date
+        def parse_date(date_string):
+            try:
+                if date_string:
+                    return datetime.strptime(date_string, '%Y-%m-%d').date()
+                return None  # Return None if the date is empty
+            except ValueError:
+                return None  # Return None if the date format is invalid
+
         # Extracting and updating data for each field
         case.refers_to_social_welfare = True if request.POST.get('refer_social_welware') == 'true' else False
-        case.refer_social_date = request.POST.get('refer_social_date', '')
+        case.refer_social_date = parse_date(request.POST.get('refer_social_date', ''))
         case.psychosocial_services = True if request.POST.get('psych_service') == 'true' else False
         case.emergency_shelter = True if request.POST.get('emergency_shelter') == 'true' else False
         case.economic_assistance = True if request.POST.get('economic_assist') == 'true' else False
 
         case.refers_to_healthcare_provider = True if request.POST.get('refer_health') == 'true' else False
-        case.refer_healthcare_date = request.POST.get('refer_healthcare_date', '')
+        case.refer_healthcare_date = parse_date(request.POST.get('refer_healthcare_date', ''))
         case.healthcare_provider_name = request.POST.get('name_health', '')
         case.provision_of_appropriate_medical_treatment = True if request.POST.get('provision') == 'true' else False
         case.issuance_of_medical_certificate = True if request.POST.get('issuance_medical_cert') == 'true' else False
         case.medico_legal_exam = True if request.POST.get('medico_legal') == 'true' else False
 
         case.refers_to_law_enforcement = True if request.POST.get('refer_law_enforce') == 'true' else False
-        case.refer_law_enforcement_date = request.POST.get('refer_law_enforcement_date', '')
+        case.refer_law_enforcement_date = parse_date(request.POST.get('refer_law_enforcement_date', ''))
         case.law_enforcement_agency_name = request.POST.get('name_of_agency', '')
         case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
         case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
@@ -2890,7 +2901,7 @@ def process_service_info(request):
         case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
 
         case.refers_to_other_service_provider = True if request.POST.get('refer_other_service') == 'true' else False
-        case.refer_other_service_date = request.POST.get('refer_other_service_date', '')
+        case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))
         case.other_service_provider_name = request.POST.get('name_of_service_provider', '')
         case.type_of_service = request.POST.get('type_of_service_provider', '')
 
@@ -2902,6 +2913,7 @@ def process_service_info(request):
     else:
         # Return a JSON response indicating failure
         return JsonResponse({'error': 'Invalid request method.'})
+
 
 def add_status(request, case_id):
     if request.method == 'POST':
