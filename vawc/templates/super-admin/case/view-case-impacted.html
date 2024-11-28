@@ -588,30 +588,8 @@
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-6 col-12 mb-3">
-                                            <div class="form-floating">
-                                                <select class="form-select" id="victim_region_{{ victim.id }}" name="victim_region_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
-                                                        <option value="region-I" {% if victim.region == 'region-I' %}selected{% endif %}>Region I – Ilocos Region</option>
-                                                        <option value="region-II" {% if victim.region == 'region-II' %}selected{% endif %}>Region II – Cagayan Valley</option>
-                                                        <option value="region-III" {% if victim.region == 'region-III' %}selected{% endif %}>Region III – Central Luzon</option>
-                                                        <option value="region-IV" {% if victim.region == 'region-IV' %}selected{% endif %}>Region IV‑A – CALABARZON</option>
-                                                        <option value="mimaropa" {% if victim.region == 'mimaropa' %}selected{% endif %}>MIMAROPA Region</option>
-                                                        <option value="region-V" {% if victim.region == 'region-V' %}selected{% endif %}>Region V – Bicol Region</option>
-                                                        <option value="region-VI" {% if victim.region == 'region-VI' %}selected{% endif %}>Region VI – Western Visayas</option>
-                                                        <option value="region-VII" {% if victim.region == 'region-VII' %}selected{% endif %}>Region VII – Central Visayas</option>
-                                                        <option value="region-VIII" {% if victim.region == 'region-VIII' %}selected{% endif %}>Region VIII – Eastern Visayas</option>
-                                                        <option value="region-IX" {% if victim.region == 'region-IX' %}selected{% endif %}>Region IX – Zamboanga Peninsula</option>
-                                                        <option value="region-X" {% if victim.region == 'region-X' %}selected{% endif %}>Region X – Northern Mindanao</option>
-                                                        <option value="region-XI" {% if victim.region == 'region-XI' %}selected{% endif %}>Region XI – Davao Region</option>
-                                                        <option value="region-XII" {% if victim.region == 'region-XII' %}selected{% endif %}>Region XII – SOCCSKSARGEN</option>
-                                                        <option value="region-XIII" {% if victim.region == 'region-XIII' %}selected{% endif %}>Region XIII – Caraga</option>
-                                                        <option value="ncr" {% if victim.region == 'ncr' %}selected{% endif %}>NCR – National Capital Region</option>
-                                                        <option value="car" {% if victim.region == 'car' %}selected{% endif %}>CAR – Cordillera Administrative Region</option>
-                                                        <option value="barmm" {% if victim.region == 'barmm' %}selected{% endif %}>BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
-                                                    {% else %}
-                                                        <option value="barmm" selected>{{victim.region}}</option>
-                                                    {% endif %}
-                                                </select>
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="victim_region_{{ victim.id }}" name="victim_region_{{ victim.id }}" value="{{ victim.region }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_region_{{ victim.id }}">Region</label>
                                             </div>
                                         </div><!--End of col-->
