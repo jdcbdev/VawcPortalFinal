@@ -1565,7 +1565,8 @@ def handle_evidence_files(files, case_instance):
 
 def get_victim_data(post_data, prefix, index):
     # all "gAAAAABl-UOp4RWQLPLraFI_q80Ogmfk-Epd8K-CA9zHzYoc1FMwc7tnLv8hTBWTvjlmwjr866FtvBwRZjPXWKBEo3SPvHOU6g==" are replaced with dummy_text
-    dummy_text = '[data-placeholder]'
+    # dummy_text = '[data-placeholder]'
+    dummy_text = ''
     victim_data = {
         'first_name': post_data.get(f'{prefix}firstname_{index}'),
         'middle_name': post_data.get(f'{prefix}middlename_{index}'),
@@ -1594,7 +1595,8 @@ def get_victim_data(post_data, prefix, index):
 
 def get_perpetrator_data(post_data, index):
     # all "gAAAAABl-UOp4RWQLPLraFI_q80Ogmfk-Epd8K-CA9zHzYoc1FMwc7tnLv8hTBWTvjlmwjr866FtvBwRZjPXWKBEo3SPvHOU6g==" are replaced with dummy_text
-    dummy_text = '[data-placeholder]'
+    # dummy_text = '[data-placeholder]'
+    dummy_text = ''
     perpetrator_data = {
         'first_name': post_data.get(f'perp-firstname_{index}'),
         'middle_name': post_data.get(f'perp-middlename_{index}'),
@@ -1645,7 +1647,8 @@ def add_new_case(request):
     dummy_encrypted = "gAAAAABl-UOp4RWQLPLraFI_q80Ogmfk-Epd8K-CA9zHzYoc1FMwc7tnLv8hTBWTvjlmwjr866FtvBwRZjPXWKBEo3SPvHOU6g=="
 
     # all dummy_encrypted are replaced with dummy_text
-    dummy_text = '[data-placeholder]'
+    # dummy_text = '[data-placeholder]'
+    dummy_text = ''
     
     if request.method == 'POST':
         email = request.POST.get('email')
