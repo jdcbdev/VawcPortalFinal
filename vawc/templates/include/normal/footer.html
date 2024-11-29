@@ -1,29 +1,51 @@
+{% load static %}
+
 <footer class="footer bg-light">
-    <div class="container">
+    <div class="container py-5">
         <div class="row">
-            <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
-                <ul class="list-inline mb-2">
-                    <li class="list-inline-item"><a class="text-decoration-none text-cust-color" href="#!">About</a></li>
-                    <li class="list-inline-item">⋅</li>
-                    <li class="list-inline-item"><a class="text-decoration-none text-cust-color" href="#!">Contact</a></li>
-                    <li class="list-inline-item">⋅</li>
-                    <li class="list-inline-item"><a class="text-decoration-none text-cust-color" href="#!">Terms of Use</a></li>
-                    <li class="list-inline-item">⋅</li>
-                    <li class="list-inline-item"><a class="text-decoration-none text-cust-color" href="#!">Privacy Policy</a></li>
-                </ul>
-                <p class="text-muted small mb-4 mb-lg-0">&copy; Your Website 2023. All Rights Reserved.</p>
+            <!-- Column 1: About VAWC, WMSU, and DILG -->
+            <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                <h6 class="text-uppercase fw-bold">About VAWC</h6>
+                <div class="img-container mt-3">
+                    <img src="{% static 'img/VAWC-DESK-PORTAL-vg.png' %}" alt="VAWC Logo" width="auto" height="70" class="d-inline-block align-text-top">
+                    <img src="{% static 'img/WMSU Logo.png' %}" alt="VAWC Logo" width="auto" height="70" class="d-inline-block align-text-top me-2">
+                    <img src="{% static 'img/dilg.png' %}" alt="VAWC Logo" width="auto" height="70" class="d-inline-block align-text-top">
+                </div>
+                <p class="small text-muted mt-3">
+                    The VAWC Desk Portal is a web application that helps authorities track and monitor VAWC cases in the region. This initiative, in partnership with 
+                    Western Mindanao State University (WMSU) and the Department of the Interior and Local Government (DILG), is dedicated to providing protection, advocacy, and resources to combat violence and promote equality.
+                </p>
             </div>
-            <div class="col-lg-6 h-100 text-center text-lg-end my-auto">
-                <ul class="list-inline mb-0">
-                    <li class="list-inline-item me-4">
-                        <a href="#!"><i class="bx bxl-facebook-circle fs-3 text-cust-color"></i></a>
-                    </li>
-                    <li class="list-inline-item me-4">
-                        <a href="#!"><i class="bx bxl-twitter fs-3 text-cust-color"></i></a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="#!"><i class="bx bxl-instagram fs-3 text-cust-color"></i></a>
-                    </li>
+
+            <!-- Column 2: List of Hotlines in Region 9 -->
+            <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                <h6 class="text-uppercase fw-bold">Hotlines in Region 9</h6>
+                <h6 class="text-uppercase fw-bold mt-4">Zamboanga City Police Office</h6>
+                <ul class="list-unstyled small text-muted mt-3">
+                    <li><strong>PS1-Vitali:</strong> 0935-604-4139</li>
+                    <li><strong>PS2-Curuan:</strong> 0935-457-2483</li>
+                    <li><strong>PS3-Sangali:</strong> 0917-146-2240 / 955-0156</li>
+                    <li><strong>PS4-Culianan:</strong> 0975-333-8826 / 055-0255</li>
+                    <li><strong>PS5-Divisoria:</strong> 0917-677-8907 / 955-6887</li>
+                    <li><strong>PS6-Tetuan:</strong> 0997-746-5666</li>
+                    <li><strong>PS7-Sta. Maria:</strong> 0917-307-8098</li>
+                    <li><strong>PS8-Sinunuc:</strong> 0906-853-9806</li>
+                    <li><strong>PS9-Ayala:</strong> 0998-967-3931 / 0917-864-8553 / 982-0001</li>
+                    <li><strong>PS10-Labuan:</strong> 0917-309-3887</li>
+                    <li><strong>PS11-Central:</strong> 0917-701-6340</li>
+                    <li><strong>1st ZCMFC:</strong> 0995-279-1449</li>
+                    <li><strong>2nd ZCMFC:</strong> 0905-886-0405</li>
+                </ul>
+                <p class="small text-muted mt-3">"By saving these hotline numbers, we can save lives."</p>
+            </div>
+
+            <!-- Column 3: Shortcut Links -->
+            <div class="col-md-4 text-center text-md-start">
+                <h6 class="text-uppercase fw-bold">Quick Links</h6>
+                <ul class="list-unstyled mt-3">
+                    <li><a class="text-decoration-none text-cust-color" href="{% url 'home' %}">Home</a></li>
+                    <li><a class="text-decoration-none text-cust-color" href="{% url 'report violence' %}">Report a Case</a></li>
+                    <li><a class="text-decoration-none text-cust-color" href="{% url 'track_case' %}">Track a Case</a></li>
                 </ul>
             </div>
         </div>

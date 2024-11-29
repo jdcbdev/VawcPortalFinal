@@ -1,9 +1,17 @@
 {% load static %}
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark cust-bg" data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'home' %}">
-        <img src="{% static 'img/VAWC-DESK-PORTAL.png' %}" alt="VAWC Logo" width="180" height="70" class="d-inline-block align-text-top">
-      </a>
+      <div class="navbar-brand d-flex">
+        <a class="navbar-brand me-1" href="{% url 'home' %}">
+          <img src="{% static 'img/VAWC-DESK-PORTAL.png' %}" alt="VAWC Logo" width="auto" height="50" class="d-inline-block align-text-top">
+        </a>
+        <a class="navbar-brand d-none d-md-flex" target="_blank" href="https://wmsu.edu.ph/">
+          <img src="{% static 'img/WMSU LOGO.png' %}" alt="WMSU Logo" width="auto" height="50" class="d-inline-block align-text-top">
+        </a>
+        <a class="navbar-brand d-none d-md-flex" target="_blank" href="https://region9.dilg.gov.ph/">
+          <img src="{% static 'img/dilg.png' %}" alt="DILG IX Logo" width="auto" height="50" class="d-inline-block align-text-top">
+        </a>
+      </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
