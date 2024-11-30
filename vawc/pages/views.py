@@ -50,6 +50,12 @@ from .forms import *
 from ph_geography.models import Region, Province, Municipality, Barangay
 
 def home_view (request):
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'account') and request.user.account.type == 'admin':
+            return redirect('admin dashboard')
+        elif hasattr(request.user, 'account') and request.user.account.type == 'staff':
+            return redirect('barangay dashboard')
+        
     return render(request, 'landing/home.html')
 
 def address_view (request):
