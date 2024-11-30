@@ -59,6 +59,12 @@ def error_view (request):
     return render(request, 'landing/error_404.html')
 
 def login_view (request):
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'account') and request.user.account.type == 'admin':
+            return redirect('admin dashboard')
+        elif hasattr(request.user, 'account') and request.user.account.type == 'staff':
+            return redirect('barangay dashboard')
+    
     return render(request, 'login/login.html')
 
 def forgot_pass_view (request):
@@ -283,11 +289,18 @@ def logout_view(request):
 
 @login_required
 def admin_dashboard_view (request):
+    if request.user.account.type != 'admin':
+        return redirect('login')
+    
     year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
 
     return render (request, 'super-admin/dashboard.html', {"year_list": year_list})
 
+@login_required
 def admin_case_view(request):
+    if request.user.account.type != 'admin':
+        return redirect('login')
+    
     logged_in_user = request.user  # Retrieve the logged-in user
     # Retrieve the Account object associated with the logged-in user
     try:
@@ -308,8 +321,6 @@ def admin_case_view(request):
         'logged_in_user': logged_in_user,
         'barangay': barangay,
     })
-
-
 
 def admin_dashboard_data (request, get_year):
     if request.method != 'GET':
@@ -514,6 +525,7 @@ def admin_manage_account_view(request):
 
     })
 
+
 def edit_account_view(request, account_id):
     if request.method == 'GET':
         try: 
@@ -564,7 +576,7 @@ def edit_account_view(request, account_id):
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
 
-
+@login_required
 def delete_account(request):
     if request.method == 'POST':
         account_id = request.POST.get('account_id')
@@ -612,7 +624,6 @@ def create_account(request):
                     f'Email:  {email}\n'
                     f'Username:  {username}\n'
                     f'Password:  {password}\n\n'
-                    f'Passkey: {passkey}\n\n'
                     f'First Name:  {first_name}\n'
                     f'Middle Name:  {middle_name}\n'
                     f'Last Name:  {last_name}\n\n'
@@ -774,7 +785,6 @@ def update_graph_table_report(request):
     else:
         pass
 
-
 def update_graph_report(request):
     if request.method == 'GET':
         try:
@@ -850,7 +860,6 @@ def send_notification (message, link, receiver):
     # Save the instance to the database
     notification.save()
 
-
 def read_notification(request):
     if request.method == 'POST':
         notification_id = request.POST.get('id')
@@ -899,6 +908,9 @@ def get_all_notification_admin(request):
 
 @login_required
 def barangay_dashboard_view (request):
+    if request.user.account.type != 'staff':
+        return redirect('login')
+    
     logged_in_user = request.user  # Retrieve the logged-in user
     # Retrieve the Account object associated with the logged-in user
     try:
@@ -1039,12 +1051,18 @@ def calculate_age(date_of_birth_str):
 
 @login_required
 def barangay_settings_view (request):
+    if request.user.account.type != 'staff':
+        return redirect('login')
+    
     logged_in_user = request.user
     
     return render(request, 'barangay-admin/settings.html', {'global': request.session, 'logged_in_user': logged_in_user})
 
 @login_required
 def admin_settings_view (request):
+    if request.user.account.type != 'admin':
+        return redirect('login')
+    
     logged_in_user = request.user
     
     return render(request, 'super-admin/settings.html', {'global': request.session, 'logged_in_user': logged_in_user})
@@ -1063,9 +1081,11 @@ def custom_password_change_view(request):
             errors = dict(form.errors)
             return JsonResponse({'success': False, 'errors': errors})
 
-
 @login_required
 def barangay_case_view(request):
+    if request.user.account.type != 'staff':
+        return redirect('login')
+    
     logged_in_user = request.user  # Retrieve the logged-in user
     # Retrieve the Account object associated with the logged-in user
     try:
@@ -1087,7 +1107,6 @@ def barangay_case_view(request):
         'logged_in_user': logged_in_user,
         'barangay': barangay,
     })
-
 
 def send_otp_email(email, otp):
     subject = 'One-Time Password Verification'
@@ -1115,7 +1134,6 @@ def send_otp_phone(phone, otp):
     )
     send_phone(phone, message)
     
-
 def send_email(receiver, subject, message):
     load_settings()
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [receiver])
@@ -1162,7 +1180,6 @@ def login_with_otp(request):
             print('Account not found.')
             return JsonResponse({'success': False, 'message': 'Account not found.'})
     return render(request, 'login/login.html')
-
 
 def verify_otp(request):
     if request.method == 'POST':
@@ -1288,7 +1305,6 @@ def phone_confirm(request):
         send_otp_phone(phone, otp)
         return JsonResponse({'success': True, 'message': 'OTP has been sent to your phone number.'})
 
-
 def verify_otp_email(request):
     if request.method == 'POST':
         otp_entered = ''
@@ -1335,8 +1351,6 @@ def verify_otp_phone(request):
                 return JsonResponse({'success': False, 'message': 'OTP has expired.'})
         return JsonResponse({'success': False, 'message': 'Incorrect OTP.', 'user_phone': user_phone})
 
-
-
 def resend_otp_email(request):
     if request.method == 'GET':
         user_email = request.session.get('user_email')  # Corrected key
@@ -1348,6 +1362,7 @@ def resend_otp_email(request):
         return JsonResponse({'success': True, 'message': 'OTP resent successfully.'})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+    
 def resend_otp_phone(request):
     if request.method == 'GET':
         user_phone = request.session.get('user_phone')  # Corrected key
@@ -1359,7 +1374,6 @@ def resend_otp_phone(request):
         return JsonResponse({'success': True, 'message': 'OTP resent successfully.'})
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method.'})
-
 
 def report_violence_view (request):
     return render(request, 'landing/report_violence.html')
@@ -1642,7 +1656,6 @@ def get_contact_person_data(post_data):
     }
     return contact_person_data
 
-
 def add_new_case(request):
     dummy_encrypted = "gAAAAABl-UOp4RWQLPLraFI_q80Ogmfk-Epd8K-CA9zHzYoc1FMwc7tnLv8hTBWTvjlmwjr866FtvBwRZjPXWKBEo3SPvHOU6g=="
 
@@ -1762,6 +1775,9 @@ def add_new_case(request):
 
 @login_required
 def view_admin_case_behalf(request, case_id):
+    if request.user.account.type != 'admin':
+        return redirect('login')
+    
     try:
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
@@ -1899,6 +1915,9 @@ def view_admin_case_behalf(request, case_id):
 
 @login_required
 def view_admin_case_impact(request, case_id):
+    if request.user.account.type != 'admin':
+        return redirect('login')
+    
     try:
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
@@ -1997,6 +2016,9 @@ def view_admin_case_impact(request, case_id):
 
 @login_required
 def view_case_behalf(request, case_id):
+    if request.user.account.type != 'staff':
+        return redirect('login')
+    
     try:
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
@@ -2134,6 +2156,9 @@ def view_case_behalf(request, case_id):
 
 @login_required
 def view_case_impact(request, case_id):
+    if request.user.account.type != 'staff':
+        return redirect('login')
+    
     try:
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
@@ -2351,7 +2376,6 @@ def pdf_template_view (request, case_id):
 
     return response
     
-
 @require_POST
 def save_victim_data(request, victim_id):
     try:
@@ -2522,7 +2546,6 @@ def add_new_perpetrator(request):
         # Return error response
         return JsonResponse({'success': False, 'message': str(e)})
 
-
 @require_POST
 def save_perpetrator_data(request, perpetrator_id):
     try:
@@ -2620,7 +2643,6 @@ def add_new_contact_person(request):
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
 
-
 @require_POST
 def save_contact_person_data(request, contact_person_id):
     try:
@@ -2646,8 +2668,6 @@ def save_contact_person_data(request, contact_person_id):
         return JsonResponse({'success': True, 'message': 'Contact Person data saved successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
-
-
 
 #parent victim data crud ----------------------------------------------------------------
 
