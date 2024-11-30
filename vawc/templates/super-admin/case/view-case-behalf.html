@@ -2024,8 +2024,26 @@
                         </div>
                         <div class="col-lg-3 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="victim_nationality" name="victim_nationality">
-                                <label for="victim_nationality">Nationality</label>
+                                <select class="form-select" id="victim_nationality" name="victim_nationality">
+                                    <option value="">--Select--</option>
+                                    <option value="Aeta">Aeta</option>
+                                    <option value="Agta">Agta</option>
+                                    <option value="Bicolano">Bicolano</option>
+                                    <option value="Bisaya">Bisaya</option>
+                                    <option value="Ilokano">Ilokano</option>
+                                    <option value="Igorot">Igorot</option>
+                                    <option value="Ilonggo">Ilonggo</option>
+                                    <option value="Kapampangan">Kapampangan</option>
+                                    <option value="Mangyan">Mangyan</option>
+                                    <option value="Moros">Moros</option>
+                                    <option value="Pangasinense">Pangasinense</option>
+                                    <option value="Tagalog">Tagalog</option>
+                                    <option value="Tausug">Tausug</option>
+                                    <option value="Samal">Samal</option>
+                                    <option value="Waray">Waray</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                                <label for="victim_nationality">Ethnicity</label>
                             </div>
                         </div>
                         <div class="col-lg-3 mb-3">
@@ -2058,44 +2076,64 @@
                         </div><!--End of col-->
                         <div class="col-lg-3 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="victim_barangay" name="victim_barangay">
+                                <select class="form-select" id="victim_barangay" name="victim_barangay">
+                                    <option value="">-- Select Barangay --</option>
+                                    {% for barangay in default_barangays %}
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == victim.barangay %}selected{% endif %}>
+                                            {{ barangay.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="victim_barangay">Barangay</label>
                             </div>
                         </div><!--End of col-->
                     </div><!--End of row-->
                     <div class="row">
-                        <div class="col-lg-3 mb-3">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="victim_province" name="victim_province">
-                                <label for="victim_province">Province</label>
-                            </div>
-                        </div><!--End of col-->
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="victim_city" name="victim_city">
+                                <select class="form-select" id="victim_city" name="victim_city" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select City --</option>
+                                    {% for city in default_cities %}
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
+                                            {{ city.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="victim_city">City</label>
                             </div>
                         </div><!--End of col-->
+
+                        <div class="col-lg-3 mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="victim_province" name="victim_province" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Province --</option>
+                                    {% for province in default_provinces %}
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>
+                                            {{ province.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="victim_province">Province</label>
+                            </div>
+                        </div><!--End of col-->
+                        
                         <div class="col-lg-6 col-12">
                             <div class="form-floating">
                                 <select class="form-select" id="victim_region" name="victim_region">
-                                    <option value="region-I">Region I – Ilocos Region</option>
-                                    <option value="region-II">Region II – Cagayan Valley</option>
-                                    <option value="region-III">Region III – Central Luzon</option>
-                                    <option value="region-IV">Region IV‑A – CALABARZON</option>
-                                    <option value="mimaropa">MIMAROPA Region</option>
-                                    <option value="region-V">Region V – Bicol Region</option>
-                                    <option value="region-VI">Region VI – Western Visayas</option>
-                                    <option value="region-VII">Region VII – Central Visayas</option>
-                                    <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                                    <option value="region-IX">Region IX – Zamboanga Peninsula</option>
-                                    <option value="region-X">Region X – Northern Mindanao</option>
-                                    <option value="region-XI">Region XI – Davao Region</option>
-                                    <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                                    <option value="region-XIII">Region XIII – Caraga</option>
-                                    <option value="ncr">NCR – National Capital Region</option>
-                                    <option value="car">CAR – Cordillera Administrative Region</option>
-                                    <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
+                                    <option value="">--Select Region--</option>
+                                    {% for region in default_regions %}
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if perpetrator.name == case.region %}selected{% endif %}>
+                                            {{ region.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
                                 </select>
                                 <label for="victim_region">Region</label>
                             </div>
@@ -2307,8 +2345,26 @@
                         </div>
                         <div class="col-lg-3 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="perpetrator_nationality" name="perpetrator_nationality">
-                                <label for="perpetrator_nationality">Nationality</label>
+                                <select class="form-select" id="perpetrator_nationality" name="perpetrator_nationality">
+                                    <option value="">--Select--</option>
+                                    <option value="Aeta">Aeta</option>
+                                    <option value="Agta">Agta</option>
+                                    <option value="Bicolano">Bicolano</option>
+                                    <option value="Bisaya">Bisaya</option>
+                                    <option value="Ilokano">Ilokano</option>
+                                    <option value="Igorot">Igorot</option>
+                                    <option value="Ilonggo">Ilonggo</option>
+                                    <option value="Kapampangan">Kapampangan</option>
+                                    <option value="Mangyan">Mangyan</option>
+                                    <option value="Moros">Moros</option>
+                                    <option value="Pangasinense">Pangasinense</option>
+                                    <option value="Tagalog">Tagalog</option>
+                                    <option value="Tausug">Tausug</option>
+                                    <option value="Samal">Samal</option>
+                                    <option value="Waray">Waray</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                                <label for="perpetrator_nationality">Ethnicity</label>
                             </div>
                         </div>
                         <div class="col-lg-3 mb-3">
@@ -2341,44 +2397,56 @@
                         </div><!--End of col-->
                         <div class="col-lg-3 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="perpetrator_barangay" name="perpetrator_barangay">
+                                <select id="perpetrator_barangay" name="perpetrator_barangay" class="form-select">
+                                    <option value="">--Select Option--</option>
+                                    {% for barangay in default_barangays %}
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="perpetrator_barangay">Barangay</label>
                             </div>
                         </div><!--End of col-->
                     </div><!--End of row-->
                     <div class="row">
-                        <div class="col-lg-3 mb-3">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="perpetrator_province" name="perpetrator_province">
-                                <label for="perpetrator_province">Province</label>
-                            </div>
-                        </div><!--End of col-->
+                        
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="perpetrator_city" name="perpetrator_city">
+                                <select id="perpetrator_city" name="perpetrator_city" class="form-select">
+                                    <option value="">--Select Option--</option>
+                                    {% for city in default_cities %}
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="perpetrator_city">City</label>
                             </div>
                         </div><!--End of col-->
+
+                        <div class="col-lg-3 mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="perpetrator_province" name="perpetrator_province">
+                                    <option value="">--Select Option--</option>
+                                    {% for province in default_provinces %}
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="perpetrator_province">Province</label>
+                            </div>
+                        </div><!--End of col-->
+
                         <div class="col-lg-6 col-12">
                             <div class="form-floating">
-                                <select class="form-select" id="perpetrator_region" name="perpetrator_region">
-                                    <option value="region-I">Region I – Ilocos Region</option>
-                                    <option value="region-II">Region II – Cagayan Valley</option>
-                                    <option value="region-III">Region III – Central Luzon</option>
-                                    <option value="region-IV">Region IV‑A – CALABARZON</option>
-                                    <option value="mimaropa">MIMAROPA Region</option>
-                                    <option value="region-V">Region V – Bicol Region</option>
-                                    <option value="region-VI">Region VI – Western Visayas</option>
-                                    <option value="region-VII">Region VII – Central Visayas</option>
-                                    <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                                    <option value="region-IX">Region IX – Zamboanga Peninsula</option>
-                                    <option value="region-X">Region X – Northern Mindanao</option>
-                                    <option value="region-XI">Region XI – Davao Region</option>
-                                    <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                                    <option value="region-XIII">Region XIII – Caraga</option>
-                                    <option value="ncr">NCR – National Capital Region</option>
-                                    <option value="car">CAR – Cordillera Administrative Region</option>
-                                    <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
+                                <select class="form-select" id="perpetrator_region" name="perpetrator_region" disabled>
+                                    {% for region in default_regions %}
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
                                 </select>
                                 <label for="perpetrator_region">Region</label>
                             </div>
