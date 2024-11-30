@@ -57,7 +57,11 @@
                                     </div>
                                     <div class="g-recaptcha d-flex justify-content-center" data-callback="err_captcha_reset" data-sitekey="{{ site_key }}"></div>
                                     <div class="err-msg-recaptcha fs-7 text-danger"></div>
-                                    <button id="submitButton" class="btn btn-primary w-100 mb-4 mt-3" type="submit" >Track Case</button>
+                                    <button id="submitButton" class="btn btn-primary w-100 mb-4 mt-3 d-flex justify-content-center align-items-center" type="submit" >
+                                        <span>Track Case</span>
+                                        <div class="spinner-border text-light position-absolute" role="status" style="display: none;">
+                                        </div>
+                                    </button>
                                 </div>
                             </div><!--First row-->
                             <div class="col-12 col-md-12 col-sm-8">
@@ -144,6 +148,9 @@
         // email confirmation
         $('#trackForm').submit(function(e) {
             e.preventDefault(); // Prevent the default form submission
+
+            $('.spinner-border').show();
+            $('#submitButton').prop('disabled', true);
         
             // Get the email value from the input field
             var emailValue = $('#email').val();
@@ -163,12 +170,15 @@
                 requestURL = '{% url 'check_phone_case' %}'
                 contactValue = isvalid_phone_number(phoneValue)
             }
+ 
 
             // Check recaptcha if puzzle is solved
             const captchaRes = grecaptcha.getResponse()
             if(!captchaRes.length > 0) {
                 $('.g-recaptcha').children().css('border', '1px solid red')
                 $('.err-msg-recaptcha').text('You need to solve captcha first')
+                $('.spinner-border').hide();
+                $('#submitButton').prop('disabled', false);
                 throw new Error('reCAPTCHA validation failed')
             }
             
@@ -184,6 +194,9 @@
                 success: function(response) {
                     // Handle success response
                     console.log(response); // Log the response to the console
+                    
+                    $('.spinner-border').show();
+                    $('#submitButton').prop('disabled', true);
 
                     // Server-side validation response
                     if (!response.success) {
@@ -195,6 +208,10 @@
                             $('#phone').parent().addClass('is-invalid')
                             $('.err-msg-phone').text(response.message)
                         }
+
+                        $('.spinner-border').hide();
+                        $('#submitButton').prop('disabled', false);
+                        
                         throw new Error(response.message)
                     }
 
@@ -221,6 +238,9 @@
 
                                 // Check if reCAPTCHA serverside validation is not successful
                                 if (!response.success) {
+                                    $('.spinner-border').hide();
+                                    $('#submitButton').prop('disabled', false);
+                                    $('#email').val('');
                                     throw new Error('reCaptcha validation failed')
                                 }
 
@@ -236,6 +256,8 @@
 
                                 // Show the OTP modal
                                 $('#otpModal').modal('show');
+                                $('.spinner-border').hide();
+                                $('#submitButton').prop('disabled', false);
                             },
                             error: function(xhr, textStatus, errorThrown) {
                                 console.error('Error:', errorThrown);
@@ -280,6 +302,10 @@
                 // Move to the previous input on backspace
                 $(this).prev('input').focus();
             }
+        });
+
+        $('#otpModal').on('hidden.bs.modal', function () {
+            location.reload();
         });
 
         // otp checking
@@ -425,6 +451,8 @@
         // Client side validation
         function isvalid_phone_number(number) {
             console.log(typeof number)
+            $('.spinner-border').hide();
+            $('#submitButton').prop('disabled', false);
             if(/^\d+$/.test(number) && number.length === 10) {
                 console.log('Phone number isvalid')
                 return number
@@ -442,8 +470,11 @@
             if(email.trim().length <= 0) {
                 $('.err-msg-email').text('Please enter your email')
                 $('#email').addClass('is-invalid')
+                $('.spinner-border').hide();
+                $('#submitButton').prop('disabled', false);
                 throw new Error('No input detected')
             } else {
+                $('#email').removeClass('is-invalid')
                 return email
             }
         }

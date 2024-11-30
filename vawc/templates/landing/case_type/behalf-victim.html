@@ -121,6 +121,7 @@
                                             <div class="col-sm-6 mb-3"> <!--civil status-->
                                                 <label for="victim-civilstatus_0" class="form-label">Civil Status</label>
                                                 <select id="victim-civilstatus_0" name="victim-civilstatus_0"  class="form-select">
+                                                    <option value="">--Select--</option>
                                                     <option value="single">Single</option>
                                                     <option value="married">Married</option>
                                                     <option value="live-in">Live-In</option>
@@ -129,9 +130,9 @@
                                                 </select>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--nationality-->
-                                                <label for="victim-nationality_0" class="form-label">Nationality</label>
+                                                <label for="victim-nationality_0" class="form-label">Ethnicity</label>
                                                 <select class="form-select" id="victim-nationality_0" name="victim-nationality_0">
-                                                    <option value="Filipino" selected>Filipino</option>
+                                                    <option value="">--Select--</option>
                                                     <option value="Aeta">Aeta</option>
                                                     <option value="Agta">Agta</option>
                                                     <option value="Bicolano">Bicolano</option>
@@ -144,7 +145,10 @@
                                                     <option value="Moros">Moros</option>
                                                     <option value="Pangasinense">Pangasinense</option>
                                                     <option value="Tagalog">Tagalog</option>
+                                                    <option value="Tausug">Tausug</option>
+                                                    <option value="Samal">Samal</option>
                                                     <option value="Waray">Waray</option>
+                                                    <option value="Others">Others</option>
                                                     <!-- Add more options for other nationalities in the Philippines -->
                                                 </select>
                                             </div>
@@ -410,9 +414,9 @@
                                                 <div class="invalid-feedback perp-date-of-birth_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--nationality-->
-                                                <label for="perp-nationality_0" class="form-label">Nationality</label>
+                                                <label for="perp-nationality_0" class="form-label">Ethnicity</label>
                                                 <select class="form-select" id="perp-nationality_0" name="perp-nationality_0">
-                                                    <option value="Filipino" selected>Filipino</option>
+                                                    <option value="">--Select--</option>
                                                     <option value="Aeta">Aeta</option>
                                                     <option value="Agta">Agta</option>
                                                     <option value="Bicolano">Bicolano</option>
@@ -425,7 +429,10 @@
                                                     <option value="Moros">Moros</option>
                                                     <option value="Pangasinense">Pangasinense</option>
                                                     <option value="Tagalog">Tagalog</option>
+                                                    <option value="Tausug">Tausug</option>
+                                                    <option value="Samal">Samal</option>
                                                     <option value="Waray">Waray</option>
+                                                    <option value="Others">Others</option>
                                                     <!-- Add more options for other nationalities in the Philippines -->
                                                 </select>
                                             </div>
@@ -852,9 +859,9 @@
                     <div class="container col-lg-12 col-md-12 col-sm-8">
                         <h3 class="text-center">Before We Can Process Your Case.</h3>
                         {% if twilio_type == 'local' %}
-                            <div class="form-label mb-4">Use your Email that was Associated with the Case.</div>
+                            <div class="form-label mb-4">Please enter your email first.</div>
                         {% else %}
-                            <div class="form-label mb-4">Use your Email or Phone that was Associated with the Case.</div>
+                            <div class="form-label mb-4">Please enter your email or phone number first.</div>
                         {% endif %}
                         <ul class="nav nav-underline mb-3" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">

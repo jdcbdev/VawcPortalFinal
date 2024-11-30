@@ -1175,7 +1175,7 @@ def login_with_otp(request):
                 return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
             else:
                 print('Invalid passkey. Please try again.')
-                return JsonResponse({'success': False, 'message': 'Invalid passkey. Please try again.'})
+                return JsonResponse({'success': False, 'message': 'Invalid password. Please try again.'})
         else:
             print('Account not found.')
             return JsonResponse({'success': False, 'message': 'Account not found.'})
