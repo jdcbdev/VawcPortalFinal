@@ -446,13 +446,26 @@
                                     <div class="row">
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="victim_sex_{{ victim.id }}" name="victim_sex_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select 
+                                                    class="form-select" 
+                                                    id="victim_sex_{{ victim.id }}" 
+                                                    name="victim_sex_{{ victim.id }}" 
+                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    
+                                                    <!-- Add a placeholder option -->
+                                                    <option value="" {% if not victim.sex %}selected{% endif %}>--Select--</option>
+                                                    
+                                                    <!-- Male option -->
                                                     <option value="Male" {% if victim.sex == 'Male' %}selected{% endif %}>Male</option>
+                                                    
+                                                    <!-- Female option -->
                                                     <option value="Female" {% if victim.sex == 'Female' %}selected{% endif %}>Female</option>
-                                                    {% else %}
-                                                        <option value="Female" selected>:{{ victim.sex }}</option>
-                                                    {% endif %}
+                                                    
+                                                    <!-- Rather Not Say option -->
+                                                    <option value="rather_not_say" {% if victim.sex == 'rather_not_say' %}selected{% endif %}>Rather not say</option>
+                                                    
+                                                    <!-- Others option -->
+                                                    <option value="Others" {% if victim.sex == 'Others' %}selected{% endif %}>Others</option>
                                                 </select>
                                                 <label for="victim_sex_{{ victim.id }}">Gender</label>
                                             </div>
@@ -461,6 +474,7 @@
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_type_of_disability_{{ victim.id }}" name="victim_type_of_disability_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
+                                                        <option value="" {% if not victim.type_of_disability %}selected{% endif %}>--Select--</option>
                                                         <option value="none" {% if victim.type_of_disability == 'none' %}selected{% endif %}>N/A</option>
                                                         <option value="With Disability" {% if victim.type_of_disability == 'With Disability' %}selected{% endif %}>With Disability</option>
                                                         <option value="Permanent Disability" {% if victim.type_of_disability == 'Permanent Disability' %}selected{% endif %}>Permanent Disability</option>
@@ -488,6 +502,7 @@
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_civil_status_{{ victim.id }}" name="victim_civil_status_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
+                                                        <option value="" {% if not victim.civil_status %}selected{% endif %}>--Select--</option>
                                                         <option value="single" {% if victim.civil_status == 'none' %}selected{% endif %}>Single</option>
                                                         <option value="married" {% if victim.civil_status == 'married' %}selected{% endif %}>Married</option>
                                                         <option value="live-in" {% if victim.civil_status == 'live-in' %}selected{% endif %}>Live-In</option>
@@ -537,6 +552,7 @@
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_educational_attainment_{{ victim.id }}" name="victim_educational_attainment_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
+                                                        <option value="" {% if not victim.educational_attainment %}selected{% endif %}>--Select--</option>
                                                         <option value="none"{% if victim.educational_attainment == 'none' %}selected{% endif %}>None</option>
                                                         <option value="highschool"{% if victim.educational_attainment == 'highschool' %}selected{% endif %}>High School Level</option>
                                                         <option value="vocational"{% if victim.educational_attainment == 'vocational' %}selected{% endif %}>Vocational</option>
@@ -560,10 +576,35 @@
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="victim_nationality_{{ victim.id }}" name="victim_nationality_{{ victim.id }}" value="{{ victim.nationality }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <label for="victim_nationality_{{ victim.id }}">Nationality</label>
+                                                <select 
+                                                    class="form-select" 
+                                                    id="victim_nationality_{{ victim.id }}" 
+                                                    name="victim_nationality_{{ victim.id }}" 
+                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    
+                                                    <!-- Placeholder Option -->
+                                                    <option value="" {% if not victim.nationality %}selected{% endif %}>--Select--</option>
+                                                    
+                                                    <option value="Aeta" {% if victim.nationality == "Aeta" %}selected{% endif %}>Aeta</option>
+                                                    <option value="Agta" {% if victim.nationality == "Agta" %}selected{% endif %}>Agta</option>
+                                                    <option value="Bicolano" {% if victim.nationality == "Bicolano" %}selected{% endif %}>Bicolano</option>
+                                                    <option value="Bisaya" {% if victim.nationality == "Bisaya" %}selected{% endif %}>Bisaya</option>
+                                                    <option value="Ilokano" {% if victim.nationality == "Ilokano" %}selected{% endif %}>Ilokano</option>
+                                                    <option value="Igorot" {% if victim.nationality == "Igorot" %}selected{% endif %}>Igorot</option>
+                                                    <option value="Ilonggo" {% if victim.nationality == "Ilonggo" %}selected{% endif %}>Ilonggo</option>
+                                                    <option value="Kapampangan" {% if victim.nationality == "Kapampangan" %}selected{% endif %}>Kapampangan</option>
+                                                    <option value="Mangyan" {% if victim.nationality == "Mangyan" %}selected{% endif %}>Mangyan</option>
+                                                    <option value="Moros" {% if victim.nationality == "Moros" %}selected{% endif %}>Moros</option>
+                                                    <option value="Pangasinense" {% if victim.nationality == "Pangasinense" %}selected{% endif %}>Pangasinense</option>
+                                                    <option value="Tagalog" {% if victim.nationality == "Tagalog" %}selected{% endif %}>Tagalog</option>
+                                                    <option value="Tausug" {% if victim.nationality == "Tausug" %}selected{% endif %}>Tausug</option>
+                                                    <option value="Samal" {% if victim.nationality == "Samal" %}selected{% endif %}>Samal</option>
+                                                    <option value="Waray" {% if victim.nationality == "Waray" %}selected{% endif %}>Waray</option>
+                                                    <option value="Others" {% if victim.nationality == "Others" %}selected{% endif %}>Others</option>
+                                                </select>
+                                                <label for="victim_nationality_{{ victim.id }}">Ethnicity</label>
                                             </div>
-                                        </div>
+                                        </div>                                        
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_religion_{{ victim.id }}" name="victim_religion_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
@@ -592,7 +633,16 @@
                                         </div><!--End of col-->
                                         <div class="col-lg-6 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="victim_region_{{ victim.id }}" name="victim_region_{{ victim.id }}" value="{{ victim.region }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="victim_region_{{ victim.id }}" name="victim_region_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    <option value="">--Select Option--</option>
+                                                    {% for region in default_regions %}
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == victim.region %}selected{% endif %}>
+                                                            {{ region.name }}
+                                                        </option>
+                                                    {% empty %}
+                                                        <option value="">No data found</option>
+                                                    {% endfor %}
+                                                </select>
                                                 <label for="victim_region_{{ victim.id }}">Region</label>
                                             </div>
                                         </div><!--End of col-->
@@ -600,26 +650,53 @@
                                     <div class="row">
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="victim_province_{{ victim.id }}" name="victim_province_{{ victim.id }}" value="{{ victim.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="victim_province_{{ victim.id }}" name="victim_province_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    <option value="">-- Select Province --</option>
+                                                    {% for province in default_provinces %}
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>
+                                                            {{ province.name }}
+                                                        </option>
+                                                    {% empty %}
+                                                        <option value="">No data found</option>
+                                                    {% endfor %}
+                                                </select>
                                                 <label for="victim_province_{{ victim.id }}">Province</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="victim_city_{{ victim.id }}" name="victim_city_{{ victim.id }}" value="{{ victim.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="victim_city_{{ victim.id }}" name="victim_city_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    <option value="">-- Select City --</option>
+                                                    {% for city in default_cities %}
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
+                                                            {{ city.name }}
+                                                        </option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
                                                 <label for="victim_city_{{ victim.id }}">City</label>
+                                            </div>
+                                        </div><!--End of col-->
+                                        <div class="col-lg-3 col-md-4 col-sm-8">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="victim_barangay_{{ victim.id }}" name="victim_barangay_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    <option value="">-- Select Barangay --</option>
+                                                    {% for barangay in default_barangays %}
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == victim.barangay %}selected{% endif %}>
+                                                            {{ barangay.name }}
+                                                        </option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <label for="victim_barangay_{{ victim.id }}">Barangay</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="victim_street_{{ victim.id }}" name="victim_street_{{ victim.id }}" value="{{ victim.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_street_{{ victim.id }}">Street</label>
-                                            </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="victim_barangay_{{ victim.id }}" name="victim_barangay_{{ victim.id }}" value="{{ victim.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <label for="victim_barangay_{{ victim.id }}">Barangay</label>
                                             </div>
                                         </div><!--End of col-->
                                     </div>
@@ -711,48 +788,61 @@
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
                                 <select class="form-select" id="contact_person_region_{{ contact_person.id }}" name="contact_person_region_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    {% if global.security_status == "decrypted" %}
-                                        <option value="region-I" {% if contact_person.region == 'region-I' %}selected{% endif %}>Region I – Ilocos Region</option>
-                                        <option value="region-II" {% if contact_person.region == 'region-II' %}selected{% endif %}>Region II – Cagayan Valley</option>
-                                        <option value="region-III" {% if contact_person.region == 'region-III' %}selected{% endif %}>Region III – Central Luzon</option>
-                                        <option value="region-IV" {% if contact_person.region == 'region-IV' %}selected{% endif %}>Region IV‑A – CALABARZON</option>
-                                        <option value="mimaropa" {% if contact_person.region == 'mimaropa' %}selected{% endif %}>MIMAROPA Region</option>
-                                        <option value="region-V" {% if contact_person.region == 'region-V' %}selected{% endif %}>Region V – Bicol Region</option>
-                                        <option value="region-VI" {% if contact_person.region == 'region-VI' %}selected{% endif %}>Region VI – Western Visayas</option>
-                                        <option value="region-VII" {% if contact_person.region == 'region-VII' %}selected{% endif %}>Region VII – Central Visayas</option>
-                                        <option value="region-VIII" {% if contact_person.region == 'region-VIII' %}selected{% endif %}>Region VIII – Eastern Visayas</option>
-                                        <option value="region-IX" {% if contact_person.region == 'region-IX' %}selected{% endif %}>Region IX – Zamboanga Peninsula</option>
-                                        <option value="region-X" {% if contact_person.region == 'region-X' %}selected{% endif %}>Region X – Northern Mindanao</option>
-                                        <option value="region-XI" {% if contact_person.region == 'region-XI' %}selected{% endif %}>Region XI – Davao Region</option>
-                                        <option value="region-XII" {% if contact_person.region == 'region-XII' %}selected{% endif %}>Region XII – SOCCSKSARGEN</option>
-                                        <option value="region-XIII" {% if contact_person.region == 'region-XIII' %}selected{% endif %}>Region XIII – Caraga</option>
-                                        <option value="ncr" {% if contact_person.region == 'ncr' %}selected{% endif %}>NCR – National Capital Region</option>
-                                        <option value="car" {% if contact_person.region == 'car' %}selected{% endif %}>CAR – Cordillera Administrative Region</option>
-                                        <option value="barmm" {% if contact_person.region == 'barmm' %}selected{% endif %}>BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
-                                    {% else %}
-                                        <option value="barmm" selected>{{contact_person.region}}</option>
-                                    {% endif %}
-                                
+                                    <option value="">--Select Region--</option>
+                                    {% for region in default_regions %}
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == contact_person.region %}selected{% endif %}>
+                                            {{ region.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
                                 </select>
                                 <label for="contact_person_region_{{ contact_person.id }}">Region</label>
                             </div>
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_province_{{ contact_person.id }}" name="contact_person_province_{{ contact_person.id }}" value="{{ contact_person.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="contact_person_province_{{ contact_person.id }}" name="contact_person_province_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Province --</option>
+                                    {% for province in default_provinces %}
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == contact_person.province %}selected{% endif %}>
+                                            {{ province.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="contact_person_province_{{ contact_person.id }}">Province</label>
                             </div>
                         </div><!--end of col-->
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_city_{{ contact_person.id }}" name="contact_person_city_{{ contact_person.id }}" value="{{ contact_person.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="contact_person_city_{{ contact_person.id }}" name="contact_person_city_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select City --</option>
+                                    {% for city in default_cities %}
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == contact_person.city %}selected{% endif %}>
+                                            {{ city.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="contact_person_city_{{ contact_person.id }}">City</label>
                             </div>
                         </div><!--end of col-->
                         
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_barangay_{{ contact_person.id }}" name="contact_person_barangay_{{ contact_person.id }}" value="{{ contact_person.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="contact_person_barangay_{{ contact_person.id }}" name="contact_person_barangay_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Barangay --</option>
+                                    {% for barangay in default_barangays %}
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == contact_person.barangay %}selected{% endif %}>
+                                            {{ barangay.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
                                 <label for="contact_person_barangay_{{ contact_person.id }}">Barangay</label>
                             </div>
                         </div><!--end of col-->
@@ -1006,8 +1096,33 @@
                                         </div>
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_nationality_{{ perpetrator.id }}" name="perpetrator_nationality_{{ perpetrator.id }}" value="{{ perpetrator.nationality }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <label for="perpetrator_nationality_{{ perpetrator.id }}">Nationality</label>
+                                                <select 
+                                                    class="form-select" 
+                                                    id="perpetrator_nationality_{{ perpetrator.id }}" 
+                                                    name="perpetrator_nationality_{{ perpetrator.id }}" 
+                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    
+                                                    <!-- Placeholder Option -->
+                                                    <option value="" {% if not perpetrator.nationality %}selected{% endif %}>--Select--</option>
+                                                    
+                                                    <option value="Aeta" {% if perpetrator.nationality == "Aeta" %}selected{% endif %}>Aeta</option>
+                                                    <option value="Agta" {% if perpetrator.nationality == "Agta" %}selected{% endif %}>Agta</option>
+                                                    <option value="Bicolano" {% if perpetrator.nationality == "Bicolano" %}selected{% endif %}>Bicolano</option>
+                                                    <option value="Bisaya" {% if perpetrator.nationality == "Bisaya" %}selected{% endif %}>Bisaya</option>
+                                                    <option value="Ilokano" {% if perpetrator.nationality == "Ilokano" %}selected{% endif %}>Ilokano</option>
+                                                    <option value="Igorot" {% if perpetrator.nationality == "Igorot" %}selected{% endif %}>Igorot</option>
+                                                    <option value="Ilonggo" {% if perpetrator.nationality == "Ilonggo" %}selected{% endif %}>Ilonggo</option>
+                                                    <option value="Kapampangan" {% if perpetrator.nationality == "Kapampangan" %}selected{% endif %}>Kapampangan</option>
+                                                    <option value="Mangyan" {% if perpetrator.nationality == "Mangyan" %}selected{% endif %}>Mangyan</option>
+                                                    <option value="Moros" {% if perpetrator.nationality == "Moros" %}selected{% endif %}>Moros</option>
+                                                    <option value="Pangasinense" {% if perpetrator.nationality == "Pangasinense" %}selected{% endif %}>Pangasinense</option>
+                                                    <option value="Tagalog" {% if perpetrator.nationality == "Tagalog" %}selected{% endif %}>Tagalog</option>
+                                                    <option value="Tausug" {% if perpetrator.nationality == "Tausug" %}selected{% endif %}>Tausug</option>
+                                                    <option value="Samal" {% if perpetrator.nationality == "Samal" %}selected{% endif %}>Samal</option>
+                                                    <option value="Waray" {% if perpetrator.nationality == "Waray" %}selected{% endif %}>Waray</option>
+                                                    <option value="Others" {% if perpetrator.nationality == "Others" %}selected{% endif %}>Others</option>
+                                                </select>
+                                                <label for="perpetrator_nationality_{{ perpetrator.id }}">Ethnicity</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-12">
@@ -1042,47 +1157,60 @@
                                         <div class="col-lg-6 col-12">
                                             <div class="form-floating mb-3">
                                                 <select class="form-select" id="perpetrator_region_{{ perpetrator.id }}" name="perpetrator_region_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
-                                                        <option value="region-I" {% if perpetrator.region == 'region-I' %}selected{% endif %}>Region I – Ilocos Region</option>
-                                                        <option value="region-II" {% if perpetrator.region == 'region-II' %}selected{% endif %}>Region II – Cagayan Valley</option>
-                                                        <option value="region-III" {% if perpetrator.region == 'region-III' %}selected{% endif %}>Region III – Central Luzon</option>
-                                                        <option value="region-IV" {% if perpetrator.region == 'region-IV' %}selected{% endif %}>Region IV‑A – CALABARZON</option>
-                                                        <option value="mimaropa" {% if perpetrator.region == 'mimaropa' %}selected{% endif %}>MIMAROPA Region</option>
-                                                        <option value="region-V" {% if perpetrator.region == 'region-V' %}selected{% endif %}>Region V – Bicol Region</option>
-                                                        <option value="region-VI" {% if perpetrator.region == 'region-VI' %}selected{% endif %}>Region VI – Western Visayas</option>
-                                                        <option value="region-VII" {% if perpetrator.region == 'region-VII' %}selected{% endif %}>Region VII – Central Visayas</option>
-                                                        <option value="region-VIII" {% if perpetrator.region == 'region-VIII' %}selected{% endif %}>Region VIII – Eastern Visayas</option>
-                                                        <option value="region-IX" {% if perpetrator.region == 'region-IX' %}selected{% endif %}>Region IX – Zamboanga Peninsula</option>
-                                                        <option value="region-X" {% if perpetrator.region == 'region-X' %}selected{% endif %}>Region X – Northern Mindanao</option>
-                                                        <option value="region-XI" {% if perpetrator.region == 'region-XI' %}selected{% endif %}>Region XI – Davao Region</option>
-                                                        <option value="region-XII" {% if perpetrator.region == 'region-XII' %}selected{% endif %}>Region XII – SOCCSKSARGEN</option>
-                                                        <option value="region-XIII" {% if perpetrator.region == 'region-XIII' %}selected{% endif %}>Region XIII – Caraga</option>
-                                                        <option value="ncr" {% if perpetrator.region == 'ncr' %}selected{% endif %}>NCR – National Capital Region</option>
-                                                        <option value="car" {% if perpetrator.region == 'car' %}selected{% endif %}>CAR – Cordillera Administrative Region</option>
-                                                        <option value="barmm" {% if perpetrator.region == 'barmm' %}selected{% endif %}>BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
-                                                    {% else %}
-                                                        <option value="barmm" selected>{{perpetrator.region}}</option>
-                                                    {% endif %}
-                                                
+                                                    <option value="">--Select Region--</option>
+                                                    {% for region in default_regions %}
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if perpetrator.name == case.region %}selected{% endif %}>
+                                                            {{ region.name }}
+                                                        </option>
+                                                    {% empty %}
+                                                        <option value="">No data found</option>
+                                                    {% endfor %}
                                                 </select>
                                                 <label for="perpetrator_region_{{ perpetrator.id }}">Region</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_province_{{ perpetrator.id }}" name="perpetrator_province_{{ perpetrator.id }}" value="{{ perpetrator.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_province_{{ perpetrator.id }}" name="perpetrator_province_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    <option value="">-- Select Province --</option>
+                                                    {% for province in default_provinces %}
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == perpetrator.province %}selected{% endif %}>
+                                                            {{ province.name }}
+                                                        </option>
+                                                    {% empty %}
+                                                        <option value="">No data found</option>
+                                                    {% endfor %}
+                                                </select>
                                                 <label for="perpetrator_province_{{ perpetrator.id }}">Province</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_city_{{ perpetrator.id }}" name="perpetrator_city_{{ perpetrator.id }}" value="{{ perpetrator.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_city_{{ perpetrator.id }}" name="perpetrator_city_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    <option value="">-- Select City --</option>
+                                                    {% for city in default_cities %}
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == perpetrator.city %}selected{% endif %}>
+                                                            {{ city.name }}
+                                                        </option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
                                                 <label for="perpetrator_city_{{ perpetrator.id }}">City</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_barangay_{{ perpetrator.id }}" name="perpetrator_barangay_{{ perpetrator.id }}" value="{{ perpetrator.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_barangay_{{ perpetrator.id }}" name="perpetrator_barangay_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    <option value="">-- Select Barangay --</option>
+                                                    {% for barangay in default_barangays %}
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
+                                                            {{ barangay.name }}
+                                                        </option>
+                                                    {% empty %}
+                                                        <option>No data found</option>
+                                                    {% endfor %}
+                                                </select>
                                                 <label for="perpetrator_barangay_{{ perpetrator.id }}">Barangay</label>
                                             </div>
                                         </div><!--End of col-->
@@ -1279,13 +1407,22 @@
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="street" name="street" placeholder="Zamboanga Del Sur" value="{{ case.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="street" name="street" value="{{ case.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 <label for="street">Street</label>
                             </div>
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="barangay" name="barangay" placeholder="Zamboanga Del Sur" value="{{ case.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="barangay" name="barangay" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Barangay --</option>
+                                    {% for barangay in default_barangays %}
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
+                                            {{ barangay.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>                                
                                 <label for="barangay">Barangay</label>
                             </div>
                         </div><!--End of col-->
@@ -1294,41 +1431,45 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="province" name="province" placeholder="Zamboanga Del Sur" value="{{ case.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                <label for="province">Province</label>
+                                <select class="form-select" id="city" name="city" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select City --</option>
+                                    {% for city in default_cities %}
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
+                                            {{ city.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="city">City / Mun</label>
                             </div>
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="city" name="city" placeholder="Zamboanga City" value="{{ case.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                <label for="city">City / Mun</label>
+                                <select class="form-select" id="province" name="province" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Province --</option>
+                                    {% for province in default_provinces %}
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
+                                            {{ province.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="province">Province</label>
                             </div>
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
                             <div class="form-floating">
                                 <select class="form-select" id="region" name="region" aria-label="Floating label select example" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    {% if global.security_status == "decrypted" %}
-                                        <option value="region-I" {% if case.region == 'region-I' %} selected {% endif %}>Region I – Ilocos Region</option>
-                                        <option value="region-II" {% if case.region == 'region-II' %} selected {% endif %}>Region II – Cagayan Valley</option>
-                                        <option value="region-III" {% if case.region == 'region-III' %} selected {% endif %}>Region III – Central Luzon</option>
-                                        <option value="region-IV" {% if case.region == 'region-IV' %} selected {% endif %}>Region IV‑A – CALABARZON</option>
-                                        <option value="mimaropa" {% if case.region == 'mimaropa' %} selected {% endif %}>MIMAROPA Region</option>
-                                        <option value="region-V" {% if case.region == 'region-V' %} selected {% endif %}>Region V – Bicol Region</option>
-                                        <option value="region-VI" {% if case.region == 'region-VI' %} selected {% endif %}>Region VI – Western Visayas</option>
-                                        <option value="region-VII" {% if case.region == 'region-VII' %} selected {% endif %}>Region VII – Central Visayas</option>
-                                        <option value="region-VIII" {% if case.region == 'region-VIII' %} selected {% endif %}>Region VIII – Eastern Visayas</option>
-                                        <option value="region-IX" {% if case.region == 'region-IX' %} selected {% endif %}>Region IX – Zamboanga Peninsula</option>
-                                        <option value="region-X" {% if case.region == 'region-X' %} selected {% endif %}>Region X – Northern Mindanao</option>
-                                        <option value="region-XI" {% if case.region == 'region-XI' %} selected {% endif %}>Region XI – Davao Region</option>
-                                        <option value="region-XII" {% if case.region == 'region-XII' %} selected {% endif %}>Region XII – SOCCSKSARGEN</option>
-                                        <option value="region-XIII" {% if case.region == 'region-XIII' %} selected {% endif %}>Region XIII – Caraga</option>
-                                        <option value="ncr" {% if case.region == 'ncr' %} selected {% endif %}>NCR – National Capital Region</option>
-                                        <option value="car" {% if case.region == 'car' %} selected {% endif %}>CAR – Cordillera Administrative Region</option>
-                                        <option value="barmm" {% if case.region == 'barmm' %} selected {% endif %}>BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option>
-                                    {% else %}
-                                        <option value="house" {% if case.case.region == 'house' %} selected {% endif %}>{{ case.region }}</option>
-                                    {% endif %}
-                                    
+                                    <option value="">--Select Region--</option>
+                                    {% for region in default_regions %}
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
+                                            {{ region.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
                                 </select>
                                 <label for="region">Region</label>
                             </div>

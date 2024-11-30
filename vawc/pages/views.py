@@ -1904,6 +1904,11 @@ def view_admin_case_behalf(request, case_id):
         #     print("Decrypted: ", decrypt_data(encryted_value))
 
         # Render the view-case.html template with the case and related objects as context
+        
+        region_id = 10 # region 9
+        province_id = 50 # zamboanga del sur
+        municipality_id = 1133 # zamboanga city
+        
         return render(request, 'super-admin/case/view-case-behalf.html', {
             'case': case,
             'contact_persons': contact_persons,
@@ -1914,6 +1919,10 @@ def view_admin_case_behalf(request, case_id):
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
             'global': request.session,
+            'default_regions': Region.objects.filter(id=region_id),
+            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_cities': Municipality.objects.filter(province_id=province_id),
+            'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -2006,6 +2015,11 @@ def view_admin_case_impact(request, case_id):
                 
 
         # Render the view-case.html template with the case and related objects as context
+        
+        region_id = 10 # region 9
+        province_id = 50 # zamboanga del sur
+        municipality_id = 1133 # zamboanga city
+                
         return render(request, 'super-admin/case/view-case-impacted.html', {
             'case': case,
             'evidence': evidences,
@@ -2015,6 +2029,10 @@ def view_admin_case_impact(request, case_id):
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
             'global': request.session,
+            'default_regions': Region.objects.filter(id=region_id),
+            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_cities': Municipality.objects.filter(province_id=province_id),
+            'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -2145,6 +2163,11 @@ def view_case_behalf(request, case_id):
         #     print("Decrypted: ", decrypt_data(encryted_value))
 
         # Render the view-case.html template with the case and related objects as context
+        
+        region_id = 10 # region 9
+        province_id = 50 # zamboanga del sur
+        municipality_id = 1133 # zamboanga city
+
         return render(request, 'barangay-admin/case/view-case-behalf.html', {
             'case': case,
             'contact_persons': contact_persons,
@@ -2155,6 +2178,10 @@ def view_case_behalf(request, case_id):
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
             'global': request.session,
+            'default_regions': Region.objects.filter(id=region_id),
+            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_cities': Municipality.objects.filter(province_id=province_id),
+            'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -2247,6 +2274,11 @@ def view_case_impact(request, case_id):
                 
 
         # Render the view-case.html template with the case and related objects as context
+        
+        region_id = 10 # region 9
+        province_id = 50 # zamboanga del sur
+        municipality_id = 1133 # zamboanga city
+        
         return render(request, 'barangay-admin/case/view-case-impacted.html', {
             'case': case,
             'evidence': evidences,
@@ -2256,6 +2288,10 @@ def view_case_impact(request, case_id):
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
             'global': request.session,
+            'default_regions': Region.objects.filter(id=region_id),
+            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_cities': Municipality.objects.filter(province_id=province_id),
+            'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
