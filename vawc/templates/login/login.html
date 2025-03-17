@@ -5,50 +5,52 @@
 <div class="container pt-5 pb-5">
     <div class="card">
         <div class="card-body">
-            <a href="{% url 'home' %}"><button type="button" class="btn-close d-flex ms-auto" aria-label="Close"></button></a>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
-                    <img src= "{% static '/img/login.png' %}" class="img-fluid" alt="image">
+            
+            <div class="row overflow-hidden">
+                <div class="col-lg-6 col-md-6 col-sm-8 m-n3">
+                    <img src= "{% static '/img/layered-steps-haikei.png' %}" class="img-fluid w-50 h-100" style="position: absolute; top: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px;" alt="image">
                 </div>
-            <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
-                <h2 class="text-center pt-3 pb-3">Log In</h2>
-                    <form id="loginForm" method="post">
-                        {% csrf_token %}
-                        <div class="row pb-2">
-                            <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                <label for="barangay-email" class="form-label">Email: </label>
-                                <input type="email" class="form-control" id="barangay-email" name="barangay-email" aria-describedby="barangay-emailFeedback">
-                                <div id="barangay-emailFeedback" class="invalid-feedback">
-                                    Please provide a valid email.
+                
+                <div class="col-lg-6 col-md-6 col-sm-8">
+                    <h2 class="text-center pt-3 pb-3 fw-light" style="color: purple;">USER LOGIN</h2>
+                        <form id="loginForm" method="post">
+                            {% csrf_token %}
+                            <div class="row pb-2">
+                                <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
+                                    <label for="barangay-email" class="form-label" style="color: purple;">Email: </label>
+                                    <input type="email" class="form-control input-purple" id="barangay-email" name="barangay-email" aria-describedby="barangay-emailFeedback">
+                                    <div id="barangay-emailFeedback" class="invalid-feedback">
+                                        Please provide a valid email.
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row pb-2">
-                            <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                <label for="barangay-passkey" class="form-label">Password: </label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="barangay-passkey" name="barangay-passkey" aria-describedby="barangay-passkeyFeedback">
-                                    <button class="btn btn-outline-secondary toggle-password" type="button">
-                                        <i class='bx bx-show'></i>
-                                    </button>
-                                </div>
-                                <div id="barangay-passkeyFeedback" class="invalid-feedback">
-                                    Your Passkey is invalid. Please try again.
+                            <div class="row pb-2">
+                                <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
+                                    <label for="barangay-passkey" class="form-label" style="color: purple;">Password: </label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control input-purple" id="barangay-passkey" name="barangay-passkey" aria-describedby="barangay-passkeyFeedback">
+                                        <button class="btn btn-outline-primary toggle-password" type="button">
+                                            <i class='bx bx-show'></i>
+                                        </button>
+                                    </div>
+                                    <div id="barangay-passkeyFeedback" class="invalid-feedback">
+                                        Your Passkey is invalid. Please try again.
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2">
-                            <button id="submitButton" class="btn btn-primary w-100 d-flex justify-content-center align-items-center" type="submit">
-                                <span>Log in</span>
-                                <div class="spinner-border text-light position-absolute" role="status" style="display: none;">
-                                </div>
-                            </button>
-                            <p class="pt-2 text-center"><a href="{% url 'forgot pass' %}">Forgot your Password?</a> Let's get you back in.</p>
-                        </div>
-                    </form>
+                            <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2">
+                                <button id="submitButton" class="btn btn-primary w-100 d-flex justify-content-center align-items-center" type="submit">
+                                    <span>Log in</span>
+                                    <div class="spinner-border text-light position-absolute" role="status" style="display: none;">
+                                    </div>
+                                </button>
+                                <a href="{% url 'home' %}" style="text-decoration: none;"><button type="button" class="btn btn-outline-primary my-2 ms-auto w-100">Back to home</button></a>
+                                <p class="pt-2 text-center"><a href="{% url 'forgot pass' %}">Forgot your Password?</a> Let's get you back in.</p>
+                            </div>
+                        </form>
                 </div>
             </div>
-      </div>
+        </div>
     </div>
 </div>
 <!-- OTP Modal -->
