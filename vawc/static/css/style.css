@@ -289,5 +289,12 @@ span.required::before {
 .input-purple:focus {
     border-color: #6f42c1 !important;
     box-shadow: 0 0 10px #6f42c1 !important;
-    outline: none !important; /* Removes default blue outline */
+    outline: none !important;
 }
+
+@media (max-width: 425px) {
+    .img-fluid {
+        display: None;;
+    }
+}
+

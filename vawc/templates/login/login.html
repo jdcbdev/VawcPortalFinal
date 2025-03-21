@@ -7,12 +7,13 @@
         <div class="card-body">
             
             <div class="row overflow-hidden">
-                <div class="col-lg-6 col-md-6 col-sm-8 m-n3">
+                <div class="col-lg-6 col-md-6 col-sm-8">
                     <img src= "{% static '/img/layered-steps-haikei.png' %}" class="img-fluid w-50 h-100" style="position: absolute; top: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px;" alt="image">
                 </div>
                 
                 <div class="col-lg-6 col-md-6 col-sm-8">
                     <h2 class="text-center pt-3 pb-3 fw-light" style="color: purple;">USER LOGIN</h2>
+                    <p class="text-center pb-2 fw-light" style="color: purple;">Sign in to your account</p>
                         <form id="loginForm" method="post">
                             {% csrf_token %}
                             <div class="row pb-2">
@@ -45,7 +46,7 @@
                                     </div>
                                 </button>
                                 <a href="{% url 'home' %}" style="text-decoration: none;"><button type="button" class="btn btn-outline-primary my-2 ms-auto w-100">Back to home</button></a>
-                                <p class="pt-2 text-center"><a href="{% url 'forgot pass' %}">Forgot your Password?</a> Let's get you back in.</p>
+                                <p class="pt-2 text-center"><a href="{% url 'forgot pass' %}" style="text-decoration: none;">Forgot your Password?</a> Let's get you back in.</p>
                             </div>
                         </form>
                 </div>
