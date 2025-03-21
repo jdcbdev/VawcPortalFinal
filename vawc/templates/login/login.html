@@ -5,93 +5,18 @@
 <div class="container pt-5 pb-5">
     <div class="card">
         <div class="card-body">
-            
             <div class="row overflow-hidden">
-                <div class="col-lg-6 col-md-6 col-sm-8 m-n3">
+                <div class="col-lg-6 col-md-6 col-sm-8">
                     <img src= "{% static '/img/layered-waves-1.png' %}" class="img-fluid w-75 h-25" style="position: absolute; bottom: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px;" alt="image">
                     <div class="typing-container">
                         <p class="typing-text"></p>
                     </div>
-
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                            const messages = [
-                                "Your Voice Matters. Your Safety Comes First.",
-                                "We Stand With You. You Are Not Alone.",
-                                "Break the Silence. End the Violence.",
-                                "Together, We Build a Safer Future.",
-                                "Need Help? Reach Out. Support is Just a Click Away."
-                            ];
-
-                            let index = 0;
-                            let charIndex = 0;
-                            const typingSpeed = 50;
-                            const erasingSpeed = 30;
-                            const delayBetweenMessages = 2000;
-                            const typingText = document.querySelector(".typing-text");
-
-                            function typeMessage() {
-                                if (charIndex < messages[index].length) {
-                                    let currentChar = messages[index][charIndex];
-
-                                    // Add <br> only if it's not the last period of the message
-                                    if (currentChar === "." && charIndex !== messages[index].length - 1) {
-                                        typingText.innerHTML += ".<br>";
-                                    } else {
-                                        typingText.innerHTML += currentChar;
-                                    }
-
-                                    charIndex++;
-                                    setTimeout(typeMessage, typingSpeed);
-                                } else {
-                                    setTimeout(eraseMessage, delayBetweenMessages);
-                                }
-                            }
-
-                            function eraseMessage() {
-                                if (charIndex > 0) {
-                                    typingText.textContent = messages[index].substring(0, charIndex - 1);
-                                    charIndex--;
-                                    setTimeout(eraseMessage, erasingSpeed);
-                                } else {
-                                    index = (index + 1) % messages.length;
-                                    setTimeout(typeMessage, typingSpeed);
-                                }
-                            }
-
-                            typeMessage();
-                        });
-                    </script>
-
-                    <style>
-                        .typing-container {
-                            text-align: center;
-                            font-size: 35px;
-                            font-weight: bold;
-                            color: purple;
-                            width:60%;
-                            max-width: 450px;
-                            position: absolute;
-                            top: 50%;
-                            left: 25%;
-                            transform: translate(-50%, -50%);
-                        }
-                        .typing-text::after {
-                            content: "|";
-                            animation: blink 0.7s infinite;
-                        }
-
-                        @keyframes blink {
-                            50% { opacity: 0; }
-                        }
-                    </style>
-
                     <img src="{% static '/img/layered-waves-1.png' %}" class="img-fluid w-75 h-25" style="position: absolute; top: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px; transform: scaleY(-1);" alt="image">
                 </div>
                 
                 <div class="col-lg-6 col-md-6 col-sm-8">
-                    <h2 class="text-center pt-3 fw-regular" style="color: black;">User Login</h2>
-                    <p class="text-center pb-2 fw-regular" style="color: black;">Sign in to your account</p>
+                    <h2 class="text-center pt-3 fw-regular" style="color: black; z-index: 1000; position: relative;">User Login</h2>
+                    <p class="text-center fw-regular" style="color: black; z-index: 1000; position: relative;">Sign in to your account</p>
                         <form id="loginForm" method="post">
                             {% csrf_token %}
                             <div class="row pb-2">
@@ -117,14 +42,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2">
+                            <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2 pb-3">
                                 <button id="submitButton" class="btn btn-primary w-100 d-flex justify-content-center align-items-center" type="submit">
                                     <span>Log in</span>
                                     <div class="spinner-border text-light position-absolute" role="status" style="display: none;">
                                     </div>
                                 </button>
                                 <a href="{% url 'home' %}" style="text-decoration: none; z-index: 1000;"><button type="button" class="btn btn-outline-primary my-2 w-100" style="z-index: 1000; position: relative;">Back to home</button></a>
-                                <p class="pt-2 text-center"><a href="{% url 'forgot pass' %}" style="text-decoration: none; color: blue; cursor: pointer; z-index: 1000; position: relative;">Forgot your Password?</a> Let's get you back in.</p>
+                                <p class="pt-2 text-center" style="z-index: 1000; position: relative;"><a href="{% url 'forgot pass' %}" style="text-decoration: none; color: blue; cursor: pointer;">Forgot your Password?</a> Let's get you back in.</p>
                             </div>
                         </form>
                 </div>
