@@ -5,19 +5,19 @@
 <div class="container pt-5 pb-5">
     <div class="card">
         <div class="card-body">
-            <a href="{% url 'login' %}"><button type="button" class="btn-close d-flex ms-auto" aria-label="Close"></button></a>
             <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
-                    <img src= "{% static '/img/login.png' %}" class="img-fluid" alt="image">
+                <div class="col-lg-6 col-md-6 col-sm-8">
+                    <img src= "{% static '/img/layered-steps-haikei.png' %}" class="img-fluid w-50 h-100" style="position: absolute; top: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px;" alt="image">
                 </div>
-            <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
-                <h2 class="text-center pt-3 pb-3">Forgot Password</h2>
+                <div class="col-lg-6 col-md-6 col-sm-8 pt-5 pb-5">
+                    <h2 class="text-center fw-light" style="color: purple;">Forgot Password</h2>
+                    <p class="text-center fw-light" style="color: purple;">Enter your email to reset your password.</p>
                     <form id="forgotPassForm" method="post">
                         {% csrf_token %}
                         <div class="row pb-2">
                             <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                <label for="barangay-email" class="form-label">Email: </label>
-                                <input type="email" class="form-control" id="barangay-email" name="barangay-email" aria-describedby="barangay-emailFeedback">
+                                <label for="barangay-email" class="form-label" style="color: purple;">Email: </label>
+                                <input type="email" class="form-control input-purple" id="barangay-email" name="barangay-email" aria-describedby="barangay-emailFeedback">
                                 <div id="barangay-emailFeedback" class="invalid-feedback">
 
                                 </div>
@@ -26,12 +26,12 @@
                         </div><!--First row-->
                         <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2">
                             <button id="submitButton" class="btn btn-primary w-100" type="submit">Recover Password</button>
-                            </button>
+                            <a href="{% url 'login' %}" style="text-decoration: none;"><button type="button" class="btn btn-outline-primary my-2 ms-auto w-100">Login instead</button></a>
                         </div>
                     </form>
                 </div>
             </div>
-      </div>
+        </div>
     </div>
 </div>
 
