@@ -292,7 +292,39 @@ span.required::before {
     outline: none !important;
 }
 
-.typing-container {
-    
+@media (max-width: 425px) {
+    .typing-container {
+        display: None;
+    }
+
+    .typing-text {
+        text-wrap: balance;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px;
+    }
 }
 
+.typing-container {
+    text-align: center;
+    font-size: 2.5vw;
+    font-weight: bold;
+    color: purple;
+    width: 60%;
+    max-width:350px;
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+}
+
+.typing-text::after {
+    content: "|";
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
