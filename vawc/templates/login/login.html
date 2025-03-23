@@ -4,131 +4,64 @@
 {% block content %}
 <div class="container pt-5 pb-5">
     <div class="card">
-        <div class="card-body">
-            
-            <div class="row overflow-hidden">
-                <div class="col-lg-6 col-md-6 col-sm-8">
-                    <img src= "{% static '/img/wave_background.png' %}" class="img-fluid w-50 h-100" style="position: absolute; bottom: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px;" alt="image">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                <div class="col-lg-6 d-none d-md-flex position-relative align-items-center justify-content-center">
+                    <img src="{% static '/img/wave_background.png' %}" class="img-fluid w-100 h-100 object-fit-cover rounded-start" alt="image">
                     <div class="typing-container">
                         <p class="typing-text"></p>
                     </div>
-
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                            const messages = [
-                                "Your Voice Matters. Your Safety Comes First.",
-                                "We Stand With You. You Are Not Alone.",
-                                "Break the Silence. End the Violence.",
-                                "Together, We Build a Safer Future.",
-                                "Need Help? Reach Out. Support is Just a Click Away."
-                            ];
-
-                            let index = 0;
-                            let charIndex = 0;
-                            const typingSpeed = 50;
-                            const erasingSpeed = 30;
-                            const delayBetweenMessages = 2000;
-                            const typingText = document.querySelector(".typing-text");
-
-                            function typeMessage() {
-                                if (charIndex < messages[index].length) {
-                                    let currentChar = messages[index][charIndex];
-
-                                    // Add <br> only if it's not the last period of the message
-                                    if (currentChar === "." && charIndex !== messages[index].length - 1) {
-                                        typingText.innerHTML += ".<br>";
-                                    } else {
-                                        typingText.innerHTML += currentChar;
-                                    }
-
-                                    charIndex++;
-                                    setTimeout(typeMessage, typingSpeed);
-                                } else {
-                                    setTimeout(eraseMessage, delayBetweenMessages);
-                                }
-                            }
-
-                            function eraseMessage() {
-                                if (charIndex > 0) {
-                                    typingText.textContent = messages[index].substring(0, charIndex - 1);
-                                    charIndex--;
-                                    setTimeout(eraseMessage, erasingSpeed);
-                                } else {
-                                    index = (index + 1) % messages.length;
-                                    setTimeout(typeMessage, typingSpeed);
-                                }
-                            }
-
-                            typeMessage();
-                        });
-                    </script>
-
-                    <style>
-                        .typing-container {
-                            text-align: center;
-                            font-size: 35px;
-                            font-weight: bold;
-                            color: rgb(255, 255, 255);
-                            width:60%;
-                            max-width: 450px;
-                            position: absolute;
-                            top: 50%;
-                            left: 25%;
-                            transform: translate(-50%, -50%);
-                        }
-                        .typing-text::after {
-                            content: "|";
-                            animation: blink 0.7s infinite;
-                        }
-
-                        @keyframes blink {
-                            50% { opacity: 0; }
-                        }
-                    </style>
                 </div>
-                
-                <div class="col-lg-6 col-md-6 col-sm-8">
-                    <h2 class="text-center pt-3 fw-regular" style="color: black;">User Login</h2>
-                    <p class="text-center pb-2 fw-regular" style="color: black;">Sign in to your account</p>
-                        <form id="loginForm" method="post">
-                            {% csrf_token %}
-                            <div class="row pb-2">
-                                <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                    <label for="barangay-email" class="form-label" style="color: black;">Email: </label>
-                                    <input type="email" class="form-control input-purple" id="barangay-email" name="barangay-email" style="border: 1px solid #c0adcc" aria-describedby="barangay-emailFeedback">
-                                    <div id="barangay-emailFeedback" class="invalid-feedback">
-                                        Please provide a valid email.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row pb-2">
-                                <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                    <label for="barangay-passkey" class="form-label" style="color: black;">Password: </label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control input-purple" id="barangay-passkey" name="barangay-passkey" style="border: 1px solid #c0adcc" aria-describedby="barangay-passkeyFeedback">
-                                        <button class="btn btn-outline-primary toggle-password" type="button">
-                                            <i class='bx bx-show'></i>
-                                        </button>
-                                    </div>
-                                    <div id="barangay-passkeyFeedback" class="invalid-feedback">
-                                        Your Passkey is invalid. Please try again.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2">
-                                <button id="submitButton" class="btn btn-primary w-100 d-flex justify-content-center align-items-center" type="submit">
-                                    <span>Log in</span>
-                                    <div class="spinner-border text-light position-absolute" role="status" style="display: none;">
-                                    </div>
+
+                <div class="col-lg-6 col-md-12 col-sm-12 d-flex flex-column justify-content-center p-4">
+                    <h2 class="text-center fw-bold text-dark">User Login</h2>
+                    <p class="text-center text-muted">Sign in to your account</p>
+                    
+                    <form id="loginForm" method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="barangay-email" class="form-label text-dark">Email:</label>
+                            <input type="email" class="form-control input-purple" style="border: 1px solid #c0adcc" id="barangay-email" name="barangay-email" required>
+                            <div class="invalid-feedback">Please provide a valid email.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="barangay-passkey" class="form-label text-dark">Password:</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control input-purple" style="border: 1px solid #c0adcc" id="barangay-passkey" name="barangay-passkey" required>
+                                <button class="btn btn-outline-primary toggle-password" type="button">
+                                    <i class='bx bx-show'></i>
                                 </button>
-                                <a href="{% url 'home' %}" style="text-decoration: none; z-index: 1000;"><button type="button" class="btn btn-outline-primary my-2 w-100" style="z-index: 1000; position: relative;">Back to home</button></a>
-                                <p class="pt-2 text-center"><a href="{% url 'forgot pass' %}" style="text-decoration: none; color: blue; cursor: pointer; z-index: 1000; position: relative;">Forgot your Password?</a> Let's get you back in.</p>
                             </div>
-                        </form>
+                            <div class="invalid-feedback">Your passkey is invalid. Please try again.</div>
+                        </div>
+
+                        <button id="submitButton" class="btn btn-primary w-100" type="submit">
+                            Log in
+                            <div class="spinner-border text-light position-absolute" role="status" style="display: none;"></div>
+                        </button>
+
+                        <a href="{% url 'home' %}" class="btn btn-outline-primary w-100 mt-2">Back to home</a>
+                        
+                        <p class="text-center mt-2">
+                            <a href="{% url 'forgot pass' %}" class="text-primary">Forgot your Password?</a> Let's get you back in.
+                        </p>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+<script>
+
+</script>
+
+
+<style>
+
+</style>
+
 </div>
 <!-- OTP Modal -->
 <div class="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">

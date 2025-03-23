@@ -292,7 +292,59 @@ span.required::before {
     outline: none !important;
 }
 
+@media (max-width: 425px) {
+    .img-fluid {
+        width: 50% !important;
+    }
+}
+
+.img-fluid {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
 .typing-container {
-    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    max-width: 450px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    transform: translate(-50%, -50%);
+}
+
+.typing-text::after {
+    content: "|";
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+
+@media (max-width: 991px) {
+    .typing-container {
+        font-size: 2.0rem;
+        width: 70%;
+    }
+}
+
+@media (max-width: 768px) { 
+    .card {
+        border-radius: 5px;
+    }
+    .typing-container {
+        font-size: 1.9rem;
+        width: 90%;
+    }
 }
 
