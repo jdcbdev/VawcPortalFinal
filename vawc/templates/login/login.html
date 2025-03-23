@@ -14,15 +14,14 @@
                     <img src="{% static '/img/layered-waves-1.png' %}" class="img-fluid w-75 h-25" style="position: absolute; top: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px; transform: scaleY(-1);" alt="image">
                 </div>
                 
-                <div class="col-lg-6 col-md-6 col-sm-8">
-                    <h2 class="text-center pt-3 fw-regular" style="color: black; z-index: 1000; position: relative;">User Login</h2>
-                    <p class="text-center fw-regular" style="color: black; z-index: 1000; position: relative;">Sign in to your account</p>
+                <div class="col-lg-6 col-md-6 col-sm-8" style="min-height: 60vh;">
+                    <h2 class="text-center pt-3 fw-regular" style="color: purple; z-index: 1000; position: relative;">User Login</h2>
+                    <p class="text-center fw-regular" style="color: purple; opacity: 75%; z-index: 1000; position: relative;">Sign in to your account</p>
                         <form id="loginForm" method="post">
                             {% csrf_token %}
                             <div class="row pb-2">
                                 <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                    <label for="barangay-email" class="form-label" style="color: black;">Email: </label>
-                                    <input type="email" class="form-control input-purple" id="barangay-email" name="barangay-email" style="border: 1px solid #c0adcc" aria-describedby="barangay-emailFeedback">
+                                    <input type="email" class="form-control input-purple" placeholder="Email" id="barangay-email" name="barangay-email" style="border: 1px solid #c0adcc" aria-describedby="barangay-emailFeedback">
                                     <div id="barangay-emailFeedback" class="invalid-feedback">
                                         Please provide a valid email.
                                     </div>
@@ -30,9 +29,8 @@
                             </div>
                             <div class="row pb-2">
                                 <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                    <label for="barangay-passkey" class="form-label" style="color: black;">Password: </label>
                                     <div class="input-group">
-                                        <input type="password" class="form-control input-purple" id="barangay-passkey" name="barangay-passkey" style="border: 1px solid #c0adcc" aria-describedby="barangay-passkeyFeedback">
+                                        <input type="password" class="form-control input-purple" placeholder="Password" id="barangay-passkey" name="barangay-passkey" style="border: 1px solid #c0adcc" aria-describedby="barangay-passkeyFeedback">
                                         <button class="btn btn-outline-primary toggle-password" type="button">
                                             <i class='bx bx-show'></i>
                                         </button>
