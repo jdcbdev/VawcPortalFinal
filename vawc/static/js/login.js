@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "We Stand With You. You Are Not Alone.",
         "Break the Silence. End the Violence.",
         "Together, We Build a Safer Future.",
-        "Need Help? Reach Out. Support is Just a Click Away."
+        "Need Help? Support is Just a Click Away."
     ];
 
     let index = 0;
@@ -14,16 +14,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const delayBetweenMessages = 2000;
     const typingText = document.querySelector(".typing-text");
 
+    function formatTextWithBreaks(text) {
+        return text.replace(/\.(?=\s)/g, ".<br>");
+    }
+
     function typeMessage() {
         if (charIndex < messages[index].length) {
-            let currentChar = messages[index][charIndex];
-
-            if (currentChar === "." && charIndex !== messages[index].length - 1) {
-                typingText.innerHTML += ".<br>";
-            } else {
-                typingText.innerHTML += currentChar;
-            }
-
+            let currentText = messages[index].substring(0, charIndex + 1);
+            typingText.innerHTML = formatTextWithBreaks(currentText);
             charIndex++;
             setTimeout(typeMessage, typingSpeed);
         } else {
@@ -33,7 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function eraseMessage() {
         if (charIndex > 0) {
-            typingText.textContent = messages[index].substring(0, charIndex - 1);
+            let currentText = messages[index].substring(0, charIndex - 1);
+            typingText.innerHTML = formatTextWithBreaks(currentText);
             charIndex--;
             setTimeout(eraseMessage, erasingSpeed);
         } else {
