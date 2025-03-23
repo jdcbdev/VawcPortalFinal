@@ -15,15 +15,14 @@
                 </div>
 
                 <div class="col-lg-6 col-md-12 col-sm-12 d-flex flex-column justify-content-center p-4">
-                    <h2 class="text-center fw-bold text-dark">Forgot Password</h2>
+                    <h2 class="text-center fw-regular text-dark">Forgot Password</h2>
                     <p class="text-center text-muted">Enter your email to recover your password</p>
 
                     <form id="forgotPassForm" method="post">
                         {% csrf_token %}
 
                         <div class="mb-3">
-                            <label for="barangay-email" class="form-label text-dark">Email:</label>
-                            <input type="email" class="form-control input-purple" style="border: 1px solid #c0adcc" id="barangay-email" name="barangay-email" required>
+                            <input type="email" class="form-control input-purple" style="border: 1px solid #c0adcc" placeholder="Email" id="barangay-email" name="barangay-email" required>
                             <div id="barangay-emailFeedback" class="invalid-feedback">
                                 Please enter a valid email.
                             </div>
