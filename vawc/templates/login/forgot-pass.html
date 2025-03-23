@@ -4,34 +4,40 @@
 {% block content %}
 <div class="container pt-5 pb-5">
     <div class="card">
-        <div class="card-body">
-            <a href="{% url 'login' %}"><button type="button" class="btn-close d-flex ms-auto" aria-label="Close"></button></a>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
-                    <img src= "{% static '/img/login.png' %}" class="img-fluid" alt="image">
+        <div class="card-body p-0">
+            <div class="row g-0 align-items-center">
+                <div class="col-lg-6 d-none d-md-flex align-items-center justify-content-center position-relative">
+                    <img src="{% static '/img/wave_background.png' %}" class="img-fluid w-100 h-100 object-fit-cover rounded-start" alt="Forgot Password">
+                    
+                    <div class="typing-container">
+                        <p class="typing-text"></p>
+                    </div>
                 </div>
-            <div class="col-lg-6 col-md-6 col-sm-8 pt-5">
-                <h2 class="text-center pt-3 pb-3">Forgot Password</h2>
+
+                <div class="col-lg-6 col-md-12 col-sm-12 d-flex flex-column justify-content-center p-4">
+                    <h2 class="text-center fw-bold text-dark">Forgot Password</h2>
+                    <p class="text-center text-muted">Enter your email to recover your password</p>
+
                     <form id="forgotPassForm" method="post">
                         {% csrf_token %}
-                        <div class="row pb-2">
-                            <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                <label for="barangay-email" class="form-label">Email: </label>
-                                <input type="email" class="form-control" id="barangay-email" name="barangay-email" aria-describedby="barangay-emailFeedback">
-                                <div id="barangay-emailFeedback" class="invalid-feedback">
 
-                                </div>
-                                <!--invalid feedback-->
+                        <div class="mb-3">
+                            <label for="barangay-email" class="form-label text-dark">Email:</label>
+                            <input type="email" class="form-control input-purple" style="border: 1px solid #c0adcc" id="barangay-email" name="barangay-email" required>
+                            <div id="barangay-emailFeedback" class="invalid-feedback">
+                                Please enter a valid email.
                             </div>
-                        </div><!--First row-->
-                        <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2">
-                            <button id="submitButton" class="btn btn-primary w-100" type="submit">Recover Password</button>
-                            </button>
                         </div>
+
+                        <button id="submitButton" class="btn btn-primary w-100" type="submit">
+                            Recover Password
+                        </button>
+
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary w-100 mt-2">Login instead</a>
                     </form>
                 </div>
             </div>
-      </div>
+        </div>
     </div>
 </div>
 

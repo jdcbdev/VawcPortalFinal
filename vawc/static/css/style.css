@@ -336,6 +336,9 @@ span.required::before {
         font-size: 2.0rem;
         width: 70%;
     }
+    .card {
+        border-radius: 8px;
+    }
 }
 
 @media (max-width: 768px) { 
@@ -345,6 +348,13 @@ span.required::before {
     .typing-container {
         font-size: 1.9rem;
         width: 90%;
+    }
+    .row {
+        flex-direction: column-reverse;
+        text-align: center;
+    }
+    .d-none.d-md-flex {
+        display: none !important;
     }
 }
 
