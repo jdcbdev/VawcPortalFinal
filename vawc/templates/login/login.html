@@ -14,22 +14,20 @@
                 </div>
 
                 <div class="col-lg-6 col-md-12 col-sm-12 d-flex flex-column justify-content-center p-4">
-                    <h2 class="text-center fw-light text-purple">User Login</h2>
-                    <p class="text-center text-muted">Sign in to your account</p>
+                    <h2 class="text-center fw-light" style="color: purple;">User Login</h2>
+                    <p class="text-center" style="color: purple;">Sign in to your account</p>
                     
                     <form id="loginForm" method="post">
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label for="barangay-email" class="form-label text-dark">Email:</label>
-                            <input type="email" class="form-control input-purple" style="border: 1px solid #c0adcc" id="barangay-email" name="barangay-email" required>
+                            <input type="email" class="form-control input-purple" style="border: 1px solid #c0adcc" placeholder="Email" id="barangay-email" name="barangay-email" required>
                             <div class="invalid-feedback">Please provide a valid email.</div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="barangay-passkey" class="form-label text-dark">Password:</label>
                             <div class="input-group">
-                                <input type="password" class="form-control input-purple" style="border: 1px solid #c0adcc" id="barangay-passkey" name="barangay-passkey" required>
+                                <input type="password" class="form-control input-purple" style="border: 1px solid #c0adcc" placeholder="Password" id="barangay-passkey" name="barangay-passkey" required>
                                 <button class="btn btn-outline-primary toggle-password" type="button">
                                     <i class='bx bx-show'></i>
                                 </button>
@@ -45,7 +43,7 @@
                         <a href="{% url 'home' %}" class="btn btn-outline-primary w-100 mt-2">Back to home</a>
                         
                         <p class="text-center mt-2">
-                            <a href="{% url 'forgot pass' %}" class="text-primary">Forgot your Password?</a> Let's get you back in.
+                            <a href="{% url 'forgot pass' %}" class="text-primary" style="text-decoration: none;">Forgot your Password?</a> Let's get you back in.
                         </p>
                     </form>
                 </div>
