@@ -286,25 +286,22 @@ span.required::before {
 }
 
 /* ===NEKOLAIV CUSTOM STYLES=== */
+
+/* General Input Focus Style */
 .input-purple:focus {
     border-color: #6f42c1 !important;
     box-shadow: 0 0 10px #6f42c1 !important;
     outline: none !important;
 }
 
-@media (max-width: 425px) {
-    .img-fluid {
-        width: 50% !important;
-    }
-}
-
+/* Default (Mobile First) */
 .img-fluid {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: auto;
 }
 
 .card {
-    border-radius: 10px;
+    border-radius: 5px;
     overflow: hidden;
 }
 
@@ -312,10 +309,10 @@ span.required::before {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 80%;
+    width: 90%;
     max-width: 450px;
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.9rem;
     font-weight: bold;
     color: white;
     transform: translate(-50%, -50%);
@@ -329,32 +326,42 @@ span.required::before {
 @keyframes blink {
     50% { opacity: 0; }
 }
+ 
+.row {
+    flex-direction: column-reverse;
+    text-align: center;
+}
 
+.d-none.d-md-flex {
+    display: none !important;
+}
 
-@media (max-width: 991px) {
+/* Tablet (768px and above) */
+@media (min-width: 768px) {
+    .card {
+        border-radius: 8px;
+    }
+    .typing-container {
+        font-size: 2rem;
+        width: 80%;
+    }
+    .row {
+        flex-direction: row;
+        text-align: left;
+    }
+    .d-none.d-md-flex {
+        display: flex !important;
+    }
+}
+
+/* Desktop (992px and above) */
+@media (min-width: 992px) {
     .typing-container {
         font-size: 2.0rem;
         width: 70%;
     }
     .card {
-        border-radius: 8px;
-    }
-}
-
-@media (max-width: 768px) { 
-    .card {
-        border-radius: 5px;
-    }
-    .typing-container {
-        font-size: 1.9rem;
-        width: 90%;
-    }
-    .row {
-        flex-direction: column-reverse;
-        text-align: center;
-    }
-    .d-none.d-md-flex {
-        display: none !important;
+        border-radius: 10px;
     }
 }
 
