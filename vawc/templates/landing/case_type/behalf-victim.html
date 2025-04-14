@@ -1421,11 +1421,11 @@
             requestURL = ''
             if(document.querySelector('#email-tab').classList.contains('active')) {
                 console.log('email is selected type')
-                requestURL = '{% url 'email_confirm'  %}'
+                requestURL = "{% url 'email_confirm'  %}"
                 contactValue = isvalid_email(emailValue)
             } else if (document.querySelector('#phone-tab').classList.contains('active')) {
                 console.log('phone number is selected type')
-                requestURL = '{% url 'phone_confirm'  %}'
+                requestURL = "{% url 'phone_confirm'  %}"
                 contactValue = isvalid_phone_number(phoneValue)
             } else {
                 throw new Error('No contact type selected')
@@ -1514,10 +1514,10 @@
             requestURL = ''
             if(document.querySelector('#email-tab').classList.contains('active')) {
                 console.log('email is selected type')
-                requestURL = '{% url 'verify_otp_email'  %}'
+                requestURL = "{% url 'verify_otp_email'  %}"
             } else if (document.querySelector('#phone-tab').classList.contains('active')) {
                 console.log('phone number is selected type')
-                requestURL = '{% url 'verify_otp_phone'  %}'
+                requestURL = "{% url 'verify_otp_phone'  %}"
             } else {
                 throw new Error('No contact type selected')
             }

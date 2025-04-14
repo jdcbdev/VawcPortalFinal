@@ -84,7 +84,7 @@
             let action = 'approve'
 
             $.ajax({
-                url: '{% url 'update_passkey'  %}', // Modify the URL to point to your Django view endpoint
+                url: "{% url 'update_passkey'  %}", // Modify the URL to point to your Django view endpoint
                 method: 'POST',
                 data: {
                     'action': action,
@@ -114,7 +114,7 @@
             let action = 'decline'
 
             $.ajax({
-                url: '{% url 'update_passkey'  %}', // Modify the URL to point to your Django view endpoint
+                url: "{% url 'update_passkey'  %}", // Modify the URL to point to your Django view endpoint
                 method: 'POST',
                 data: {
                     'action': action,
