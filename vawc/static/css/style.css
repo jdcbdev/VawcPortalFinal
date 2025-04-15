@@ -284,3 +284,64 @@ span.required::before {
     content: '*';
     color: red;
 }
+
+/* ===NEKOLAIV CUSTOM STYLES=== */
+
+/* General Input Focus Style */
+.input-purple:focus {
+    border-color: #6f42c1 !important;
+    box-shadow: 0 0 10px #6f42c1 !important;
+    outline: none !important;
+}
+
+/* Default (Mobile First) */
+.typing-container {
+    display: none;
+    text-align: center;
+    font-size: 4vw;
+    font-weight: bold;
+    color: purple;
+    width: 80%;
+    max-width: 350px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.typing-text {
+    text-wrap: balance;
+}
+
+.typing-text::after {
+    content: "|";
+    animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+.btn {
+    font-size: 14px;
+    padding: 8px;
+}
+
+/* Tablet (768px and above) */
+@media (min-width: 768px) {
+    .typing-container {
+        display: block;
+        font-size: 2.5vw;
+        width: 60%;
+        left: 25%;
+    }
+}
+
+/* Desktop (1024px and above) */
+@media (min-width: 1024px) {
+    .typing-container {
+        font-size: 2vw;
+        width: 50%;
+        max-width: 400px;
+    }
+}
