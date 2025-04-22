@@ -2719,6 +2719,11 @@ def add_parent_view(request, case_id, victim_id):
     case = Case.objects.get(id=case_id)
     victim = Victim.objects.get(id=victim_id)
 
+    # default/initial data to use when page loads
+    region_id = 10 # region 9
+    province_id = 50 # zamboanga del sur
+    municipality_id = 1133 # zamboanga city
+
     # Query Parent objects related to the Victim
     parents = Parent.objects.filter(victim_parent=victim)
     
@@ -2749,6 +2754,10 @@ def add_parent_view(request, case_id, victim_id):
         'victim': victim,
         'case': case,
         'parents': parents,
+        'default_regions': Region.objects.filter(id=region_id),
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_cities': Municipality.objects.filter(province_id=province_id),
+        'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
     })
 
 @require_POST
@@ -2868,6 +2877,11 @@ def add_parent_perp_view(request, case_id, perp_id):
     case = Case.objects.get(id=case_id)
     perpetrator = Perpetrator.objects.get(id=perp_id)
 
+    # default/initial data to use when page loads
+    region_id = 10 # region 9
+    province_id = 50 # zamboanga del sur
+    municipality_id = 1133 # zamboanga city
+
     # Query Parent objects related to the Victim
     parents = Parent_Perpetrator.objects.filter(perpetrator_parent=perpetrator)
     
@@ -2901,6 +2915,10 @@ def add_parent_perp_view(request, case_id, perp_id):
         'perpetrator': perpetrator,
         'case': case,
         'parents': parents,
+        'default_regions': Region.objects.filter(id=region_id),
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_cities': Municipality.objects.filter(province_id=province_id),
+        'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
     })
 
 @require_POST
