@@ -164,10 +164,10 @@
             // Determine what url endpoint to use, either for email or phone
             let requestURL = ''
             if(get_contact_type() == 'email') {
-                requestURL = '{% url 'check_email_case' %}'
+                requestURL = "{% url 'check_email_case' %}"
                 contactValue = isvalid_email(emailValue)
             } else if (get_contact_type() == 'phone') {
-                requestURL = '{% url 'check_phone_case' %}'
+                requestURL = "{% url 'check_phone_case' %}"
                 contactValue = isvalid_phone_number(phoneValue)
             }
  
@@ -220,9 +220,9 @@
 
                         let requestURL = ''
                         if(get_contact_type() == 'email') {
-                            requestURL = '{% url 'email_confirm' %}'
+                            requestURL = "{% url 'email_confirm' %}"
                         } else if (get_contact_type() == 'phone') {
-                            requestURL = '{% url 'phone_confirm' %}'
+                            requestURL = "{% url 'phone_confirm' %}"
                         }
 
                         $.ajax({
@@ -315,9 +315,9 @@
 
             let requestURL = ''
             if(get_contact_type() == 'email') {
-                requestURL = '{% url 'verify_otp_email_track_case' %}'
+                requestURL = "{% url 'verify_otp_email_track_case' %}"
             } else if (get_contact_type() == 'phone') {
-                requestURL = '{% url 'verify_otp_phone_track_case' %}'
+                requestURL = "{% url 'verify_otp_phone_track_case' %}"
             }
 
             $.ajax({

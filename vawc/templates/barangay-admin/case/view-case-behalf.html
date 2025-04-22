@@ -2725,7 +2725,7 @@
 
         $('.btn-check-update').on('change', function() {
             var status = $(this).data('status');
-            var caseId = {{ case.pk }};
+            var caseId = "{{ case.pk }}";
             var csrfToken = '{{ csrf_token }}';  // Fetch CSRF token from the cookie
 
             $.ajax({
@@ -2947,7 +2947,7 @@
         });
         $('#date_closed').on('input', function() {
             var dateStatus = $(this).val();  // Get the value of the date input
-            var caseId = {{ case.pk }};
+            var caseId = "{{ case.pk }}";
             var csrfToken = '{{ csrf_token }}';  // Fetch CSRF token from the cookie
         
             $.ajax({
