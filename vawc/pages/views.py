@@ -92,7 +92,7 @@ def forgot_pass_confirm_sent_view(request):
         # Send email
         subject = 'Reset Your Password'
         message = f'Click the following link to reset your password: {reset_url}'
-        to_email = [custom_user.email]
+        to_email = custom_user.email
         send_email(to_email, subject, message)
 
         # If the email exists, return success response
