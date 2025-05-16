@@ -688,6 +688,16 @@
                             </form>
                         </div>
                     </div>
+                    <!-- mark -->
+                    <script src="{% static 'js/address-fields.js' %}"></script>
+                    <script>
+                        // For Address Fields Consistenciess
+                        const csrf_token = '{{ csrf_token }}'
+                        const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
+                        const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
+                        addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
+                        addAddressListener(formElementPerp, 'perp', '{{ perpetrator.id }}');
+                    </script>
                     {% endfor %}
                 {% else %}
                 <div class="tab-pane fade show active h-100" id="v-pills-no-victim" role="tabpanel" aria-labelledby="v-pills-no-victim-tab" tabindex="0">
