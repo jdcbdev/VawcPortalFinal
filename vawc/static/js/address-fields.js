@@ -24,7 +24,7 @@ function addAddressListener(formElement, formType, count = 0) {
         const regionId = e.target.options[e.target.selectedIndex].dataset.code
 
         if(regionId) {
-            setGeoSelect(city, {
+            setGeoSelect(province, {
                 filter: regionId,
                 action: 'province',
                 csrfmiddlewaretoken: csrf_token,
