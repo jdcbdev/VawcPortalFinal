@@ -1,0 +1,115 @@
+[
+  {
+    "province": "Zamboanga del Norte",
+    "LGU": [
+      {
+        "name": "Baliguian",
+        "station": "Baliguian Police Station"
+      },
+      {
+        "name": "Godod",
+        "station": "Godod Police Station"
+      },
+      {
+        "name": "Gutalac",
+        "station": "Gutalac Police Station"
+      },
+      {
+        "name": "Jose Dalman",
+        "station": "Jose Dalman Police Station"
+      },
+      {
+        "name": "Kalawit",
+        "station": "Kalawit Police Station"
+      },
+      {
+        "name": "Katipunan",
+        "station": "Katipunan Police Station"
+      },
+      {
+        "name": "La Libertad",
+        "station": "La Libertad Police Station"
+      },
+      {
+        "name": "Labason",
+        "station": "Labason Police Station"
+      },
+      {
+        "name": "Leon Postigo",
+        "station": "Leon Postigo Police Station"
+      },
+      {
+        "name": "Liloy",
+        "station": "Liloy Police Station"
+      },
+      {
+        "name": "Manukan",
+        "station": "Manukan Police Station"
+      },
+      {
+        "name": "Mutia",
+        "station": "Mutia Police Station"
+      },
+      {
+        "name": "Piñan",
+        "station": "Piñan Police Station"
+      },
+      {
+        "name": "Polanco",
+        "station": "Polanco Police Station"
+      },
+      {
+        "name": "President Manuel A. Roxas",
+        "station": "President Manuel A. Roxas Police Station"
+      },
+      {
+        "name": "Rizal",
+        "station": "Rizal Police Station"
+      },
+      {
+        "name": "Salug",
+        "station": "Salug Police Station"
+      },
+      {
+        "name": "Sergio Osmeña Sr.",
+        "station": "Sergio Osmeña Sr. Police Station"
+      },
+      {
+        "name": "Siayan",
+        "station": "Siayan Police Station"
+      },
+      {
+        "name": "Sibuco",
+        "station": "Sibuco Police Station"
+      },
+      {
+        "name": "Sibutad",
+        "station": "Sibutad Police Station"
+      },
+      {
+        "name": "Sindangan",
+        "station": "Sindangan Police Station"
+      },
+      {
+        "name": "Siocon",
+        "station": "Siocon Police Station"
+      },
+      {
+        "name": "Sirawai",
+        "station": "Sirawai Police Station"
+      },
+      {
+        "name": "Tampilisan",
+        "station": "Tampilisan Police Station"
+      },
+      {
+        "name": "Dapitan",
+        "station": "Dapitan Police Station"
+      },
+      {
+        "name": "Dipolog",
+        "station": "Dipolog Police Station"
+      }
+    ]
+  }
+]
