@@ -55,6 +55,8 @@ def home_view (request):
             return redirect('admin dashboard')
         elif hasattr(request.user, 'account') and request.user.account.type == 'staff':
             return redirect('barangay dashboard')
+        elif hasattr(request.user, 'account') and request.user.account.type == 'law_enforcement':
+            return redirect('law enforcement dashboard')
         
     return render(request, 'landing/home.html')
 
@@ -70,6 +72,9 @@ def login_view (request):
             return redirect('admin dashboard')
         elif hasattr(request.user, 'account') and request.user.account.type == 'staff':
             return redirect('barangay dashboard')
+        else:
+            if hasattr(request.user, 'law_enforcement_account'):
+                return redirect('law enforcement dashboard')
     
     return render(request, 'login/login.html')
 
@@ -532,6 +537,67 @@ def admin_manage_account_view(request):
     })
 
 
+@login_required
+def law_enforcement_manage_account_view(request):
+    # Emails to exclude
+    excluded_emails = ['admin@gmail.com', 'vawcdilg@gmail.com']
+
+    # Default/initial data to use when page loads
+    region_id = 10  # Region 9
+    province_id = 50  # Zamboanga del Sur
+    municipality_id = 1133  # Zamboanga City
+
+    # Exclude the specified emails from the queryset
+    users = CustomUser.objects.exclude(email__in=excluded_emails)
+    accounts = LawEnforcementAccount.objects.filter(user__in=users)
+
+    return render(request, 'super-admin/law-enforcement-account.html', {
+        'users': users,
+        'accounts': accounts,
+        'default_regions': Region.objects.filter(id=region_id),
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_police_stations': PoliceStations.objects.filter(region="Region 9"),  # 👈 Include this
+    })
+
+def select_police_station(request):
+    if request.method == "POST":
+        action = request.POST.get("action")
+        region_name = request.POST.get("region")  # Region is now explicitly passed
+        province_name = request.POST.get("filter")  # Province name is still passed under "filter"
+
+        if action == "station":
+            stations = PoliceStations.objects.filter(
+                region=region_name,
+                province=province_name
+            ).values_list("name", flat=True)
+
+            data = [{"code": s, "name": s} for s in stations]
+            return JsonResponse(data, safe=False)
+
+    return JsonResponse([], safe=False)
+
+# def select_police_station(request):
+#     if request.method == "POST":
+#         action = request.POST.get("action")
+#         filter_value = request.POST.get("filter")
+
+#         if action == "province":
+#             provinces = (
+#                 PoliceStations.objects.filter(region=filter_value)
+#                 .values_list("province", flat=True)
+#                 .distinct()
+#             )
+#             data = [{"code": p, "name": p} for p in sorted(provinces)]
+#             return JsonResponse(data, safe=False)
+
+#         elif action == "station":
+#             stations = PoliceStations.objects.filter(province=filter_value)
+#             data = [{"code": s.name, "name": s.name} for s in stations]
+#             return JsonResponse(data, safe=False)
+
+#     return JsonResponse([], safe=False)
+
+
 def edit_account_view(request, account_id):
     if request.method == 'GET':
         try: 
@@ -653,6 +719,68 @@ def create_account(request):
                     province=province, 
                     city=city,
                     barangay=barangay
+                )
+            except:
+                pass
+            # Return success response
+            return JsonResponse({'success': True, 'message': 'Account created successfully'})
+
+        except Exception as e:
+            # Return error response if something goes wrong
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    else:
+        # Return error response for unsupported methods
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+
+@login_required
+def create_law_enforcement_account(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('account_username')
+            email = request.POST.get('account_email')
+            first_name = request.POST.get('account_fname')
+            middle_name = request.POST.get('account_mname')
+            last_name = request.POST.get('account_lname')
+            region = request.POST.get('account_region')
+            province = request.POST.get('account_province')
+            station = request.POST.get('account_station')
+            
+            print(username, email, first_name, middle_name, last_name, region, province, station)
+            
+            try:
+                password = generate_random_password()
+                passkey = generate_random_password()
+                subject = 'Account Creation from VAWC'
+                message = (
+                    f'--------------------------\n'
+                    f'Account Details\n'
+                    f'--------------------------\n\n'
+                    f'Here is your New Account From VAWC:\n\n'
+                    f'Email:  {email}\n'
+                    f'Username:  {username}\n'
+                    f'Password:  {password}\n\n'
+                    f'First Name:  {first_name}\n'
+                    f'Middle Name:  {middle_name}\n'
+                    f'Last Name:  {last_name}\n\n'
+                    f'Region:  {region}\n'
+                    f'Province:  {province}\n'
+                    f'Station:  {station}\n\n'
+                    f'--------------------------\n'
+                    f'This email was sent automatically. Please do not reply.'
+                )
+                send_email(email, subject, message)
+                # Create the user with provided data using the CustomUser manager
+                user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                # Create the Account instance and link it to the user
+                account = Account.objects.create(
+                    user=user,
+                    first_name=first_name,
+                    middle_name=middle_name,
+                    last_name=last_name,
+                    region=region, 
+                    province=province, 
+                    station=station
                 )
             except:
                 pass
@@ -1113,6 +1241,202 @@ def barangay_case_view(request):
         'logged_in_user': logged_in_user,
         'barangay': barangay,
     })
+
+@login_required
+def law_enforcement_dashboard_view (request):
+    if request.user.account.type != 'law_enforcement':
+        return redirect('login')
+    
+    logged_in_user = request.user  # Retrieve the logged-in user
+    # Retrieve the Account object associated with the logged-in user
+    try:
+        account = logged_in_user.account
+        barangay = account.barangay
+    except Account.DoesNotExist:
+        barangay = None
+
+    print(barangay)
+
+    year_list = Case.objects.filter(barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+
+    return render(request, 'law-enforcement-admin/dashboard.html', {"year_list": year_list, "barangay": barangay})
+
+def law_enforcement_dashboard_data(request, get_year):
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    logged_in_user = request.user  # Retrieve the logged-in user
+    # Retrieve the Account object associated with the logged-in user
+    try:
+        account = logged_in_user.account
+        barangay = account.barangay
+    except Account.DoesNotExist:
+        barangay = None
+    
+    if get_year == 0:
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(barangay=barangay)
+    else:
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( barangay=barangay, date_added__year = get_year)
+
+    
+    total_cases = cases.count() or 0
+    ongoing_cases = cases.filter(status='Active').count() or 0
+    resolved_cases = cases.filter(status='Close').count() or 0
+    services_provided = 0
+    bpo_count = 0
+    tpo_count = 0
+    ppo_count = 0
+    ra_9262 = 0
+    ra_8353 = 0
+    ra_7877 = 0
+    ra_7610 = 0
+    ra_9775 = 0
+    annual_cases = defaultdict(lambda:defaultdict(int))
+    cases_w_criminal_cases = 0
+    barangay_case_list = []
+    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    for month_temp in all_months:   
+        annual_cases[month_temp] = 0
+
+    # Iterate through filtered cases
+    for case in cases:
+
+        # count all the services of resolved case
+        if (case.status == 'Close'):
+            services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
+
+        # count bpo, tpo, ppo
+        if case.service_information == 'issuance':
+            bpo_count += 1
+            if case.enforcement_of_protection_order:
+                ppo_count += 1
+            else:
+                tpo_count += 1
+
+         # count RAs
+        ra_9262 += case.checkbox_ra_9262
+        ra_8353 += case.checkbox_ra_8353
+        ra_7877 += case.checkbox_ra_7877
+        ra_7610 += case.checkbox_a_7610
+        ra_9775 += case.checkbox_ra_9775
+
+        # no of cases with criminal case
+        if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
+            cases_w_criminal_cases += 1
+
+        # increment case count per month    
+        month = case.date_added.strftime('%b') 
+        annual_cases[month] += 1
+
+        case_dict_data = {
+            'case_number': case.case_number,
+            'date_added': case.date_added,
+            'barangay': case.barangay,
+            'city': case.city,
+            'province': case.province,
+            'checkbox_ra_8353': case.checkbox_ra_8353,
+            'checkbox_ra_9262': case.checkbox_ra_9262,
+            'checkbox_ra_7877': case.checkbox_ra_7877,
+            'checkbox_ra_9775': case.checkbox_ra_9775,
+            'checkbox_a_7610': case.checkbox_a_7610,
+        }
+        case_dict = {
+            'data': case_dict_data,
+            'victims': list(case.victim_set.values()),
+            'perpetrators': list(case.perpetrator.values())
+        }
+        barangay_case_list.append(case_dict)
+
+
+
+    republic_acts = {
+        'RA 9262': ra_9262,
+        'RA 8353': ra_8353,
+        'RA 7877': ra_7877,
+        'RA 7610': ra_7610,
+        'RA 9775': ra_9775
+    }
+
+    return JsonResponse({
+        #'cases': filtered_cases,
+        'total_cases': total_cases,
+        'ongoing_cases': ongoing_cases,
+        'resolved_cases': resolved_cases,
+        'services_provided': services_provided,
+        'bpo_count': bpo_count,
+        'ppo_count': ppo_count,
+        'tpo_count': tpo_count,
+        'cases_w_criminal_cases': cases_w_criminal_cases,
+        'republic_acts': republic_acts,
+        'annual_cases': annual_cases,
+        'barangay_case_list': barangay_case_list,
+        # 'logged_in_user': logged_in_user,
+        # 'email' : logged_in_user.email,
+        'barangay': barangay,
+        # 'global': request.session,
+    })
+
+@login_required
+def law_enforcement_settings_view (request):
+    if request.user.account.type != 'law_enforcement':
+        return redirect('login')
+    
+    logged_in_user = request.user
+    
+    return render(request, 'law-enforcement-admin/settings.html', {'global': request.session, 'logged_in_user': logged_in_user})
+
+
+@login_required
+def law_enforcement_case_view(request):
+    if request.user.account.type != 'law_enforcement':
+        return redirect('login')
+    
+    logged_in_user = request.user  # Retrieve the logged-in user
+    # Retrieve the Account object associated with the logged-in user
+    try:
+        account = logged_in_user.account
+        barangay = account.barangay
+    except Account.DoesNotExist:
+        barangay = None
+    cases = Case.objects.all()  # Retrieve all cases from the database
+    
+    filtered_cases = []
+    
+    for case in cases:
+        if case.barangay == barangay:
+            filtered_cases.append(case)
+    
+    return render(request, 'law-enforcement-admin/case/case.html', {
+        'cases': filtered_cases,
+        'global': request.session,
+        'logged_in_user': logged_in_user,
+        'barangay': barangay,
+    })
+
+
+
+def select_police_station(request):
+    if request.method == "POST":
+        action = request.POST.get("action")
+        filter_value = request.POST.get("filter")
+
+        if action == "province":
+            provinces = (
+                PoliceStations.objects.filter(region=filter_value)
+                .values_list("province", flat=True)
+                .distinct()
+            )
+            data = [{"code": p, "name": p} for p in sorted(provinces)]
+            return JsonResponse(data, safe=False)
+
+        elif action == "station":
+            stations = PoliceStations.objects.filter(province=filter_value)
+            data = [{"code": s.name, "name": s.name} for s in stations]
+            return JsonResponse(data, safe=False)
+
+    return JsonResponse([], safe=False)
+
+
 
 def send_otp_email(email, otp):
     subject = 'One-Time Password Verification'
