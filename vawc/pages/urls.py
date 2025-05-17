@@ -43,8 +43,10 @@ urlpatterns = [
     path('admin-vawc/admin-dashboard-data/<int:get_year>/', views.admin_dashboard_data, name='admin dashboard data'),
     path('admin-vawc/graph-report/', views.admin_graph_view, name='admin graph'),
     path('admin-vawc/manage/account/', views.admin_manage_account_view, name='admin account'),
+    path('admin-vawc/manage/law-enforcement-account/', views.law_enforcement_manage_account_view, name='law enforcement account'),
     path('admin-vawc/manage/passkey/', views.admin_manage_passkey_view, name='admin passkey'),
     path('admin-vawc/create_account/', views.create_account, name='create account'),
+    path('admin-vawc/create_law-enforcement-account/', views.create_law_enforcement_account, name='create law enforcement account'),
     path('admin-vawc/edit_account/<int:account_id>/', views.edit_account_view, name='edit_account'),
     path('delete_account/', views.delete_account, name='delete_account'),
     path('check_username_email/', views.check_username_email, name='check_username_email'),
@@ -73,6 +75,22 @@ urlpatterns = [
     path('admin-barangay-vawc/view-case/impacted/<int:case_id>/', views.view_case_impact, name='barangay case impacted view'),
     path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
     path('process_service_info/', views.process_service_info, name='process_service_info'),
+
+    #law enforcement admin side
+    path('admin-law-enforcement-vawc/dashboard/', views.law_enforcement_dashboard_view, name='law enforcement dashboard'),
+    path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.law_enforcement_dashboard_data, name='law enforcement dashboard data'),
+    path('admin-law-enforcement-vawc/settings/', views.law_enforcement_settings_view, name='law enforcement settings'),
+
+    path('add_status/<int:case_id>/', views.add_status, name='add_status'),
+    path('edit_status/<int:status_id>/', views.edit_status, name='edit_status'),
+    path('delete_status/<int:status_id>/', views.delete_status, name='delete_status'),
+
+    path('admin-law-enforcement-vawc/case/', views.law_enforcement_case_view, name='law enforcement case'),
+    path('admin-barangay-vawc/view-case/bFehalf/<int:case_id>/', views.view_case_behalf, name='barangay case behalf view'),
+    path('admin-barangay-vawc/view-case/impacted/<int:case_id>/', views.view_case_impact, name='barangay case impacted view'),
+    path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
+    path('process_service_info/', views.process_service_info, name='process_service_info'),
+    path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
 
     # NOTIF
     path('admin-barangay-vawc/notification', views.admin_notification_view, name="Notification"),
@@ -117,7 +135,8 @@ urlpatterns = [
 
 
     #misc
-    path('pages/select-address/', views.ph_address, name='ph_address')
+    path('pages/select-address/', views.ph_address, name='ph_address'),
+    path('pages/select-police-station/', views.select_police_station, name='select police station'),
 ]
 
 # Serve media files during development
