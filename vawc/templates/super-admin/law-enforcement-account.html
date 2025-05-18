@@ -39,7 +39,7 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Barangay</th>
+                    <th scope="col">Station</th>
                     <th scope="col">Date Added</th>
                     <th class="text-center" scope="col">Manage</th>
                 </tr>
@@ -50,7 +50,7 @@
                         <td>{{ account.last_name }},{{ account.first_name }}&nbsp;{{ account.middle_name }}</td>
                         <td>{{ account.user.email }}</td>
                         <td>{{ account.status }}</td>
-                        <td>{{ account.barangay }}</td>
+                        <td>{{ account.station }}</td>
                         <td>{{ account.user.date_joined }}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-success edit-account-btn" role="button" data-account-id="{{ account.user.id }}">View</button>

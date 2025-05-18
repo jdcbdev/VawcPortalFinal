@@ -729,7 +729,7 @@ def create_law_enforcement_account(request):
             last_name = request.POST.get('account_lname')
             region = request.POST.get('account_region')
             province = request.POST.get('account_province')
-            station = request.POST.get('account_station')
+            station = request.POST.get('account_police_station')
             
             print(username, email, first_name, middle_name, last_name, region, province, station)
             
@@ -758,7 +758,7 @@ def create_law_enforcement_account(request):
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
                 # Create the Account instance and link it to the user
-                account = Account.objects.create(
+                account = LawEnforcementAccount.objects.create(
                     user=user,
                     first_name=first_name,
                     middle_name=middle_name,
