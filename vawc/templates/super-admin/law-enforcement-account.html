@@ -663,7 +663,7 @@
 
     async function setGeoSelectPoliceStation(selectElement, formData) {
         try {
-            const res = await fetch('/pages/select-police-station/', {
+            const res = await fetch('/pages/get-police-station/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -686,6 +686,7 @@
                 option.value = item.name;
                 option.textContent = item.name;
                 selectElement.appendChild(option);
+                console.log(item.name);
             });
         } catch (error) {
             console.error("Failed to fetch police stations:", error);
