@@ -559,22 +559,7 @@ def law_enforcement_manage_account_view(request):
         'default_police_stations': PoliceStations.objects.filter(region="Region 9"),  # 👈 Include this
     })
 
-def select_police_station(request):
-    if request.method == "POST":
-        action = request.POST.get("action")
-        region_name = request.POST.get("region")  # Region is now explicitly passed
-        province_name = request.POST.get("filter")  # Province name is still passed under "filter"
 
-        if action == "station":
-            stations = PoliceStations.objects.filter(
-                region=region_name,
-                province=province_name
-            ).values_list("name", flat=True)
-
-            data = [{"code": s, "name": s} for s in stations]
-            return JsonResponse(data, safe=False)
-
-    return JsonResponse([], safe=False)
 
 # def select_police_station(request):
 #     if request.method == "POST":
@@ -3769,3 +3754,28 @@ def ph_address(request):
             return JsonResponse(list(region), safe=False)
     else:
         return 
+
+
+def get_police_station(request):
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if action == "province":
+            region_name = request.POST.get("region")
+            provinces = PoliceStations.objects.filter(
+                region=region_name
+            ).values_list("province", flat=True).distinct().order_by("province")
+            
+            data = [{"name": province} for province in provinces]
+            return JsonResponse(data, safe=False)
+
+        elif action == "police_station":
+            province_name = request.POST.get("province")
+            stations = PoliceStations.objects.filter(
+                province=province_name
+            ).values_list("name", flat=True).order_by("name")
+
+            data = [{"name": station} for station in stations]
+            return JsonResponse(data, safe=False)
+
+    return JsonResponse([], safe=False)

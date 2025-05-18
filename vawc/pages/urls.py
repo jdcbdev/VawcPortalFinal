@@ -136,7 +136,7 @@ urlpatterns = [
 
     #misc
     path('pages/select-address/', views.ph_address, name='ph_address'),
-    path('pages/select-police-station/', views.select_police_station, name='select police station'),
+    path('pages/select-police-station/', views.get_police_station, name='select police station'),
 ]
 
 # Serve media files during development
