@@ -90,7 +90,7 @@ urlpatterns = [
     path('admin-barangay-vawc/view-case/impacted/<int:case_id>/', views.view_case_impact, name='barangay case impacted view'),
     path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
     path('process_service_info/', views.process_service_info, name='process_service_info'),
-    path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
+    # path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
 
     # NOTIF
     path('admin-barangay-vawc/notification', views.admin_notification_view, name="Notification"),
@@ -136,7 +136,7 @@ urlpatterns = [
 
     #misc
     path('pages/select-address/', views.ph_address, name='ph_address'),
-    path('pages/select-police-station/', views.get_police_station, name='select police station'),
+    path('pages/get-police-station/', views.get_police_station, name='get police station'),
 ]
 
 # Serve media files during development

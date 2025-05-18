@@ -1400,26 +1400,26 @@ def law_enforcement_case_view(request):
 
 
 
-def select_police_station(request):
-    if request.method == "POST":
-        action = request.POST.get("action")
-        filter_value = request.POST.get("filter")
+# def select_police_station(request):
+#     if request.method == "POST":
+#         action = request.POST.get("action")
+#         filter_value = request.POST.get("filter")
 
-        if action == "province":
-            provinces = (
-                PoliceStations.objects.filter(region=filter_value)
-                .values_list("province", flat=True)
-                .distinct()
-            )
-            data = [{"code": p, "name": p} for p in sorted(provinces)]
-            return JsonResponse(data, safe=False)
+#         if action == "province":
+#             provinces = (
+#                 PoliceStations.objects.filter(region=filter_value)
+#                 .values_list("province", flat=True)
+#                 .distinct()
+#             )
+#             data = [{"code": p, "name": p} for p in sorted(provinces)]
+#             return JsonResponse(data, safe=False)
 
-        elif action == "station":
-            stations = PoliceStations.objects.filter(province=filter_value)
-            data = [{"code": s.name, "name": s.name} for s in stations]
-            return JsonResponse(data, safe=False)
+#         elif action == "station":
+#             stations = PoliceStations.objects.filter(province=filter_value)
+#             data = [{"code": s.name, "name": s.name} for s in stations]
+#             return JsonResponse(data, safe=False)
 
-    return JsonResponse([], safe=False)
+#     return JsonResponse([], safe=False)
 
 
 
