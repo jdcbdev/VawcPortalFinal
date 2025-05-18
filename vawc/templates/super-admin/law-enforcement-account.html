@@ -148,28 +148,18 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="account_province" name="account_province" aria-label="Province">
-                        <option>--Select Option--</option>
-                        {% for province in default_provinces %}
-                            <option value="{{ province.name }}" data-code="{{  province.code }}">{{ province.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
+                    <select class="form-select" id="account_province" name="account_province" disabled>
+                        <option value="">--Select Option--</option>
                     </select>
                     <label for="account_province">Province</label>
-                </div>
+                </div>  
                 
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="account_police_station" name="account_police_station" aria-label="Police Station">
-                        <option>--Select Option--</option>
-                        {% for station in default_police_stations %}
-                            <option value="{{ station.name }}" data-code="{{ station.name }}">{{ station.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
+                    <select class="form-select" id="account_police_station" name="account_police_station" disabled>
+                        <option value="">--Select Option--</option>
                     </select>
                     <label for="account_police_station">Police Station</label>
-                </div>                             
+                </div>                         
             </form>
         </div>
         <div class="modal-footer">
@@ -556,6 +546,7 @@
 
     function addAddressListener(formElement, formType, count = 0) {
         let province = null
+        let police_station = null
 
         if(formType === 'perp' || formType === 'victim') {
             region = formElement.querySelector(`#${formType}_region_${count}`)
@@ -571,36 +562,34 @@
 
         region.addEventListener('change', (e) => {
 
-            const regionId = e.target.options[e.target.selectedIndex].dataset.code
-
-            if(regionId) {
-                setGeoSelect(province, {
-                    filter: regionId,
+            const regionSelect = document.querySelector('#account_region');
+            const regionNameRaw = regionSelect.value;
+            const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if(regionName) {
+                setGeoSelectPoliceStation(province, {
+                    region: regionName,
                     action: 'province',
                     csrfmiddlewaretoken: csrf_token,
-                }, {passive: true})
+                });
                 province.disabled=false
+            } else {
+                console.log('Please select a region.');
             }
 
         })
 
         province.addEventListener('change', (e) => {
             const provinceName = e.target.value;
-            const regionSelect = document.querySelector('#account_region');
-            const regionName = regionSelect.value;
-            console.log(provinceName, regionName);
-            if (provinceName && regionName) {
-                console.log('Setting police station');
-                police_station.disabled = false;
+            if (provinceName) {
                 setGeoSelectPoliceStation(police_station, {
-                    filter: provinceName,
-                    region: regionName,
-                    action: 'station',
+                    province: provinceName,
+                    action: 'police_station',
                     csrfmiddlewaretoken: csrf_token,
                 });
+                police_station.disabled = false;
                 
             } else {
-                console.log('Please select both province and region.');
+                console.log('Please select a province.');
             }
         });
 
@@ -673,30 +662,35 @@
     }
 
     async function setGeoSelectPoliceStation(selectElement, formData) {
-        const res = await fetch('/pages/select-police-station/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': csrf_token
-            },
-            body: new URLSearchParams(formData)
-        });
+        try {
+            const res = await fetch('/pages/select-police-station/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrf_token
+                },
+                body: new URLSearchParams(formData)
+            });
 
-        const data = await res.json();
+            if (!res.ok) throw new Error(`Server error: ${res.status}`);
+            const data = await res.json();
 
-        selectElement.innerHTML = ''; // clear all
-        const blankOption = document.createElement('option');
-        blankOption.textContent = '--Select Option--';
-        blankOption.value = '';
-        selectElement.appendChild(blankOption);
+            selectElement.innerHTML = '';
+            const blankOption = document.createElement('option');
+            blankOption.textContent = '--Select Option--';
+            blankOption.value = '';
+            selectElement.appendChild(blankOption);
 
-        data.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.name;
-            option.textContent = item.name;
-            option.dataset.code = item.code;
-            selectElement.appendChild(option);
-    });
-}
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.name;
+                option.textContent = item.name;
+                selectElement.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Failed to fetch police stations:", error);
+        }
+    }
+
 </script>
 {% endblock scripts %}
