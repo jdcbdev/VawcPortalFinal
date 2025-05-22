@@ -63,13 +63,7 @@ class LawEnforcementAccount(models.Model):
     region = models.CharField(max_length=100, null=True, blank=True)
     province = models.CharField(max_length=100, null=True, blank=True)
     station = models.CharField(max_length=100, null=True, blank=True)
-    # ADMIN, STAFF = 'admin', 'staff'
-    # TYPE_CHOICES = [(ADMIN, 'Admin'), (STAFF, 'Staff')]
-    # type = models.CharField(
-    #     max_length=5,
-    #     choices=TYPE_CHOICES,
-    #     default=STAFF
-    # )
+    type = models.CharField(max_length=20, default='law_enforcement')
     passkey = models.CharField(max_length=100, null=True, blank=True)
     
     def __str__(self):
