@@ -171,7 +171,7 @@
 </div>
 
 <!-- Modal edit -->
-<div class="modal fade" id="edit_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="edit_law_enforcement_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -210,61 +210,23 @@
                 <div class="form-floating mb-3">
                     <select class="form-select" id="edit_account_region" name="edit_account_region">
                         <option>--Select Option--</option>
-                        {% for region in default_regions %}
-                            <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
                     </select>
-                    <label for="edit_victim_region">Region</label>
+                    <label for="edit_account_region">Region</label>
                 </div>
                 
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_province" name="edit_account_province" aria-label="Province">
+                    <select class="form-select" id="edit_account_province" name="edit_account_province">
                         <option>--Select Option--</option>
-                        {% for province in default_provinces %}
-                            <option value="{{ province.name }}" data-code="{{  province.code }}">{{ province.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
                     </select>
                     <label for="edit_account_province">Province</label>
-                </div>
-
+                </div>  
+                
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_police_station" name="edit_account_police_station" aria-label="Police Station">
+                    <select class="form-select" id="edit_account_police" name="edit_account_police">
                         <option>--Select Option--</option>
-                        {% for station in default_police_stations %}
-                            <option value="{{ station.name }}" data-code="{{ station.name }}">{{ station.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
                     </select>
-                    <label for="edit_account_police_station">Police Station</label>
-                </div>   
-                <!-- <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_city" name="edit_account_city" aria-label="City/Municipality">
-                        <option>--Select Option--</option>
-                        {% for city in default_cities %}
-                            <option value="{{ city.name }}" data-code="{{  city.code }}">{{ city.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
-                    </select>
-                    <label for="edit_account_city">City/Municipality</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <select id="edit_account_barangay" name="edit_account_barangay" class="form-select">
-                        <option>--Select Option--</option>
-                        {% for barangay in default_barangays %}
-                            <option value="{{ barangay.name }}" data-code="{{  barangay.code }}">{{ barangay.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
-                    </select>
-                    <label for="edit_account_barangay">Barangay</label>
-                </div>End of col -->
-               
+                    <label for="edit_account_police">Police Station</label>
+                </div>    
             </form>
         </div>
         <div class="modal-footer">
@@ -349,42 +311,34 @@
 
         $(document).on('click', '.edit-account-btn', function() {
             var accountId = $(this).data('account-id');
-            //console.log(accountId);
+            console.log(accountId);
             $.ajax({
-                url: '{% url "edit_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
                 method: 'GET',
                 success: function(response) {
-                    console.log(response);
+                    // console.log("Full response object:", response);
 
-                    setGeoSelect($('#edit_account_region'), 'region', 'default_regions')
-                    setGeoSelect($('#edit_account_province'), 'province', 'default_provinces')
-                    setGeoSelect($('#edit_account_city'), 'city', 'default_cities')
-                    setGeoSelect($('#edit_account_barangay'), 'barangay', 'default_barangays')
+                    setGeoSelect($('#edit_account_region'), 'region', 'default_regions');
+                    setGeoSelect($('#edit_account_province'), 'province', 'default_provinces');
+                    setGeoSelect($('#edit_account_police'), 'name', 'default_police_stations');
 
-                    function setGeoSelect(geoTypeInput, geoType, key) {
+                    function setGeoSelect(geoTypeInput, itemKey, dataKey) {
+                        const blankOption = document.createElement('option');
+                        blankOption.textContent = '--Select Option--';
+                        geoTypeInput.empty().append(blankOption);
 
-                        const blankOption = document.createElement('option')
-                        blankOption.textContent = '--Select Option--'
-                        // clear all options in select element
-    
-                        // apend blank option as the first selected options
-                        geoTypeInput.empty().append(blankOption)
-                        // apped data to respective inputs
-                        console.log(response[key])
-                        response[key].forEach(item => {
-                            const option = document.createElement('option')
-                            option.dataset.code = item.code
-                            option.value = item.name
-                            option.textContent = item.name
-    
-                            if(option.value == response.geoType) {
-                                console.log(okeeeee)
-                            }
+                        // console.log("response data key: ",response[dataKey]);
+
+                        response[dataKey].forEach(item => {
+                            const value = item[itemKey];
+                            if (!value) return;
+
+                            const option = document.createElement('option');
+                            option.value = value;
+                            option.textContent = value;
                             geoTypeInput.append(option)
-                        })
+                        });
                     }
-
-
 
                     // Populate the modal with the data from the response
                     $('#account_id').val(response.account_id);
@@ -394,11 +348,9 @@
                     $('#edit_status').val(response.status);
                     $('#edit_account_region').val(response.region);
                     $('#edit_account_province').val(response.province);
-                    $('#edit_account_city').val(response.city);
-                    $('#edit_account_barangay').val(response.barangay);
-        
+                    $('#edit_account_police').val(response.station);
                     // Show the modal
-                    $('#edit_account').modal('show');
+                    $('#edit_law_enforcement_account').modal('show');
                 },
                 error: function(xhr, status, error) {
                     // Handle error
@@ -415,14 +367,14 @@
             console.log('Account Id:', accountId);
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
                     // Handle success response
                     console.log(response);
                     // Optionally, close the modal or show a success message
-                    $('#edit_account').modal('hide');
+                    $('#edit_law_enforcement_account').modal('hide');
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
@@ -545,6 +497,7 @@
     });
 
     function addAddressListener(formElement, formType, count = 0) {
+        let region = null
         let province = null
         let police_station = null
 
@@ -562,7 +515,7 @@
 
         region.addEventListener('change', (e) => {
 
-            const regionSelect = document.querySelector('#account_region');
+            const regionSelect = document.querySelector(`#${formType}_region`);
             const regionNameRaw = regionSelect.value;
             const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
             if(regionName) {
@@ -572,6 +525,7 @@
                     csrfmiddlewaretoken: csrf_token,
                 });
                 province.disabled=false
+                console.log("enabled police station")
             } else {
                 console.log('Please select a region.');
             }
@@ -592,41 +546,56 @@
                 console.log('Please select a province.');
             }
         });
+    }
+    function editAddressListener(formElement, formType, count = 0) {
+        let region = null
+        let province = null
+        let police_station = null
 
-        // province.addEventListener('change', (e) => {
+        if(formType === 'perp' || formType === 'victim') {
+            region = formElement.querySelector(`#${formType}_region_${count}`)
+            province = formElement.querySelector(`#${formType}_province_${count}`)
+            police_station = formElement.querySelector(`#${formType}_police_station_${count}`) 
+        } else {
+            region = formElement.querySelector(`#${formType}_region`)   
+            province = formElement.querySelector(`#${formType}_province`)   
+            police_station = formElement.querySelector(`#${formType}_police_station`)   
+        }
 
-        //     const provinceId = e.target.value;
-        //     console.log(provinceId);
+        region.addEventListener('change', (e) => {
 
-        //     if(provinceId) {
-        //         setGeoSelectPoliceStation(police_station, {
-        //             filter: provinceId,
-        //             action: 'station',
-        //             csrfmiddlewaretoken: csrf_token,
-        //         }, {passive: true})
-        //         police_station.disabled=false
-        //     }
+            const regionSelect = document.querySelector(`#${formType}_region`);
+            const regionNameRaw = regionSelect.value;
+            const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if(regionName) {
+                setGeoSelectPoliceStation(province, {
+                    region: regionName,
+                    action: 'province',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+            } else {
+                console.log('Please select a region.');
+            }
 
-        // })
+        })
 
-        // police_station.addEventListener('change', (e) => {
-
-        //     const stationId = e.target.options[e.target.selectedIndex].dataset.code
-        //     if(stationId) {
-        //         setGeoSelectPoliceStation(province, {
-        //             filter: stationId,
-        //             action: 'barangay',
-        //             csrfmiddlewaretoken: csrf_token,
-        //         }, {passive: true})
-        //         barangay.disabled=false
-        //     }
-        // })
-        
+        province.addEventListener('change', (e) => {
+            const provinceName = e.target.value;
+            if (provinceName) {
+                setGeoSelectPoliceStation(police_station, {
+                    province: provinceName,
+                    action: 'police_station',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+            } else {
+                console.log('Please select a province.');
+            }
+        });
     }
     
     document.addEventListener('DOMContentLoaded', () => {
         addAddressListener(document.querySelector('#addAccountForm'), 'account')
-        addAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
+        editAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
     })
     
     

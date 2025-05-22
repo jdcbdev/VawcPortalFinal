@@ -48,6 +48,7 @@ urlpatterns = [
     path('admin-vawc/create_account/', views.create_account, name='create account'),
     path('admin-vawc/create_law-enforcement-account/', views.create_law_enforcement_account, name='create law enforcement account'),
     path('admin-vawc/edit_account/<int:account_id>/', views.edit_account_view, name='edit_account'),
+    path('admin-vawc/edit_law-enforcement_account/<int:account_id>/', views.edit_law_enforcement_account_view, name='edit_law-enforcement_account'),
     path('delete_account/', views.delete_account, name='delete_account'),
     path('check_username_email/', views.check_username_email, name='check_username_email'),
     path('admin-vawc/settings/', views.admin_settings_view, name='admin settings'),
