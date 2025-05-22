@@ -586,9 +586,6 @@ def law_enforcement_manage_account_view(request):
 def edit_account_view(request, account_id):
     if request.method == 'GET':
         try: 
-            
-            
-
             print(account_id)
             account = get_object_or_404(Account, user__id=account_id)
             regions = list(Region.objects.filter(name=account.region).values())
@@ -619,7 +616,7 @@ def edit_account_view(request, account_id):
             return JsonResponse({'success': False, 'message': str(e)})
     elif request.method == 'POST':
         try:
-            account = get_object_or_404(Account, user__id=account_id)
+            account = get_object_or_404(Account, user_id=account_id)
             account.first_name = request.POST.get('edit_account_fname')
             account.middle_name = request.POST.get('edit_account_mname') 
             account.last_name = request.POST.get('edit_account_lname')
@@ -629,6 +626,48 @@ def edit_account_view(request, account_id):
             account.city = request.POST.get('edit_account_city')
             account.barangay = request.POST.get('edit_account_barangay')
             account.save()
+            return JsonResponse({'success': True, 'message': 'Account updated successfully'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+def edit_law_enforcement_account_view(request, account_id):
+    if request.method == 'GET':
+        try: 
+            print(account_id)
+            police_account = get_object_or_404(LawEnforcementAccount, user_id=account_id)
+            regions = list(PoliceStations.objects.values('region').distinct())
+            provinces = list(PoliceStations.objects.values('province').distinct())
+            police_stations = list(PoliceStations.objects.all().values())
+
+            return JsonResponse({
+                'success': True,
+                'account_id': account_id,               
+                'first_name': police_account.first_name,
+                'middle_name': police_account.middle_name,
+                'last_name': police_account.last_name,
+                'status': police_account.status,
+                'region': police_account.region,
+                'province': police_account.province,
+                'station': police_account.station,
+                'default_regions': regions,
+                'default_provinces': provinces,
+                'default_police_stations': police_stations,
+            })
+        except LawEnforcementAccount.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Account not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    elif request.method == 'POST':
+        try:
+            police_account = get_object_or_404(LawEnforcementAccount, user__id=account_id)
+            police_account.first_name = request.POST.get('edit_account_fname')
+            police_account.middle_name = request.POST.get('edit_account_mname') 
+            police_account.last_name = request.POST.get('edit_account_lname')
+            police_account.status = request.POST.get('edit_status')
+            police_account.region = request.POST.get('edit_account_region')
+            police_account.province = request.POST.get('edit_account_province')
+            police_account.city = request.POST.get('edit_account_police_station')
+            police_account.save()
             return JsonResponse({'success': True, 'message': 'Account updated successfully'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
@@ -1469,31 +1508,46 @@ def send_phone(receiver, message_body):
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
 
+from django.core.exceptions import ObjectDoesNotExist
+
+from django.core.exceptions import ObjectDoesNotExist
+
 def login_with_otp(request):
     if request.method == 'POST':
         email = request.POST.get('barangay-email')
         passkey = request.POST.get('barangay-passkey')
-        # Check if the user exists
+
         user = CustomUser.objects.filter(email=email).first()
-        if user:
+
+        if not user:
+            return JsonResponse({'success': False, 'message': 'Account not found.'})
+
+        # Try checking for regular Account
+        try:
             if user.account.status == 'Not Active':
                 return JsonResponse({'success': False, 'message': 'Account is Not Active Anymore'})
-            # Validate passkey
-            user_authenticated = authenticate(request, username=email, password=passkey)
-            if user_authenticated:
-                otp = generate_otp()
-                request.session['otp'] = otp
-                request.session['user_email'] = email  # Store user email in session for later retrieval
-                otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
-                request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
-                send_otp_email(email, otp)
-                return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
-            else:
-                print('Invalid passkey. Please try again.')
-                return JsonResponse({'success': False, 'message': 'Invalid password. Please try again.'})
-        else:
-            print('Account not found.')
-            return JsonResponse({'success': False, 'message': 'Account not found.'})
+        except Account.DoesNotExist:
+            # Try checking for LawEnforcementAccount
+            try:
+                if user.lawenforcementaccount.status == 'Not Active':
+                    return JsonResponse({'success': False, 'message': 'Law Enforcement account is Not Active'})
+            except LawEnforcementAccount.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'User has no linked account.'})
+
+        # Authenticate
+        user_authenticated = authenticate(request, username=email, password=passkey)
+
+        if user_authenticated:
+            otp = generate_otp()
+            request.session['otp'] = otp
+            request.session['user_email'] = email
+            otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
+            request.session['otp_expiry'] = otp_expiry.isoformat()
+            send_otp_email(email, otp)
+            return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
+        else:       
+            return JsonResponse({'success': False, 'message': 'Invalid password. Please try again.'})
+
     return render(request, 'login/login.html')
 
 def verify_otp(request):
