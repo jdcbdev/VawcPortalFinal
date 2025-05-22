@@ -555,11 +555,11 @@
         if(formType === 'perp' || formType === 'victim') {
             region = formElement.querySelector(`#${formType}_region_${count}`)
             province = formElement.querySelector(`#${formType}_province_${count}`)
-            police_station = formElement.querySelector(`#${formType}_police_station_${count}`) 
+            police_station = formElement.querySelector(`#${formType}_police_${count}`) 
         } else {
             region = formElement.querySelector(`#${formType}_region`)   
             province = formElement.querySelector(`#${formType}_province`)   
-            police_station = formElement.querySelector(`#${formType}_police_station`)   
+            police_station = formElement.querySelector(`#${formType}_police`)   
         }
 
         region.addEventListener('change', (e) => {
