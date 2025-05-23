@@ -1266,143 +1266,141 @@ def barangay_case_view(request):
         'barangay': barangay,
     })
 
-@login_required
-def law_enforcement_dashboard_view (request):
-    if request.user.account.type != 'law_enforcement':
-        return redirect('login')
+# @login_required
+# def law_enforcement_dashboard_view (request):
+#     if request.user.lawenforcementaccount.type != 'law_enforcement':
+#         return redirect('login')
     
-    logged_in_user = request.user  # Retrieve the logged-in user
-    # Retrieve the Account object associated with the logged-in user
-    try:
-        account = logged_in_user.account
-        barangay = account.barangay
-    except Account.DoesNotExist:
-        barangay = None
+#     logged_in_user = request.user  # Retrieve the logged-in user
+#     # Retrieve the Account object associated with the logged-in user
+#     try:
+#         lawenforcementaccount = logged_in_user.lawenforcementaccount
+#         station = lawenforcementaccount.station
+#     except LawEnforcementAccount.DoesNotExist:
+#         station = None
 
-    print(barangay)
+#     year_list = Case.objects.filter(station=station).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
 
-    year_list = Case.objects.filter(barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+#     return render(request, 'law-enforcement-admin/dashboard.html', {"year_list": year_list, "station": station})
 
-    return render(request, 'law-enforcement-admin/dashboard.html', {"year_list": year_list, "barangay": barangay})
+# def law_enforcement_dashboard_data(request, get_year):
+#     if request.method != 'GET':
+#         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
-def law_enforcement_dashboard_data(request, get_year):
-    if request.method != 'GET':
-        return JsonResponse({'success': False, 'message': 'Invalid request method'})
-
-    logged_in_user = request.user  # Retrieve the logged-in user
-    # Retrieve the Account object associated with the logged-in user
-    try:
-        account = logged_in_user.account
-        barangay = account.barangay
-    except Account.DoesNotExist:
-        barangay = None
+#     logged_in_user = request.user  # Retrieve the logged-in user
+#     # Retrieve the Account object associated with the logged-in user
+#     try:
+#         account = logged_in_user.account
+#         barangay = account.barangay
+#     except Account.DoesNotExist:
+#         barangay = None
     
-    if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(barangay=barangay)
-    else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( barangay=barangay, date_added__year = get_year)
+#     if get_year == 0:
+#         cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(barangay=barangay)
+#     else:
+#         cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( barangay=barangay, date_added__year = get_year)
 
     
-    total_cases = cases.count() or 0
-    ongoing_cases = cases.filter(status='Active').count() or 0
-    resolved_cases = cases.filter(status='Close').count() or 0
-    services_provided = 0
-    bpo_count = 0
-    tpo_count = 0
-    ppo_count = 0
-    ra_9262 = 0
-    ra_8353 = 0
-    ra_7877 = 0
-    ra_7610 = 0
-    ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
-    cases_w_criminal_cases = 0
-    barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
+#     total_cases = cases.count() or 0
+#     ongoing_cases = cases.filter(status='Active').count() or 0
+#     resolved_cases = cases.filter(status='Close').count() or 0
+#     services_provided = 0
+#     bpo_count = 0
+#     tpo_count = 0
+#     ppo_count = 0
+#     ra_9262 = 0
+#     ra_8353 = 0
+#     ra_7877 = 0
+#     ra_7610 = 0
+#     ra_9775 = 0
+#     annual_cases = defaultdict(lambda:defaultdict(int))
+#     cases_w_criminal_cases = 0
+#     barangay_case_list = []
+#     all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+#     for month_temp in all_months:   
+#         annual_cases[month_temp] = 0
 
-    # Iterate through filtered cases
-    for case in cases:
+#     # Iterate through filtered cases
+#     for case in cases:
 
-        # count all the services of resolved case
-        if (case.status == 'Close'):
-            services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
+#         # count all the services of resolved case
+#         if (case.status == 'Close'):
+#             services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
 
-        # count bpo, tpo, ppo
-        if case.service_information == 'issuance':
-            bpo_count += 1
-            if case.enforcement_of_protection_order:
-                ppo_count += 1
-            else:
-                tpo_count += 1
+#         # count bpo, tpo, ppo
+#         if case.service_information == 'issuance':
+#             bpo_count += 1
+#             if case.enforcement_of_protection_order:
+#                 ppo_count += 1
+#             else:
+#                 tpo_count += 1
 
-         # count RAs
-        ra_9262 += case.checkbox_ra_9262
-        ra_8353 += case.checkbox_ra_8353
-        ra_7877 += case.checkbox_ra_7877
-        ra_7610 += case.checkbox_a_7610
-        ra_9775 += case.checkbox_ra_9775
+#          # count RAs
+#         ra_9262 += case.checkbox_ra_9262
+#         ra_8353 += case.checkbox_ra_8353
+#         ra_7877 += case.checkbox_ra_7877
+#         ra_7610 += case.checkbox_a_7610
+#         ra_9775 += case.checkbox_ra_9775
 
-        # no of cases with criminal case
-        if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
-            cases_w_criminal_cases += 1
+#         # no of cases with criminal case
+#         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
+#             cases_w_criminal_cases += 1
 
-        # increment case count per month    
-        month = case.date_added.strftime('%b') 
-        annual_cases[month] += 1
+#         # increment case count per month    
+#         month = case.date_added.strftime('%b') 
+#         annual_cases[month] += 1
 
-        case_dict_data = {
-            'case_number': case.case_number,
-            'date_added': case.date_added,
-            'barangay': case.barangay,
-            'city': case.city,
-            'province': case.province,
-            'checkbox_ra_8353': case.checkbox_ra_8353,
-            'checkbox_ra_9262': case.checkbox_ra_9262,
-            'checkbox_ra_7877': case.checkbox_ra_7877,
-            'checkbox_ra_9775': case.checkbox_ra_9775,
-            'checkbox_a_7610': case.checkbox_a_7610,
-        }
-        case_dict = {
-            'data': case_dict_data,
-            'victims': list(case.victim_set.values()),
-            'perpetrators': list(case.perpetrator.values())
-        }
-        barangay_case_list.append(case_dict)
+#         case_dict_data = {
+#             'case_number': case.case_number,
+#             'date_added': case.date_added,
+#             'barangay': case.barangay,
+#             'city': case.city,
+#             'province': case.province,
+#             'checkbox_ra_8353': case.checkbox_ra_8353,
+#             'checkbox_ra_9262': case.checkbox_ra_9262,
+#             'checkbox_ra_7877': case.checkbox_ra_7877,
+#             'checkbox_ra_9775': case.checkbox_ra_9775,
+#             'checkbox_a_7610': case.checkbox_a_7610,
+#         }
+#         case_dict = {
+#             'data': case_dict_data,
+#             'victims': list(case.victim_set.values()),
+#             'perpetrators': list(case.perpetrator.values())
+#         }
+#         barangay_case_list.append(case_dict)
 
 
 
-    republic_acts = {
-        'RA 9262': ra_9262,
-        'RA 8353': ra_8353,
-        'RA 7877': ra_7877,
-        'RA 7610': ra_7610,
-        'RA 9775': ra_9775
-    }
+#     republic_acts = {
+#         'RA 9262': ra_9262,
+#         'RA 8353': ra_8353,
+#         'RA 7877': ra_7877,
+#         'RA 7610': ra_7610,
+#         'RA 9775': ra_9775
+#     }
 
-    return JsonResponse({
-        #'cases': filtered_cases,
-        'total_cases': total_cases,
-        'ongoing_cases': ongoing_cases,
-        'resolved_cases': resolved_cases,
-        'services_provided': services_provided,
-        'bpo_count': bpo_count,
-        'ppo_count': ppo_count,
-        'tpo_count': tpo_count,
-        'cases_w_criminal_cases': cases_w_criminal_cases,
-        'republic_acts': republic_acts,
-        'annual_cases': annual_cases,
-        'barangay_case_list': barangay_case_list,
-        # 'logged_in_user': logged_in_user,
-        # 'email' : logged_in_user.email,
-        'barangay': barangay,
-        # 'global': request.session,
-    })
+#     return JsonResponse({
+#         #'cases': filtered_cases,
+#         'total_cases': total_cases,
+#         'ongoing_cases': ongoing_cases,
+#         'resolved_cases': resolved_cases,
+#         'services_provided': services_provided,
+#         'bpo_count': bpo_count,
+#         'ppo_count': ppo_count,
+#         'tpo_count': tpo_count,
+#         'cases_w_criminal_cases': cases_w_criminal_cases,
+#         'republic_acts': republic_acts,
+#         'annual_cases': annual_cases,
+#         'barangay_case_list': barangay_case_list,
+#         # 'logged_in_user': logged_in_user,
+#         # 'email' : logged_in_user.email,
+#         'barangay': barangay,
+#         # 'global': request.session,
+#     })
 
 @login_required
 def law_enforcement_settings_view (request):
-    if request.user.account.type != 'law_enforcement':
+    if request.user.lawenforcementaccount.type != 'law_enforcement':
         return redirect('login')
     
     logged_in_user = request.user
@@ -1412,15 +1410,15 @@ def law_enforcement_settings_view (request):
 
 @login_required
 def law_enforcement_case_view(request):
-    if request.user.account.type != 'law_enforcement':
+    if request.user.lawenforcementaccount.type != 'law_enforcement':
         return redirect('login')
     
     logged_in_user = request.user  # Retrieve the logged-in user
     # Retrieve the Account object associated with the logged-in user
     try:
-        account = logged_in_user.account
-        barangay = account.barangay
-    except Account.DoesNotExist:
+        lawenforcementaccount = logged_in_user.lawenforcementaccount
+        barangay = lawenforcementaccount.station
+    except LawEnforcementAccount.DoesNotExist:
         barangay = None
     cases = Case.objects.all()  # Retrieve all cases from the database
     
@@ -1508,9 +1506,6 @@ def send_phone(receiver, message_body):
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
 
-from django.core.exceptions import ObjectDoesNotExist
-
-from django.core.exceptions import ObjectDoesNotExist
 
 def login_with_otp(request):
     if request.method == 'POST':
@@ -1520,83 +1515,102 @@ def login_with_otp(request):
         user = CustomUser.objects.filter(email=email).first()
 
         if not user:
+            print('Account not found.')
             return JsonResponse({'success': False, 'message': 'Account not found.'})
 
-        # Try checking for regular Account
-        try:
-            if user.account.status == 'Not Active':
-                return JsonResponse({'success': False, 'message': 'Account is Not Active Anymore'})
-        except Account.DoesNotExist:
-            # Try checking for LawEnforcementAccount
+        # Check account status from all possible related account models
+        account_models = [Account, LawEnforcementAccount]
+        user_account_status = None
+        for model in account_models:
             try:
-                if user.lawenforcementaccount.status == 'Not Active':
-                    return JsonResponse({'success': False, 'message': 'Law Enforcement account is Not Active'})
-            except LawEnforcementAccount.DoesNotExist:
-                return JsonResponse({'success': False, 'message': 'User has no linked account.'})
+                account_instance = model.objects.get(user=user)
+                user_account_status = account_instance.status
+                break
+            except model.DoesNotExist:
+                continue
 
-        # Authenticate
+        if user_account_status == 'Not Active':
+            return JsonResponse({'success': False, 'message': 'Account is Not Active Anymore'})
+
+        # Validate credentials
         user_authenticated = authenticate(request, username=email, password=passkey)
-
-        if user_authenticated:
-            otp = generate_otp()
-            request.session['otp'] = otp
-            request.session['user_email'] = email
-            otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
-            request.session['otp_expiry'] = otp_expiry.isoformat()
-            send_otp_email(email, otp)
-            return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
-        else:       
+        if not user_authenticated:
+            print('Invalid passkey. Please try again.')
             return JsonResponse({'success': False, 'message': 'Invalid password. Please try again.'})
+
+        # Passed all checks, generate and store OTP
+        otp = generate_otp()
+        request.session['otp'] = otp
+        request.session['user_email'] = email
+        otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
+        request.session['otp_expiry'] = otp_expiry.isoformat()
+
+        send_otp_email(email, otp)
+
+        return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
 
     return render(request, 'login/login.html')
 
+
 def verify_otp(request):
     if request.method == 'POST':
-        otp_entered = ''
-        for i in range(1, 7):  # Iterate through OTP fields from 1 to 6
-            otp_entered += request.POST.get(f'otp_{i}', '')
+        # Combine OTP input
+        otp_entered = ''.join(request.POST.get(f'otp_{i}', '') for i in range(1, 7))
 
-        otp_saved = None
-        otp_expiry_str = None
+        otp_saved = request.session.get('otp')
+        otp_expiry_str = request.session.get('otp_expiry')
+        user_email = request.session.get('user_email')
 
-        # Check all possible OTP fields
-        for i in range(1, 4):  # Adjust the range based on your maximum OTP fields
-            otp_saved = request.session.get('otp')
-            otp_expiry_str = request.session.get('otp_expiry')
-            user_email = request.session.get('user_email')
-            print(user_email)
-            if otp_saved and otp_expiry_str:
-                otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
-                if timezone.now() < otp_expiry and otp_entered == otp_saved:
-                    user = CustomUser.objects.filter(email=user_email).first()
-                    if user:
-                        login(request, user)  # Logging in the user
-                        request.session.pop('otp')
-                        request.session.pop('otp_expiry')
-                        request.session.pop('user_email')
+        if not (otp_saved and otp_expiry_str and user_email):
+            return JsonResponse({'success': False, 'message': 'Session expired or incomplete.'})
 
-                        # Fetch the account type of the user
-                        account_type = Account.objects.filter(user=user).first().type
+        otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
 
-                        # Print a success message
-                        print("User logged in successfully")
-                        print(account_type)
+        if timezone.now() >= otp_expiry:
+            return JsonResponse({'success': False, 'message': 'Code is already expired.', 'otp_expiry': otp_expiry_str})
 
-                        request.session['security_status'] = "decrypted"
-                        print(request.session['security_status'])
+        if otp_entered != otp_saved:
+            return JsonResponse({'success': False, 'message': 'OTP inputted is not correct.', 'otp_expiry': otp_expiry_str})
 
-                        # Return success along with account type
-                        return JsonResponse({'success': True, 'message': 'Login successful.', 'account_type': account_type, 'otp_expiry': otp_expiry_str})
-                    else:
-                        return JsonResponse({'success': False, 'message': 'User not found.'})
-                elif timezone.now() >= otp_expiry:
-                    return JsonResponse({'success': False, 'message': 'Code is already expired.', 'otp_expiry': otp_expiry_str})
-                else:
-                    break
-        # If OTP is incorrect
-        return JsonResponse({'success': False, 'message': 'OTP Inputted is not Correct.', 'otp_expiry': otp_expiry_str})
+        user = CustomUser.objects.filter(email=user_email).first()
+
+        if not user:
+            return JsonResponse({'success': False, 'message': 'User not found.'})
+
+        login(request, user)
+
+        # Clean session
+        request.session.pop('otp', None)
+        request.session.pop('otp_expiry', None)
+        request.session.pop('user_email', None)
+
+        # List of related account models to check
+        account_models = [Account, LawEnforcementAccount]
+
+        account_type = None
+        for model in account_models:
+            try:
+                account_instance = model.objects.get(user=user)
+                account_type = account_instance.type
+                break
+            except model.DoesNotExist:
+                continue
+
+        if not account_type:
+            return JsonResponse({'success': False, 'message': 'No associated account type found.'})
+
+        # Store other metadata if needed
+        request.session['security_status'] = "decrypted"
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Login successful.',
+            'account_type': account_type,
+            'otp_expiry': otp_expiry_str
+        })
 
     return JsonResponse({'success': False, 'message': 'Invalid request.'}, encoder=DjangoJSONEncoder)
+
 
 def resend_otp(request):
     if request.method == 'GET':

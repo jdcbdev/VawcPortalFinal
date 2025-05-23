@@ -245,6 +245,9 @@
                         } else if (response.account_type === 'staff') {
                             // Redirect to staff dashboard
                             window.location.href = '{% url "barangay dashboard" %}';
+                        } else if (response.account_type === 'law_enforcement') {
+                            // Redirect to staff dashboard
+                            window.location.href = '{% url "law enforcement case" %}';
                         }
 
                         // Log success message to the console

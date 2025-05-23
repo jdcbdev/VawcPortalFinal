@@ -78,7 +78,7 @@ urlpatterns = [
     path('process_service_info/', views.process_service_info, name='process_service_info'),
 
     #law enforcement admin side
-    path('admin-law-enforcement-vawc/dashboard/', views.law_enforcement_dashboard_view, name='law enforcement dashboard'),
+    # path('admin-law-enforcement-vawc/dashboard/', views.law_enforcement_dashboard_view, name='law enforcement dashboard'),
     path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.law_enforcement_dashboard_data, name='law enforcement dashboard data'),
     path('admin-law-enforcement-vawc/settings/', views.law_enforcement_settings_view, name='law enforcement settings'),
 
