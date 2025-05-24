@@ -47,6 +47,7 @@ import datetime
 from case.models import *
 from account.models import *
 from .forms import *
+from django.forms.models import model_to_dict
 from ph_geography.models import Region, Province, Municipality, Barangay
 
 def home_view (request):
@@ -2156,6 +2157,7 @@ def add_new_case(request):
     # else:
     #     return HttpResponse("Method not allowed", status=405)
 
+# TODO: copy similar function for both view case behalf, and view case impacted
 @login_required
 def view_admin_case_behalf(request, case_id):
     if request.user.account.type != 'admin':
@@ -3588,16 +3590,16 @@ def process_service_info(request):
         except Case.DoesNotExist:
             return JsonResponse({'error': 'Case not found.'}, status=404)
 
-        # Helper function to parse and validate date
+        # Helper function to parse date
         def parse_date(date_string):
             try:
                 if date_string:
                     return datetime.strptime(date_string, '%Y-%m-%d').date()
-                return None  # Return None if the date is empty
+                return None
             except ValueError:
-                return None  # Return None if the date format is invalid
+                return None
 
-        # Extracting and updating data for each field
+        # Update main case
         case.refers_to_social_welfare = True if request.POST.get('refer_social_welware') == 'true' else False
         case.refer_social_date = parse_date(request.POST.get('refer_social_date', ''))
         case.psychosocial_services = True if request.POST.get('psych_service') == 'true' else False
@@ -3623,15 +3625,36 @@ def process_service_info(request):
         case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))
         case.other_service_provider_name = request.POST.get('name_of_service_provider', '')
         case.type_of_service = request.POST.get('type_of_service_provider', '')
-
-        # Saving the updated Case object
         case.save()
 
-        # Return a JSON response indicating success
+        case_data = model_to_dict(case)
+        case_data.pop('id', None)  # Remove primary key to avoid conflicts
+
+        # # Handle Social Welfare Referral
+        # if case.refers_to_social_welfare:
+        #     SocialWelfareReferral.objects.update_or_create(
+        #         case=case,
+        #         defaults=case_data
+        #     )
+
+        # # Handle Healthcare Referral
+        # if case.refers_to_healthcare_provider:
+        #     HealthcareReferral.objects.update_or_create(
+        #         case=case,
+        #         defaults=case_data
+        #     )
+
+        # Handle Law Enforcement Referral
+        if case.refers_to_law_enforcement:
+            LawEnforcementReferredCase.objects.update_or_create(
+                case_number=case.case_number,
+                defaults=case_data
+            )
+
+
         return JsonResponse({'message': 'Service information saved successfully.'})
-    else:
-        # Return a JSON response indicating failure
-        return JsonResponse({'error': 'Invalid request method.'})
+
+    return JsonResponse({'error': 'Invalid request method.'}, status=400)
 
 
 def add_status(request, case_id):
