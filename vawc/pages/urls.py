@@ -79,7 +79,7 @@ urlpatterns = [
 
     #law enforcement admin side
     # path('admin-law-enforcement-vawc/dashboard/', views.law_enforcement_dashboard_view, name='law enforcement dashboard'),
-    path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.law_enforcement_dashboard_data, name='law enforcement dashboard data'),
+    # path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.law_enforcement_dashboard_data, name='law enforcement dashboard data'),
     path('admin-law-enforcement-vawc/settings/', views.law_enforcement_settings_view, name='law enforcement settings'),
 
     path('add_status/<int:case_id>/', views.add_status, name='add_status'),
