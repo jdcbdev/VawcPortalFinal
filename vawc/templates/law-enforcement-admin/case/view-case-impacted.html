@@ -280,8 +280,17 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="name_of_agency" name="name_of_agency" placeholder="none" value="{{ case.law_enforcement_agency_name }}">
-                                    <label for="name_of_agency">Name of Agency</label>
+                                    <select id="name_of_agency" name="name_of_agency" class="form-select">
+                                        <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                        {% for station in default_stations %}
+                                            <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
+                                                {{ station.name }}
+                                            </option>
+                                        {% empty %}
+                                            <option>No data found</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="name_of_agency">Station</label>
                                 </div>
                             </div><!--end of col-->
                         </div><!--end of row-->
