@@ -2414,6 +2414,7 @@ def view_admin_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+            'default_stations': PoliceStations.objects.all()
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
