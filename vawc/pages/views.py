@@ -1418,23 +1418,22 @@ def law_enforcement_case_view(request):
     # Retrieve the Account object associated with the logged-in user
     try:
         lawenforcementaccount = logged_in_user.lawenforcementaccount
-        # station = lawenforcementaccount.law_enforcement_agency_name
+        station = lawenforcementaccount.station
     except LawEnforcementAccount.DoesNotExist:
-        # station = None
-        print("None")
-    cases = LawEnforcementReferredCase.objects.all()  # Retrieve all cases from the database
+        station = None
+    cases = Case.objects.all()  # Retrieve all cases from the database
     
-    # filtered_cases = []
+    filtered_cases = []
     
-    # for case in cases:
-    #     if case.law_enforcement_agency_name == station:
-    #         filtered_cases.append(case)
+    for case in cases:
+        if case.law_enforcement_agency_name == station:
+            filtered_cases.append(case)
     
     return render(request, 'law-enforcement-admin/case/case.html', {
-        'cases': cases,
+        'cases': filtered_cases,
         'global': request.session,
         'logged_in_user': logged_in_user,
-        # 'station': station,
+        'station': station,
     })
 
 
@@ -1602,7 +1601,10 @@ def verify_otp(request):
             return JsonResponse({'success': False, 'message': 'No associated account type found.'})
 
         # Store other metadata if needed
-        request.session['security_status'] = "decrypted"
+        if account_type == 'law_enforcement':
+            request.session['security_status'] = "encrypted"
+        else:
+            request.session['security_status'] = "decrypted"
 
         return JsonResponse({
             'success': True,
@@ -2683,12 +2685,12 @@ def view_case_impact(request, case_id):
 
 @login_required
 def view_enforcement_case_behalf(request, case_id):
-    if request.user.account.type != 'staff':
+    if request.user.lawenforcementaccount.type != 'law_enforcement':
         return redirect('login')
     
     try:
         # Retrieve the case object from the database based on the case_id
-        case = LawEnforcementReferredCase.objects.get(id=case_id)
+        case = Case.objects.get(id=case_id)
         # Retrieve related objects such as contact persons, evidence, victims, perpetrators, and parents
         contact_persons = Contact_Person.objects.filter(case_contact=case)
         evidences = Evidence.objects.filter(case=case)
@@ -2811,7 +2813,7 @@ def view_enforcement_case_behalf(request, case_id):
         province_id = 50 # zamboanga del sur
         municipality_id = 1133 # zamboanga city
 
-        return render(request, 'barangay-admin/case/view-case-behalf.html', {
+        return render(request, 'law-enforcement-admin/case/view-case-behalf.html', {
             'case': case,
             'contact_persons': contact_persons,
             'evidence': evidences,
@@ -2833,12 +2835,12 @@ def view_enforcement_case_behalf(request, case_id):
 
 @login_required
 def view_enforcement_case_impact(request, case_id):
-    if request.user.account.type != 'staff':
+    if request.user.lawenforcementaccount.type != 'law_enforcement':
         return redirect('login')
     
     try:
         # Retrieve the case object from the database based on the case_id
-        case = LawEnforcementReferredCase.objects.get(id=case_id)
+        case = Case.objects.get(id=case_id)
         # Retrieve related objects such as evidence, victims, perpetrators, and parents
         evidences = Evidence.objects.filter(case=case)
         victims = Victim.objects.filter(case_victim=case)
@@ -2923,7 +2925,7 @@ def view_enforcement_case_impact(request, case_id):
         province_id = 50 # zamboanga del sur
         municipality_id = 1133 # zamboanga city
         
-        return render(request, 'barangay-admin/case/view-case-impacted.html', {
+        return render(request, 'law-enforcement-admin/case/view-case-impacted.html', {
             'case': case,
             'evidence': evidences,
             'victims': victims,

@@ -139,7 +139,7 @@
                     <select class="form-select" id="account_region" name="account_region">
                         <option>--Select Option--</option>
                         {% for region in default_regions %}
-                            <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
+                            <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                         {% empty %}
                             <option>No data found</option>
                         {% endfor %}

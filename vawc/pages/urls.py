@@ -87,9 +87,9 @@ urlpatterns = [
     path('delete_status/<int:status_id>/', views.delete_status, name='delete_status'),
 
     path('admin-law-enforcement-vawc/case/', views.law_enforcement_case_view, name='law enforcement case'),
-    path('admin-barangay-vawc/view-law-enforcement-case/behalf/<int:case_id>/', views.view_enforcement_case_behalf, name='law enforcement case behalf view'),
-    path('admin-barangay-vawc/view-law-enforcement-case/impacted/<int:case_id>/', views.view_enforcement_case_impact, name='law enforcement case impacted view'),
-    path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
+    path('admin-law-enforcement-vawc/view-law-enforcement-case/behalf/<int:case_id>/', views.view_enforcement_case_behalf, name='law enforcement case behalf view'),
+    path('admin-law-enforcement-vawc/view-law-enforcement-case/impacted/<int:case_id>/', views.view_enforcement_case_impact, name='law enforcement case impacted view'),
+    path('admin-law-enforcement-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
     path('process_service_info/', views.process_service_info, name='process_service_info'),
     # path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
 
