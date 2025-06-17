@@ -1,0 +1,666 @@
+{% extends "../base/base_admin.html" %}
+{% block title %}Manage | Account {% endblock %}
+{% load static %}
+{% block styles %}
+<link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
+<link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
+{% endblock %}
+{% block content %}
+<div class="container-fluid pb-4">
+    <div class="row d-flex justify-content-between">
+        <div class="col-auto">
+            <h1>Account</h1>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account"><i class="bx bx-plus"></i> Add Account</button>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-6 mb-lg-0 mb-3 ">
+            <div class="input-group search-keyword">
+                <input type="text" name="keyword" id="keyword" placeholder="Search Name" class="form-control">
+                <button class="btn btn-outline-secondary background-color-green" type="button"><i class='bx bx-search-alt'></i></button>
+            </div>
+        </div>
+        <div class="form-group col-lg-6 mb-lg-0 mb-3 ">
+            <select name="status" id="status" class="form-select me-md-2">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Not Active">Not Active</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="pt-4">
+        <table class="table table-striped nowrap" id="table-account" style="width:100%">
+            <thead class="border-bottom border-dark border-2 border-opacity-50">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Station</th>
+                    <th scope="col">Date Added</th>
+                    <th class="text-center" scope="col">Manage</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.last_name }},{{ account.first_name }}&nbsp;{{ account.middle_name }}</td>
+                        <td>{{ account.user.email }}</td>
+                        <td>{{ account.status }}</td>
+                        <td>{{ account.station }}</td>
+                        <td>{{ account.user.date_joined }}</td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-success edit-account-btn" role="button" data-account-id="{{ account.user.id }}">View</button>
+                            <button class="btn btn-outline-danger delete-account-btn ms-lg-3" role="button" data-account-id="{{ account.user.id }}">Delete</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div><!--end of div of table-->
+</div>
+<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
+<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Success</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+        </div>
+    </div>
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Error</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+        </div>
+    </div>
+</div>
+
+<!-- Modal add  -->
+<div class="modal fade" id="add_new_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Account</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="addAccountForm" method="POST">
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="account_username" name="account_username" placeholder="name@example.com" >
+                    <label for="account_username">Username</label>
+                    <div id="account_usernameFeedback" class="invalid-feedback">
+                        Username is already Taken.
+                    </div>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="account_email" name="account_email" placeholder="name@example.com" >
+                    <label for="account_email">Email</label>
+                    <div id="account_emailFeedback" class="invalid-feedback">
+                        Email is already Taken.
+                    </div>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="account_fname" name="account_fname" placeholder="name@example.com" >
+                            <label for="account_fname">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-12l">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="account_mname" name="account_mname" placeholder="name@example.com" >
+                            <label for="account_mname">Middle Name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="account_lname" name="account_lname" placeholder="name@example.com" >
+                    <label for="account_lname">Last Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="account_region" name="account_region">
+                        <option>--Select Option--</option>
+                        {% for region in default_regions %}
+                            <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                        {% empty %}
+                            <option>No data found</option>
+                        {% endfor %}
+                    </select>
+                    <label for="victim_region">Region</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="account_province" name="account_province" disabled>
+                        <option value="">--Select Option--</option>
+                    </select>
+                    <label for="account_province">Province</label>
+                </div>  
+                
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="account_police_station" name="account_police_station" disabled>
+                        <option value="">--Select Option--</option>
+                    </select>
+                    <label for="account_police_station">Police Station</label>
+                </div>                         
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="addAccountBtn" disabled>Add New Account</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal edit -->
+<div class="modal fade" id="edit_law_enforcement_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Account</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="editAccountForm" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    <input type="hidden" id="account_id" name="account_id" value="0">
+                    <div class="col-lg-6 col-12">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="edit_account_fname" name="edit_account_fname" placeholder="name@example.com" >
+                            <label for="edit_account_fname">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-12l">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="edit_account_mname" name="edit_account_mname" placeholder="name@example.com" >
+                            <label for="edit_account_mname">Middle Name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="edit_account_lname" name="edit_account_lname" placeholder="name@example.com" >
+                    <label for="edit_account_lname">Last Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" name="edit_status" id="edit_status">
+                        <option value="Active">Active</option>
+                        <option value="Not Active">Not Active</option>
+                    </select>
+                    <label for="edit_status">Status</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="edit_account_region" name="edit_account_region">
+                        <option>--Select Option--</option>
+                    </select>
+                    <label for="edit_account_region">Region</label>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="edit_account_province" name="edit_account_province">
+                        <option>--Select Option--</option>
+                    </select>
+                    <label for="edit_account_province">Province</label>
+                </div>  
+                
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="edit_account_police" name="edit_account_police">
+                        <option>--Select Option--</option>
+                    </select>
+                    <label for="edit_account_police">Police Station</label>
+                </div>    
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="saveAccountBtn">Save Account</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal confirm delete  -->
+<div class="modal fade" id="confirmAccountDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this Account?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmAccountDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<!-- <script src="{% static 'js/police-station-address.js' %}"></script> -->
+<script>
+    const csrf_token = '{{ csrf_token }}'
+    $(document).ready(function() {
+        $('#table-account').DataTable({
+            dom: 'Brt <"bottom"lp>',
+            responsive: true,
+            fixedHeader: true,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            //order: [[4, 'desc']],
+            order: [[0, 'desc']],
+            pageLength: 20,
+        });
+
+        // Your filter options and search functionality
+        $('input#keyword').on('input', function(e){
+            var status = $(this).val();
+            $('#table-account').DataTable().columns([0]).search(status).draw();
+        });
+        $('select#status').on('change', function(e){
+            var status = $(this).val();
+            $('#table-account').DataTable().columns([2]).search(status).draw();
+        });
+
+        // Function to handle form submission
+        $('#addAccountForm').submit(function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            $.ajax({
+                url: '{% url "create law enforcement account" %}',
+                method: 'POST',
+                data: $(this).serialize(), // Serialize form data
+                success: function(response) {
+                    if (response.success) {
+                        // Display success message and reload page after 2 seconds
+                        $('#successToast .toast-body').text(response.message);
+                        $('#successToast').toast('show');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        // Display error message
+                        $('#errorToast .toast-body').text(response.message);
+                        $('#errorToast').toast('show');
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        });
+
+        $(document).on('click', '.edit-account-btn', function() {
+            var accountId = $(this).data('account-id');
+            console.log(accountId);
+            $.ajax({
+                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                method: 'GET',
+                success: function(response) {
+                    // console.log("Full response object:", response);
+
+                    setGeoSelect($('#edit_account_region'), 'region', 'default_regions');
+                    setGeoSelect($('#edit_account_province'), 'province', 'default_provinces');
+                    setGeoSelect($('#edit_account_police'), 'name', 'default_police_stations');
+
+                    function setGeoSelect(geoTypeInput, itemKey, dataKey) {
+                        const blankOption = document.createElement('option');
+                        blankOption.textContent = '--Select Option--';
+                        geoTypeInput.empty().append(blankOption);
+
+                        // console.log("response data key: ",response[dataKey]);
+
+                        response[dataKey].forEach(item => {
+                            const value = item[itemKey];
+                            if (!value) return;
+
+                            const option = document.createElement('option');
+                            option.value = value;
+                            option.textContent = value;
+                            geoTypeInput.append(option)
+                        });
+                    }
+
+                    // Populate the modal with the data from the response
+                    $('#account_id').val(response.account_id);
+                    $('#edit_account_fname').val(response.first_name);
+                    $('#edit_account_mname').val(response.middle_name);
+                    $('#edit_account_lname').val(response.last_name);
+                    $('#edit_status').val(response.status);
+                    $('#edit_account_region').val(response.region);
+                    $('#edit_account_province').val(response.province);
+                    $('#edit_account_police').val(response.station);
+                    // Show the modal
+                    $('#edit_law_enforcement_account').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        $('#saveAccountBtn').on('click', function() {
+            var formData = $('#editAccountForm').serialize();
+
+            // Get the accountId from the hidden input field
+            var accountId = $('#account_id').val();
+            console.log('Account Id:', accountId);
+            console.log(accountId);
+            $.ajax({
+                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Handle success response
+                    console.log(response);
+                    // Optionally, close the modal or show a success message
+                    $('#edit_law_enforcement_account').modal('hide');
+                    // Display success message and reload page after 2 seconds
+                    $('#successToast .toast-body').text(response.message);
+                    $('#successToast').toast('show');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                    // Refresh the page or update any UI as needed
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error:', error);
+                    // Display error message
+                    $('#errorToast .toast-body').text(response.message);
+                    $('#errorToast').toast('show');
+                    // Optionally, show an error message to the user
+                }
+            });
+        });
+
+        // Attach click event listener to the Delete button
+        $('.delete-account-btn').on('click', function() {
+            // Retrieve the account ID from the data-account-id attribute
+            var accountId = $(this).data('account-id');
+            
+            // Set the account ID value in the modal confirmation button
+            $('#confirmAccountDeleteBtn').data('account-id', accountId);
+            
+            // Open the confirmation modal
+            $('#confirmAccountDelete').modal('show');
+        });
+
+        // Attach click event listener to the confirmation modal Delete button
+        $('#confirmAccountDeleteBtn').on('click', function() {
+            // Retrieve the account ID from the data-account-id attribute of the Delete button in the modal
+            var accountId = $(this).data('account-id');
+            
+            // Send an AJAX request to delete the account
+            $.ajax({
+                url: '{% url "delete_account" %}',
+                method: 'POST',
+                data: {
+                    account_id: accountId,
+                    // Add any additional data if needed
+                },
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
+                },
+                success: function(response) {
+                    // Handle success response
+                    // Display success message and reload page after 2 seconds
+                    $('#successToast .toast-body').text(response.message);
+                    $('#successToast').toast('show');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error('Error:', error);
+                    // Display error message
+                    $('#errorToast .toast-body').text(response.message);
+                    $('#errorToast').toast('show');
+                    // Optionally, show an error message to the user
+                }
+            });
+        });
+
+
+        // Attach the form submission function to the click event of the submit button
+        $('#addAccountBtn').click(function() {
+            $('#addAccountForm').submit(); // Trigger form submission when the button is clicked
+        });
+
+        $('#account_username, #account_email').on('blur', function() {
+            var username = $('#account_username').val();
+            var email = $('#account_email').val();
+        
+            $.ajax({
+                type: 'GET',
+                url: '/check_username_email/',
+                data: {
+                    'username': username,
+                    'email': email
+                },
+                success: function(response) {
+                    if (response.username_taken) {
+                        $('#account_username').addClass('is-invalid');
+                        $('#account_username').removeClass('is-valid'); // Remove is-valid class
+                        $('#account_usernameFeedback').show();
+                        $('#account_usernameFeedback.valid-feedback').hide(); // Hide valid feedback
+                    } else {
+                        $('#account_username').removeClass('is-invalid');
+                        $('#account_username').addClass('is-valid'); // Add is-valid class
+                        $('#account_usernameFeedback').hide();
+                        $('#account_usernameFeedback.valid-feedback').show(); // Show valid feedback
+                    }
+        
+                    if (response.email_taken) {
+                        $('#account_email').addClass('is-invalid');
+                        $('#account_email').removeClass('is-valid'); // Remove is-valid class
+                        $('#account_emailFeedback').show();
+                        $('#account_emailFeedback.valid-feedback').hide(); // Hide valid feedback
+                    } else {
+                        $('#account_email').removeClass('is-invalid');
+                        $('#account_email').addClass('is-valid'); // Add is-valid class
+                        $('#account_emailFeedback').hide();
+                        $('#account_emailFeedback.valid-feedback').show(); // Show valid feedback
+                    }
+        
+                    // Check if both username and email are valid
+                    if (!$('#account_username').hasClass('is-invalid') && !$('#account_email').hasClass('is-invalid')) {
+                        $('#addAccountBtn').removeAttr('disabled'); // Remove disabled attribute
+                    } else {
+                        $('#addAccountBtn').attr('disabled', 'disabled'); // Add disabled attribute
+                    }
+                }
+            });
+        });
+
+    });
+
+    function addAddressListener(formElement, formType, count = 0) {
+        let region = null
+        let province = null
+        let police_station = null
+
+        if(formType === 'perp' || formType === 'victim') {
+            region = formElement.querySelector(`#${formType}_region_${count}`)
+            province = formElement.querySelector(`#${formType}_province_${count}`)
+            police_station = formElement.querySelector(`#${formType}_police_station_${count}`) 
+        } else {
+            region = formElement.querySelector(`#${formType}_region`)   
+            province = formElement.querySelector(`#${formType}_province`)   
+            police_station = formElement.querySelector(`#${formType}_police_station`)   
+        }
+        province.disabled = true
+        police_station.disabled = true
+
+        region.addEventListener('change', (e) => {
+
+            const regionSelect = document.querySelector(`#${formType}_region`);
+            const regionNameRaw = regionSelect.value;
+            const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if(regionName) {
+                setGeoSelectPoliceStation(province, {
+                    region: regionName,
+                    action: 'province',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+                province.disabled=false
+                console.log("enabled police station")
+            } else {
+                console.log('Please select a region.');
+            }
+
+        })
+
+        province.addEventListener('change', (e) => {
+            const provinceName = e.target.value;
+            if (provinceName) {
+                setGeoSelectPoliceStation(police_station, {
+                    province: provinceName,
+                    action: 'police_station',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+                police_station.disabled = false;
+                
+            } else {
+                console.log('Please select a province.');
+            }
+        });
+    }
+    function editAddressListener(formElement, formType, count = 0) {
+        let region = null
+        let province = null
+        let police_station = null
+
+        if(formType === 'perp' || formType === 'victim') {
+            region = formElement.querySelector(`#${formType}_region_${count}`)
+            province = formElement.querySelector(`#${formType}_province_${count}`)
+            police_station = formElement.querySelector(`#${formType}_police_${count}`) 
+        } else {
+            region = formElement.querySelector(`#${formType}_region`)   
+            province = formElement.querySelector(`#${formType}_province`)   
+            police_station = formElement.querySelector(`#${formType}_police`)   
+        }
+
+        region.addEventListener('change', (e) => {
+
+            const regionSelect = document.querySelector(`#${formType}_region`);
+            const regionNameRaw = regionSelect.value;
+            const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if(regionName) {
+                setGeoSelectPoliceStation(province, {
+                    region: regionName,
+                    action: 'province',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+            } else {
+                console.log('Please select a region.');
+            }
+
+        })
+
+        province.addEventListener('change', (e) => {
+            const provinceName = e.target.value;
+            if (provinceName) {
+                setGeoSelectPoliceStation(police_station, {
+                    province: provinceName,
+                    action: 'police_station',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+            } else {
+                console.log('Please select a province.');
+            }
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        addAddressListener(document.querySelector('#addAccountForm'), 'account')
+        editAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
+    })
+    
+    
+    async function setGeoSelect(geoTypeInput, formData) {
+
+        const res = await fetch('/pages/select-address/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify(formData),
+        })
+
+        const data = await res.json()
+
+        const blankOption = document.createElement('option')
+        blankOption.textContent = '--Select Option--'
+        blankOption.value = ''
+        // clear all options in select element
+        geoTypeInput.replaceChildren()
+
+        // apend blank option as the first selected options
+        geoTypeInput.appendChild(blankOption)
+        // apped data to respective inputs
+        data.forEach(item => {
+            const option = document.createElement('option')
+            option.dataset.code = item.code
+            option.value = item.name
+            option.textContent = item.name
+            geoTypeInput.appendChild(option)
+        })
+    }
+
+    async function setGeoSelectPoliceStation(selectElement, formData) {
+        try {
+            const res = await fetch('/pages/get-police-station/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrf_token
+                },
+                body: new URLSearchParams(formData)
+            });
+
+            if (!res.ok) throw new Error(`Server error: ${res.status}`);
+            const data = await res.json();
+
+            selectElement.innerHTML = '';
+            const blankOption = document.createElement('option');
+            blankOption.textContent = '--Select Option--';
+            blankOption.value = '';
+            selectElement.appendChild(blankOption);
+
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.name;
+                option.textContent = item.name;
+                selectElement.appendChild(option);
+                console.log(item.name);
+            });
+        } catch (error) {
+            console.error("Failed to fetch police stations:", error);
+        }
+    }
+
+</script>
+{% endblock scripts %}

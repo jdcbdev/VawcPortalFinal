@@ -594,6 +594,7 @@
 </div>
 {% endblock content %}
 {% block scripts %}
+<script src="{% static 'js/dynamic_forms.js' %}"></script>
 <script>
     $(document).ready(function() {
         $('form[id^="parent_form_"]').submit(function(e) {

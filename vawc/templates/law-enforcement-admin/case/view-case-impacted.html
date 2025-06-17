@@ -1,4 +1,4 @@
-{% extends "../../base/base_admin.html" %}
+{% extends "../../base/base_law_enforcement.html" %}
 {% block title %}Report | View Case {% endblock %}
 {% load static %}
 {% block styles %}
@@ -9,21 +9,19 @@
 {% block content %}
 <div class="container-fluid pb-4">
     <div class="pt-1 row">
-        <a class="col text-decoration-none text-dark" href="{% url 'admin case' %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
+        <a class="col text-decoration-none text-dark" href="{% url 'law enforcement case' %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
     </div>
     <div class="row">
         <div class="col-lg-8 col-12">
             <h2>Case Number: {{ case.case_number }} <span class="h5">(Date Added:{{ case.date_added }})</span>  </h2>
         </div>
-        {% if global.security_status == "decrypted" %}
-            <div class="d-grid gap-2 col-lg-2 col-12 mx-auto mb-lg-0 mb-2">
-                <a href="{% url 'pdf case' case_id=case.id %}" class="btn btn-info d-flex align-items-center justify-content-center" target="_blank">
-                    <i class='bx bxs-file-pdf me-3'></i>
-                    Print Case
-                </a>
-            </div>
-        {% endif %}
-        <div class="d-grid gap-2  mx-auto {% if global.security_status == 'encrypted' %} col-lg-4 {% elif global.security_status == 'decrypted'  %} col-lg-2 {% endif %} col-12">
+        <div class="d-grid gap-2 col-lg-2 col-12 mx-auto mb-lg-0 mb-2">
+            <a href="{% url 'pdf case' case_id=case.id %}" class="btn btn-info d-flex align-items-center justify-content-center" target="_blank">
+                <i class='bx bxs-file-pdf me-3'></i>
+                Print Case
+            </a>
+        </div>
+        <div class="d-grid gap-2  mx-auto col-lg-2">
             <button class="btn btn-danger btn-confirm-delete-case" data-case-id="{{ case.id }}" data-bs-toggle="modal" data-bs-target="#confirmDeletCase" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                 <i class='bx bx-trash me-2'></i>
                 Delete Case
@@ -113,16 +111,16 @@
                         <div class="col-6">
                             <div class="d-flex align-items-center">
                                 <h4><strong>CASE STATUS:</strong></h4>
-                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active" id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %} data-status="Active">
+                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active" id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %} data-status="Active" disabled>
                                 <label class="btn btn-outline-primary mx-2" for="option1">Active</label>
 
-                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close" id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %} data-status="Close">
+                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close" id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %} data-status="Close" disabled>
                                 <label class="btn btn-outline-primary" for="option2">Closed</label>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-floating mb-3">
-                                <input type="date" class="form-control" id="date_closed" name="date_closed" placeholder="name@example.com"  value="{{ case.date_closed|date:'Y-m-d' }}">
+                                <input type="date" class="form-control" id="date_closed" name="date_closed" placeholder="name@example.com"  value="{{ case.date_closed|date:'Y-m-d' }}" disabled>
                                 <label for="date_closed">Date Closed</label>
                             </div>
                         </div>
@@ -174,13 +172,13 @@
                                 <div class="row d-flex align-items-center">
                                     <div class="col">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_social_welware" id="refer_social_welware" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}>
+                                            <input class="form-check-input" type="checkbox" name="refer_social_welware" id="refer_social_welware" value="true" {% if case.refers_to_social_welfare %} checked {% endif %} disabled>
                                             <label class="form-check-label" for="refer_social_welware">
                                                 <strong><h4>Refers to Social Welfare and Development Office<h4></strong>
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col"><input class="form-control" type="date" name="refer_social_date" id="refer_social_date" value="{{ case.refer_social_date|date:'Y-m-d' }}"></div>
+                                    <div class="col"><input class="form-control" type="date" name="refer_social_date" id="refer_social_date" value="{{ case.refer_social_date|date:'Y-m-d' }}" disabled></div>
                                 </div>
                                 
                                 
@@ -190,7 +188,7 @@
                         <div class="row pt-1">
                             <div class="col-lg-4 vol-md-4 col-sm-8">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}>
+                                    <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %} disabled>
                                     <label class="form-check-label" for="psych_service">
                                         Psychosocial services
                                     </label>
@@ -198,7 +196,7 @@
                             </div><!--end of col-->
                             <div class="col-lg-4 vol-md-4 col-sm-8">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}>
+                                    <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %} disabled>
                                     <label class="form-check-label" for="emergency_shelter">
                                         Emergency Shelter
                                     </label>
@@ -206,7 +204,7 @@
                             </div><!--end of col-->
                             <div class="col-lg-4 vol-md-4 col-sm-8">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %}>
+                                    <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %} disabled>
                                     <label class="form-check-label" for="economic_assist">
                                         Economic Assistance
                                     </label>
@@ -219,7 +217,7 @@
                                 <div class="row d-flex align-items-center mb-3">
                                     <div class="col">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_health" id="refer_health" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %}>
+                                            <input class="form-check-input" type="checkbox" name="refer_health" id="refer_health" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %} disabled>
                                             <label class="form-check-label" for="refer_health">
                                                 <strong>
                                                     <h4>Refers to Healthcare provider<h4>
@@ -227,11 +225,11 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_healthcare_date" id="refer_healthcare_date" value="{{ case.refer_healthcare_date|date:'Y-m-d' }}"></div></div>
+                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_healthcare_date" id="refer_healthcare_date" value="{{ case.refer_healthcare_date|date:'Y-m-d' }}" disabled></div></div>
                                 </div>
                                 
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="name_health" id="name_health" placeholder="none" value="{{case.healthcare_provider_name }}">
+                                    <input type="text" class="form-control" name="name_health" id="name_health" placeholder="none" value="{{case.healthcare_provider_name }}" disabled>
                                     <label for="name_health">Name of Healthcare Provider</label>
                                 </div>
                             </div><!--end of col-->
@@ -240,7 +238,7 @@
                         <div class="row  pt-1">
                             <div class="col-lg-4 vol-md-4 col-sm-8">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}>
+                                    <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %} disabled>
                                     <label class="form-check-label" for="provision">
                                         Provision of appropriate medical treatment
                                     </label>
@@ -248,7 +246,7 @@
                             </div><!--end of col-->
                             <div class="col-lg-4 vol-md-4 col-sm-8">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}>
+                                    <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %} disabled>
                                     <label class="form-check-label" for="issuance_medical_cert">
                                     Issuance of medical certificate
                                     </label>
@@ -256,7 +254,7 @@
                             </div><!--end of col-->
                             <div class="col-lg-4 vol-md-4 col-sm-8">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}>
+                                    <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %} disabled>
                                     <label class="form-check-label" for="medico_legal">
                                         Medico-legal Exam
                                     </label>
@@ -280,7 +278,7 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <select id="name_of_agency" name="name_of_agency" class="form-select">
+                                    <select id="name_of_agency" name="name_of_agency" class="form-select" disabled>
                                         <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
                                         {% for station in default_stations %}
                                             <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
@@ -291,7 +289,7 @@
                                         {% endfor %}
                                     </select>
                                     <label for="name_of_agency">Station</label>
-                                </div>   
+                                </div>
                             </div><!--end of col-->
                         </div><!--end of row-->
 
@@ -335,14 +333,14 @@
                                 <div class="row d-flex align-items-center mb-3">
                                     <div class="col">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_other_service" id="refer_other_service" value="true" {% if case.refers_to_other_service_provider %} checked {% endif %}>
+                                            <input class="form-check-input" type="checkbox" name="refer_other_service" id="refer_other_service" value="true" {% if case.refers_to_other_service_provider %} checked {% endif %} disabled>
                                             <label class="form-check-label" for="refer_other_service"><strong>
                                                 <h4>Refers to Other Service Provider<h4>
                                             </strong>
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_other_service_date" id="refer_other_service_date" value="{{ case.refer_other_service_date|date:'Y-m-d' }}"></div></div>
+                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_other_service_date" id="refer_other_service_date" value="{{ case.refer_other_service_date|date:'Y-m-d' }}" disabled></div></div>
                                 </div>
                             </div><!--end of col-->
                         </div><!--end of row-->
@@ -377,9 +375,9 @@
                 <div class="nav flex-column nav-pills me-lg-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     {% for victim in victims %}
                         {% if forloop.first %}
-                            <button class="nav-link custom-nav-link active mb-2" id="v-pills-victim-{{ forloop.counter }}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-victim-{{ forloop.counter }}" type="button" role="tab" aria-controls="v-pills-victim-{{ forloop.counter }}" aria-selected="true">Victim No. {{ forloop.counter }}</button>
+                            <button class="nav-link custom-nav-link active mb-2" id="v-pills-victim-{{ forloop.counter }}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-victim-{{ forloop.counter }}" type="button" role="tab" aria-controls="v-pills-victim-{{ forloop.counter }}" aria-selected="true" disabled>Victim No. {{ forloop.counter }}</button>
                         {% else %}
-                            <button class="nav-link custom-nav-link mb-2" id="v-pills-victim-{{ forloop.counter }}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-victim-{{ forloop.counter }}" type="button" role="tab" aria-controls="v-pills-victim-{{ forloop.counter }}" aria-selected="false">Victim No. {{ forloop.counter }}</button>
+                            <button class="nav-link custom-nav-link mb-2" id="v-pills-victim-{{ forloop.counter }}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-victim-{{ forloop.counter }}" type="button" role="tab" aria-controls="v-pills-victim-{{ forloop.counter }}" aria-selected="false" disabled>Victim No. {{ forloop.counter }}</button>
                         {% endif %}
                     {% endfor %}
                     <hr class="my-lg-0  mt-0">
@@ -406,7 +404,7 @@
                                         <span>Add, View, or Delete Parent</span>
                                     </a>
                                 {% endif %}
-                                <button class="btn btn-danger me-2 btn-confirm-delete-victim col-lg-4 col-12" data-victim-id="{{ victim.id }}" data-bs-toggle="modal" data-bs-target="#confirmVictimDelete">
+                                <button class="btn btn-danger me-2 btn-confirm-delete-victim col-lg-4 col-12" data-victim-id="{{ victim.id }}" data-bs-toggle="modal" data-bs-target="#confirmVictimDelete" disabled>
                                     <i class='bx bx-trash'></i>
                                     <span>Delete Victim</span>
                                 </button>
@@ -1335,34 +1333,29 @@
                     </div>
 
                     <h3>Evidences:</h3>
-                    {% if global.security_status == "decrypted" %}
-                        {% if case.evidence.all %}
-                            <div class="row">
-                                {% for evidence in case.evidence.all %}
-                                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                                        <div class="form-check">
-                                            <!-- Add a link to the image with target="_blank" to open it in a new tab -->
-                                            <input class="form-check-input" type="checkbox" name="evidenceToDelete" value="{{ evidence.id }}">
-                                            <label class="form-check-label" for="evidence{{ evidence.id }}"></label>
-                                            <a href="{% static 'uploads/' %}{{ evidence.file.name }}" target="_blank" class="image-link">
-                                                <img src="{% static 'uploads/' %}{{ evidence.file.name }}" alt="Evidence Image" class="img-fluid">
-                                            </a>
-                                        </div>
+                    {% if case.evidence.all %}
+                        <div class="row">
+                            {% for evidence in case.evidence.all %}
+                                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                    <div class="form-check">
+                                        <!-- Add a link to the image with target="_blank" to open it in a new tab -->
+                                        <input class="form-check-input" type="checkbox" name="evidenceToDelete" value="{{ evidence.id }}">
+                                        <label class="form-check-label" for="evidence{{ evidence.id }}"></label>
+                                        <a href="{% static 'uploads/' %}{{ evidence.file.name }}" target="_blank" class="image-link">
+                                            <img src="{% static 'uploads/' %}{{ evidence.file.name }}" alt="Evidence Image" class="img-fluid">
+                                        </a>
                                     </div>
-                                {% endfor %}
-                            </div>
-                            
-                        {% else %}
-                            <p>No evidence available.</p>
-                            <div class="row pt-3">
-                                <div class="mb-3">
-                                    <label for="evidence_file" class="form-label"><strong>Upload Evidences:</strong></label>
-                                    <input class="form-control" type="file" id="evidence_file" name="evidence_file" accept="image/*" multiple>
-                                </div><!--form to upload-->
-                            </div><!--End or row-->
-                        {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% else %}
-                        <p class="text-center">Data is Encrypted</p>
+                        <p>No evidence available.</p>
+                        <div class="row pt-3">
+                            <div class="mb-3">
+                                <label for="evidence_file" class="form-label"><strong>Upload Evidences:</strong></label>
+                                <input class="form-control" type="file" id="evidence_file" name="evidence_file" accept="image/*" multiple>
+                            </div><!--form to upload-->
+                        </div><!--End or row-->
                     {% endif %}
 
                     <hr class="pt-3">
@@ -1407,45 +1400,40 @@
                                 <br>
                             {% endfor %}
                         </div>
-                            {% if global.security_status == "decrypted" %}
-                                <div class="d-flex justify-content-end"><button type="button" class="btn btn-primary" id="addWitnessBtn">Add Witness</button></div>
-                            {% endif %}
+                        <div class="d-flex justify-content-end"><button type="button" class="btn btn-primary" id="addWitnessBtn">Add Witness</button></div> 
                         {% else %}
-                            {% if global.security_status == "decrypted" %}
-                                <div id="witnessContainer">
-                                    <div class="row border border-opacity-25 rounded border-dark shadow" id="witness">
-                                        <div class="pt-2"></div>
-                                        <div class="col-lg-4 col-md-3 col-sm-12 col-12">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="witness_name" name="witness_name" placeholder="">
-                                                <label for="witness_name">Name</label>
-                                            </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-4 col-md-3 col-sm-12 col-12">
-                                            <div class="form-floating mb-3">
-                                                <textarea class="form-control" id="witness_address" name="witness_address" placeholder=""></textarea>
-                                                <label for="witness_address">Address</label>
-                                            </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-4 col-md-3 col-sm-12 col-12">
-                                            <div class="form-floating mb-3">
-                                                <input type="number" class="form-control" id="witness_number" name="witness_number" placeholder="">
-                                                <label for="witness_number">Contact Number</label>
-                                            </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-12 col-md-3 col-sm-12 col-12">
-                                            <div class="form-floating mb-3">
-                                                <textarea type="text" class="form-control" id="witness_email" name="witness_email" placeholder="none"></textarea>
-                                                <label for="witness_email">Eye-Witness Account</label>
-                                            </div>
-                                        </div><!--End of col-->
-                                        <button type="button" class="btn btn-sm rounded-top-0 bg-primary border-primary"><i class='bx bx-trash text-white'></i></button>
-                                    </div><!--End of row-->
-                                </div>
-                                <br>
-                                <div class="d-flex justify-content-end"><button type="button" class="btn btn-primary" id="addWitnessBtn">Add Witness</button></div>
-                            {% endif %}
-                        
+                        <div id="witnessContainer">
+                            <div class="row border border-opacity-25 rounded border-dark shadow" id="witness">
+                                <div class="pt-2"></div>
+                                <div class="col-lg-4 col-md-3 col-sm-12 col-12">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="witness_name" name="witness_name" placeholder="">
+                                        <label for="witness_name">Name</label>
+                                    </div>
+                                </div><!--End of col-->
+                                <div class="col-lg-4 col-md-3 col-sm-12 col-12">
+                                    <div class="form-floating mb-3">
+                                        <textarea class="form-control" id="witness_address" name="witness_address" placeholder=""></textarea>
+                                        <label for="witness_address">Address</label>
+                                    </div>
+                                </div><!--End of col-->
+                                <div class="col-lg-4 col-md-3 col-sm-12 col-12">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="witness_number" name="witness_number" placeholder="">
+                                        <label for="witness_number">Contact Number</label>
+                                    </div>
+                                </div><!--End of col-->
+                                <div class="col-lg-12 col-md-3 col-sm-12 col-12">
+                                    <div class="form-floating mb-3">
+                                        <textarea type="text" class="form-control" id="witness_email" name="witness_email" placeholder="none"></textarea>
+                                        <label for="witness_email">Eye-Witness Account</label>
+                                    </div>
+                                </div><!--End of col-->
+                                <button type="button" class="btn btn-sm rounded-top-0 bg-primary border-primary"><i class='bx bx-trash text-white'></i></button>
+                            </div><!--End of row-->
+                        </div>
+                        <br>
+                        <div class="d-flex justify-content-end"><button type="button" class="btn btn-primary" id="addWitnessBtn">Add Witness</button></div>
                         {% endif %}
                     <br>
                     <hr class="pt-3">

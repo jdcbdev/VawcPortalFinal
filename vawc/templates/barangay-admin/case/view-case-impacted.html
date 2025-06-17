@@ -280,8 +280,17 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="name_of_agency" name="name_of_agency" placeholder="none" value="{{ case.law_enforcement_agency_name }}">
-                                    <label for="name_of_agency">Name of Agency</label>
+                                    <select id="name_of_agency" name="name_of_agency" class="form-select">
+                                        <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                        {% for station in default_stations %}
+                                            <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
+                                                {{ station.name }}
+                                            </option>
+                                        {% empty %}
+                                            <option>No data found</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="name_of_agency">Station</label>
                                 </div>
                             </div><!--end of col-->
                         </div><!--end of row-->
@@ -688,6 +697,16 @@
                             </form>
                         </div>
                     </div>
+                    <!-- mark -->
+                    <script src="{% static 'js/address-fields.js' %}"></script>
+                    <script>
+                        // For Address Fields Consistenciess
+                        const csrf_token = '{{ csrf_token }}'
+                        const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
+                        const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
+                        addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
+                        addAddressListener(formElementPerp, 'perp', '{{ perpetrator.id }}');
+                    </script>
                     {% endfor %}
                 {% else %}
                 <div class="tab-pane fade show active h-100" id="v-pills-no-victim" role="tabpanel" aria-labelledby="v-pills-no-victim-tab" tabindex="0">
