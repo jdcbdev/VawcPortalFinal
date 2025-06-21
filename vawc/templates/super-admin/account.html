@@ -551,7 +551,7 @@
 
     });
 
-    function addAddressListener(formElement, formType, count = 0) {
+    function addressListener(formElement, formType, count = 0) {
         let region = null
         let province = null
         let city = null
@@ -568,9 +568,11 @@
             city = formElement.querySelector(`#${formType}_city`)
             barangay = formElement.querySelector(`#${formType}_barangay`)
         }
-        province.disabled = true
-        city.disabled = true
-        barangay.disabled = true
+        if (formType === 'account'){
+            province.disabled = true
+            city.disabled = true
+            barangay.disabled = true
+        }
 
         region.addEventListener('change', (e) => {
 
@@ -614,12 +616,11 @@
                 barangay.disabled=false
             }
         })
-        
     }
     
     document.addEventListener('DOMContentLoaded', () => {
-        addAddressListener(document.querySelector('#addAccountForm'), 'account')
-        addAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
+        addressListener(document.querySelector('#addAccountForm'), 'account')
+        addressListener(document.querySelector('#editAccountForm'), 'edit_account')
     })
     
     
