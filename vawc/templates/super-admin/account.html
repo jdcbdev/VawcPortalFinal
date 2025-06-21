@@ -552,39 +552,69 @@
     });
 
     function addAddressListener(formElement, formType, count = 0) {
-        let barangay = null
-        let city = null
+        let region = null
         let province = null
+        let city = null
+        let barangay = null
     
         if(formType === 'perp' || formType === 'victim') {
-            barangay = formElement.querySelector(`#${formType}-barangay_${count}`)
-            city = formElement.querySelector(`#${formType}-city_${count}`)
+            region = formElement.querySelector(`#${formType}-region_${count}`)
             province = formElement.querySelector(`#${formType}-province_${count}`)
+            city = formElement.querySelector(`#${formType}-city_${count}`)
+            barangay = formElement.querySelector(`#${formType}-barangay_${count}`)
         } else {
-            barangay = formElement.querySelector(`#${formType}_barangay`)
-            city = formElement.querySelector(`#${formType}_city`)
+            region = formElement.querySelector(`#${formType}_region`)
             province = formElement.querySelector(`#${formType}_province`)
+            city = formElement.querySelector(`#${formType}_city`)
+            barangay = formElement.querySelector(`#${formType}_barangay`)
         }
+        province.disabled = true
+        city.disabled = true
+        barangay.disabled = true
+
+        region.addEventListener('change', (e) => {
+
+            const regionId = e.target.options[e.target.selectedIndex].dataset.code
+
+            if(regionId) {
+                setGeoSelect(province, {
+                    filter: regionId,
+                    action: 'province',
+                    csrfmiddlewaretoken: csrf_token,
+                }, {passive: true})
+                province.disabled=false
+            }
+
+        })
+
+        province.addEventListener('change', (e) => {
+
+            const provinceId = e.target.options[e.target.selectedIndex].dataset.code
+
+            if(provinceId) {
+                setGeoSelect(city, {
+                    filter: provinceId,
+                    action: 'city',
+                    csrfmiddlewaretoken: csrf_token,
+                }, {passive: true})
+                city.disabled=false
+            }
+
+        })
     
         city.addEventListener('change', (e) => {
-    
+
             const cityId = e.target.options[e.target.selectedIndex].dataset.code
-            setGeoSelect(barangay, {
-                filter: cityId,
-                action: 'barangay',
-                csrfmiddlewaretoken: csrf_token,
-            })
+            if(cityId) {
+                setGeoSelect(barangay, {
+                    filter: cityId,
+                    action: 'barangay',
+                    csrfmiddlewaretoken: csrf_token,
+                }, {passive: true})
+                barangay.disabled=false
+            }
         })
-        province.addEventListener('change', (e) => {
-    
-            const provinceId = e.target.options[e.target.selectedIndex].dataset.code
-            setGeoSelect(city, {
-                filter: provinceId,
-                action: 'city',
-                csrfmiddlewaretoken: csrf_token,
-            })
-    
-        })
+        
     }
     
     document.addEventListener('DOMContentLoaded', () => {
