@@ -621,12 +621,25 @@
                                                 <label for="victim_house_information_{{ victim.id }}">House Information</label>
                                             </div>
                                         </div><!--End of col-->
-                                        <div class="col-lg-6 col-12 mb-3">
-                                            <div class="form-floating">
-                                                <select class="form-select" id="victim_region_{{ victim.id }}" name="victim_region_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                        <div class="col-lg-6 col-md-4 col-sm-8">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="victim_street_{{ victim.id }}" name="victim_street_{{ victim.id }}" value="{{ victim.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <label for="victim_street_{{ victim.id }}">Street</label>
+                                            </div>
+                                        </div><!--End of col-->
+                                    </div><!--End of row-->
+                                    <div class="row">
+                                        <div class="col-lg-3 col-12">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select"
+                                                    id="victim_region_{{ victim.id }}"
+                                                    name="victim_region_{{ victim.id }}"
+                                                    data-selected="{{ victim.region }}"
+                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">--Select Option--</option>
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == victim.region %}selected{% endif %}>
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
+                                                            {% if region.name == victim.region %}selected{% endif %}>
                                                             {{ region.name }}
                                                         </option>
                                                     {% empty %}
@@ -636,14 +649,18 @@
                                                 <label for="victim_region_{{ victim.id }}">Region</label>
                                             </div>
                                         </div><!--End of col-->
-                                    </div><!--End of row-->
-                                    <div class="row">
-                                        <div class="col-lg-3 mb-3">
-                                            <div class="form-floating">
-                                                <select class="form-select" id="victim_province_{{ victim.id }}" name="victim_province_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    
+                                        <div class="col-lg-3 col-12">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select"
+                                                    id="victim_province_{{ victim.id }}"
+                                                    name="victim_province_{{ victim.id }}"
+                                                    data-selected="{{ victim.province }}"
+                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
+                                                            {% if province.name == victim.province %}selected{% endif %}>
                                                             {{ province.name }}
                                                         </option>
                                                     {% empty %}
@@ -653,12 +670,18 @@
                                                 <label for="victim_province_{{ victim.id }}">Province</label>
                                             </div>
                                         </div><!--End of col-->
+                                    
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select" id="victim_city_{{ victim.id }}" name="victim_city_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select"
+                                                    id="victim_city_{{ victim.id }}"
+                                                    name="victim_city_{{ victim.id }}"
+                                                    data-selected="{{ victim.city }}"
+                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
+                                                            {% if city.name == victim.city %}selected{% endif %}>
                                                             {{ city.name }}
                                                         </option>
                                                     {% empty %}
@@ -668,12 +691,18 @@
                                                 <label for="victim_city_{{ victim.id }}">City</label>
                                             </div>
                                         </div><!--End of col-->
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
+                                    
+                                        <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select" id="victim_barangay_{{ victim.id }}" name="victim_barangay_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select"
+                                                    id="victim_barangay_{{ victim.id }}"
+                                                    name="victim_barangay_{{ victim.id }}"
+                                                    data-selected="{{ victim.barangay }}"
+                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == victim.barangay %}selected{% endif %}>
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
+                                                            {% if barangay.name == victim.barangay %}selected{% endif %}>
                                                             {{ barangay.name }}
                                                         </option>
                                                     {% empty %}
@@ -683,13 +712,21 @@
                                                 <label for="victim_barangay_{{ victim.id }}">Barangay</label>
                                             </div>
                                         </div><!--End of col-->
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
+                                    </div><!--End of row-->                                    
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-12 col-sm-8">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="victim_house_information_{{ victim.id }}" name="victim_house_information_{{ victim.id }}" value="{{ victim.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <label for="victim_house_information_{{ victim.id }}">House Information</label>
+                                            </div>
+                                        </div><!--End of col-->
+                                        <div class="col-lg-6 col-md-12 col-sm-8">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="victim_street_{{ victim.id }}" name="victim_street_{{ victim.id }}" value="{{ victim.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_street_{{ victim.id }}">Street</label>
                                             </div>
                                         </div><!--End of col-->
-                                    </div>
+                                    </div><!--End of row-->
                                 </div>
                                 <div class="d-flex justify-content-end mt-lg-2 mt-2">
                                     <button class="btn btn-primary save-btn-victim_{{ victim.id }}" id="save-btn-victim" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
@@ -697,6 +734,13 @@
                             </form>
                         </div>
                     </div>
+                    <script src="{% static 'js/address-fields.js' %}"></script>
+                    <script>
+                        // For Address Fields Consistenciess
+                        const csrf_token_victim = '{{ csrf_token }}'
+                        const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
+                        addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
+                    </script>
                     {% endfor %}
                 {% else %}
                 <div class="tab-pane fade show active h-100" id="v-pills-no-victim" role="tabpanel" aria-labelledby="v-pills-no-victim-tab" tabindex="0">
@@ -1000,20 +1044,18 @@
                                             </div>
                                         </div><!--End of col-->
                                     </div><!--End of row-->
-
                                     <div class="row">
-                                        <div class="col-lg-6 col-12">
+                                        <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_house_information_{{ perpetrator.id }}" name="perpetrator_house_information_{{ perpetrator.id }}" value="{{ perpetrator.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <label for="perpetrator_house_information_{{ perpetrator.id }}">House Information</label>
-                                            </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-6 col-12">
-                                            <div class="form-floating mb-3">
-                                                <select class="form-select" id="perpetrator_region_{{ perpetrator.id }}" name="perpetrator_region_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select"
+                                                        id="perpetrator_region_{{ perpetrator.id }}"
+                                                        name="perpetrator_region_{{ perpetrator.id }}"
+                                                        data-selected="{{ perpetrator.region }}"
+                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">--Select Region--</option>
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if perpetrator.name == case.region %}selected{% endif %}>
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
+                                                            {% if region.name == perpetrator.region %}selected{% endif %}>
                                                             {{ region.name }}
                                                         </option>
                                                     {% empty %}
@@ -1022,13 +1064,18 @@
                                                 </select>
                                                 <label for="perpetrator_region_{{ perpetrator.id }}">Region</label>
                                             </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
+                                        </div>
+                                        <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select" id="perpetrator_province_{{ perpetrator.id }}" name="perpetrator_province_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select"
+                                                        id="perpetrator_province_{{ perpetrator.id }}"
+                                                        name="perpetrator_province_{{ perpetrator.id }}"
+                                                        data-selected="{{ perpetrator.province }}"
+                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == perpetrator.province %}selected{% endif %}>
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
+                                                            {% if province.name == perpetrator.province %}selected{% endif %}>
                                                             {{ province.name }}
                                                         </option>
                                                     {% empty %}
@@ -1037,13 +1084,18 @@
                                                 </select>
                                                 <label for="perpetrator_province_{{ perpetrator.id }}">Province</label>
                                             </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
+                                        </div>
+                                        <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select" id="perpetrator_city_{{ perpetrator.id }}" name="perpetrator_city_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select"
+                                                        id="perpetrator_city_{{ perpetrator.id }}"
+                                                        name="perpetrator_city_{{ perpetrator.id }}"
+                                                        data-selected="{{ perpetrator.city }}"
+                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == perpetrator.city %}selected{% endif %}>
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
+                                                            {% if city.name == perpetrator.city %}selected{% endif %}>
                                                             {{ city.name }}
                                                         </option>
                                                     {% empty %}
@@ -1052,13 +1104,18 @@
                                                 </select>
                                                 <label for="perpetrator_city_{{ perpetrator.id }}">City</label>
                                             </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
+                                        </div>
+                                        <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select" id="perpetrator_barangay_{{ perpetrator.id }}" name="perpetrator_barangay_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select"
+                                                        id="perpetrator_barangay_{{ perpetrator.id }}"
+                                                        name="perpetrator_barangay_{{ perpetrator.id }}"
+                                                        data-selected="{{ perpetrator.barangay }}"
+                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
+                                                            {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
                                                             {{ barangay.name }}
                                                         </option>
                                                     {% empty %}
@@ -1067,8 +1124,16 @@
                                                 </select>
                                                 <label for="perpetrator_barangay_{{ perpetrator.id }}">Barangay</label>
                                             </div>
+                                        </div> <!--End of col-->
+                                    </div> <!--End of row-->
+                                    <div class="row">                            
+                                        <div class="col-lg-6 col-md-12 col-sm-8">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="perpetrator_house_information_{{ perpetrator.id }}" name="perpetrator_house_information_{{ perpetrator.id }}" value="{{ perpetrator.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <label for="perpetrator_house_information_{{ perpetrator.id }}">House Information</label>
+                                            </div>
                                         </div><!--End of col-->
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
+                                        <div class="col-lg-6 col-md-12 col-sm-8">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="perpetrator_street_{{ perpetrator.id }}" name="perpetrator_street_{{ perpetrator.id }}" value="{{ perpetrator.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_street_{{ perpetrator.id }}">Street</label>
@@ -1082,6 +1147,13 @@
                             </form>
                         </div>
                     </div>
+                    <script src="{% static 'js/address-fields.js' %}"></script>
+                    <script>
+                        // For Address Fields Consistenciess
+                        const csrf_token_perpetrator = '{{csrf_token}}';
+                        const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
+                        addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}');
+                    </script>
                     {% endfor %}
                 {% else %}
                     <div class="tab-pane fade show active h-100" id="v-pills-no-perp" role="tabpanel" aria-labelledby="v-pills-no-parent-tab" tabindex="0">
