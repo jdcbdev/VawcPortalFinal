@@ -1,7 +1,7 @@
 function addAddressListener(formElement, formType, count = 0) {
     let region, province, city, barangay;
 
-    if (formType === 'perp' || formType === 'victim') {
+    if (formType === 'perpetrator' || formType === 'victim') {
         region = formElement.querySelector(`#${formType}_region_${count}`);
         province = formElement.querySelector(`#${formType}_province_${count}`);
         city = formElement.querySelector(`#${formType}_city_${count}`);
@@ -13,30 +13,45 @@ function addAddressListener(formElement, formType, count = 0) {
         barangay = formElement.querySelector(`#${formType}_barangay`);
     }
 
-    // Do not disable anything initially (requirement 2)
-    // Ensure dropdowns retain selected value after reload (requirement 1)
+    const selectedRegion = region.getAttribute('data-selected');
     const selectedProvince = province.getAttribute('data-selected');
     const selectedCity = city.getAttribute('data-selected');
     const selectedBarangay = barangay.getAttribute('data-selected');
 
-    if (region.value) {
+    // Always start with children disabled
+    disableSelect(province);
+    disableSelect(city);
+    disableSelect(barangay);
+
+    // Populate and enable selects if values are saved
+    if (selectedRegion) {
+        region.value = selectedRegion;
         setGeoSelect(province, {
             filter: region.options[region.selectedIndex].dataset.code,
             action: 'province',
-            csrfmiddlewaretoken: csrf_token,
+            csrfmiddlewaretoken: csrf_token_victim ? csrf_token_victim : csrf_token_perpetrator,
         }, selectedProvince).then(() => {
-            if (province.value) {
+            if (selectedProvince) {
+                enableSelect(province);
+                province.value = selectedProvince;
                 setGeoSelect(city, {
                     filter: province.options[province.selectedIndex].dataset.code,
                     action: 'city',
-                    csrfmiddlewaretoken: csrf_token,
+                    csrfmiddlewaretoken: csrf_token_victim ? csrf_token_victim : csrf_token_perpetrator,
                 }, selectedCity).then(() => {
-                    if (city.value) {
+                    if (selectedCity) {
+                        enableSelect(city);
+                        city.value = selectedCity;
                         setGeoSelect(barangay, {
                             filter: city.options[city.selectedIndex].dataset.code,
                             action: 'barangay',
-                            csrfmiddlewaretoken: csrf_token,
-                        }, selectedBarangay);
+                            csrfmiddlewaretoken: csrf_token_victim ? csrf_token_victim : csrf_token_perpetrator,
+                        }, selectedBarangay).then(() => {
+                            if (selectedBarangay) {
+                                enableSelect(barangay);
+                                barangay.value = selectedBarangay;
+                            }
+                        });
                     }
                 });
             }
@@ -49,13 +64,18 @@ function addAddressListener(formElement, formType, count = 0) {
         resetSelect(province);
         resetSelect(city);
         resetSelect(barangay);
+        disableSelect(city);
+        disableSelect(barangay);
 
         if (regionId) {
             setGeoSelect(province, {
                 filter: regionId,
                 action: 'province',
-                csrfmiddlewaretoken: csrf_token,
+                csrfmiddlewaretoken: csrf_token_victim ? csrf_token_victim : csrf_token_perpetrator,
             });
+            enableSelect(province);
+        } else {
+            disableSelect(province);
         }
     });
 
@@ -64,13 +84,17 @@ function addAddressListener(formElement, formType, count = 0) {
 
         resetSelect(city);
         resetSelect(barangay);
+        disableSelect(barangay);
 
         if (provinceId) {
             setGeoSelect(city, {
                 filter: provinceId,
                 action: 'city',
-                csrfmiddlewaretoken: csrf_token,
+                csrfmiddlewaretoken: csrf_token_victim ? csrf_token_victim : csrf_token_perpetrator,
             });
+            enableSelect(city);
+        } else {
+            disableSelect(city);
         }
     });
 
@@ -83,19 +107,22 @@ function addAddressListener(formElement, formType, count = 0) {
             setGeoSelect(barangay, {
                 filter: cityId,
                 action: 'barangay',
-                csrfmiddlewaretoken: csrf_token,
+                csrfmiddlewaretoken: csrf_token_victim ? csrf_token_victim : csrf_token_perpetrator,
             });
+            enableSelect(barangay);
+        } else {
+            disableSelect(barangay);
         }
     });
 }
 
-
+// Helper to populate and optionally select a value
 async function setGeoSelect(geoTypeInput, formData, selectedValue = null) {
     const res = await fetch('/pages/select-address/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrf_token
+            'X-CSRFToken': csrf_token_victim ? csrf_token_victim : csrf_token_perpetrator,
         },
         body: JSON.stringify(formData),
     });
@@ -105,7 +132,7 @@ async function setGeoSelect(geoTypeInput, formData, selectedValue = null) {
     const blankOption = document.createElement('option');
     blankOption.textContent = '--Select Option--';
     blankOption.value = '';
-    geoTypeInput.replaceChildren();  // clear all options
+    geoTypeInput.replaceChildren();
     geoTypeInput.appendChild(blankOption);
 
     data.forEach(item => {
@@ -113,19 +140,27 @@ async function setGeoSelect(geoTypeInput, formData, selectedValue = null) {
         option.dataset.code = item.code;
         option.value = item.name;
         option.textContent = item.name;
-
         if (item.name === selectedValue) {
             option.selected = true;
         }
-
         geoTypeInput.appendChild(option);
     });
 }
 
+// Helpers
 function resetSelect(selectElement) {
     selectElement.innerHTML = '';
     const blankOption = document.createElement('option');
     blankOption.textContent = '--Select Option--';
     blankOption.value = '';
     selectElement.appendChild(blankOption);
+    selectElement.value = '';
+}
+
+function disableSelect(el) {
+    el.disabled = true;
+}
+
+function enableSelect(el) {
+    el.disabled = false;
 }
