@@ -1268,6 +1268,79 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
                             <div class="form-floating">
+                                <select class="form-select" id="region" name="region"
+                                    data-selected="{{ case.region }}"
+                                    aria-label="Floating label select example"
+                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">--Select Region--</option>
+                                    {% for region in default_regions %}
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
+                                            {{ region.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="region">Region</label>
+                            </div>
+                        </div><!--End of col-->
+                        
+                        <div class="col-lg-4 col-md-4 col-sm-8">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="province" name="province"
+                                    data-selected="{{ case.province }}"
+                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Province --</option>
+                                    {% for province in default_provinces %}
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
+                                            {{ province.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="province">Province</label>
+                            </div>
+                        </div><!--End of col-->
+                        
+                        <div class="col-lg-4 col-md-4 col-sm-8">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="city" name="city"
+                                    data-selected="{{ case.city }}"
+                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select City --</option>
+                                    {% for city in default_cities %}
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
+                                            {{ city.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="city">City / Mun</label>
+                            </div>
+                        </div><!--End of col-->                        
+                    </div><!--end or row-->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-8">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="barangay" name="barangay"
+                                    data-selected="{{ case.barangay }}"
+                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Barangay --</option>
+                                    {% for barangay in default_barangays %}
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
+                                            {{ barangay.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>                                
+                                <label for="barangay">Barangay</label>
+                            </div>
+                        </div><!--End of col-->                        
+                        <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
+                            <div class="form-floating">
                                 <select class="form-select" id="place_of_incident" name="place_of_incident" aria-label="Floating label select example" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     {% if global.security_status == "decrypted" %}
                                     <option value="house" {% if case.place_of_incident == 'house' %} selected {% endif %}>House</option>
@@ -1290,71 +1363,8 @@
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="street" name="street" placeholder="Zamboanga Del Sur" value="{{ case.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="street" name="street" value="{{ case.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 <label for="street">Street</label>
-                            </div>
-                        </div><!--End of col-->
-                        <div class="col-lg-4 col-md-4 col-sm-8">
-                            <div class="form-floating mb-3">
-                                <select class="form-select" id="barangay" name="barangay" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select Barangay --</option>
-                                    {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
-                                            {{ barangay.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option>No data found</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="barangay">Barangay</label>
-                            </div>
-                        </div><!--End of col-->
-                    </div><!--end or row-->
-
-                    <div class="row">
-                        <div class="col-lg-4 col-md-4 col-sm-8">
-                            <div class="form-floating mb-3">
-                                <select class="form-select" id="city" name="city" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select City --</option>
-                                    {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
-                                            {{ city.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option>No data found</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="city">City / Mun</label>
-                            </div>
-                        </div><!--End of col-->
-                        <div class="col-lg-4 col-md-4 col-sm-8">
-                            <div class="form-floating mb-3">
-                                <select class="form-select" id="province" name="province" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select Province --</option>
-                                    {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
-                                            {{ province.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option value="">No data found</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="province">Province</label>
-                            </div>
-                        </div><!--End of col-->
-                        <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
-                            <div class="form-floating">
-                                <select class="form-select" id="region" name="region" aria-label="Floating label select example" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">--Select Region--</option>
-                                    {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
-                                            {{ region.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option value="">No data found</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="region">Region</label>
                             </div>
                         </div><!--End of col-->
                     </div><!--End of row-->
@@ -1484,7 +1494,13 @@
                         <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
-
+                    <script src="{% static 'js/address-fields.js' %}"></script>
+                    <script>
+                        // For Generic Address Fields (no prefix)
+                        const csrf_token_generic = '{{ csrf_token }}';
+                        const formElementGeneric = document.querySelector("#incident-form");
+                        addAddressListener(formElementGeneric, '', 0);
+                    </script>
                 </form>
 
             </div><!--end of container-->
