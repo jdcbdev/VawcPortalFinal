@@ -740,10 +740,8 @@
                         </div>
                     </div>
                     <!-- mark -->
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
-                        const csrf_token_victim = '{{ csrf_token }}'
                         const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
                         addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
                     </script>
@@ -884,10 +882,8 @@
                     <div class="d-flex justify-content-end">
                         <button class="btn btn-primary save-btn-contact_person_{{ contact_person.id }}" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
-                        const csrf_token_contact = '{{ csrf_token }}'
                         const formElementContact = document.querySelector("#contact_person_form_{{ contact_person.id }}");
                         addAddressListener(formElementContact, 'contact_person', '{{ contact_person.id }}');
                     </script>
@@ -1280,10 +1276,8 @@
                             </form>
                         </div>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
-                        const csrf_token_perpetrator = '{{csrf_token}}';
                         const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
                         addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}');
                     </script>
@@ -1667,10 +1661,8 @@
                         <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Generic Address Fields (no prefix)
-                        const csrf_token_generic = '{{ csrf_token }}';
                         const formElementGeneric = document.querySelector("#incident-form");
                         addAddressListener(formElementGeneric, '', 0);
                     </script>
@@ -2538,6 +2530,30 @@
 </div>
 {% endblock content %}
 {% block scripts %}
+<!-- Load external JS first -->
+<script src="{% static 'js/address-fields.js' %}"></script>
+
+<!-- Declare CSRF token globally -->
+<script>
+    const csrf_token_generic = '{{ csrf_token }}';
+    const csrf_token_victim = csrf_token_generic;
+    const csrf_token_perpetrator = csrf_token_generic;
+    const csrf_token_contact = csrf_token_generic;
+</script>
+<script>
+    const victimModal = document.getElementById('victimModal');
+    victimModal.addEventListener('shown.bs.modal', () => {
+        const form = victimModal.querySelector("#victim_form_{{ victim.id }}");
+        addAddressListener(form, 'victim', '{{ victim.id }}');
+    });
+
+    const perpetratorModal = document.getElementById('perpetratorModal');
+    perpetratorModal.addEventListener('shown.bs.modal', () => {
+        const form = perpetratorModal.querySelector("#perpetrator_form_{{ perpetrator.id }}");
+        addAddressListener(form, 'perpetrator', '{{ perpetrator.id }}');
+    });
+</script>
+
 <script>
     $(document).ready(function() {
         $("#addWitnessBtn").click(function() {
@@ -2829,7 +2845,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", function() {
-        
+                
         // Get today's date in the format YYYY-MM-DD
         var today = new Date().toISOString().split('T')[0];
 
