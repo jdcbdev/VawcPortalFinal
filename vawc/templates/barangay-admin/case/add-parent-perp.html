@@ -184,22 +184,58 @@
                                     </div><!--End of col-->
                                 </div><!--End of row-->
                                 <div class="row">
-                                    <div class="col-lg-6 col-md-4 col-sm-8">
+                                    <div class="col-lg-3 col-12">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="parent_house_information_{{ parent.id }}" name="parent_house_information_{{ parent.id }}" value="{{ parent.house_information }}">
-                                            <label for="parent_house_information_{{ parent.id }}">House Information</label>
+                                            <select class="form-select" id="parent_region_{{ parent.id }}" name="parent_region_{{ parent.id }}">
+                                                <option value="">--Select Region--</option>
+                                                {% for region in default_regions %}
+                                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == parent.region %}selected{% endif %}>
+                                                        {{ region.name }}
+                                                    </option>
+                                                {% empty %}
+                                                    <option value="">No data found</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="parent_region_{{ parent.id }}">Region</label>
                                         </div>
                                     </div><!--End of col-->
-                                    <div class="col-lg-3 col-md-4 col-sm-8">
+                                
+                                    <div class="col-lg-3 col-12">
                                         <div class="form-floating mb-3">
-                                            <input type="text" class="form-control" id="parent_street_{{ parent.id }}" name="parent_street_{{ parent.id }}" value="{{ parent.street }}">
-                                            <label for="parent_street_{{ parent.id }}">Street</label>
+                                            <select class="form-select" id="parent_province_{{ parent.id }}" name="parent_province_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <option value="">--Select Province--</option>
+                                                {% for province in default_provinces %}
+                                                    <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == parent.province %}selected{% endif %}>
+                                                        {{ province.name }}
+                                                    </option>
+                                                {% empty %}
+                                                    <option value="">No data found</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="parent_province_{{ parent.id }}">Province</label>
                                         </div>
                                     </div><!--End of col-->
-                                    <div class="col-lg-3 col-md-4 col-sm-8">
+                                
+                                    <div class="col-lg-3 col-12">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" id="parent_city_{{ parent.id }}" name="parent_city_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <option value="">--Select City--</option>
+                                                {% for city in default_cities %}
+                                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == parent.city %}selected{% endif %}>
+                                                        {{ city.name }}
+                                                    </option>
+                                                {% empty %}
+                                                    <option value="">No data found</option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="parent_city_{{ parent.id }}">City</label>
+                                        </div>
+                                    </div><!--End of col-->
+                                
+                                    <div class="col-lg-3 col-12">
                                         <div class="form-floating mb-3">
                                             <select class="form-select" id="parent_barangay_{{ parent.id }}" name="parent_barangay_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <option value="">-- Select Barangay --</option>
+                                                <option value="">--Select Barangay--</option>
                                                 {% for barangay in default_barangays %}
                                                     <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == parent.barangay %}selected{% endif %}>
                                                         {{ barangay.name }}
@@ -212,70 +248,23 @@
                                         </div>
                                     </div><!--End of col-->
                                 </div><!--End of row-->
+                                
                                 <div class="row">
-                                    <div class="col-lg-3 mb-3">
-                                        <div class="form-floating">
-                                            <select class="form-select" id="parent_province_{{ parent.id }}" name="parent_province_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <option value="">-- Select Province --</option>
-                                                    {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == parent.province %}selected{% endif %}>
-                                                            {{ province.name }}
-                                                        </option>
-                                                    {% empty %}
-                                                        <option value="">No data found</option>
-                                                    {% endfor %}
-                                            </select>
-                                            <label for="parent_province_{{ parent.id }}">Province</label>
-                                        </div>
-                                    </div><!--End of col-->
-                                    <div class="col-lg-3 col-12">
+                                    <div class="col-lg-6 col-md-12 col-sm-8">
                                         <div class="form-floating mb-3">
-                                            <select class="form-select" id="victim_city_{{ victim.id }}" name="victim_city_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <option value="">-- Select City --</option>
-                                                {% for city in default_cities %}
-                                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
-                                                        {{ city.name }}
-                                                    </option>
-                                                {% empty %}
-                                                    <option>No data found</option>
-                                                {% endfor %}
-                                            </select>
-                                            <label for="parent_city_{{ parent.id }}">City</label>
+                                            <input type="text" class="form-control" id="parent_house_information_{{ parent.id }}" name="parent_house_information_{{ parent.id }}" value="{{ parent.house_information }}">
+                                            <label for="parent_house_information_{{ parent.id }}">House Information</label>
                                         </div>
                                     </div><!--End of col-->
-                                    <div class="col-lg-6 col-12">
-                                        <div class="form-floating">
-                                            <select class="form-select" id="parent_region_{{ parent.id }}" name="parent_region_{{ parent.id }}">
-                                                <option value="">--Select Option--</option>
-                                                {% for region in default_regions %}
-                                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == parent.region %}selected{% endif %}>
-                                                        {{ region.name }}
-                                                    </option>
-                                                {% empty %}
-                                                    <option value="">No data found</option>
-                                                {% endfor %}
-                                                <!-- <option value="region-I" {% if parent.region == 'region-I' %}selected{% endif %}>Region I – Ilocos Region</option>
-                                                <option value="region-II" {% if parent.region == 'region-II' %}selected{% endif %}>Region II – Cagayan Valley</option>
-                                                <option value="region-III" {% if parent.region == 'region-III' %}selected{% endif %}>Region III – Central Luzon</option>
-                                                <option value="region-IV" {% if parent.region == 'region-IV' %}selected{% endif %}>Region IV‑A – CALABARZON</option>
-                                                <option value="mimaropa" {% if parent.region == 'mimaropa' %}selected{% endif %}>MIMAROPA Region</option>
-                                                <option value="region-V" {% if parent.region == 'region-V' %}selected{% endif %}>Region V – Bicol Region</option>
-                                                <option value="region-VI" {% if parent.region == 'region-VI' %}selected{% endif %}>Region VI – Western Visayas</option>
-                                                <option value="region-VII" {% if parent.region == 'region-VII' %}selected{% endif %}>Region VII – Central Visayas</option>
-                                                <option value="region-VIII" {% if parent.region == 'region-VIII' %}selected{% endif %}>Region VIII – Eastern Visayas</option>
-                                                <option value="region-IX" {% if parent.region == 'region-IX' %}selected{% endif %}>Region IX – Zamboanga Peninsula</option>
-                                                <option value="region-X" {% if parent.region == 'region-X' %}selected{% endif %}>Region X – Northern Mindanao</option>
-                                                <option value="region-XI" {% if parent.region == 'region-XI' %}selected{% endif %}>Region XI – Davao Region</option>
-                                                <option value="region-XII" {% if parent.region == 'region-XII' %}selected{% endif %}>Region XII – SOCCSKSARGEN</option>
-                                                <option value="region-XIII" {% if parent.region == 'region-XIII' %}selected{% endif %}>Region XIII – Caraga</option>
-                                                <option value="ncr" {% if parent.region == 'ncr' %}selected{% endif %}>NCR – National Capital Region</option>
-                                                <option value="car" {% if parent.region == 'car' %}selected{% endif %}>CAR – Cordillera Administrative Region</option>
-                                                <option value="barmm" {% if parent.region == 'barmm' %}selected{% endif %}>BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option> -->
-                                            </select>
-                                            <label for="parent_region_{{ parent.id }}">Region</label>
+                                
+                                    <div class="col-lg-6 col-md-12 col-sm-8">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="parent_street_{{ parent.id }}" name="parent_street_{{ parent.id }}" value="{{ parent.street }}">
+                                            <label for="parent_street_{{ parent.id }}">Street</label>
                                         </div>
                                     </div><!--End of col-->
-                                </div>
+                                </div><!--End of row-->
+                                
                             </div>
                             <div class="d-flex justify-content-end mt-lg-2 mt-2">
                                 <button class="btn btn-primary save-btn-parent_{{ parent.id }}" type="submit">Save</button>
@@ -489,22 +478,58 @@
                         </div><!--End of col-->
                     </div><!--End of row-->
                     <div class="row">
-                        <div class="col-lg-6 col-md-4 col-sm-8">
+                        <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="parent_house_information" name="parent_house_information">
-                                <label for="parent_house_information">House Information</label>
+                                <select class="form-select" id="parent_region_{{ parent.id }}" name="parent_region_{{ parent.id }}">
+                                    <option value="">--Select Region--</option>
+                                    {% for region in default_regions %}
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == parent.region %}selected{% endif %}>
+                                            {{ region.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="parent_region_{{ parent.id }}">Region</label>
                             </div>
                         </div><!--End of col-->
-                        <div class="col-lg-3 col-md-4 col-sm-8">
+                    
+                        <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="parent_street" name="parent_street">
-                                <label for="parent_street">Street</label>
+                                <select class="form-select" id="parent_province_{{ parent.id }}" name="parent_province_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">--Select Province--</option>
+                                    {% for province in default_provinces %}
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == parent.province %}selected{% endif %}>
+                                            {{ province.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="parent_province_{{ parent.id }}">Province</label>
                             </div>
                         </div><!--End of col-->
-                        <div class="col-lg-3 col-md-4 col-sm-8">
+                    
+                        <div class="col-lg-3 col-12">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="parent_city_{{ parent.id }}" name="parent_city_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">--Select City--</option>
+                                    {% for city in default_cities %}
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == parent.city %}selected{% endif %}>
+                                            {{ city.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="parent_city_{{ parent.id }}">City</label>
+                            </div>
+                        </div><!--End of col-->
+                    
+                        <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="parent_barangay_{{ parent.id }}" name="parent_barangay_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select Barangay --</option>
+                                    <option value="">--Select Barangay--</option>
                                     {% for barangay in default_barangays %}
                                         <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == parent.barangay %}selected{% endif %}>
                                             {{ barangay.name }}
@@ -513,75 +538,26 @@
                                         <option>No data found</option>
                                     {% endfor %}
                                 </select>
-                                <label for="parent_barangay">Barangay</label>
+                                <label for="parent_barangay_{{ parent.id }}">Barangay</label>
                             </div>
                         </div><!--End of col-->
                     </div><!--End of row-->
-                    <div class="row">
-                        <div class="col-lg-3 mb-3">
-                            <div class="form-floating">
-                                <select class="form-select" id="parent_province_{{ parent.id }}" name="parent_province_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select Province --</option>
-                                        {% for province in default_provinces %}
-                                            <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == parent.province %}selected{% endif %}>
-                                                {{ province.name }}
-                                            </option>
-                                        {% empty %}
-                                            <option value="">No data found</option>
-                                        {% endfor %}
-                                </select>
-                                <label for="parent_province">Province</label>
-                            </div>
-                        </div><!--End of col-->
-                        <div class="col-lg-3 col-12">
-                            <div class="form-floating mb-3">
-                                <select class="form-select" id="parent_city_{{ parent.id }}" name="parent_city_{{ parent.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select City --</option>
-                                    {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == parent.city %}selected{% endif %}>
-                                            {{ city.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option>No data found</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="parent_city">City</label>
-                            </div>
-                        </div><!--End of col-->
-                        <div class="col-lg-6 col-12">
-                            <div class="form-floating">
-                                <select class="form-select" id="parent_region" name="parent_region">
-                                    <option value="">--Select Option--</option>
-                                    {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == parent.region %}selected{% endif %}>
-                                            {{ region.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option value="">No data found</option>
-                                    {% endfor %}
-                                    <!-- <option value="region-I">Region I – Ilocosed Region</option>
-                                    <option value="region-II">Region II – Cagayan Valley</option>
-                                    <option value="region-III">Region III – Central Luzon</option>
-                                    <option value="region-IV">Region IV‑A – CALABARZON</option>
-                                    <option value="mimaropa">MIMAROPA Region</option>
-                                    <option value="region-V">Region V – Bicol Region</option>
-                                    <option value="region-VI">Region VI – Western Visayas</option>
-                                    <option value="region-VII">Region VII – Central Visayas</option>
-                                    <option value="region-VIII">Region VIII – Eastern Visayas</option>
-                                    <option value="region-IX">Region IX – Zamboanga Peninsula</option>
-                                    <option value="region-X">Region X – Northern Mindanao</option>
-                                    <option value="region-XI">Region XI – Davao Region</option>
-                                    <option value="region-XII">Region XII – SOCCSKSARGEN</option>
-                                    <option value="region-XIII">Region XIII – Caraga</option>
-                                    <option value="ncr">NCR – National Capital Region</option>
-                                    <option value="car">CAR – Cordillera Administrative Region</option>
-                                    <option value="barmm">BARMM – Bangsamoro Autonomous Region in Muslim Mindanao</option> -->
-                                </select>
-                                <label for="parent_region">Region</label>
-                            </div>
-                        </div><!--End of col-->
-                    </div>
                     
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-8">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="parent_house_information_{{ parent.id }}" name="parent_house_information_{{ parent.id }}" value="{{ parent.house_information }}">
+                                <label for="parent_house_information_{{ parent.id }}">House Information</label>
+                            </div>
+                        </div><!--End of col-->
+                    
+                        <div class="col-lg-6 col-md-12 col-sm-8">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="parent_street_{{ parent.id }}" name="parent_street_{{ parent.id }}" value="{{ parent.street }}">
+                                <label for="parent_street_{{ parent.id }}">Street</label>
+                            </div>
+                        </div><!--End of col-->
+                    </div><!--End of row-->                    
                 </div>
             </div>
             <div class="modal-footer">
