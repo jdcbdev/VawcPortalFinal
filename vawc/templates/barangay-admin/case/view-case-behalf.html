@@ -7,6 +7,14 @@
 {% endblock %}
 {% load custom_filter %}
 {% block content %}
+<script src="{% static 'js/address-fields.js' %}"></script>
+<!-- Declare CSRF token globally -->
+<script>
+    const csrf_token_generic = '{{ csrf_token }}';
+    const csrf_token_victim = csrf_token_generic;
+    const csrf_token_perpetrator = csrf_token_generic;
+    const csrf_token_contact = csrf_token_generic;
+</script>
 <div class="container-fluid pb-4">
     <div class="pt-1 row">
         <a class="col text-decoration-none text-dark" href="{% url 'barangay case' %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
@@ -740,12 +748,12 @@
                         </div>
                     </div>
                     <!-- mark -->
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
-                        // For Address Fields Consistenciess
-                        const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
-                        addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
-                    </script>
+                        (function() {
+                            const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
+                            addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
+                        })();
+                    </script>                        
                     {% endfor %}
                 {% else %}
                 <div class="tab-pane fade show active h-100" id="v-pills-no-victim" role="tabpanel" aria-labelledby="v-pills-no-victim-tab" tabindex="0">
@@ -1277,11 +1285,12 @@
                             </form>
                         </div>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
-                        const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
-                        addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}');
+                        (function() {
+                            const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
+                            addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}');
+                        })();
                     </script>
                     {% endfor %}
                 {% else %}
@@ -1663,11 +1672,12 @@
                         <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Generic Address Fields (no prefix)
-                        const formElementGeneric = document.querySelector("#incident-form");
-                        addAddressListener(formElementGeneric, '', 0);
+                        (function() {
+                            const formElementGeneric = document.querySelector("#incident-form");
+                            addAddressListener(formElementGeneric, '', 0);
+                        })();
                     </script>
                 </form>
 
@@ -2145,7 +2155,8 @@
                         </div><!--End of col-->
                         <div class="col-lg-3 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="victim_barangay" name="victim_barangay">
+                                <select class="form-select" id="victim_barangay" name="victim_barangay"
+                                    data-selected="{{ victim.barangay }}">
                                     <option value="">-- Select Barangay --</option>
                                     {% for barangay in default_barangays %}
                                         <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == victim.barangay %}selected{% endif %}>
@@ -2157,12 +2168,13 @@
                                 </select>
                                 <label for="victim_barangay">Barangay</label>
                             </div>
-                        </div><!--End of col-->
+                        </div><!--End of col-->                        
                     </div><!--End of row-->
                     <div class="row">
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="victim_city" name="victim_city" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="victim_city" name="victim_city"
+                                    data-selected="{{ victim.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
                                         <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
@@ -2175,10 +2187,11 @@
                                 <label for="victim_city">City</label>
                             </div>
                         </div><!--End of col-->
-
+                        
                         <div class="col-lg-3 mb-3">
                             <div class="form-floating">
-                                <select class="form-select" id="victim_province" name="victim_province" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="victim_province" name="victim_province"
+                                    data-selected="{{ victim.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
                                         <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>
@@ -2194,10 +2207,11 @@
                         
                         <div class="col-lg-6 col-12">
                             <div class="form-floating">
-                                <select class="form-select" id="victim_region" name="victim_region">
+                                <select class="form-select" id="victim_region" name="victim_region"
+                                    data-selected="{{ victim.region }}">
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if perpetrator.name == case.region %}selected{% endif %}>
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == victim.region %}selected{% endif %}>
                                             {{ region.name }}
                                         </option>
                                     {% empty %}
@@ -2206,7 +2220,7 @@
                                 </select>
                                 <label for="victim_region">Region</label>
                             </div>
-                        </div><!--End of col-->
+                        </div><!--End of col-->                        
                     </div>
                     
                 </div>
@@ -2510,7 +2524,8 @@
 
                         <div class="col-lg-6 col-12">
                             <div class="form-floating">
-                                <select class="form-select" id="perpetrator_region" name="perpetrator_region" disabled>
+                                <select class="form-select" id="perpetrator_region" name="perpetrator_region">
+                                    <option value="">--Select Option--</option>
                                     {% for region in default_regions %}
                                         <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                                     {% empty %}
@@ -2534,29 +2549,6 @@
 {% endblock content %}
 {% block scripts %}
 <!-- Load external JS first -->
-<script src="{% static 'js/address-fields.js' %}"></script>
-
-<!-- Declare CSRF token globally -->
-<script>
-    const csrf_token_generic = '{{ csrf_token }}';
-    const csrf_token_victim = csrf_token_generic;
-    const csrf_token_perpetrator = csrf_token_generic;
-    const csrf_token_contact = csrf_token_generic;
-</script>
-<script>
-    const victimModal = document.getElementById('addVictimModal');
-    victimModal.addEventListener('shown.bs.modal', () => {
-        const form = document.querySelector("#add_new_victim_form");
-        addAddressListener(form, 'victim');
-    });
-
-    const perpetratorModal = document.getElementById('addPerpModal');
-    perpetratorModal.addEventListener('shown.bs.modal', () => {
-        const form = document.querySelector("#add_new_perpetrator_form");
-        addAddressListener(form, 'perpetrator');
-    });
-</script>
-
 
 <script>
     $(document).ready(function() {
