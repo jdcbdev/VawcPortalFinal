@@ -721,6 +721,7 @@
                         </div>
                     </div>
                     <!-- mark -->
+                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess'
                         const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
@@ -1133,6 +1134,7 @@
                             </form>
                         </div>
                     </div>
+                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
                         const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
@@ -1519,6 +1521,7 @@
                         <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
+                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Generic Address Fields (no prefix)
                         const formElementGeneric = document.querySelector("#incident-form");
