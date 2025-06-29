@@ -1,47 +1,45 @@
-function addAddressListener(formElement, formType, count = 0) {
-    let region, province, city, barangay;
+function addAddressListener(formElement, formType = '', count = 0) {
+    if (!formElement) return;
 
-    // Define selectors based on formType
-    let prefix = formType ? `${formType}_` : '';
-    let suffix = (formType === 'victim' || formType === 'perpetrator' || formType === 'contact_person') ? `_${count}` : '';
+    const prefix = formType ? `${formType}_` : '';
+    const suffix = (formType && count) ? `_${count}` : '';
 
-    // For empty formType, do not add prefix or suffix
-    if (formType === '') {
-        prefix = '';
-        suffix = '';
+    // Helper: attempt multiple selector combinations
+    function getField(name) {
+        return (
+            formElement.querySelector(`#${prefix}${name}${suffix}`) ||  // prefix + suffix
+            formElement.querySelector(`#${prefix}${name}`) ||          // prefix only
+            formElement.querySelector(`#${name}`)                      // base only
+        );
     }
 
-    // Select elements
-    region = formElement.querySelector(`#${prefix}region${suffix}`);
-    province = formElement.querySelector(`#${prefix}province${suffix}`);
-    city = formElement.querySelector(`#${prefix}city${suffix}`);
-    barangay = formElement.querySelector(`#${prefix}barangay${suffix}`);
+    const region = getField('region');
+    const province = getField('province');
+    const city = getField('city');
+    const barangay = getField('barangay');
 
     if (!region || !province || !city || !barangay) return;
-    
-    // 🔍 Debug logs
-    console.log("Selected Region:", region?.getAttribute('data-selected'));
-    console.log("Selected Province:", province?.getAttribute('data-selected'));
-    console.log("Selected City:", city?.getAttribute('data-selected'));
-    console.log("Selected Barangay:", barangay?.getAttribute('data-selected'));
-    
 
-    const selectedRegion = region?.getAttribute('data-selected');
-    const selectedProvince = province?.getAttribute('data-selected');
-    const selectedCity = city?.getAttribute('data-selected');
-    const selectedBarangay = barangay?.getAttribute('data-selected');
+    const selectedRegion = region.getAttribute('data-selected');
+    const selectedProvince = province.getAttribute('data-selected');
+    const selectedCity = city.getAttribute('data-selected');
+    const selectedBarangay = barangay.getAttribute('data-selected');
+
+    console.log('Selected Region:', selectedRegion);
+    console.log('Selected Province:', selectedProvince);
+    console.log('Selected City:', selectedCity);
+    console.log('Selected Barangay:', selectedBarangay);
 
     disableSelect(province);
     disableSelect(city);
     disableSelect(barangay);
 
-    // Handle initial population if data-selected exists
     if (selectedRegion) {
         region.value = selectedRegion;
         setGeoSelect(province, {
             filter: region.options[region.selectedIndex].dataset.code,
             action: 'province',
-            csrfmiddlewaretoken: csrf_token_victim || csrf_token_perpetrator || csrf_token_contact || csrf_token_generic,
+            csrfmiddlewaretoken: getCSRF(),
         }, selectedProvince).then(() => {
             if (selectedProvince) {
                 enableSelect(province);
@@ -49,7 +47,7 @@ function addAddressListener(formElement, formType, count = 0) {
                 setGeoSelect(city, {
                     filter: province.options[province.selectedIndex].dataset.code,
                     action: 'city',
-                    csrfmiddlewaretoken: csrf_token_victim || csrf_token_perpetrator || csrf_token_contact || csrf_token_generic,
+                    csrfmiddlewaretoken: getCSRF(),
                 }, selectedCity).then(() => {
                     if (selectedCity) {
                         enableSelect(city);
@@ -57,7 +55,7 @@ function addAddressListener(formElement, formType, count = 0) {
                         setGeoSelect(barangay, {
                             filter: city.options[city.selectedIndex].dataset.code,
                             action: 'barangay',
-                            csrfmiddlewaretoken: csrf_token_victim || csrf_token_perpetrator || csrf_token_contact || csrf_token_generic,
+                            csrfmiddlewaretoken: getCSRF(),
                         }, selectedBarangay).then(() => {
                             if (selectedBarangay) {
                                 enableSelect(barangay);
@@ -68,13 +66,11 @@ function addAddressListener(formElement, formType, count = 0) {
                 });
             }
         });
-        region.value = selectedRegion;
     }
 
     // Event listeners
     region.addEventListener('change', (e) => {
         const regionId = e.target.options[e.target.selectedIndex].dataset.code;
-
         resetSelect(province);
         resetSelect(city);
         resetSelect(barangay);
@@ -85,7 +81,7 @@ function addAddressListener(formElement, formType, count = 0) {
             setGeoSelect(province, {
                 filter: regionId,
                 action: 'province',
-                csrfmiddlewaretoken: csrf_token_victim || csrf_token_perpetrator || csrf_token_contact || csrf_token_generic,
+                csrfmiddlewaretoken: getCSRF(),
             });
             enableSelect(province);
         } else {
@@ -95,7 +91,6 @@ function addAddressListener(formElement, formType, count = 0) {
 
     province.addEventListener('change', (e) => {
         const provinceId = e.target.options[e.target.selectedIndex].dataset.code;
-
         resetSelect(city);
         resetSelect(barangay);
         disableSelect(barangay);
@@ -104,7 +99,7 @@ function addAddressListener(formElement, formType, count = 0) {
             setGeoSelect(city, {
                 filter: provinceId,
                 action: 'city',
-                csrfmiddlewaretoken: csrf_token_victim || csrf_token_perpetrator || csrf_token_contact || csrf_token_generic,
+                csrfmiddlewaretoken: getCSRF(),
             });
             enableSelect(city);
         } else {
@@ -114,14 +109,13 @@ function addAddressListener(formElement, formType, count = 0) {
 
     city.addEventListener('change', (e) => {
         const cityId = e.target.options[e.target.selectedIndex].dataset.code;
-
         resetSelect(barangay);
 
         if (cityId) {
             setGeoSelect(barangay, {
                 filter: cityId,
                 action: 'barangay',
-                csrfmiddlewaretoken: csrf_token_victim || csrf_token_perpetrator || csrf_token_contact || csrf_token_generic,
+                csrfmiddlewaretoken: getCSRF(),
             });
             enableSelect(barangay);
         } else {
@@ -129,6 +123,24 @@ function addAddressListener(formElement, formType, count = 0) {
         }
     });
 }
+// CSRF getter utility
+function getCSRF() {
+    return (
+        typeof csrf_token_victim !== 'undefined' ? csrf_token_victim :
+        typeof csrf_token_perpetrator !== 'undefined' ? csrf_token_perpetrator :
+        typeof csrf_token_contact !== 'undefined' ? csrf_token_contact :
+        typeof csrf_token_generic !== 'undefined' ? csrf_token_generic :
+        ''
+    );
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const addvictimform = document.querySelector("#add_new_victim_form");
+    addAddressListener(addvictimform, 'victim');
+
+    const form = document.querySelector("#add_new_perpetrator_form");
+    addAddressListener(form, 'perpetrator');
+});
 
 
 // Helper to populate and optionally select a value
