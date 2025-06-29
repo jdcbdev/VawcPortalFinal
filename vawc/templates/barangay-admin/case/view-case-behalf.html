@@ -740,6 +740,7 @@
                         </div>
                     </div>
                     <!-- mark -->
+                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
                         const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
@@ -1276,6 +1277,7 @@
                             </form>
                         </div>
                     </div>
+                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
                         const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
@@ -1661,6 +1663,7 @@
                         <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
+                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Generic Address Fields (no prefix)
                         const formElementGeneric = document.querySelector("#incident-form");
@@ -2541,18 +2544,19 @@
     const csrf_token_contact = csrf_token_generic;
 </script>
 <script>
-    const victimModal = document.getElementById('victimModal');
+    const victimModal = document.getElementById('addVictimModal');
     victimModal.addEventListener('shown.bs.modal', () => {
-        const form = victimModal.querySelector("#victim_form_{{ victim.id }}");
-        addAddressListener(form, 'victim', '{{ victim.id }}');
+        const form = document.querySelector("#add_new_victim_form");
+        addAddressListener(form, 'victim');
     });
 
-    const perpetratorModal = document.getElementById('perpetratorModal');
+    const perpetratorModal = document.getElementById('addPerpModal');
     perpetratorModal.addEventListener('shown.bs.modal', () => {
-        const form = perpetratorModal.querySelector("#perpetrator_form_{{ perpetrator.id }}");
-        addAddressListener(form, 'perpetrator', '{{ perpetrator.id }}');
+        const form = document.querySelector("#add_new_perpetrator_form");
+        addAddressListener(form, 'perpetrator');
     });
 </script>
+
 
 <script>
     $(document).ready(function() {
