@@ -831,10 +831,12 @@
                         </div><!--end of col-->
                     </div><!--end of row-->
 
-                    <div class="row pt-2 pb-3">
+                    <div class="row pt-2">
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <select class="form-select" id="contact_person_region_{{ contact_person.id }}" name="contact_person_region_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="contact_person_region_{{ contact_person.id }}" name="contact_person_region_{{ contact_person.id }}"
+                                data-selected="{{ contact_person.region|default:'' }}"
+                                {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
                                         <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == contact_person.region %}selected{% endif %}>
@@ -849,7 +851,8 @@
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <select class="form-select" id="contact_person_province_{{ contact_person.id }}" name="contact_person_province_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="contact_person_province_{{ contact_person.id }}" name="contact_person_province_{{ contact_person.id }}"
+                                    data-selected="{{ contact_person.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
                                         <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == contact_person.province %}selected{% endif %}>
@@ -864,7 +867,8 @@
                         </div><!--end of col-->
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <select class="form-select" id="contact_person_city_{{ contact_person.id }}" name="contact_person_city_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="contact_person_city_{{ contact_person.id }}" name="contact_person_city_{{ contact_person.id }}"
+                                    data-selected="{{ contact_person.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
                                         <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == contact_person.city %}selected{% endif %}>
@@ -877,10 +881,10 @@
                                 <label for="contact_person_city_{{ contact_person.id }}">City</label>
                             </div>
                         </div><!--end of col-->
-                        
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <select class="form-select" id="contact_person_barangay_{{ contact_person.id }}" name="contact_person_barangay_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="contact_person_barangay_{{ contact_person.id }}" name="contact_person_barangay_{{ contact_person.id }}"
+                                    data-selected="{{ contact_person.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select Barangay --</option>
                                     {% for barangay in default_barangays %}
                                         <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == contact_person.barangay %}selected{% endif %}>
@@ -909,6 +913,13 @@
                     <div class="d-flex justify-content-end">
                         <button class="btn btn-primary save-btn-contact_person_{{ contact_person.id }}" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
                     </div>
+                    <script>
+                        // For Address Fields Consistenciess
+                        (function() {
+                            const formElementContact = document.querySelector("#contact_person_form_{{ contact_person.id }}");
+                            addAddressListener(formElementContact, 'contact_person', '{{ contact_person.id }}');
+                        })();
+                    </script>
                 </form>
                 {% endfor %}
             {% else %}
