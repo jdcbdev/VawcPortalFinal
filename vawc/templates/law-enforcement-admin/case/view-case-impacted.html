@@ -7,6 +7,14 @@
 {% endblock %}
 {% load custom_filter %}
 {% block content %}
+<script src="{% static 'js/address-fields.js' %}"></script>
+<!-- Declare CSRF token globally -->
+<script>
+    const csrf_token_generic = '{{ csrf_token }}';
+    const csrf_token_victim = csrf_token_generic;
+    const csrf_token_perpetrator = csrf_token_generic;
+    const csrf_token_contact = csrf_token_generic;
+</script>
 <div class="container-fluid pb-4">
     <div class="pt-1 row">
         <a class="col text-decoration-none text-dark" href="{% url 'law enforcement case' %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
@@ -718,7 +726,6 @@
                             </form>
                         </div>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
                         (function() {
@@ -1132,7 +1139,6 @@
                             </form>
                         </div>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
                         (function() {
@@ -1513,7 +1519,6 @@
                     </div>
 
                 </form>
-                <script src="{% static 'js/address-fields.js' %}"></script>
                 <script>
                     // For Generic Address Fields (no prefix)
                     (function() {
