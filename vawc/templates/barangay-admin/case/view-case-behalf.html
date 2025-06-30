@@ -893,8 +893,10 @@
                     </div>
                     <script>
                         // For Address Fields Consistenciess
-                        const formElementContact = document.querySelector("#contact_person_form_{{ contact_person.id }}");
-                        addAddressListener(formElementContact, 'contact_person', '{{ contact_person.id }}');
+                        (function() {
+                            const formElementContact = document.querySelector("#contact_person_form_{{ contact_person.id }}");
+                            addAddressListener(formElementContact, 'contact_person', '{{ contact_person.id }}');
+                        })();
                     </script>
                 </form>
                 {% endfor %}
