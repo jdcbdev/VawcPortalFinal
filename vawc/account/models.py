@@ -107,7 +107,7 @@ class Twilio(models.Model):
         ('local', 'Local'),
         ('deployed', 'Deployed'),
     ]
-    acc_type = models.CharField(
+    account_type = models.CharField(
         max_length=20,
         choices=TYPE_CHOICES,
         default='local',
