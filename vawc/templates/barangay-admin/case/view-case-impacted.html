@@ -724,8 +724,10 @@
                     <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess'
-                        const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
-                        addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
+                        (function() {
+                            const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
+                            addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
+                        })();
                     </script>
                     {% endfor %}
                 {% else %}
@@ -1137,8 +1139,10 @@
                     <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
-                        const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
-                        addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}');
+                        (function() {
+                            const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
+                            addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}')
+                        })();
                     </script>
                     {% endfor %}
                 {% else %}
@@ -1524,8 +1528,10 @@
                     <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Generic Address Fields (no prefix)
-                        const formElementGeneric = document.querySelector("#incident-form");
-                        addAddressListener(formElementGeneric, '', 0);
+                        (function() {
+                            const formElementGeneric = document.querySelector("#incident-form");
+                            addAddressListener(formElementGeneric, '', 0);
+                        })();
                     </script>
                 </form>
 

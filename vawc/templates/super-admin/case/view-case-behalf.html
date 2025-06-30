@@ -1290,12 +1290,12 @@
                             </form>
                         </div>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
                     <script>
                         // For Address Fields Consistenciess
-                        const csrf_token_perpetrator = '{{csrf_token}}';
-                        const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
-                        addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}');
+                        (function() {
+                            const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
+                            addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}');
+                        })();
                     </script>
                     {% endfor %}
                 {% else %}
@@ -1678,12 +1678,12 @@
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
                 </form>
-                <script src="{% static 'js/address-fields.js' %}"></script>
                 <script>
                     // For Generic Address Fields (no prefix)
-                    const csrf_token_generic = '{{ csrf_token }}';
-                    const formElementGeneric = document.querySelector("#incident-form");
-                    addAddressListener(formElementGeneric, '', 0);
+                    (function() {
+                        const formElementGeneric = document.querySelector("#incident-form");
+                        addAddressListener(formElementGeneric, '', 0);
+                    })();
                 </script>
             </div><!--end of container-->
 
