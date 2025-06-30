@@ -2812,7 +2812,7 @@ def view_enforcement_case_behalf(request, case_id):
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
             'default_stations': PoliceStations.objects.all()
         })
-    except LawEnforcementReferredCase.DoesNotExist: 
+    except Case.DoesNotExist: 
         # Handle case not found appropriately, for example, return a 404 page
         return HttpResponseNotFound("Case not found")
 
@@ -3897,7 +3897,7 @@ def process_service_info(request):
 
         # Handle Law Enforcement Referral
         if case.refers_to_law_enforcement:
-            LawEnforcementReferredCase.objects.update_or_create(
+            Case.objects.update_or_create(
                 case_number=case.case_number,
                 defaults=case_data
             )
