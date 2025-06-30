@@ -2467,12 +2467,15 @@
                     <div class="row">
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="perpetrator_region" name="perpetrator_region">
+                                <select class="form-select" id="perpetrator_region" name="perpetrator_region"
+                                    data-selected="{{ perpetrator.region }}">
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == perpetrator.region %}selected{% endif %}>
+                                            {{ region.name }}
+                                        </option>
                                     {% empty %}
-                                        <option>No data found</option>
+                                        <option value="">No data found</option>
                                     {% endfor %}
                                 </select>
                                 <label for="perpetrator_region">Region</label>
@@ -2481,10 +2484,13 @@
                     
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="perpetrator_province" name="perpetrator_province">
+                                <select class="form-select" id="perpetrator_province" name="perpetrator_province"
+                                    data-selected="{{ perpetrator.province }}">
                                     <option value="">--Select Province--</option>
                                     {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == perpetrator.province %}selected{% endif %}>
+                                            {{ province.name }}
+                                        </option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}
@@ -2495,10 +2501,13 @@
                     
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="perpetrator_city" name="perpetrator_city">
+                                <select class="form-select" id="perpetrator_city" name="perpetrator_city"
+                                    data-selected="{{ perpetrator.city }}">
                                     <option value="">--Select City--</option>
                                     {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == perpetrator.city %}selected{% endif %}>
+                                            {{ city.name }}
+                                        </option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}
@@ -2509,10 +2518,13 @@
                     
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="perpetrator_barangay" name="perpetrator_barangay">
+                                <select class="form-select" id="perpetrator_barangay" name="perpetrator_barangay"
+                                    data-selected="{{ perpetrator.barangay }}">
                                     <option value="">--Select Barangay--</option>
                                     {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
+                                            {{ barangay.name }}
+                                        </option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}
@@ -2525,18 +2537,18 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="perpetrator_house_information" name="perpetrator_house_information">
+                                <input type="text" class="form-control" id="perpetrator_house_information" name="perpetrator_house_information" value="{{ perpetrator.house_information }}">
                                 <label for="perpetrator_house_information">House Information</label>
                             </div>
                         </div><!--End of col-->
                     
                         <div class="col-lg-6 col-md-12 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="perpetrator_street" name="perpetrator_street">
+                                <input type="text" class="form-control" id="perpetrator_street" name="perpetrator_street" value="{{ perpetrator.street }}">
                                 <label for="perpetrator_street">Street</label>
                             </div>
                         </div><!--End of col-->
-                    </div><!--End of row-->
+                    </div><!--End of row-->                    
                     
                 </div>
             </div>
