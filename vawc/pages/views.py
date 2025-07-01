@@ -1507,39 +1507,49 @@ def send_phone(receiver, message_body):
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
 
-
 def login_with_otp(request):
     if request.method == 'POST':
         email = request.POST.get('barangay-email')
         passkey = request.POST.get('barangay-passkey')
 
         user = CustomUser.objects.filter(email=email).first()
-        if user:
+
+        if not user:
+            return JsonResponse({'success': False, 'message': 'Account not found.'})
+
+        # Try checking for regular Account
+        try:
             if user.account.status == 'Not Active':
                 return JsonResponse({'success': False, 'message': 'Account is Not Active Anymore'})
-            # Validate passkey
-            user_authenticated = authenticate(request, username=email, password=passkey)
-            if user_authenticated:
-                otp = generate_otp()
-                request.session['otp'] = otp
-                request.session['user_email'] = email  # Store user email in session for later retrieval
-                otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
-                request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
-                send_otp_email(email, otp)
-                return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
-            else:
-                print('Invalid passkey. Please try again.')
-                return JsonResponse({'success': False, 'message': 'Invalid password. Please try again.'})
-        else:
-            print('Account not found.')
-            return JsonResponse({'success': False, 'message': 'Account not found.'})
-    return render(request, 'login/login.html')
+        except Account.DoesNotExist:
+            # Try checking for LawEnforcementAccount
+            try:
+                if user.lawenforcementaccount.status == 'Not Active':
+                    return JsonResponse({'success': False, 'message': 'Law Enforcement account is Not Active'})
+            except LawEnforcementAccount.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'User has no linked account.'})
 
+        # Authenticate
+        user_authenticated = authenticate(request, username=email, password=passkey)
+
+        if user_authenticated:
+            otp = generate_otp()
+            request.session['otp'] = otp
+            request.session['user_email'] = email
+            otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
+            request.session['otp_expiry'] = otp_expiry.isoformat()
+            send_otp_email(email, otp)
+            return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
+        else:       
+            return JsonResponse({'success': False, 'message': 'Invalid password. Please try again.'})
+
+    return render(request, 'login/login.html')
 
 def verify_otp(request):
     if request.method == 'POST':
-        # Combine OTP input
-        otp_entered = ''.join(request.POST.get(f'otp_{i}', '') for i in range(1, 7))
+        otp_entered = ''
+        for i in range(1, 7):  # Iterate through OTP fields from 1 to 6
+            otp_entered += request.POST.get(f'otp_{i}', '')
 
         otp_saved = request.session.get('otp')
         otp_expiry_str = request.session.get('otp_expiry')
@@ -2143,7 +2153,6 @@ def add_new_case(request):
     # else:
     #     return HttpResponse("Method not allowed", status=405)
 
-# TODO: copy similar function for both view case behalf, and view case impacted
 @login_required
 def view_admin_case_behalf(request, case_id):
     if request.user.account.type != 'admin':
@@ -2288,7 +2297,6 @@ def view_admin_case_behalf(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -2399,7 +2407,6 @@ def view_admin_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -2549,7 +2556,6 @@ def view_case_behalf(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -2660,7 +2666,6 @@ def view_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -3324,15 +3329,15 @@ def save_contact_person_data(request, contact_person_id):
         contact_person.first_name = request.POST.get('contact_person_first_name_' + str(contact_person_id))
         contact_person.middle_name = request.POST.get('contact_person_middle_name_' + str(contact_person_id))
         contact_person.last_name = request.POST.get('contact_person_last_name_' + str(contact_person_id))
-        contact_person.suffix = request.POST.get('contact_person_suffix_name_' + str(contact_person_id))
-        contact_person.relationship = request.POST.get('contact_person-relationship_' + str(contact_person_id))
-        contact_person.contact_number = request.POST.get('contact_person_contact-number_' + str(contact_person_id))
+        # contact_person.suffix = request.POST.get('contact_person_suffix_name_' + str(contact_person_id))
+        # contact_person.relationship = request.POST.get('contact_person-relationship_' + str(contact_person_id))
+        # contact_person.contact_number = request.POST.get('contact_person_contact-number_' + str(contact_person_id))
         contact_person.telephone_number = request.POST.get('contact_person_contact-tel_' + str(contact_person_id))
-        contact_person.street = request.POST.get('contact_person_contact-street_' + str(contact_person_id))
+        # contact_person.street = request.POST.get('contact_person_street_' + str(contact_person_id))
         contact_person.barangay = request.POST.get('contact_person_barangay_' + str(contact_person_id))
         contact_person.province = request.POST.get('contact_person_province_' + str(contact_person_id))
         contact_person.city = request.POST.get('contact_person_city_' + str(contact_person_id))
-        contact_person.region = request.POST.get('contact_person_region_' + str(contact_person_id))
+        # contact_person.region = request.POST.get('contact_person_region_' + str(contact_person_id))
         contact_person.bldg_number = request.POST.get('contact_person_bldg_no_' + str(contact_person_id))
         # Save contact_person data
         contact_person.save()
@@ -3841,16 +3846,16 @@ def process_service_info(request):
         except Case.DoesNotExist:
             return JsonResponse({'error': 'Case not found.'}, status=404)
 
-        # Helper function to parse date
+        # Helper function to parse and validate date
         def parse_date(date_string):
             try:
                 if date_string:
                     return datetime.strptime(date_string, '%Y-%m-%d').date()
-                return None
+                return None  # Return None if the date is empty
             except ValueError:
-                return None
+                return None  # Return None if the date format is invalid
 
-        # Update main case
+        # Extracting and updating data for each field
         case.refers_to_social_welfare = True if request.POST.get('refer_social_welware') == 'true' else False
         case.refer_social_date = parse_date(request.POST.get('refer_social_date', ''))
         case.psychosocial_services = True if request.POST.get('psych_service') == 'true' else False
@@ -3876,6 +3881,8 @@ def process_service_info(request):
         case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))
         case.other_service_provider_name = request.POST.get('name_of_service_provider', '')
         case.type_of_service = request.POST.get('type_of_service_provider', '')
+
+        # Saving the updated Case object
         case.save()
 
         case_data = model_to_dict(case)
@@ -3904,8 +3911,9 @@ def process_service_info(request):
 
 
         return JsonResponse({'message': 'Service information saved successfully.'})
-
-    return JsonResponse({'error': 'Invalid request method.'}, status=400)
+    else:
+        # Return a JSON response indicating failure
+        return JsonResponse({'error': 'Invalid request method.'})
 
 
 def add_status(request, case_id):
