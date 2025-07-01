@@ -740,14 +740,6 @@
                             </form>
                         </div>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
-                    <script>
-                        // For Address Fields Consistenciess'
-                        (function() {
-                            const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
-                            addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
-                        })();
-                    </script>
                     {% endfor %}
                 {% else %}
                 <div class="tab-pane fade show active h-100" id="v-pills-no-victim" role="tabpanel" aria-labelledby="v-pills-no-victim-tab" tabindex="0">
@@ -908,14 +900,6 @@
                         <button class="btn btn-primary save-btn-contact_person_{{ contact_person.id }}" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
                     </div>
                 </form>
-                <script src="{% static 'js/address-fields.js' %}"></script>
-                    <script>
-                        // For Address Fields Consistenciess
-                        (function() {
-                            const formElementContact = document.querySelector("#contact_person_form_{{ contact_person.id }}");
-                            addAddressListener(formElementContact, 'contact_person', '{{ contact_person.id }}');
-                        })();
-                    </script>
                 {% endfor %}
             {% else %}
             <div class="card border border-dark border-1 border-opacity-10 shadow-lg">
@@ -1296,14 +1280,6 @@
                             </form>
                         </div>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
-                    <script>
-                        // For Address Fields Consistenciess
-                        (function() {
-                            const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
-                            addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}')
-                        })();
-                    </script>
                     {% endfor %}
                 {% else %}
                     <div class="tab-pane fade show active h-100" id="v-pills-no-perp" role="tabpanel" aria-labelledby="v-pills-no-parent-tab" tabindex="0">
@@ -1684,14 +1660,6 @@
                         <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
-                    <script src="{% static 'js/address-fields.js' %}"></script>
-                    <script>
-                        // For Generic Address Fields (no prefix)
-                        (function() {
-                            const formElementGeneric = document.querySelector("#incident-form");
-                            addAddressListener(formElementGeneric, '', 0);
-                        })();
-                    </script>
                 </form>
             </div><!--end of container-->
 
