@@ -596,6 +596,7 @@
 </div>
 {% endblock content %}
 {% block scripts %}
+<script src="{% static 'js/address-fields.js' %}"></script>
 <script>
     const addParentForm = document.querySelector("#add_parent_form");
     addAddressListener(addParentForm, 'parent');
