@@ -552,10 +552,17 @@ def law_enforcement_manage_account_view(request):
     users = CustomUser.objects.exclude(email__in=excluded_emails)
     accounts = LawEnforcementAccount.objects.filter(user__in=users)
 
+    regions = Region.objects.filter(id=region_id).values('id', 'code', 'name')
+
+    # Strip names like 'REGION IX (ZAMBOANGA PENINSULA)' → 'REGION IX'
+    for r in regions:
+        if '(' in r['name']:
+            r['name'] = r['name'].split('(')[0].strip()
+
     return render(request, 'super-admin/law-enforcement-account.html', {
         'users': users,
         'accounts': accounts,
-        'default_regions': Region.objects.filter(id=region_id),
+        'default_regions': regions,
         'default_provinces': Province.objects.filter(region_id=region_id),
         'default_police_stations': PoliceStations.objects.filter(region="Region 9"),  # 👈 Include this
     })
