@@ -1536,7 +1536,7 @@ def login_with_otp(request):
             otp = generate_otp()
             request.session['otp'] = otp
             request.session['user_email'] = email
-            otp_expiry = timezone.now() + timezone.timedelta(minutes=1)
+            otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
             request.session['otp_expiry'] = otp_expiry.isoformat()
             send_otp_email(email, otp)
             return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
