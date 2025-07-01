@@ -395,13 +395,13 @@
         });
 
         // Attach click event listener to the Delete button
-        $('.delete-account-btn').on('click', function() {
+        $(document).on('click', '.delete-account-btn', function () {
             // Retrieve the account ID from the data-account-id attribute
             var accountId = $(this).data('account-id');
-            
+
             // Set the account ID value in the modal confirmation button
             $('#confirmAccountDeleteBtn').data('account-id', accountId);
-            
+
             // Open the confirmation modal
             $('#confirmAccountDelete').modal('show');
         });
