@@ -3,648 +3,648 @@
         "model": "account.policestations",
         "fields": {
             "name": "Baliguian Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Godod Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Gutalac Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Dalman Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Kalawit Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Katipunan Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "La Libertad Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Labason Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Postigo Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Liloy Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Manukan Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Mutia Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
-            "name": "Pi\u00f1an Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "name": "Piñan Police Station",
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Polanco Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Roxas Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Rizal Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Salug Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
-            "name": "Osme\u00f1a Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "name": "Osmeña Police Station",
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Siayan Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sibuco Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sibutad Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sindangan Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Siocon Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sirawai Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Tampilisan Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Dapitan Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Dipolog Police Station",
-            "province": "Zamboanga del Norte",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL NORTE",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Pagadian Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Aurora Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Bayog Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Dimataling Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Dinas Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Dumalinao Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Dumingag Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Guipos Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Josefina Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Kumalarang Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Labangan Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Lakewood Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Lapuyan Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Mahayag Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Margosatubig Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Midsalip Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Molave Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Pitogo Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Magsaysay Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "San Miguel Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "San Pablo Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sominot Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Tabina Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Tambulig Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Tigbao Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Tukuran Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sagun Police Station",
-            "province": "Zamboanga del Sur",
-            "region": "Region 9"
+            "province": "ZAMBOANGA DEL SUR",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Alicia Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Buug Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Diplahan Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Imelda Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Ipil Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Kabasalan Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Mabuhay Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Malangas Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Naga Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Olutanga Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Payao Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "RT Lim Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Siay Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Talusan Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Titay Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Tungawan Police Station",
-            "province": "Zamboanga Sibugay",
-            "region": "Region 9"
+            "province": "ZAMBOANGA SIBUGAY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Vitali Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Curuan Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sangali Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Culianan Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Divisoria Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Tetuan Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sta. Maria Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Sinunuc Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Ayala Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Labuan Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     },
     {
         "model": "account.policestations",
         "fields": {
             "name": "Central Police Station",
-            "province": "Zamboanga City",
-            "region": "Region 9"
+            "province": "ZAMBOANGA CITY",
+            "region": "REGION IX"
         }
     }
 ]
