@@ -409,7 +409,7 @@
                                 {% if victim.date_of_birth|calculate_age >= 18 %}
                                     <h4 class="fw-bold ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12z text-lg-start text-center">Victim is above 18.</h4>
                                 {% else %}
-                                    <a href="{% url 'add_parent' case_id=case.id victim_id=victim.id %}" class="btn btn-outline-primary ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12">
+                                    <a href="{% url 'add_parent_victim' case_id=case.id victim_id=victim.id %}" class="btn btn-outline-primary ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12">
                                         <i class='bx bx-body'></i>
                                         <span>Add, View, or Delete Parent</span>
                                     </a>
