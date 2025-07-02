@@ -56,6 +56,8 @@ urlpatterns = [
 
     path('admin-vawc/case/', views.admin_case_view, name='admin case'),
     path('add-new-case/', views.add_new_case, name='add_new_case'),
+    path('admin-barangay-vawc/admin_parent_victim/<int:case_id>/<int:victim_id>/', views.add_parent_admin_view, name='add_parent_admin'),
+    path('admin-barangay-vawc/admin_parent_perpetrator/<int:case_id>/<int:perp_id>/', views.add_parent_perp_admin_view, name='add_parent_perp'),
     path('admin-vawc/view-case/behalf/<int:case_id>/', views.view_admin_case_behalf, name='admin case behalf view'),
     path('admin-vawc/view-case/impacted/<int:case_id>/', views.view_admin_case_impact, name='admin case impacted view'),
     path('admin-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
@@ -118,7 +120,7 @@ urlpatterns = [
     path('update_case_status/<int:case_id>/', views.update_case_status, name='update_case_status'),
     path('update_case_date_closed/<int:case_id>/', views.update_case_date_closed, name='update_case_date_closed'),
 
-    path('admin-barangay-vawc/parent_victim/<int:case_id>/<int:victim_id>/', views.add_parent_view, name='add_parent'),
+    path('admin-barangay-vawc/parent_victim/<int:case_id>/<int:victim_id>/', views.add_parent_view, name='add_parent_'),
     path('save_parent_data/<int:parent_id>/', views.save_parent_data, name='save_parent_data'),
     path('add_new_parent_data/', views.add_new_parent_form, name='add_new_parent_form'),
     path('check_parent_count/', views.check_parent_count, name='check_parent_count'),

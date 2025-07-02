@@ -3406,6 +3406,54 @@ def add_parent_view(request, case_id, victim_id):
         'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
     })
 
+@login_required
+def add_parent_admin_view(request, case_id, victim_id):
+    # Get the Case and Victim objects
+    case = Case.objects.get(id=case_id)
+    victim = Victim.objects.get(id=victim_id)
+
+    # default/initial data to use when page loads
+    region_id = 10 # region 9
+    province_id = 50 # zamboanga del sur
+    municipality_id = 1133 # zamboanga city
+
+    # Query Parent objects related to the Victim
+    parents = Parent.objects.filter(victim_parent=victim)
+    
+    if request.session['security_status'] == "encrypted":
+        for parent in parents:
+            parent.first_name = encrypt_data(parent.first_name)
+            parent.middle_name = encrypt_data(parent.middle_name)
+            parent.last_name = encrypt_data(parent.last_name)
+            parent.suffix = encrypt_data(parent.suffix)
+            parent.date_of_birth = encrypt_data(parent.date_of_birth)
+            parent.civil_status = encrypt_data(parent.civil_status)
+            parent.educational_attainment = encrypt_data(parent.educational_attainment)
+            parent.occupation = encrypt_data(parent.occupation)
+            parent.type_of_disability = encrypt_data(parent.type_of_disability)
+            parent.nationality = encrypt_data(parent.nationality)
+            parent.religion = encrypt_data(parent.religion)
+            parent.contact_number = encrypt_data(parent.contact_number)
+            parent.telephone_number = encrypt_data(parent.telephone_number)
+            parent.house_information = encrypt_data(parent.house_information)
+            parent.street = encrypt_data(parent.street)
+            parent.barangay = encrypt_data(parent.barangay)
+            parent.province = encrypt_data(parent.province)
+            parent.city = encrypt_data(parent.city)
+            parent.region = encrypt_data(parent.region)
+            parent.relationship_to_victim = encrypt_data(parent.relationship_to_victim)
+
+    return render(request, 'super-admin/case/add-parent.html', {
+        'victim': victim,
+        'case': case,
+        'parents': parents,
+        'default_regions': Region.objects.filter(id=region_id),
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_cities': Municipality.objects.filter(province_id=province_id),
+        'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+    })
+
+
 @require_POST
 def save_parent_data(request, parent_id):
     try:
@@ -3558,6 +3606,56 @@ def add_parent_perp_view(request, case_id, perp_id):
             parent.relationship_of_guardian = encrypt_data(parent.relationship_of_guardian)
 
     return render(request, 'barangay-admin/case/add-parent-perp.html', {
+        'perpetrator': perpetrator,
+        'case': case,
+        'parents': parents,
+        'default_regions': Region.objects.filter(id=region_id),
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_cities': Municipality.objects.filter(province_id=province_id),
+        'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+    })
+
+@login_required
+def add_parent_perp_admin_view(request, case_id, perp_id):
+    # Get the Case and Victim objects
+    case = Case.objects.get(id=case_id)
+    perpetrator = Perpetrator.objects.get(id=perp_id)
+
+    # default/initial data to use when page loads
+    region_id = 10 # region 9
+    province_id = 50 # zamboanga del sur
+    municipality_id = 1133 # zamboanga city
+
+    # Query Parent objects related to the Victim
+    parents = Parent_Perpetrator.objects.filter(perpetrator_parent=perpetrator)
+    
+    print("test")
+    
+   
+    if request.session['security_status'] == "encrypted":
+        for parent in parents:
+            parent.first_name = encrypt_data(parent.first_name)
+            parent.middle_name = encrypt_data(parent.middle_name)
+            parent.last_name = encrypt_data(parent.last_name)
+            parent.suffix = encrypt_data(parent.suffix)
+            parent.date_of_birth = encrypt_data(parent.date_of_birth)
+            parent.civil_status = encrypt_data(parent.civil_status)
+            parent.educational_attainment = encrypt_data(parent.educational_attainment)
+            parent.occupation = encrypt_data(parent.occupation)
+            parent.type_of_disability = encrypt_data(parent.type_of_disability)
+            parent.nationality = encrypt_data(parent.nationality)
+            parent.religion = encrypt_data(parent.religion)
+            parent.contact_number = encrypt_data(parent.contact_number)
+            parent.telephone_number = encrypt_data(parent.telephone_number)
+            parent.house_information = encrypt_data(parent.house_information)
+            parent.street = encrypt_data(parent.street)
+            parent.barangay = encrypt_data(parent.barangay)
+            parent.province = encrypt_data(parent.province)
+            parent.city = encrypt_data(parent.city)
+            parent.region = encrypt_data(parent.region)
+            parent.relationship_of_guardian = encrypt_data(parent.relationship_of_guardian)
+
+    return render(request, 'super-admin/case/add-parent-perp.html', {
         'perpetrator': perpetrator,
         'case': case,
         'parents': parents,

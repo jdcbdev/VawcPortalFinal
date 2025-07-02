@@ -14,9 +14,9 @@
 <div class="container-fluid pb-4">
     <div class="pt-1 row">
         {% if case.type_of_case == 'Impacted' %}
-            <a class="col text-decoration-none text-dark" href="{% url 'barangay case impacted view' case_id=case.id %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
+            <a class="col text-decoration-none text-dark" href="{% url 'admin case impacted view' case_id=case.id %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
         {% elif case.type_of_case == 'Behalf' %}
-            <a class="col text-decoration-none text-dark" href="{% url 'barangay case behalf view' case_id=case.id %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
+            <a class="col text-decoration-none text-dark" href="{% url 'admin case behalf view' case_id=case.id %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
         {% endif %}
     </div>
     <h2 class="pt-3 text-center">PARENT INFORMATION (Victim)</h2>
