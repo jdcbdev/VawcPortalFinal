@@ -120,7 +120,7 @@ urlpatterns = [
     path('update_case_status/<int:case_id>/', views.update_case_status, name='update_case_status'),
     path('update_case_date_closed/<int:case_id>/', views.update_case_date_closed, name='update_case_date_closed'),
 
-    path('admin-barangay-vawc/parent_victim/<int:case_id>/<int:victim_id>/', views.add_parent_view, name='add_parent_'),
+    path('admin-barangay-vawc/parent_victim/<int:case_id>/<int:victim_id>/', views.add_parent_view, name='add_parent'),
     path('save_parent_data/<int:parent_id>/', views.save_parent_data, name='save_parent_data'),
     path('add_new_parent_data/', views.add_new_parent_form, name='add_new_parent_form'),
     path('check_parent_count/', views.check_parent_count, name='check_parent_count'),
