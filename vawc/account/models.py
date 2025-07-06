@@ -102,7 +102,7 @@ class Twilio(models.Model):
     account_sid = models.CharField(max_length=50)
     auth_token = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
-    # type = models.CharField(max_length=20, null=True, blank=True)
+    type = models.CharField(max_length=20, null=True, blank=True)
     TYPE_CHOICES = [
         ('local', 'Local'),
         ('deployed', 'Deployed'),
