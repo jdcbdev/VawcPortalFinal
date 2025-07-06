@@ -1660,6 +1660,7 @@ def email_confirm(request):
         otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
         request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
         send_otp_email(email, otp)
+        print('OTP: ' + otp)
         return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
 
 def phone_confirm(request):
@@ -1703,7 +1704,6 @@ def verify_otp_email(request):
         otp_expiry_str = request.session.get('otp_expiry')
         user_email = request.session.get('user_email')  # Retrieving user email from session
         print(user_email)
-        print(otp_saved)
 
         if otp_saved and otp_expiry_str and user_email:  # Check if user_email exists
             otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
