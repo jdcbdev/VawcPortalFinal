@@ -1703,6 +1703,7 @@ def verify_otp_email(request):
         otp_expiry_str = request.session.get('otp_expiry')
         user_email = request.session.get('user_email')  # Retrieving user email from session
         print(user_email)
+        print(otp_saved)
 
         if otp_saved and otp_expiry_str and user_email:  # Check if user_email exists
             otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
