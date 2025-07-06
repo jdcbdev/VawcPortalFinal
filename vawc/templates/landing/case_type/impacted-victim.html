@@ -1140,6 +1140,16 @@
 
         // otp checking
         $('#otpForm').submit(function(e) {
+
+            // Enable the select for region,barangay, and city
+            $('#victim-region_0').prop('disabled', false);
+            $('#perp-region_0').prop('disabled', false);
+            $('#perp-city_0').prop('disabled', false);
+            $('#perp-barangay_0').prop('disabled', false);
+            $('#incident-region').prop('disabled', false);
+            $('#incident-city').prop('disabled', false);
+            $('#incident-barangay').prop('disabled', false);
+
             e.preventDefault(); // Prevent the default form submission
             var formData = $(this).serialize();
 
@@ -1169,10 +1179,14 @@
                         console.log("Phone entered(OTP): " + phoneValue);
                         $('#email-confirmed').val(emailValue);
                         $('#phone-confirmed').val(phoneValue);
+                        
                         goForSubmission = true
+                        
+                      
 
                         // to trigger button of main form
                         document.querySelector(".btn-form-submit").click()
+                        
                         // Log success message to the console
                         console.log('OTP verification successful.');
                     } else {
