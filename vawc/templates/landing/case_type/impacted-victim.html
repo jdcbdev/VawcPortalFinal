@@ -1071,6 +1071,13 @@
                 throw new Error('reCAPTCHA validation failed')
             }
 
+            
+            //show loader and disabled
+            $('#send_email_confirmation').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#send_email_confirmation').css('background-color', '#6c757d'); // Change button color to indicate it's disabled
+            $('#send_email_confirmation').text('Sending...'); // Change button text to indicate validation in progress
+            
+
             $.ajax({
                 url: requestURL, // Modify the URL to point to your Django view endpoint
                 type: 'POST',
@@ -1081,6 +1088,11 @@
                 success: function(response) {
                     // Handle success response
                     console.log(response); // Log the response to the console
+                      //enable button
+                    $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
+                    $('#send_email_confirmation').text('Confirm'); // Change button text to indicate validation in progress
+                    
 
                     // Server-side validation response
                     if (!response.success) {
@@ -1116,6 +1128,13 @@
                     console.error('Error:', errorThrown);
                     // Show error toast if response indicates failure
                     showToast('error', 'An error occurred. Please try again.');
+
+                      //enable button
+                    $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
+                    $('#send_email_confirmation').text('Confirm'); // Change button text to indicate validation in progress
+                    
+
                 }
             });
         });

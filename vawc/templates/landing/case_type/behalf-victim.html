@@ -325,6 +325,7 @@
                                 <hr>
                                 <div class="d-flex justify-content-end mt-4">
                                     <button class="btn btn-primary ml-auto next-perpetrator-button js-btn-next" type="button" title="Next">Next</button>
+                                    
                                 </div>
                             </div>
 
@@ -909,7 +910,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" id="send_email_confirmation">Confirm</button>
+                    <button type="submit" class="btn btn-primary flex justify-between items-center" id="send_email_confirmation">Confirm</button>
                 </div>
             </form>
         </div>
@@ -940,7 +941,7 @@
                         <input class="m-2 text-center form-control rounded" type="text" name="otp_6" maxlength="1" />
                     </div>
                     <div class="text-center mt-4">
-                        <button class="btn btn-primary px-4" type="submit">Validate</button>
+                        <button class="btn btn-primary px-4 flex justify-between" type="submit">Validate</button
                     </div>
                     <div class="text-center mt-3 text-danger" style="display: none;">
                         <i class='bx bx-error-circle'></i>
@@ -1377,6 +1378,7 @@
             if (!goForSubmission) {
                 // Show send email modal
                 $('#sendEmail').modal('show');
+
             } else {
                 // Submitting form to database
 
@@ -1445,6 +1447,12 @@
                 throw new Error('reCAPTCHA validation failed')
             }
 
+            //show loader and disabled
+            $('#send_email_confirmation').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#send_email_confirmation').css('background-color', '#6c757d'); // Change button color to indicate it's disabled
+            $('#send_email_confirmation').text('Sending...'); // Change button text to indicate validation in progress
+            
+
             $.ajax({
                 url: requestURL, // Modify the URL to point to your Django view endpoint
                 type: 'POST',
@@ -1455,7 +1463,12 @@
                 success: function(response) {
                     // Handle success response
                     console.log(response); // Log the response to the console
+                    //enable button
+                    $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
+                    $('#send_email_confirmation').text('Confirm'); // Change button text to indicate validation in progress
                     
+
                     // Server-side validation response
                     if (!response.success) {
                         if(get_contact_type() == 'email') {
@@ -1490,6 +1503,12 @@
                     console.error('Error:', errorThrown);
                     // Show error toast if response indicates failure
                     showToast('error', 'An error occurred. Please try again.');
+                    //enable button
+                    $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
+                    $('#send_email_confirmation').text('Confirm'); // Change button text to indicate validation in progress
+                    
+
                 }
             });
         });
