@@ -1508,6 +1508,20 @@
 
         // otp checking
         $('#otpForm').submit(function(e) {
+
+            // Enable the select for region,barangay, and city
+            $('#victim-region_0').prop('disabled', false);
+            $('#perp-region_0').prop('disabled', false);
+            $('#perp-city_0').prop('disabled', false);
+            $('#perp-barangay_0').prop('disabled', false);
+            $('#incident-region').prop('disabled', false);
+            $('#incident-city').prop('disabled', false);
+            $('#incident-barangay').prop('disabled', false);
+            $('#contact-region').prop('disabled', false);
+            $('#contact-city').prop('disabled', false);
+            $('#contact-barangay').prop('disabled', false);
+
+
             e.preventDefault(); // Prevent the default form submission
             var formData = $(this).serialize();
 
