@@ -715,6 +715,12 @@
                                     </div>
                                     
                                     <h3 class="fs-5 my-3">Local Address</h3>
+                                    <div class="col-12 mb-3">
+                                        <div class="d-flex align-items-center gap-2 pt-1">
+                                            <input class="form-check-input form-check" type="checkbox" id="same-address-victim-3">
+                                            <label for="same-address-victim-3" class="">Check if same as Victim's Address</label>
+                                        </div>
+                                    </div>
                                     <div class="col-sm-6 mb-3"> <!--region-->
                                         <label for="contact-region" class="form-label">Region <span class="required"></span></label>
                                         <select id="contact-region" name="contact-region" class="form-select req-inp" disabled>
@@ -1742,6 +1748,22 @@
             $('#incident-barangay').val('');
             $('#incident-street').val('');
         }
+    });
+
+    $('#same-address-victim-3').on('change', function () {
+    if ($(this).is(':checked')) {
+        $('#contact-province').val($('#victim-province_0').val());
+        $('#contact-city').val($('#victim-city_0').val());
+        $('#contact-barangay').val($('#victim-barangay_0').val());
+        $('#contact-street').val($('#victim-street_0').val());
+        $('#contact-bldg-no').val($('#victim-house-info_0').val());
+    } else {
+        $('#contact-province').val('');
+        $('#contact-city').val('');
+        $('#contact-barangay').val('');
+        $('#contact-street').val('');
+        $('#contact-bldg-no').val('');
+    }
     });
 
 </script>
