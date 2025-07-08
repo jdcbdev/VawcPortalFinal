@@ -3988,6 +3988,7 @@ def process_service_info(request):
         case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
         case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
         case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
+        case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
 
         case.refers_to_other_service_provider = True if request.POST.get('refer_other_service') == 'true' else False
         case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))

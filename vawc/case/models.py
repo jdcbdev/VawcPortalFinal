@@ -116,6 +116,7 @@ class Case(models.Model):
     rescue_operations_of_vaw_cases = models.BooleanField(default=False)
     forensic_interview_and_investigation = models.BooleanField(default=False)
     enforcement_of_protection_order = models.BooleanField(default=False)
+    remarks_to_law_enforcement = models.TextField(null=True, blank=True)
 
     # Other service provider related options
     refers_to_other_service_provider = models.BooleanField(default=False)

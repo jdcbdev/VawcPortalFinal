@@ -333,7 +333,7 @@
                                 </div><!--end of address holder-->
                             </div><!--end of col-->
                         </div><!--end of row-->
-
+                        {% comment %} 
                         <div class="row pt-1">
                             <div class="col-lg-6 vol-md-6 col-sm-8">
                                 <div class="form-check">
@@ -365,6 +365,18 @@
                                     <label class="form-check-label" for="enforce_protect_order">
                                     Enforcement of Protection Order
                                     </label>
+                                </div>
+                        </div><!--end of col--> 
+                        {% endcomment %}
+                            <div class="col-lg-12 vol-md-12 col-sm-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control"
+                                            id="remarks_law_enforcement"
+                                            name="remarks_law_enforcement"
+                                            rows="3"
+                                            placeholder="Input any remarks for the Law Enforcement"
+                                            {% if global.security_status == "encrypted" %}disabled{% endif %}>{{ case.remarks_to_law_enforcement|default_if_none:"" }}</textarea>
+                                    <label for="remarks_law_enforcement">Remarks to Law Enforcement</label>
                                 </div>
                             </div><!--end of col-->
                         </div><!--end of row-->
