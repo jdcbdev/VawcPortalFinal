@@ -273,7 +273,7 @@
                         </div><!--end of row-->
                         <hr>
                         <div class="row pt-4">
-                            <div class="col-lg-12 col-md-6 col-sm-12">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
                                 <div class="row d-flex align-items-center mb-3">
                                     <div class="col">
                                         <div class="form-check">
@@ -287,19 +287,50 @@
                                     <div class="col"><div class="col"><input class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{{ case.refer_law_enforcement_date|date:'Y-m-d' }}"></div></div>
                                 </div>
 
-                                <div class="form-floating mb-3">
-                                    <select id="name_of_agency" name="name_of_agency" class="form-select">
-                                        <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
-                                        {% for station in default_stations %}
-                                            <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
-                                                {{ station.name }}
-                                            </option>
-                                        {% empty %}
-                                            <option>No data found</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label for="name_of_agency">Station</label>
-                                </div>
+                                {% comment %} province {% endcomment %}
+                                <div class="row mb-3 flex">
+                                    <div class="form-floating mb-3">
+                                        <select id="name_of_province" name="name_of_province" class="form-select">
+                                            <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                            {% for station in default_stations_provinces %}
+                                                <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
+                                                    {{ station }}
+                                                </option>
+                                            {% empty %}
+                                                <option>No Province found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="name_of_province">Province</label>
+                                    </div>
+                                    
+                                    {% comment %} end of province {% endcomment %}
+
+                                    <div class="form-floating mb-3">
+                                        <select id="name_of_agency" name="name_of_agency" class="form-select">
+                                            {% comment %} <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                            {% for station in default_stations %}
+                                                {% if case.city == "ZAMBOANGA" %}
+                                                    {% if station.province == "ZAMBOANGA CITY" %}
+                                                    <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
+                                                        {{ station.name }}
+                                                    </option>
+                                                    {% endif %}
+                                                {% else %}
+
+                                                    {% if station.province == case.province %}
+                                                    <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
+                                                        {{ station.name }}
+                                                    </option>
+                                                    {% endif %}
+
+                                                {% endif %}
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %} {% endcomment %}
+                                        </select>
+                                        <label for="name_of_agency">Station</label>
+                                    </div>
+                                </div><!--end of address holder-->
                             </div><!--end of col-->
                         </div><!--end of row-->
 
@@ -409,7 +440,7 @@
                                 {% if victim.date_of_birth|calculate_age >= 18 %}
                                     <h4 class="fw-bold ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12  text-lg-start text-center">Victim is above 18.</h4>
                                 {% else %}
-                                    <a href="{% url 'add_parent' case_id=case.id victim_id=victim.id %}" class="btn btn-outline-primary ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12">
+                                    <a href="{% url 'add_parent_victim' case_id=case.id victim_id=victim.id %}" class="btn btn-outline-primary ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12">
                                         <i class='bx bx-body'></i>
                                         <span>Add, View, or Delete Parent</span>
                                     </a>
@@ -2565,6 +2596,7 @@
 <!-- Load external JS first -->
 
 <script>
+   
     $(document).ready(function() {
         $("#addWitnessBtn").click(function() {
             var witnessDiv = `
@@ -3323,6 +3355,25 @@
             });
         });
 
+
+
+         //dynamic values of police stations
+        $('#name_of_province').on('change', function(){
+            var selectedProvince = $(this).val();
+            var stations = JSON.parse('{{ default_stations|safe }}');
+            var filteredStations = stations.filter(function(station) {
+                return station.province === selectedProvince;
+            });
+
+            var options = '<option value="">--Select Police Station--</option>';
+            filteredStations.forEach(function(station) {
+                options += `<option value="${station.name}">${station.name}</option>`;
+            });
+
+            $('#name_of_agency').html(options);
+        })
+
+        $('#name_of_province').trigger('change');
 
     });
 
