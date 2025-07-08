@@ -709,7 +709,7 @@
                         <input class="m-2 text-center form-control rounded" type="text" name="otp_6" maxlength="1" />
                     </div>
                     <div class="text-center mt-4">
-                        <button class="btn btn-primary px-4" type="submit">Validate</button>
+                        <button class="btn btn-primary px-4" id="btn_otp_validate" type="submit">Validate</button>
                     </div>
                     <div class="text-center mt-3 text-danger" style="display: none;">
                         <i class='bx bx-error-circle'></i>
@@ -1022,7 +1022,9 @@
                     contentType: false, // Prevent jQuery from automatically setting contentType
                     processData: false, // Prevent jQuery from automatically processing data
                     dataType: 'json', // Expect JSON response
-                    success: function(response) {
+                    success: function(response) {    
+                        // hide otp modal
+                        $('#otpModal').modal('hide');
                         if (response.success) {
                             $('#staticBackdrop').modal('show'); // Show the success modal
                         } else {
@@ -1031,6 +1033,8 @@
                         }
                     },
                     error: function(xhr, textStatus, errorThrown) {
+                        // hide otp modal
+                        $('#otpModal').modal('hide');
                         console.error('Error:', errorThrown);
                         // Show error toast if response indicates failure
                         showToast('error', 'An error occurred. Please try again.');
@@ -1163,6 +1167,7 @@
 
         // otp checking
         $('#otpForm').submit(function(e) {
+            $('#btn_otp_validate').prop('disabled', true).text('Validating...'); // Disable the button to prevent multiple submissions
 
             // Enable the select for region,barangay, and city
             $('#victim-region_0').prop('disabled', false);
@@ -1194,8 +1199,7 @@
                 success: function(response) {
                     if (response.success) {
                         $('#successMessage').text(response.message);
-                        // hide otp modal
-                        $('#otpModal').modal('hide');
+                        
                         var emailValue = $('#email-confirm').val();
                         var phoneValue = $('#phone-confirm').val();
                         console.log("Email entered(OTP): " + emailValue);
@@ -1204,9 +1208,7 @@
                         $('#phone-confirmed').val(phoneValue);
                         
                         goForSubmission = true
-                        
-                      
-
+                       
                         // to trigger button of main form
                         document.querySelector(".btn-form-submit").click()
                         
