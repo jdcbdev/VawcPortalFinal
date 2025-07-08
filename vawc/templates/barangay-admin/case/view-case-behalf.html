@@ -271,27 +271,74 @@
                                 </div>
                             </div><!--end of col-->
                         </div><!--end of row-->
+                        
                         <hr>
+                        <div class="row  pt-4">
+                            <div class="col-lg-12 col-md-12 col-sm-8">
+                                <div class="row d-flex align-items-center mb-3">
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="refer_other_service" id="refer_other_service" value="true" {% if case.refers_to_other_service_provider %} checked {% endif %}>
+                                            <label class="form-check-label" for="refer_other_service"><strong>
+                                                <h4>Refers to Other Service Provider<h4>
+                                            </strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_other_service_date" id="refer_other_service_date" value="{{ case.refer_other_service_date|date:'Y-m-d' }}"></div></div>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-8">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="name_of_service_provider" name="name_of_service_provider" placeholder="none" value="{{ case.other_service_provider_name }}">
+                                    <label for="name_of_service_provider">Name of Service Provider</label>
+                                </div>
+                            </div><!--End of col-->
+                            <div class="col-lg-6 col-md-6 col-sm-8">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="type_of_service_provider" id="type_of_service_provider" placeholder="None" value="{{ case.type_of_service}}">
+                                    <label for="type_of_service_provider">Type of Service</label>
+                                </div>
+                            </div><!--End of col-->
+                        </div><!--end of row-->
+
+                        <div class="d-flex justify-content-end just">
+                            <button class="btn btn-primary" id="btn-save-service" type="submit" disabled>Save</button>
+                        </div>
+                    </form>
+
+                    <form id="form-refer-law-enforcement">
+                        {% csrf_token %}
+                        <input type="hidden" name="case_id" value="{{ case.id }}">
+                        <h2 class="pt-3">Law Enforcement</h2>
+                     <hr>
                         <div class="row pt-4">
                             <div class="col-lg-12 col-md-12 col-sm-12">
                                 <div class="row d-flex align-items-center mb-3">
                                     <div class="col">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_law_enforce" id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}>
+                                            <input class="form-check-input" type="checkbox" name="refer_law_enforce" id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}onclick="return false;">
                                             <label class="form-check-label" for="refer_law_enforce"><strong>
-                                                <h4>Refers to Law Enforcement<h4>
+                                                {% if case.refers_to_law_enforcement %}
+                                                    <h4>Refered to Law Enforcement</h4>
+                                                {% else %}
+                                                    <h4>Refer to Law Enforcement</h4>
+                                                {% endif %}
                                             </strong>
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{{ case.refer_law_enforcement_date|date:'Y-m-d' }}"></div></div>
+                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{% if case.refer_law_enforcement_date %}{{ case.refer_law_enforcement_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></div></div>
                                 </div>
 
                                 {% comment %} province {% endcomment %}
                                 <div class="row mb-3 flex">
                                     <div class="form-floating mb-3">
                                         <select id="name_of_province" name="name_of_province" class="form-select">
-                                            <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                            <option value="" {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
                                             {% for station in default_stations_provinces %}
                                                 <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
                                                     {{ station }}
@@ -300,7 +347,7 @@
                                                 <option>No Province found</option>
                                             {% endfor %}
                                         </select>
-                                        <label for="name_of_province">Province</label>
+                                        <label id="name_of_province_label" for="name_of_province">Province</label>
                                     </div>
                                     
                                     {% comment %} end of province {% endcomment %}
@@ -328,7 +375,7 @@
                                                 <option>No data found</option>
                                             {% endfor %} {% endcomment %}
                                         </select>
-                                        <label for="name_of_agency">Station</label>
+                                        <label id="name_of_agency_label" for="name_of_agency">Station</label>
                                     </div>
                                 </div><!--end of address holder-->
                             </div><!--end of col-->
@@ -379,44 +426,13 @@
                                     <label for="remarks_law_enforcement">Remarks to Law Enforcement</label>
                                 </div>
                             </div><!--end of col-->
-                        </div><!--end of row-->
-                        <hr>
-                        <div class="row  pt-4">
-                            <div class="col-lg-12 col-md-12 col-sm-8">
-                                <div class="row d-flex align-items-center mb-3">
-                                    <div class="col">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_other_service" id="refer_other_service" value="true" {% if case.refers_to_other_service_provider %} checked {% endif %}>
-                                            <label class="form-check-label" for="refer_other_service"><strong>
-                                                <h4>Refers to Other Service Provider<h4>
-                                            </strong>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_other_service_date" id="refer_other_service_date" value="{{ case.refer_other_service_date|date:'Y-m-d' }}"></div></div>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-8">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="name_of_service_provider" name="name_of_service_provider" placeholder="none" value="{{ case.other_service_provider_name }}">
-                                    <label for="name_of_service_provider">Name of Service Provider</label>
-                                </div>
-                            </div><!--End of col-->
-                            <div class="col-lg-6 col-md-6 col-sm-8">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="type_of_service_provider" id="type_of_service_provider" placeholder="None" value="{{ case.type_of_service}}">
-                                    <label for="type_of_service_provider">Type of Service</label>
-                                </div>
-                            </div><!--End of col-->
-                        </div><!--end of row-->
-
-                        <div class="d-flex justify-content-end just">
-                            <button class="btn btn-primary" id="btn-save-service" type="submit">Save</button>
+                        </div><!-- Law Enforcement -->
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary" id="btn-submit-law-enforcement" type="submit">{% if case.refers_to_law_enforcement %}Update{% else %}Send{% endif %}</button>
                         </div>
-                    </form>
+                    </form> <!-- End of Law Enforcement Form -->
+
+
                 </div><!--end of container-->
             </div><!--end of container-->
 
@@ -3334,6 +3350,75 @@
             });
         });
 
+
+        $('#btn-submit-law-enforcement').click(function() {
+            // Prevent default form submission
+            event.preventDefault();
+
+            flag = false;
+            // Clear previous error messages
+            $('#name_of_province_label .text-danger').remove();
+            $('#name_of_province_label').text('Province');
+            $('#name_of_agency_label .text-danger').remove();
+            $('#name_of_agency_label').text('Station');
+
+            // Check if the form is valid
+            if (!$('#name_of_province').val()) {
+                $('#name_of_province_label').append('<span class="text-danger">*Required</span>');
+                flag = true;
+            }
+            if (!$('#name_of_agency').val()) {
+                $('#name_of_agency_label').append('<span class="text-danger">*Required</span>');
+                flag = true;
+            }
+
+            if(flag) {
+                // Show error toast
+                $('#errorToast .toast-body').text('Please fill out all required fields.');
+                $('#errorToast').toast('show');
+            }
+            else{
+                
+                if($('#btn-submit-law-enforcement').text() === 'Send') {
+                    $('#btn-submit-law-enforcement').text('Sending...').prop('disabled', true);
+                } else {
+                    $('#btn-submit-law-enforcement').text('Updating...').prop('disabled', true);
+                }
+
+                // Create FormData object from the form
+                var formData = new FormData($('#form-refer-law-enforcement')[0]);
+
+                // Send AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: '/refer-law-enforcement/',
+                    data: formData,
+                    contentType: false, // Prevent jQuery from automatically setting contentType
+                    processData: false, // Prevent jQuery from automatically processing data
+                    dataType: 'json', // Expect JSON response
+                    success: function(response) {
+                        $('#btn-submit-law-enforcement').text('Update').prop('disabled', false);
+                        
+                        // Show success toast
+                        $('#successToast .toast-body').text(response.message);
+                        $('#successToast').toast('show');
+                        
+                        // Reload page after 3 seconds
+                        setTimeout(function() {
+                            location.reload();
+                        }, 3000);
+                    },
+                    error: function(xhr, errmsg, err) {
+                        // Show error toast
+                        $('#errorToast .toast-body').text('Error occurred while processing the form.');
+                        $('#errorToast').toast('show');
+                    }
+                });
+
+            }
+
+        });
+
         $('#btn-save-service').click(function() {
             // Prevent default form submission
             event.preventDefault();
@@ -3369,6 +3454,15 @@
 
 
 
+        $('#name_of_agency').on('change', function() {
+            var selectedStation = $(this).val();
+            if (!selectedStation) {
+                $('#name_of_agency_label').append('<span class="text-danger">*Required</span>');
+            } else {
+                $('#name_of_agency_label .text-danger').remove();
+                $('#name_of_agency_label').text('Station');
+            }
+        })
          //dynamic values of police stations
         $('#name_of_province').on('change', function(){
             var selectedProvince = $(this).val();
@@ -3376,6 +3470,13 @@
             var filteredStations = stations.filter(function(station) {
                 return station.province === selectedProvince;
             });
+
+            if (!selectedProvince) {
+                $('#name_of_province_label').append('<span class="text-danger">*Required</span>');   
+            }else{
+                $('#name_of_province_label .text-danger').remove();
+                $('#name_of_province_label').text('Province');
+            }
 
             var options = '<option value="">--Select Police Station--</option>';
             filteredStations.forEach(function(station) {
@@ -3386,6 +3487,7 @@
         })
 
         $('#name_of_province').trigger('change');
+        $('#name_of_agency').trigger('change');
 
     });
 

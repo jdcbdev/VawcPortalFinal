@@ -34,6 +34,8 @@ from django.contrib.auth.hashers import make_password
 from account.utils import *
 import requests
 from twilio.rest import Client
+from datetime import datetime
+
 # Create your views here.
 
 from .utils import encrypt_data, decrypt_data
@@ -2569,6 +2571,7 @@ def view_case_behalf(request, case_id):
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
             'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
             'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'today': datetime.today(),
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -3948,7 +3951,7 @@ def process_incident_form(request):
         }
         return JsonResponse(response_data)
 
-from datetime import datetime
+
 
 def process_service_info(request):
     if request.method == 'POST':
@@ -3981,14 +3984,14 @@ def process_service_info(request):
         case.issuance_of_medical_certificate = True if request.POST.get('issuance_medical_cert') == 'true' else False
         case.medico_legal_exam = True if request.POST.get('medico_legal') == 'true' else False
 
-        case.refers_to_law_enforcement = True if request.POST.get('refer_law_enforce') == 'true' else False
-        case.refer_law_enforcement_date = parse_date(request.POST.get('refer_law_enforcement_date', ''))
-        case.law_enforcement_agency_name = request.POST.get('name_of_agency', '')
-        case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
-        case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
-        case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
-        case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
-        case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
+        # case.refers_to_law_enforcement = True if request.POST.get('refer_law_enforce') == 'true' else False
+        # case.refer_law_enforcement_date = parse_date(request.POST.get('refer_law_enforcement_date', ''))
+        # case.law_enforcement_agency_name = request.POST.get('name_of_agency', '')
+        # case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
+        # case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
+        # case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
+        # case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
+        # case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
 
         case.refers_to_other_service_provider = True if request.POST.get('refer_other_service') == 'true' else False
         case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))
@@ -4016,11 +4019,11 @@ def process_service_info(request):
         #     )
 
         # Handle Law Enforcement Referral
-        if case.refers_to_law_enforcement:
-            Case.objects.update_or_create(
-                case_number=case.case_number,
-                defaults=case_data
-            )
+        # if case.refers_to_law_enforcement:
+        #     Case.objects.update_or_create(
+        #         case_number=case.case_number,
+        #         defaults=case_data
+        #     )
 
 
         return JsonResponse({'message': 'Service information saved successfully.'})
@@ -4028,6 +4031,43 @@ def process_service_info(request):
         # Return a JSON response indicating failure
         return JsonResponse({'error': 'Invalid request method.'})
 
+def refer_law_enforcement(request):
+    if request.method == 'POST':
+        case_id = request.POST.get('case_id')
+        try:
+            case = Case.objects.get(id=case_id)
+        except Case.DoesNotExist:
+            return JsonResponse({'error': 'Case not found.'}, status=404)
+        
+        # Helper function to parse and validate date
+        def parse_date(date_string):
+            try:
+                if date_string:
+                    return datetime.strptime(date_string, '%Y-%m-%d').date()
+                return None  # Return None if the date is empty
+            except ValueError:
+                return None  # Return None if the date format is invalid
+            
+        case.refers_to_law_enforcement = True 
+        case.refer_law_enforcement_date = parse_date(request.POST.get('refer_law_enforcement_date', ''))
+        case.law_enforcement_agency_name = request.POST.get('name_of_agency', '')
+        case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
+        case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
+        case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
+        case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
+        case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
+
+        case.save()
+
+        if request.POST.get('refer_law_enforce') == 'true':
+            message = 'Law enforcement referral information Updated successfully.'
+        else:
+            message = 'Law enforcement referral information sent successfully.'
+            
+        return JsonResponse({'message': message})
+    else:
+        # Return a JSON response indicating failure
+        return JsonResponse({'error': 'Invalid request method.'})
 
 def add_status(request, case_id):
     if request.method == 'POST':

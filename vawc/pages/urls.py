@@ -78,7 +78,7 @@ urlpatterns = [
     path('admin-barangay-vawc/view-case/impacted/<int:case_id>/', views.view_case_impact, name='barangay case impacted view'),
     path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
     path('process_service_info/', views.process_service_info, name='process_service_info'),
-
+    path('refer-law-enforcement/', views.refer_law_enforcement, name='refer_law_enforcement'),
     #law enforcement admin side
     # path('admin-law-enforcement-vawc/dashboard/', views.law_enforcement_dashboard_view, name='law enforcement dashboard'),
     # path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.law_enforcement_dashboard_data, name='law enforcement dashboard data'),

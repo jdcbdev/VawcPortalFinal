@@ -345,3 +345,8 @@ span.required::before {
         max-width: 400px;
     }
 }
+
+.text-danger {
+    font-weight: bold;
+    color: red;
+}
