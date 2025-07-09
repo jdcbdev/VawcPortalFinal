@@ -183,8 +183,8 @@
 
                             <div class="row">
                                 <div class="d-flex flex-column align-items-start">
-                                    <h5>Remarks to Law Enforcement:</h5>
-                                    <textarea class="form-control" id="remarks_to_law_enforcement" name="remarks_to_law_enforcement" rows="3" {% if global.security_status == "encrypted" %}disabled{% endif %}>{{ case.remarks_to_law_enforcement }}</textarea>
+                                    <h5>Barangay Remark:</h5>
+                                    <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" {% if global.security_status == "encrypted" %}disabled{% endif %}>{% if case.remarks_to_law_enforcement %}{{ case.remarks_to_law_enforcement }}{% else %} No Remark.{% endif %}</textarea>
                                 </div><!--end of col-->
                             </div><!--end of row-->
 
@@ -233,8 +233,18 @@
                                 </div><!--end of col-->
                             </div><!--end of row-->
                             
-                            <h4>Add Remarks</h4>
-
+                            <h4>Add Case Remarks</h4>
+                            <div class="col-lg-12 vol-md-12 col-sm-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control"
+                                            id="remarks_barangay"
+                                            name="remarks_barangay" 
+                                            rows="3"
+                                            placeholder="Input any remarks for the Barangay"
+                                            >{{ case.remarks_to_barangay|default_if_none:"" }}</textarea>
+                                    <label for="remarks_barangay">Add remarks for the case.</label>
+                                </div>
+                            </div><!--end of col-->
 
 
                             <div class="d-flex justify-content-end just">
@@ -3137,6 +3147,8 @@
         $('#btn-save-service').click(function() {
             // Prevent default form submission
             event.preventDefault();
+
+
 
             // Create FormData object from the form
             var formData = new FormData($('#service_info_form')[0]);

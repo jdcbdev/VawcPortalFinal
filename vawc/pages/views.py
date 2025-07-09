@@ -2722,7 +2722,7 @@ def view_enforcement_case_behalf(request, case_id):
             case.city = encrypt_data(case.city)
             case.service_information = encrypt_data(case.service_information)
             case.remarks_to_law_enforcement = encrypt_data(case.remarks_to_law_enforcement)
-
+            case.remarks_to_barangay = encrypt_data(case.remarks_to_barangay)
             # for victim in victims:
             #     victim.description
             for victim in victims:
@@ -2838,7 +2838,6 @@ def view_enforcement_case_behalf(request, case_id):
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
             'default_stations': PoliceStations.objects.all(),
             'service_information': case.service_information,
-            'remarks_to_law_enforcement': case.remarks_to_law_enforcement,
         })
     except Case.DoesNotExist: 
         # Handle case not found appropriately, for example, return a 404 page
@@ -3990,14 +3989,16 @@ def process_service_info(request):
         case.issuance_of_medical_certificate = True if request.POST.get('issuance_medical_cert') == 'true' else False
         case.medico_legal_exam = True if request.POST.get('medico_legal') == 'true' else False
 
+
         # case.refers_to_law_enforcement = True if request.POST.get('refer_law_enforce') == 'true' else False
         # case.refer_law_enforcement_date = parse_date(request.POST.get('refer_law_enforcement_date', ''))
         # case.law_enforcement_agency_name = request.POST.get('name_of_agency', '')
-        # case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
-        # case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
-        # case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
-        # case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
-        # case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
+        case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
+        case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
+        case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
+        case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
+        case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
+        case.remarks_to_barangay = request.POST.get('remarks_barangay', '')
 
         case.refers_to_other_service_provider = True if request.POST.get('refer_other_service') == 'true' else False
         case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))
