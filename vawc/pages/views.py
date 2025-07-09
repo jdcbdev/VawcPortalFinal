@@ -2838,6 +2838,7 @@ def view_enforcement_case_behalf(request, case_id):
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
             'default_stations': PoliceStations.objects.all(),
             'service_information': case.service_information,
+            'today': datetime.today(),
         })
     except Case.DoesNotExist: 
         # Handle case not found appropriately, for example, return a 404 page
@@ -3999,6 +4000,7 @@ def process_service_info(request):
         case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
         case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
         case.remarks_to_barangay = request.POST.get('remarks_barangay', '')
+        case.refer_to_barangay_date = parse_date(request.POST.get('today', ''))
 
         case.refers_to_other_service_provider = True if request.POST.get('refer_other_service') == 'true' else False
         case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))

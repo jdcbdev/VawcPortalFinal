@@ -182,6 +182,13 @@
                             </div><!--end of row-->
 
                             <div class="row">
+                                <div class="d-flex align-items-center">
+                                    <h5>Date Updated: </h5>
+                                    <h5 class="lead"> {%  if case.refer_to_barangay_date %}{{ case.refer_to_barangay_date|date:"F j, Y" }}{%else%} N/A {% endif %}</h5>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+
+                            <div class="row">
                                 <div class="d-flex flex-column align-items-start">
                                     <h5>Barangay Remark:</h5>
                                     <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" {% if global.security_status == "encrypted" %}disabled{% endif %}>{% if case.remarks_to_law_enforcement %}{{ case.remarks_to_law_enforcement }}{% else %} No Remark.{% endif %}</textarea>
@@ -196,7 +203,8 @@
                         <form id="service_info_form">
                             {% csrf_token %}
                             <input type="hidden" name="case_id" value="{{ case.id }}">
-                          
+                            <input type="hidden" name="today" value="{{ today|date:"Y-m-d" }}">
+                            
                             <h4>Referral Actions</h4>
                             <div class="row pt-1 pb-3 ms-3">
                                 <div class="col-lg-6 vol-md-6 col-sm-8">
@@ -248,7 +256,7 @@
 
 
                             <div class="d-flex justify-content-end just">
-                                <button class="btn btn-primary" id="btn-save-service" type="submit">Save</button>
+                                <button class="btn btn-primary" id="btn-save-service" type="submit">Update</button>
                             </div>
                         </form>
                     </div><!--end of container-->

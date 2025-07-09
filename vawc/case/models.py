@@ -122,6 +122,7 @@ class Case(models.Model):
     # Other service provider related options
     refers_to_other_service_provider = models.BooleanField(default=False)
     refer_other_service_date = models.DateField(null=True, blank=True)
+    refer_to_barangay_date = models.DateField(null=True, blank=True)    
     other_service_provider_name = models.CharField(max_length=250, blank=True)
     type_of_service = models.CharField(max_length=250, blank=True)
     
