@@ -2454,6 +2454,7 @@ def view_case_behalf(request, case_id):
             case.province = encrypt_data(case.province)
             case.region = encrypt_data(case.region)
             case.description_of_incident = encrypt_data(case.description_of_incident)
+            case.service_information = encrypt_data(case.service_information)
             case.city = encrypt_data(case.city)
 
             # for victim in victims:
@@ -2572,6 +2573,7 @@ def view_case_behalf(request, case_id):
             'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
             'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
             'today': datetime.today(),
+            
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -4055,8 +4057,9 @@ def refer_law_enforcement(request):
         case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
         case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
         case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
+        case.service_information = request.POST.get('service', '')
         case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
-
+        
         case.save()
 
         if request.POST.get('refer_law_enforce') == 'true':
