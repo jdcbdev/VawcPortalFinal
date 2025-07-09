@@ -310,11 +310,59 @@
                         </div>
                     </form>
 
+                    <h2 class="pt-3">Law Enforcement</h2>
+                     <hr>
+
+                    <div id="law-enforcement-update" class="row pt-4" >
+                        <h4 class="text-left">Law Enforcement Update</h4>
+                        <p> Date Updated : {{ case.refer_to_barangay_date }}</p>
+
+                        <div class="row pt-1 p-4">
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="receipt_comp" id="receipt_comp" value="true" {% if case.receipt_and_recording_of_complaints %} checked {% endif %}disabled>
+                                    <label class="form-check-label" for="receipt_comp">
+                                    Receipt and recording of Complaints
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="rescue_operation" id="rescue_operation" value="true" {% if case.rescue_operations_of_vaw_cases %} checked {% endif %}disabled>
+                                    <label class="form-check-label" for="rescue_operation">
+                                        Rescue Operations of VAW Cases
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="forensic_interview" id="forensic_interview" value="true" {% if case.forensic_interview_and_investigation %} checked {% endif %}disabled>
+                                    <label class="form-check-label" for="forensic_interview">
+                                        Forensic Interview and Investigation
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="enforce_protect_order" id="enforce_protect_order" value="true" {% if case.enforcement_of_protection_order %} checked {% endif %}disabled>
+                                    <label class="form-check-label" for="enforce_protect_order">
+                                    Enforcement of Protection Order
+                                    </label>
+                                </div>
+                        </div><!--end of col--> 
+
+                        <div class="row">
+                            <div class="d-flex flex-column align-items-start">
+                                <h5>Law Enforcement Remark:</h5>
+                                <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" disabled>{% if case.remarks_to_barangay %}{{ case.remarks_to_barangay }}{% else %}No Remark.{% endif %}</textarea>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+                        
+                    </div>
                     <form id="form-refer-law-enforcement">
                         {% csrf_token %}
                         <input type="hidden" name="case_id" value="{{ case.id }}">
-                        <h2 class="pt-3">Law Enforcement</h2>
-                     <hr>
+                        
                         <div class="row pt-4">
                             <div class="col-lg-12 col-md-12 col-sm-12">
                                 <div class="row d-flex align-items-center mb-3">
@@ -380,41 +428,7 @@
                                 </div><!--end of address holder-->
                             </div><!--end of col-->
                         </div><!--end of row-->
-                        {% comment %} 
-                        <div class="row pt-1">
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="receipt_comp" id="receipt_comp" value="true" {% if case.receipt_and_recording_of_complaints %} checked {% endif %}>
-                                    <label class="form-check-label" for="receipt_comp">
-                                    Receipt and recording of Complaints
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="resuce_operation" id="resuce_operation" value="true" {% if case.rescue_operations_of_vaw_cases %} checked {% endif %}>
-                                    <label class="form-check-label" for="resuce_operation">
-                                        Rescue Operations of VAW Cases
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="forensic_interview" id="forensic_interview" value="true" {% if case.forensic_interview_and_investigation %} checked {% endif %}>
-                                    <label class="form-check-label" for="forensic_interview">
-                                        Forensic Interview and Investigation
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="enforce_protect_order" id="enforce_protect_order" value="true" {% if case.enforcement_of_protection_order %} checked {% endif %}>
-                                    <label class="form-check-label" for="enforce_protect_order">
-                                    Enforcement of Protection Order
-                                    </label>
-                                </div>
-                        </div><!--end of col--> 
-                        {% endcomment %}
+                       
 
                         <h4 id="service_information"> Service Information</h4>
                             <div class="label-form border rounded p-4 mb-4">
@@ -3534,6 +3548,16 @@
 
         $('#name_of_province').trigger('change');
         $('#name_of_agency').trigger('change');
+
+        no_barangay_remarks = false;
+        if (!$('#remarks_to_barangay').val() || $('#remarks_to_barangay').val().trim() === 'No Remark.') {
+            no_barangay_remarks = true;
+        }
+        if (no_barangay_remarks && !$('#receipt_comp').val() && !$('#rescue_operation').val() && !$('#forensic_interview').val() && !$('#enforce_protect_order').val()) {
+            $('#law-enforcement-update').css('display', 'none');
+        }
+        
+        
 
     });
 
