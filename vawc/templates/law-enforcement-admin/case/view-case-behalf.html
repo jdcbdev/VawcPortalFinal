@@ -180,6 +180,14 @@
                                     <h5 class="lead"> {{ case.refer_law_enforcement_date|date:"F j, Y" }}</h5>
                                 </div><!--end of col-->
                             </div><!--end of row-->
+
+                            <div class="row">
+                                <div class="d-flex flex-column align-items-start">
+                                    <h5>Remarks to Law Enforcement:</h5>
+                                    <textarea class="form-control" id="remarks_to_law_enforcement" name="remarks_to_law_enforcement" rows="3" {% if global.security_status == "encrypted" %}disabled{% endif %}>{{ case.remarks_to_law_enforcement }}</textarea>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+
                         </div>
                     </div>
 
