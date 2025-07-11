@@ -309,7 +309,7 @@
                             <button class="btn btn-primary" id="btn-save-service" type="submit" disabled>Save</button>
                         </div>
                     </form>
-
+                    
                     <h2 class="pt-3">Law Enforcement</h2>
                      <hr>
 
@@ -349,6 +349,7 @@
                                     Enforcement of Protection Order
                                     </label>
                                 </div>
+                            </div><!--end of col-->
                         </div><!--end of col--> 
 
                         <div class="row">
@@ -3553,12 +3554,16 @@
         if (!$('#remarks_to_barangay').val() || $('#remarks_to_barangay').val().trim() === 'No Remark.') {
             no_barangay_remarks = true;
         }
-        if (no_barangay_remarks && !$('#receipt_comp').val() && !$('#rescue_operation').val() && !$('#forensic_interview').val() && !$('#enforce_protect_order').val()) {
+        if (
+            no_barangay_remarks &&
+            !$('#receipt_comp').is(':checked') &&
+            !$('#rescue_operation').is(':checked') &&
+            !$('#forensic_interview').is(':checked') &&
+            !$('#enforce_protect_order').is(':checked')
+        ) {
             $('#law-enforcement-update').css('display', 'none');
         }
         
-        
-
     });
 
 </script>

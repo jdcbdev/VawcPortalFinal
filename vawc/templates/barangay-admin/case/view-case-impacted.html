@@ -272,7 +272,7 @@
                             </div><!--end of col-->
                         </div><!--end of row-->
                         <hr>
-                        <div class="row pt-4">
+                        {% comment %} <div class="row pt-4">
                             <div class="col-lg-12 col-md-6 col-sm-12">
                                 <div class="row d-flex align-items-center mb-3">
                                     <div class="col">
@@ -336,7 +336,7 @@
                                     </label>
                                 </div>
                             </div><!--end of col-->
-                        </div><!--end of row-->
+                        </div><!--end of row--> {% endcomment %}
                         <hr>
                         <div class="row  pt-4">
                             <div class="col-lg-12 col-md-12 col-sm-8">
@@ -371,9 +371,184 @@
                         </div><!--end of row-->
 
                         <div class="d-flex justify-content-end just">
-                            <button class="btn btn-primary" id="btn-save-service" type="submit">Save</button>
+                            <button class="btn btn-primary" id="btn-save-service" type="submit" disabled>Save</button>
                         </div>
                     </form>
+
+
+                    
+                    <h2 class="pt-3">Law Enforcement</h2>
+                     <hr>
+
+                    <div id="law-enforcement-update" class="row pt-4" >
+                        <h4 class="text-left">Law Enforcement Update</h4>
+                        <p> Date Updated : {{ case.refer_to_barangay_date }}</p>
+
+                        <div class="row pt-1 p-4">
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="receipt_comp" id="receipt_comp" value="true" {% if case.receipt_and_recording_of_complaints %} checked {% endif %}disabled>
+                                    <label class="form-check-label" for="receipt_comp">
+                                    Receipt and recording of Complaints
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="rescue_operation" id="rescue_operation" value="true" {% if case.rescue_operations_of_vaw_cases %} checked {% endif %}disabled>
+                                    <label class="form-check-label" for="rescue_operation">
+                                        Rescue Operations of VAW Cases
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="forensic_interview" id="forensic_interview" value="true" {% if case.forensic_interview_and_investigation %} checked {% endif %}disabled>
+                                    <label class="form-check-label" for="forensic_interview">
+                                        Forensic Interview and Investigation
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="enforce_protect_order" id="enforce_protect_order" value="true" {% if case.enforcement_of_protection_order %} checked {% endif %}disabled>
+                                    <label class="form-check-label" for="enforce_protect_order">
+                                    Enforcement of Protection Order
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of col--> 
+
+                        <div class="row">
+                            <div class="d-flex flex-column align-items-start">
+                                <h5>Law Enforcement Remark:</h5>
+                                <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" disabled>{% if case.remarks_to_barangay %}{{ case.remarks_to_barangay }}{% else %}No Remark.{% endif %}</textarea>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+                        
+                    </div>
+                </div><!--end of law enforcement update-->
+
+                    <form id="form-refer-law-enforcement">
+                        {% csrf_token %}
+                        <input type="hidden" name="case_id" value="{{ case.id }}">
+                        
+                        <div class="row pt-4">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <div class="row d-flex align-items-center mb-3">
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="refer_law_enforce" id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}onclick="return false;">
+                                            <label class="form-check-label" for="refer_law_enforce"><strong>
+                                                {% if case.refers_to_law_enforcement %}
+                                                    <h4>Refered to Law Enforcement</h4>
+                                                {% else %}
+                                                    <h4>Refer to Law Enforcement</h4>
+                                                {% endif %}
+                                            </strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{% if case.refer_law_enforcement_date %}{{ case.refer_law_enforcement_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></div></div>
+                                </div>
+
+                                {% comment %} province {% endcomment %}
+                                <div class="row mb-3 flex">
+                                    <div class="form-floating mb-3">
+                                        <select id="name_of_province" name="name_of_province" class="form-select">
+                                            <option value="" {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                            {% for station in default_stations_provinces %}
+                                                <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
+                                                    {{ station }}
+                                                </option>
+                                            {% empty %}
+                                                <option>No Province found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label id="name_of_province_label" for="name_of_province">Province</label>
+                                    </div>
+                                    
+                                    {% comment %} end of province {% endcomment %}
+
+                                    <div class="form-floating mb-3">
+                                        <select id="name_of_agency" name="name_of_agency" class="form-select">
+                                            {% comment %} <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                            {% for station in default_stations %}
+                                                {% if case.city == "ZAMBOANGA" %}
+                                                    {% if station.province == "ZAMBOANGA CITY" %}
+                                                    <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
+                                                        {{ station.name }}
+                                                    </option>
+                                                    {% endif %}
+                                                {% else %}
+
+                                                    {% if station.province == case.province %}
+                                                    <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
+                                                        {{ station.name }}
+                                                    </option>
+                                                    {% endif %}
+
+                                                {% endif %}
+                                            {% empty %}
+                                                <option>No data found</option>
+                                            {% endfor %} {% endcomment %}
+                                        </select>
+                                        <label id="name_of_agency_label" for="name_of_agency">Station</label>
+                                    </div>
+                                </div><!--end of address holder-->
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+                       
+
+                        <h4 id="service_information"> Service Information</h4>
+                            <div class="label-form border rounded p-4 mb-4">
+                                    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-2">
+
+                                        <label for="crisis" class="col">
+                                            <div class="service-option form-check card shadow-sm p-2 h-100 card-link">
+                                                <div class="card-title ">
+                                                    <h3 class="fw-bold fs-5">Crisis Intervention Including Rescue</h3>
+                                                </div>
+                                                <p class="fw-light">Provides immediate support in emergencies, including rescue operations, temporary shelter, and access to essential resources.</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <input type="radio" class="form-check-input" name="service" id="crisis" value="crisis" autocomplete="off" {% if case.service_information == 'crisis' %}checked{% endif %}>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        <label for="issuance" class="col">
+                                            <div class="service-option form-check card shadow-sm p-2 h-100 card-link">
+                                                <div class="card-title">
+                                                    <h3 class="fw-bold fs-5">Issuance / Enforcement of Barangay Protection Order</h3>
+                                                </div>
+                                                <p class="fw-light">Issues and enforces protective orders at the barangay to ensure the safety of individuals facing domestic violence.</p>
+                                                <div class="d-flex justify-content-end">
+                                                    <input type="radio" class="form-check-input" name="service" id="issuance" value="issuance" autocomplete="off" {% if case.service_information == 'issuance' %}checked{% endif %}>
+                                                </div>
+                                            </div>
+                                        </label>
+
+                                    </div>
+                                </div>
+                        
+                        <h4 id="remarks"> Additional Remarks</h4>
+                            <div class="col-lg-12 vol-md-12 col-sm-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control"
+                                            id="remarks_law_enforcement"
+                                            name="remarks_law_enforcement"
+                                            rows="3"
+                                            placeholder="Input any remarks for the Law Enforcement"
+                                            {% if global.security_status == "encrypted" %}disabled{% endif %}>{{ case.remarks_to_law_enforcement|default_if_none:"" }}</textarea>
+                                    <label for="remarks_law_enforcement">Remarks to Law Enforcement</label>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!-- Law Enforcement -->
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary" id="btn-submit-law-enforcement" type="submit">{% if case.refers_to_law_enforcement %}Update{% else %}Send{% endif %}</button>
+                        </div>
+
+                    </form> <!-- End of Law Enforcement Form -->
+                    
                 </div><!--end of container-->
             </div><!--end of container-->
 
@@ -3008,6 +3183,141 @@
                 localStorage.setItem('activeTab', tabId);
             });
         });
+
+
+
+        
+        $('#btn-submit-law-enforcement').click(function() {
+            // Prevent default form submission
+            event.preventDefault();
+
+            flag = false;
+            // Clear previous error messages
+            $('#name_of_province_label .text-danger').remove();
+            $('#name_of_province_label').text('Province');
+            $('#name_of_agency_label .text-danger').remove();
+            $('#name_of_agency_label').text('Station');
+            $('#service_information .text-danger').remove();
+            $('#service_information').text('Service Information');
+
+            // Check if the form is valid
+            if (!$('#name_of_province').val()) {
+                $('#name_of_province_label').append('<span class="text-danger">*Required</span>');
+                flag = true;
+            }
+            if (!$('#name_of_agency').val()) {
+                $('#name_of_agency_label').append('<span class="text-danger">*Required</span>');
+                flag = true;
+            }
+            var selectedService = $('input[name="service"]:checked').val();
+            if(!selectedService) {
+                $('#service_information').append('<span class="text-danger fs-2">*Required</span>');
+                flag = true;
+            } else {
+                $('#service_information .text-danger').remove();
+                $('#service_information').text('Service Information');
+            }
+
+            if(flag) {
+                // Show error toast
+                $('#errorToast .toast-body').text('Please fill out all required fields.');
+                $('#errorToast').toast('show');
+            }
+            else{
+                
+                if($('#btn-submit-law-enforcement').text() === 'Send') {
+                    $('#btn-submit-law-enforcement').text('Sending...').prop('disabled', true);
+                } else {
+                    $('#btn-submit-law-enforcement').text('Updating...').prop('disabled', true);
+                }
+
+                // Create FormData object from the form
+                var formData = new FormData($('#form-refer-law-enforcement')[0]);
+
+                // Send AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: '/refer-law-enforcement/',
+                    data: formData,
+                    contentType: false, // Prevent jQuery from automatically setting contentType
+                    processData: false, // Prevent jQuery from automatically processing data
+                    dataType: 'json', // Expect JSON response
+                    success: function(response) {
+                        $('#btn-submit-law-enforcement').text('Update').prop('disabled', false);
+                        
+                        // Show success toast
+                        $('#successToast .toast-body').text(response.message);
+                        $('#successToast').toast('show');
+                        
+                        // Reload page after 3 seconds
+                        setTimeout(function() {
+                            location.reload();
+                        }, 3000);
+                    },
+                    error: function(xhr, errmsg, err) {
+                        // Show error toast
+                        $('#errorToast .toast-body').text('Error occurred while processing the form.');
+                        $('#errorToast').toast('show');
+                    }
+                });
+
+            }
+
+        });
+
+        
+        $('#name_of_agency').on('change', function() {
+            var selectedStation = $(this).val();
+            if (!selectedStation) {
+                $('#name_of_agency_label').append('<span class="text-danger">*Required</span>');
+            } else {
+                $('#name_of_agency_label .text-danger').remove();
+                $('#name_of_agency_label').text('Station');
+            }
+        })
+         //dynamic values of police stations
+        $('#name_of_province').on('change', function(){
+            var selectedProvince = $(this).val();
+            var stations = JSON.parse('{{ default_stations|safe }}');
+            var filteredStations = stations.filter(function(station) {
+                return station.province === selectedProvince;
+            });
+
+            if (!selectedProvince) {
+                $('#name_of_province_label').append('<span class="text-danger">*Required</span>');   
+            }else{
+                $('#name_of_province_label .text-danger').remove();
+                $('#name_of_province_label').text('Province');
+            }
+
+            var options = '<option value="">--Select Police Station--</option>';
+            filteredStations.forEach(function(station) {
+                if (station.name === '{{ case.law_enforcement_agency_name }}') {
+                    options += `<option value="${station.name}" selected>${station.name}</option>`;
+                } else {
+                    options += `<option value="${station.name}">${station.name}</option>`;
+                }
+            });
+
+            $('#name_of_agency').html(options);
+        })
+
+        $('#name_of_province').trigger('change');
+        $('#name_of_agency').trigger('change');
+
+        no_barangay_remarks = false;
+        if (!$('#remarks_to_barangay').val() || $('#remarks_to_barangay').val().trim() === 'No Remark.') {
+            no_barangay_remarks = true;
+        }
+        if (
+            no_barangay_remarks &&
+            !$('#receipt_comp').is(':checked') &&
+            !$('#rescue_operation').is(':checked') &&
+            !$('#forensic_interview').is(':checked') &&
+            !$('#enforce_protect_order').is(':checked')
+        ) {
+            $('#law-enforcement-update').css('display', 'none');
+        }
 
 
     });
