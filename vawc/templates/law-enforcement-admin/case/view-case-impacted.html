@@ -202,8 +202,8 @@
                             {% csrf_token %}
                             <input type="hidden" name="case_id" value="{{ case.id }}">
                             <input type="hidden" name="today" value="{{ today|date:"Y-m-d" }}">
-                            
-                            <h4>Referral Actions</h4>
+
+                            <h4 id="referral_actions">Referral Actions</h4>
                             <div class="row pt-1 pb-3 ms-3">
                                 <div class="col-lg-6 vol-md-6 col-sm-8">
                                     <div class="form-check">
@@ -234,6 +234,14 @@
                                         <input class="form-check-input" type="checkbox" name="enforce_protect_order" id="enforce_protect_order" value="true" {% if case.enforcement_of_protection_order %} checked {% endif %}>
                                         <label class="form-check-label" for="enforce_protect_order">
                                         Enforcement of Protection Order
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                                <div class="col-lg-6 vol-md-6 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="law_enforcement_others" id="law_enforcement_others" value="true" {% if case.law_enforcement_others %} checked {% endif %}>
+                                        <label class="form-check-label" for="law_enforcement_others">
+                                            Others
                                         </label>
                                     </div>
                                 </div><!--end of col-->
@@ -2628,38 +2636,58 @@
 
         
         $('#btn-save-service').click(function() {
-            // Prevent default form submission
-            $('#remarks_to_barangay').prop('disabled', false); // Enable the remarks field
-            event.preventDefault();
+            // Check if at least one referral action is checked
+            if(!$('#receipt_comp').is(':checked') 
+            && !$('#rescue_operation').is(':checked')
+            && !$('#forensic_interview').is(':checked')
+            && !$('#enforce_protect_order').is(':checked')
+            && !$('#law_enforcement_others').is(':checked')
+            ){
+                $('#errorToast .toast-body').text('Check Atleast 1 Refferal Action.');
+                $('#errorToast').toast('show');
+                
+                $('#referral_actions .text-danger').remove();
+                $('#referral_actions').append('<span class="text-danger">*</span>');
+                return false; // Prevent form submission if no action is checked
+            }else{
+                
+                $('#remarks_to_barangay').prop('disabled', false); // Enable the remarks field
+                // Prevent default form submission
+                event.preventDefault();
 
 
-            // Create FormData object from the form
-            var formData = new FormData($('#service_info_form')[0]);
+                // Create FormData object from the form
+                var formData = new FormData($('#service_info_form')[0]);
 
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '/process_service_info/',
-                data: formData,
-                contentType: false, // Prevent jQuery from automatically setting contentType
-                processData: false, // Prevent jQuery from automatically processing data
-                dataType: 'json', // Expect JSON response
-                success: function(response) {
-                    // Show success toast
-                    $('#successToast .toast-body').text(response.message);
-                    $('#successToast').toast('show');
-                    
-                    // Reload page after 3 seconds
-                    setTimeout(function() {
-                        location.reload();
-                    }, 3000);
-                },
-                error: function(xhr, errmsg, err) {
-                    // Show error toast
-                    $('#errorToast .toast-body').text('Error occurred while processing the form.');
-                    $('#errorToast').toast('show');
-                }
-            });
+                // Send AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: '/process_service_info/',
+                    data: formData,
+                    contentType: false, // Prevent jQuery from automatically setting contentType
+                    processData: false, // Prevent jQuery from automatically processing data
+                    dataType: 'json', // Expect JSON response
+                    success: function(response) {
+                        // Show success toast
+                        $('#successToast .toast-body').text(response.message);
+                        $('#successToast').toast('show');
+                        
+                        // Reload page after 3 seconds
+                        setTimeout(function() {
+                            location.reload();
+                        }, 3000);
+                    },
+                    error: function(xhr, errmsg, err) {
+                        // Show error toast
+                        $('#errorToast .toast-body').text('Error occurred while processing the form.');
+                        $('#errorToast').toast('show');
+                    }
+                });
+
+            }
+            
+            
+            
         });
 
         // Function to set the active tab
