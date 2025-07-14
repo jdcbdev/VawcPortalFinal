@@ -248,8 +248,12 @@
                         } else if (response.account_type === 'law_enforcement') {
                             // Redirect to staff dashboard
                             window.location.href = '{% url "law enforcement case" %}';
+                        }else if (response.account_type === 'SWDO') {
+                            // Redirect to SWDO dashboard
+                            window.location.href = '{% url "SWDO case" %}';
                         }
 
+                        
                         // Log success message to the console
                         console.log('OTP verification successful.');
                     } else {

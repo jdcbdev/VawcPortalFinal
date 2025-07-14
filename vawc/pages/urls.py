@@ -98,6 +98,13 @@ urlpatterns = [
     path('process_service_info/', views.process_service_info, name='process_service_info'),
     # path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
 
+    # SWDO admin side============================================================================================
+    path('admin-SWDO-vawc/case/', views.SWDO_case_view, name='SWDO case'),
+    path('admin-SWDO-vawc/settings/', views.SWDO_settings_view, name='SWDO settings'),
+    path('admin-SWDO-vawc/view-SWDO-case/behalf/<int:case_id>/', views.view_SWDO_case_behalf, name='SWDO case behalf view'),
+    path('admin-SWDO-vawc/view-SWDO-case/impacted/<int:case_id>/', views.view_SWDO_case_impact, name='SWDO case impacted view'),
+
+
     # NOTIF
     path('admin-barangay-vawc/notification', views.admin_notification_view, name="Notification"),
     path('read_notification/', views.read_notification, name='read_notification'),
