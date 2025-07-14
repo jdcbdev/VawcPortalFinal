@@ -745,6 +745,34 @@ def edit_law_enforcement_account_view(request, account_id):
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
 
+
+
+def edit_swdo_account_view(request, account_id):
+    if request.method == 'GET':
+        try: 
+            print(account_id)
+            SWDO_account = get_object_or_404(SWDOaccount, user_id=account_id)
+          
+            return JsonResponse({
+                'success': True,
+                'account_id': account_id,               
+                'name': SWDO_account.name,
+                'status': SWDO_account.status,
+            })
+        except SWDOaccount.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Account not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    elif request.method == 'POST':
+        try:
+            SWDO_account = get_object_or_404(SWDOaccount, user__id=account_id)
+            SWDO_account.name = request.POST.get('edit_account_fname')
+            SWDO_account.status = request.POST.get('edit_status')
+            SWDO_account.save()
+            return JsonResponse({'success': True, 'message': 'SWDO Account updated successfully'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
 @login_required
 def delete_account(request):
     if request.method == 'POST':

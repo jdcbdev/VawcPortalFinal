@@ -245,14 +245,14 @@
             var accountId = $(this).data('account-id');
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_SWDO_account" 0 %}'.replace('0', accountId),
                 method: 'GET',
                 success: function(response) {
                     // console.log("Full response object:", response);
 
                     // Populate the modal with the data from the response
                     $('#account_id').val(response.account_id);
-                    $('#edit_account_fname').val(response.first_name);
+                    $('#edit_account_fname').val(response.name);
                     $('#edit_status').val(response.status);
                     // Show the modal
                     $('#edit_law_enforcement_account').modal('show');
@@ -272,7 +272,7 @@
             console.log('Account Id:', accountId);
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_SWDO_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
