@@ -216,7 +216,7 @@
         // Function to handle form submission
         $('#addAccountForm').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
-
+            $('#addAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
             $.ajax({
                 url: '{% url "create SWDO account" %}',
                 method: 'POST',
@@ -234,9 +234,11 @@
                         $('#errorToast .toast-body').text(response.message);
                         $('#errorToast').toast('show');
                     }
+                    $('#addAccountBtn').prop('disabled', false); // Enable the button after submission
                 },
                 error: function(xhr, errmsg, err) {
                     console.log(xhr.status + ": " + xhr.responseText);
+                    $('#addAccountBtn').prop('disabled', false); // Enable the button after submission
                 }
             });
         });
