@@ -586,6 +586,53 @@ def swdo_manage_account_view(request):
         'accounts': accounts,
     })
 
+
+@login_required
+def create_swdo_manage_account(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('account_username')
+            email = request.POST.get('account_email')
+            name = request.POST.get('account_fname')
+            
+            print(username, email, name)
+            
+            try:
+                password = generate_random_password()
+                passkey = generate_random_password()
+                subject = 'Account Creation from VAWC'
+                message = (
+                    f'--------------------------\n'
+                    f'Account Details\n'
+                    f'--------------------------\n\n'
+                    f'Here is your New Account From VAWC:\n\n'
+                    f'Email:  {email}\n'
+                    f'Username:  {username}\n'
+                    f'Password:  {password}\n\n'
+                    f'--------------------------\n'
+                    f'This email was sent automatically. Please do not reply.'
+                )
+                send_email(email, subject, message)
+                # Create the user with provided data using the CustomUser manager
+                user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                # Create the Account instance and link it to the user
+                account = SWDOaccount.objects.create(
+                    user=user,
+                    name= name,
+                )
+            except:
+                pass
+            # Return success response
+            return JsonResponse({'success': True, 'message': 'SWDO Account created successfully'})
+
+        except Exception as e:
+            # Return error response if something goes wrong
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    else:
+        # Return error response for unsupported methods
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+    
 # def select_police_station(request):
 #     if request.method == "POST":
 #         action = request.POST.get("action")
