@@ -69,6 +69,15 @@ class LawEnforcementAccount(models.Model):
     def __str__(self):
         return self.user.username
     
+class SWDOaccount(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, null=True, blank=True, default='Active')
+    type = models.CharField(max_length=20, default='SWDO')
+    
+    def __str__(self):
+        return self.user.username
+    
 class PoliceStations(models.Model):
     name = models.CharField(max_length=255)
     province = models.CharField(max_length=100)

@@ -570,6 +570,21 @@ def law_enforcement_manage_account_view(request):
     })
 
 
+    
+@login_required
+def swdo_manage_account_view(request):
+    # Emails to exclude
+    excluded_emails = ['admin@gmail.com', 'vawcdilg@gmail.com']
+
+
+    # Exclude the specified emails from the queryset
+    users = CustomUser.objects.exclude(email__in=excluded_emails)
+    accounts = SWDOaccount.objects.filter(user__in=users)
+
+    return render(request, 'super-admin/SWDO-account.html', {
+        'users': users,
+        'accounts': accounts,
+    })
 
 # def select_police_station(request):
 #     if request.method == "POST":
@@ -591,6 +606,7 @@ def law_enforcement_manage_account_view(request):
 #             return JsonResponse(data, safe=False)
 
 #     return JsonResponse([], safe=False)
+
 
 
 def edit_account_view(request, account_id):

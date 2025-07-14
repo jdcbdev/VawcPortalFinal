@@ -9,7 +9,7 @@
 <div class="container-fluid pb-4">
     <div class="row d-flex justify-content-between">
         <div class="col-auto">
-            <h1>Law Enforcement Account</h1>
+            <h1>SWDO Account</h1>
         </div>
         <div class="col-auto">
             <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account"><i class="bx bx-plus"></i> Add Account</button>
@@ -39,7 +39,6 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Station</th>
                     <th scope="col">Date Added</th>
                     <th class="text-center" scope="col">Manage</th>
                 </tr>
@@ -91,7 +90,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Account</h1>
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Add SWDO Account</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -117,49 +116,12 @@
                         Looks good!
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-6 col-12">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="account_fname" name="account_fname" placeholder="name@example.com" >
-                            <label for="account_fname">First Name</label>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-12l">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="account_mname" name="account_mname" placeholder="name@example.com" >
-                            <label for="account_mname">Middle Name</label>
-                        </div>
-                    </div>
-                </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="account_lname" name="account_lname" placeholder="name@example.com" >
-                    <label for="account_lname">Last Name</label>
+                    <input type="text" class="form-control" id="account_fname" name="account_fname" placeholder="name@example.com" >
+                    <label for="account_fname">Name</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="account_region" name="account_region">
-                        <option>--Select Option--</option>
-                        {% for region in default_regions %}
-                            <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
-                    </select>
-                    <label for="victim_region">Region</label>
-                </div>
+               
 
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="account_province" name="account_province" disabled>
-                        <option value="">--Select Option--</option>
-                    </select>
-                    <label for="account_province">Province</label>
-                </div>  
-                
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="account_police_station" name="account_police_station" disabled>
-                        <option value="">--Select Option--</option>
-                    </select>
-                    <label for="account_police_station">Police Station</label>
-                </div>                         
             </form>
         </div>
         <div class="modal-footer">
