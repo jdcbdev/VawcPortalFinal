@@ -203,49 +203,52 @@
                             <input type="hidden" name="case_id" value="{{ case.id }}">
                             <input type="hidden" name="today" value="{{ today|date:"Y-m-d" }}">
 
-                            <h4 id="referral_actions">Referral Actions</h4>
-                            <div class="row pt-1 pb-3 ms-3">
-                                <div class="col-lg-6 vol-md-6 col-sm-8">
+                            
+                            <div class="row pt-4">
+                                <div class="col-lg-12 col-md-12 col-sm-8">
+                                    <div class="row d-flex align-items-center">
+                                        <div class="col">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="refer_social_welware" id="refer_social_welware" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}>
+                                                <label class="form-check-label" for="refer_social_welware">
+                                                        <h4 id="referral_actions">Refers to Social Welfare and Development Office</h4>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col"><input class="form-control" type="date" name="refer_social_date" id="refer_social_date" value="{{ case.refer_social_date|date:'Y-m-d' }}"></div>
+                                    </div>
+                                    
+                                    
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+
+                            <div class="row pt-1 pb-3">
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="receipt_comp" id="receipt_comp" value="true" {% if case.receipt_and_recording_of_complaints %} checked {% endif %}>
-                                        <label class="form-check-label" for="receipt_comp">
-                                        Receipt and recording of Complaints
+                                        <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}>
+                                        <label class="form-check-label" for="psych_service">
+                                            Psychosocial services
                                         </label>
                                     </div>
                                 </div><!--end of col-->
-                                <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="resuce_operation" id="resuce_operation" value="true" {% if case.rescue_operations_of_vaw_cases %} checked {% endif %}>
-                                        <label class="form-check-label" for="resuce_operation">
-                                            Rescue Operations of VAW Cases
+                                        <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}>
+                                        <label class="form-check-label" for="emergency_shelter">
+                                            Emergency Shelter
                                         </label>
                                     </div>
                                 </div><!--end of col-->
-                                <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="forensic_interview" id="forensic_interview" value="true" {% if case.forensic_interview_and_investigation %} checked {% endif %}>
-                                        <label class="form-check-label" for="forensic_interview">
-                                            Forensic Interview and Investigation
-                                        </label>
-                                    </div>
-                                </div><!--end of col-->
-                                <div class="col-lg-6 vol-md-6 col-sm-8">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="enforce_protect_order" id="enforce_protect_order" value="true" {% if case.enforcement_of_protection_order %} checked {% endif %}>
-                                        <label class="form-check-label" for="enforce_protect_order">
-                                        Enforcement of Protection Order
-                                        </label>
-                                    </div>
-                                </div><!--end of col-->
-                                <div class="col-lg-6 vol-md-6 col-sm-8">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="law_enforcement_others" id="law_enforcement_others" value="true" {% if case.law_enforcement_others %} checked {% endif %}>
-                                        <label class="form-check-label" for="law_enforcement_others">
-                                            Others
+                                        <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %}>
+                                        <label class="form-check-label" for="economic_assist">
+                                            Economic Assistance
                                         </label>
                                     </div>
                                 </div><!--end of col-->
                             </div><!--end of row-->
+                            
                             
                             <h4>Add Case Remarks</h4>
                             <div class="col-lg-12 vol-md-12 col-sm-12">
