@@ -139,6 +139,8 @@
                 <div class="container pt-3 pb-3">
                 </div><!--end of container-->
                 <hr>
+
+
                 <div class="container-fluid mx-0 pt-2 pb-3">
                     <h1 class="text-center">Case Information</h1>
                     <div class="pt-2">
@@ -172,55 +174,13 @@
                     </div>
                 </div>
 
+                   
                 <div class=" pt-2">
                     <form id="service_info_form">
                         {% csrf_token %}
                         <input type="hidden" name="case_id" value="{{ case.id }}">
                         <h2>Services Information</h2>
-                        <div class="row pt-4">
-                            <div class="col-lg-12 col-md-12 col-sm-8">
-                                <div class="row d-flex align-items-center">
-                                    <div class="col">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_social_welware" id="refer_social_welware" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}>
-                                            <label class="form-check-label" for="refer_social_welware">
-                                                <strong><h4>Refers to Social Welfare and Development Office<h4></strong>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col"><input class="form-control" type="date" name="refer_social_date" id="refer_social_date" value="{{ case.refer_social_date|date:'Y-m-d' }}"></div>
-                                </div>
-                                
-                                
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-
-                        <div class="row pt-1">
-                            <div class="col-lg-4 vol-md-4 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}>
-                                    <label class="form-check-label" for="psych_service">
-                                        Psychosocial services
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 vol-md-4 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}>
-                                    <label class="form-check-label" for="emergency_shelter">
-                                        Emergency Shelter
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 vol-md-4 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %}>
-                                    <label class="form-check-label" for="economic_assist">
-                                        Economic Assistance
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
+                        
                         <hr>
                         <div class="row pt-4">
                             <div class="col-12">
@@ -375,13 +335,97 @@
                         </div>
                     </form>
 
+                    <hr>
+                     
+                    <div id="SWDO-update" class="row pt-4" >
+                        <h4 class="text-left">Referred to Social Welfare and Development Office Update</h4>
+                        <p> Date Updated : {{ case.refer_to_barangay_from_social_date }}</p>
 
+                        <div class="row pt-1 pb-3 ps-3">
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}onclick="return false;">
+                                    <label class="form-check-label" for="psych_service">
+                                        Psychosocial services
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}onclick="return false;">
+                                    <label class="form-check-label" for="emergency_shelter">
+                                        Emergency Shelter
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %} onclick="return false;">
+                                    <label class="form-check-label" for="economic_assist">
+                                        Economic Assistance
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+
+                        <div class="row">
+                            <div class="d-flex flex-column align-items-start">
+                                <h5>SWDO Remark:</h5>
+                                <textarea class="form-control" id="remark_to_barangay_from_SWDO" name="remark_to_barangay_from_SWDO" rows="3" disabled>{% if case.remark_to_barangay_from_SWDO %}{{ case.remark_to_barangay_from_SWDO }}{% else %}No Remark.{% endif %}</textarea>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+                    </div><!--end of SWDO update-->
+
+                    <form id="form-refer-SWDO" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="case_id" value="{{ case.id }}">
+                        <input type = "hidden" class="form-control" type="date" name="refer_social_date" id="refer_social_date"  value="{% if case.refer_social_date %}{{ case.refer_social_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
+                        <input type="hidden" name="brgy_to_SWDO_form" value="true">
+
+                        
+                        <div class="row pt-4">
+                            <div class="col-lg-12 col-md-12 col-sm-8">
+                                <div class="row d-flex align-items-center">
+                                    <div class="col">
+                                        <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="refer_SWDO" id="refer_SWDO" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}onclick="return false;">
+                                                <label class="form-check-label" for="refer_SWDO"><strong>
+                                                    {% if case.refers_to_social_welfare %}
+                                                        <h4>Refered to Social Welfare and Development Office</h4>
+                                                    {% else %}
+                                                        <h4>Refer to Social Welfare and Development Office</h4>
+                                                    {% endif %}
+                                                </strong>
+                                                </label>
+                                        </div>
+                                        <div class="col">{% if case.refer_social_date %}Date Reffered : <strong>{{ case.refer_social_date|date:'M j, Y' }}</strong>{% endif %}</div>
+                                    </div>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+                        
+                       <h5 id="remarks" class="pt-3"> Additional Remarks</h5>
+                        <div class="col-lg-12 vol-md-12 col-sm-12">
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control"
+                                        id="remarks_SWDO"
+                                        name="remarks_SWDO"
+                                        rows="3"
+                                        placeholder="Input any remarks for the Social Welfare and Development Office"
+                                        >{{ case.remarks_to_social_welfare|default_if_none:"" }}</textarea>
+                                <label for="remarks_SWDO">Remarks to Social Welfare and Development Office</label>
+                            </div>
+                        </div><!--end of col-->
                     
-                    <h2 class="pt-3">Law Enforcement</h2>
-                     <hr>
+                    
+                        <div class="d-flex justify-content-end just">
+                                <button class="btn btn-primary" id="btn-submit-SWDO" type="submit">{% if case.refers_to_social_welfare %}Update{% else %}Send{% endif %}</button>
+                        </div>
+                    </form>
+                    <hr>
 
                     <div id="law-enforcement-update" class="row pt-4" >
-                        <h4 class="text-left">Law Enforcement Update</h4>
+                        <h5 class="text-left">Law Enforcement Update</h5>
                         <p> Date Updated : {{ case.refer_to_barangay_date }}</p>
 
                         <div class="row pt-1 p-4">
@@ -448,8 +492,10 @@
                                             </strong>
                                             </label>
                                         </div>
+                                        <div class="col">{% if case.refer_law_enforcement_date %}Date Reffered : <strong>{{case.refer_law_enforcement_date|date:'M j, Y'}}</strong>{%endif%}</div>
                                     </div>
-                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{% if case.refer_law_enforcement_date %}{{ case.refer_law_enforcement_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></div></div>
+                                    
+                                    <div  class="col"><div class="col"><input type = "hidden" class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{% if case.refer_law_enforcement_date %}{{ case.refer_law_enforcement_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></div></div>
                                 </div>
 
                                 {% comment %} province {% endcomment %}
@@ -500,7 +546,7 @@
                         </div><!--end of row-->
                        
 
-                        <h4 id="service_information"> Service Information</h4>
+                        <h5 id="service_information"> Service Information</h5>
                             <div class="label-form border rounded p-4 mb-4">
                                     <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-2">
 
@@ -530,7 +576,7 @@
                                     </div>
                                 </div>
                         
-                        <h4 id="remarks"> Additional Remarks</h4>
+                        <h5 id="remarks"> Additional Remarks</h5>
                             <div class="col-lg-12 vol-md-12 col-sm-12">
                                 <div class="form-floating mb-3">
                                     <textarea class="form-control"
@@ -3318,6 +3364,64 @@
         ) {
             $('#law-enforcement-update').css('display', 'none');
         }
+
+
+        no_SWDO_remarks = false;
+        if (!$('#remark_to_barangay_from_SWDO').val() || $('#remark_to_barangay_from_SWDO').val().trim() === 'No Remark.') {
+            no_SWDO_remarks = true;
+        }
+        if (
+            no_SWDO_remarks &&
+            !$('#psych_service').is(':checked') &&
+            !$('#emergency_shelter').is(':checked') &&
+            !$('#economic_assist').is(':checked') 
+        ) {
+            $('#SWDO-update').css('display', 'none');
+        }
+
+
+        $('#btn-submit-SWDO').click(function() {
+            // Prevent default form submission
+            event.preventDefault();
+            var formData = new FormData($('#form-refer-SWDO')[0]);
+
+            $('#btn-submit-SWDO').text('Update').prop('disabled', true);
+
+            if($('#btn-submit-SWDO').text() === 'Send') {
+                    $('#btn-submit-SWDO').text('Sending...').prop('disabled', true);
+                } else {
+                    $('#btn-submit-SWDO').text('Updating...').prop('disabled', true);
+                }
+                
+            // Send AJAX request
+            $.ajax({
+                type: 'POST',
+                url: '/refer-SWDO/',
+                data: formData,
+                contentType: false, // Prevent jQuery from automatically setting contentType
+                processData: false, // Prevent jQuery from automatically processing data
+                dataType: 'json', // Expect JSON response
+                success: function(response) {
+                    $('#btn-submit-SWDO').text('Update').prop('disabled', false);
+                    
+                    // Show success toast
+                    $('#successToast .toast-body').text(response.message);
+                    $('#successToast').toast('show');
+                    
+                    // Reload page after 3 seconds
+                    setTimeout(function() {
+                        location.reload();
+                    }, 3000);
+                },
+                error: function(xhr, errmsg, err) {
+                    // Show error toast
+                     $('#btn-submit-SWDO').text('Update').prop('disabled', false);
+                    $('#errorToast .toast-body').text('Error occurred while processing the form.');
+                    $('#errorToast').toast('show');
+                }
+            });
+        
+        });
 
 
     });

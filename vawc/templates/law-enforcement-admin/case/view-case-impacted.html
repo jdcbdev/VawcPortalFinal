@@ -201,7 +201,7 @@
                         <form id="service_info_form">
                             {% csrf_token %}
                             <input type="hidden" name="case_id" value="{{ case.id }}">
-                            <input type="hidden" name="today" value="{{ today|date:"Y-m-d" }}">
+                            <div class="col"><div class="col"><input type="hidden" class="form-control" type="date" name="refer_to_barangay_date" id="refer_to_barangay_date" value="{% if case.refer_to_barangay_date %}{{ case.refer_to_barangay_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></div></div>
 
                             <h4 id="referral_actions">Referral Actions</h4>
                             <div class="row pt-1 pb-3 ms-3">

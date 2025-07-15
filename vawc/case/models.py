@@ -96,10 +96,14 @@ class Case(models.Model):
     checkbox_ra_9775 = models.BooleanField(default=False)
 
     refers_to_social_welfare = models.BooleanField(default=False)
+    refers_to_barangay_from_SWDO = models.BooleanField(default=False)
     refer_social_date = models.DateField(null=True, blank=True)
+    refer_to_barangay_from_social_date = models.DateField(null=True, blank=True)
     psychosocial_services = models.BooleanField(default=False)
     emergency_shelter = models.BooleanField(default=False)
     economic_assistance = models.BooleanField(default=False)
+    remarks_to_social_welfare = models.TextField(null=True, blank=True)
+    remark_to_barangay_from_SWDO = models.TextField(null=True, blank=True)
 
     refers_to_healthcare_provider = models.BooleanField(default=False)
     refer_healthcare_date = models.DateField(null=True, blank=True)
