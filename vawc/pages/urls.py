@@ -44,10 +44,12 @@ urlpatterns = [
     path('admin-vawc/graph-report/', views.admin_graph_view, name='admin graph'),
     path('admin-vawc/manage/account/', views.admin_manage_account_view, name='admin account'),
     path('admin-vawc/manage/law-enforcement-account/', views.law_enforcement_manage_account_view, name='law enforcement account'),
+    path('admin-vawc/manage/healthcare-account/', views.healthcare_manage_account_view, name='healthcare account'),
     path('admin-vawc/manage/SWDO-account/', views.swdo_manage_account_view, name='SWDO account'),
     path('admin-vawc/manage/passkey/', views.admin_manage_passkey_view, name='admin passkey'),
     path('admin-vawc/create_account/', views.create_account, name='create account'),
     path('admin-vawc/create_law-enforcement-account/', views.create_law_enforcement_account, name='create law enforcement account'),
+    path('admin-vawc/create_healthcare-account/', views.create_healthcare_account, name='create healthcare account'),
     path('admin-vawc/create_SWDO-account/', views.create_swdo_manage_account, name='create SWDO account'),
     path('admin-vawc/edit_account/<int:account_id>/', views.edit_account_view, name='edit_account'),
     path('admin-vawc/edit_law-enforcement_account/<int:account_id>/', views.edit_law_enforcement_account_view, name='edit_law-enforcement_account'),
@@ -82,7 +84,6 @@ urlpatterns = [
     path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
     # path('process_service_info/', views.process_service_info, name='process_service_info'),
     path('refer-law-enforcement/', views.refer_law_enforcement, name='refer_law_enforcement'),
-    path('refer-SWDO/', views.refer_SWDO, name='refer_SWDO'),
     #law enforcement admin side
     # path('admin-law-enforcement-vawc/dashboard/', views.law_enforcement_dashboard_view, name='law enforcement dashboard'),
     # path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.law_enforcement_dashboard_data, name='law enforcement dashboard data'),
@@ -104,6 +105,7 @@ urlpatterns = [
     path('admin-SWDO-vawc/settings/', views.SWDO_settings_view, name='SWDO settings'),
     path('admin-SWDO-vawc/view-SWDO-case/behalf/<int:case_id>/', views.view_SWDO_case_behalf, name='SWDO case behalf view'),
     path('admin-SWDO-vawc/view-SWDO-case/impacted/<int:case_id>/', views.view_SWDO_case_impact, name='SWDO case impacted view'),
+    path('refer-SWDO/', views.refer_SWDO, name='refer_SWDO'),
 
 
     # NOTIF

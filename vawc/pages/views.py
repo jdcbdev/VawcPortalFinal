@@ -570,6 +570,34 @@ def law_enforcement_manage_account_view(request):
     })
 
 
+@login_required
+def healthcare_manage_account_view(request):
+    # Emails to exclude
+    excluded_emails = ['admin@gmail.com', 'vawcdilg@gmail.com']
+
+    # Default/initial data to use when page loads
+    region_id = 10  # Region 9
+    province_id = 50  # Zamboanga del Sur
+    municipality_id = 1133  # Zamboanga City
+
+    # Exclude the specified emails from the queryset
+    users = CustomUser.objects.exclude(email__in=excluded_emails)
+    accounts = HealthcareAccount.objects.filter(user__in=users)
+
+    regions = Region.objects.filter(id=region_id).values('id', 'code', 'name')
+
+    # Strip names like 'REGION IX (ZAMBOANGA PENINSULA)' → 'REGION IX'
+    for r in regions:
+        if '(' in r['name']:
+            r['name'] = r['name'].split('(')[0].strip()
+
+    return render(request, 'super-admin/healthcare-account.html', {
+        'users': users,
+        'accounts': accounts,
+        'default_regions': regions,
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_police_stations': PoliceStations.objects.filter(region="Region 9"),  # 👈 Include this
+    })
     
 @login_required
 def swdo_manage_account_view(request):
@@ -906,6 +934,68 @@ def create_law_enforcement_account(request):
                     region=region, 
                     province=province, 
                     station=station
+                )
+            except:
+                pass
+            # Return success response
+            return JsonResponse({'success': True, 'message': 'Account created successfully'})
+
+        except Exception as e:
+            # Return error response if something goes wrong
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    else:
+        # Return error response for unsupported methods
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+
+@login_required
+def create_healthcare_account(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('account_username')
+            email = request.POST.get('account_email')
+            first_name = request.POST.get('account_fname')
+            middle_name = request.POST.get('account_mname')
+            last_name = request.POST.get('account_lname')
+            region = request.POST.get('account_region')
+            province = request.POST.get('account_province')
+            hospital_name = request.POST.get('account_hospital_name')
+            
+            print(username, email, first_name, middle_name, last_name, region, province, hospital_name)
+            
+            try:
+                password = generate_random_password()
+                passkey = generate_random_password()
+                subject = 'Account Creation from VAWC'
+                message = (
+                    f'--------------------------\n'
+                    f'Account Details\n'
+                    f'--------------------------\n\n'
+                    f'Here is your New Healthcare Account From VAWC:\n\n'
+                    f'Email:  {email}\n'
+                    f'Username:  {username}\n'
+                    f'Password:  {password}\n\n'
+                    f'First Name:  {first_name}\n'
+                    f'Middle Name:  {middle_name}\n'
+                    f'Last Name:  {last_name}\n\n'
+                    f'Region:  {region}\n'
+                    f'Province:  {province}\n'
+                    f'Hospital Name:  {hospital_name}\n\n'
+                    f'--------------------------\n'
+                    f'This email was sent automatically. Please do not reply.'
+                )
+                send_email(email, subject, message)
+                # Create the user with provided data using the CustomUser manager
+                user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                # Create the Account instance and link it to the user
+                account = HealthcareAccount.objects.create(
+                    user=user,
+                    first_name=first_name,
+                    middle_name=middle_name,
+                    last_name=last_name,
+                    region=region, 
+                    province=province, 
+                    hospital_name=hospital_name
                 )
             except:
                 pass

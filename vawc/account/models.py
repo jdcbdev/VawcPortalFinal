@@ -78,7 +78,7 @@ class SWDOaccount(models.Model):
     def __str__(self):
         return self.user.username
 
-class account_healthcare(models.Model):
+class HealthcareAccount(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=50)
