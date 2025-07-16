@@ -77,7 +77,21 @@ class SWDOaccount(models.Model):
     
     def __str__(self):
         return self.user.username
+
+class account_healthcare(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, null=True, blank=True, default='Active')
+    region = models.CharField(max_length=100, null=True, blank=True)
+    province = models.CharField(max_length=100, null=True, blank=True)
+    hospital_name = models.CharField(max_length=100, null=True, blank=True)
+    type = models.CharField(max_length=20, default='law_enforcement')
     
+    def __str__(self):
+        return self.user.username
+
 class PoliceStations(models.Model):
     name = models.CharField(max_length=255)
     province = models.CharField(max_length=100)
