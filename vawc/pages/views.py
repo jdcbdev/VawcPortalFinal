@@ -781,7 +781,7 @@ def edit_healthcare_account_view(request, account_id):
             print(account_id)
             healthcare_account = get_object_or_404(HealthcareAccount, user_id=account_id)
             regions = list(HealthcareAccount.objects.values('region').distinct())
-            provinces = list(HealthcareAccount.objects.values('province').distinct())
+            provinces = list(PoliceStations.objects.values('province').distinct())
 
             return JsonResponse({
                 'success': True,
@@ -802,14 +802,14 @@ def edit_healthcare_account_view(request, account_id):
             return JsonResponse({'success': False, 'message': str(e)})
     elif request.method == 'POST':
         try:
-            healthcare_account = get_object_or_404(LawEnforcementAccount, user__id=account_id)
+            healthcare_account = get_object_or_404(HealthcareAccount, user__id=account_id)
             healthcare_account.first_name = request.POST.get('edit_account_fname')
             healthcare_account.middle_name = request.POST.get('edit_account_mname') 
             healthcare_account.last_name = request.POST.get('edit_account_lname')
             healthcare_account.status = request.POST.get('edit_status')
             healthcare_account.region = request.POST.get('edit_account_region')
             healthcare_account.province = request.POST.get('edit_account_province')
-            healthcare_account.city = request.POST.get('edit_account_police_station')
+            healthcare_account.hospital_name = request.POST.get('edit_account_hospital_name')
             healthcare_account.save()
             return JsonResponse({'success': True, 'message': 'Account updated successfully'})
         except Exception as e:

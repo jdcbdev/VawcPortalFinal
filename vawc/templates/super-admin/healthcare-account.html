@@ -314,7 +314,7 @@
                 method: 'GET',
                 success: function(response) {
                     // console.log("Full response object:", response);
-
+                
                     setGeoSelect($('#edit_account_region'), 'region', 'default_regions');
                     setGeoSelect($('#edit_account_province'), 'province', 'default_provinces');
 
@@ -347,6 +347,8 @@
                     $('#edit_account_hospital_name').val(response.hospital_name);
                     // Show the modal
                     $('#edit_healthcare_account').modal('show');
+                    
+                    
                 },
                 error: function(xhr, status, error) {
                     // Handle error
@@ -363,7 +365,7 @@
             console.log('Account Id:', accountId);
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_healthcare_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
