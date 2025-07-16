@@ -170,7 +170,7 @@
 </div>
 
 <!-- Modal edit -->
-<div class="modal fade" id="edit_law_enforcement_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="edit_healthcare_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -221,11 +221,9 @@
                 </div>  
                 
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_police" name="edit_account_police">
-                        <option>--Select Option--</option>
-                    </select>
-                    <label for="edit_account_police">Police Station</label>
-                </div>    
+                    <input type="text" class="form-control" id="edit_account_hospital_name" name="edit_account_hospital_name" placeholder="name@example.com" >
+                    <label for="edit_account_hospital_name">Hospital Name</label>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
@@ -312,21 +310,20 @@
             var accountId = $(this).data('account-id');
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_healthcare_account" 0 %}'.replace('0', accountId),
                 method: 'GET',
                 success: function(response) {
                     // console.log("Full response object:", response);
 
                     setGeoSelect($('#edit_account_region'), 'region', 'default_regions');
                     setGeoSelect($('#edit_account_province'), 'province', 'default_provinces');
-                    setGeoSelect($('#edit_account_police'), 'name', 'default_police_stations');
 
                     function setGeoSelect(geoTypeInput, itemKey, dataKey) {
                         const blankOption = document.createElement('option');
                         blankOption.textContent = '--Select Option--';
                         geoTypeInput.empty().append(blankOption);
 
-                        // console.log("response data key: ",response[dataKey]);
+                         console.log("response data key: ",response[dataKey]);
 
                         response[dataKey].forEach(item => {
                             const value = item[itemKey];
@@ -347,9 +344,9 @@
                     $('#edit_status').val(response.status);
                     $('#edit_account_region').val(response.region);
                     $('#edit_account_province').val(response.province);
-                    $('#edit_account_police').val(response.station);
+                    $('#edit_account_hospital_name').val(response.hospital_name);
                     // Show the modal
-                    $('#edit_law_enforcement_account').modal('show');
+                    $('#edit_healthcare_account').modal('show');
                 },
                 error: function(xhr, status, error) {
                     // Handle error

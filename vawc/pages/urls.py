@@ -53,6 +53,7 @@ urlpatterns = [
     path('admin-vawc/create_SWDO-account/', views.create_swdo_manage_account, name='create SWDO account'),
     path('admin-vawc/edit_account/<int:account_id>/', views.edit_account_view, name='edit_account'),
     path('admin-vawc/edit_law-enforcement_account/<int:account_id>/', views.edit_law_enforcement_account_view, name='edit_law-enforcement_account'),
+    path('admin-vawc/edit_healthcare_account/<int:account_id>/', views.edit_healthcare_account_view, name='edit_healthcare_account'),
     path('admin-vawc/edit_SWDO_account/<int:account_id>/', views.edit_swdo_account_view, name='edit_SWDO_account'),
     path('delete_account/', views.delete_account, name='delete_account'),
     path('check_username_email/', views.check_username_email, name='check_username_email'),
