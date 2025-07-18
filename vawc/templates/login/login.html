@@ -251,7 +251,14 @@
                         }else if (response.account_type === 'SWDO') {
                             // Redirect to SWDO dashboard
                             window.location.href = '{% url "SWDO case" %}';
+                        }else if (response.account_type === 'SWDO') {
+                            // Redirect to SWDO dashboard
+                            window.location.href = '{% url "SWDO case" %}';
                         }
+                        else if (response.account_type === 'healthcare') {
+                            // Redirect to healthcare dashboard
+                            window.location.href = '{% url "healthcare case" %}';
+                        } 
 
                         
                         // Log success message to the console

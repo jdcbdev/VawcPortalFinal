@@ -87,7 +87,7 @@ class HealthcareAccount(models.Model):
     region = models.CharField(max_length=100, null=True, blank=True)
     province = models.CharField(max_length=100, null=True, blank=True)
     hospital_name = models.CharField(max_length=100, null=True, blank=True)
-    type = models.CharField(max_length=20, default='law_enforcement')
+    type = models.CharField(max_length=20, default='healthcare')
     
     def __str__(self):
         return self.user.username

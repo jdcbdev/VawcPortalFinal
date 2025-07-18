@@ -281,7 +281,8 @@
         // Function to handle form submission
         $('#addAccountForm').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
-
+            $('#addAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#addAccountBtn').text('Adding...'); // Change button text to indicate loading
             $.ajax({
                 url: '{% url "create healthcare account" %}',
                 method: 'POST',
@@ -291,16 +292,21 @@
                         // Display success message and reload page after 2 seconds
                         $('#successToast .toast-body').text(response.message);
                         $('#successToast').toast('show');
+                        $('#add_new_account').modal('hide');
                         setTimeout(function() {
                             location.reload();
-                        }, 2000);
+                        }, 1000);
                     } else {
                         // Display error message
                         $('#errorToast .toast-body').text(response.message);
                         $('#errorToast').toast('show');
                     }
+                    $('#addAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#addAccountBtn').text('Add New Account'); // Change button text to indicate loading
                 },
                 error: function(xhr, errmsg, err) {
+                    $('#addAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#addAccountBtn').text('Add New Account'); // Change button text to indicate loading
                     console.log(xhr.status + ": " + xhr.responseText);
                 }
             });
@@ -359,7 +365,8 @@
 
         $('#saveAccountBtn').on('click', function() {
             var formData = $('#editAccountForm').serialize();
-
+            $('#saveAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#saveAccountBtn').text('Saving...'); // Change button text to indicate loading
             // Get the accountId from the hidden input field
             var accountId = $('#account_id').val();
             console.log('Account Id:', accountId);
@@ -376,12 +383,17 @@
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
+                    $('#edit_healthcare_account').modal('hide');
+                    $('#saveAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#saveAccountBtn').text('Saving Account'); // Change button text to indicate loading
                     setTimeout(function() {
                         location.reload();
-                    }, 2000);
+                    }, 1000);
                     // Refresh the page or update any UI as needed
                 },
                 error: function(xhr, status, error) {
+                    $('#saveAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#saveAccountBtn').text('Saving Account'); // Change button text to indicate loading
                     // Handle error
                     console.error('Error:', error);
                     // Display error message
@@ -396,6 +408,7 @@
         $(document).on('click', '.delete-account-btn', function () {
             // Retrieve the account ID from the data-account-id attribute
             var accountId = $(this).data('account-id');
+           
 
             // Set the account ID value in the modal confirmation button
             $('#confirmAccountDeleteBtn').data('account-id', accountId);
@@ -408,7 +421,8 @@
         $('#confirmAccountDeleteBtn').on('click', function() {
             // Retrieve the account ID from the data-account-id attribute of the Delete button in the modal
             var accountId = $(this).data('account-id');
-            
+            $('#confirmAccountDeleteBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#confirmAccountDeleteBtn').text('Deleting...'); // Change button text to indicate loading
             // Send an AJAX request to delete the account
             $.ajax({
                 url: '{% url "delete_account" %}',
@@ -425,9 +439,13 @@
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
+                    $('#confirmAccountDelete').modal('hide');
+                    $('#confirmAccountDeleteBtn').text('Delete'); // Change button text to indicate loading
+                    $('#confirmAccountDeleteBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
                     setTimeout(function() {
                         location.reload();
-                    }, 2000);
+                    }, 1000);
+
                 },
                 error: function(xhr, status, error) {
                     // Handle error
@@ -436,6 +454,8 @@
                     $('#errorToast .toast-body').text(response.message);
                     $('#errorToast').toast('show');
                     // Optionally, show an error message to the user
+                    $('#confirmAccountDeleteBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#confirmAccountDeleteBtn').text('Delete'); // Change button text to indicate loading
                 }
             });
         });

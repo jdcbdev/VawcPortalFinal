@@ -249,6 +249,14 @@
                                         </label>
                                     </div>
                                 </div><!--end of col-->
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="SWDO_other" id="SWDO_other" value="true" {% if case.SWDO_other %} checked {% endif %}>
+                                        <label class="form-check-label" for="SWDO_other">
+                                            Other
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
                             </div><!--end of row-->
                             
                             
@@ -3168,6 +3176,7 @@
             if(!$('#psych_service').is(':checked') 
             && !$('#emergency_shelter').is(':checked')
             && !$('#economic_assist').is(':checked')
+            && !$('#SWDO_other').is(':checked')
             ){
                 $('#errorToast .toast-body').text('Check Atleast 1 Refferal Action.');
                 $('#errorToast').toast('show');

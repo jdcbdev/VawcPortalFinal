@@ -102,6 +102,7 @@ class Case(models.Model):
     psychosocial_services = models.BooleanField(default=False)
     emergency_shelter = models.BooleanField(default=False)
     economic_assistance = models.BooleanField(default=False)
+    SWDO_other = models.BooleanField(default=False)
     remarks_to_social_welfare = models.TextField(null=True, blank=True)
     remark_to_barangay_from_SWDO = models.TextField(null=True, blank=True)
 
@@ -111,6 +112,10 @@ class Case(models.Model):
     provision_of_appropriate_medical_treatment = models.BooleanField(default=False)
     issuance_of_medical_certificate = models.BooleanField(default=False)
     medico_legal_exam = models.BooleanField(default=False)
+    healthcare_other = models.BooleanField(default=False)
+    refer_to_barangay_from_healthcare_date = models.DateField(null=True, blank=True)
+    remarks_to_healthcare = models.TextField(null=True, blank=True)
+    remarks_to_barangay_from_healthcare = models.TextField(null=True, blank=True)
 
     # Law enforcement related options
     refers_to_law_enforcement = models.BooleanField(default=False)
