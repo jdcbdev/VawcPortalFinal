@@ -235,7 +235,7 @@ main {
 .nav-pills .nav-link {
   cursor: pointer;
   color: rgb(175, 185, 196);
-  background-color: rgb(240, 240, 240) !important;
+  background-color: rgb(197, 197, 197) !important;
   opacity: 0.5;
 }
 .nav-pills .nav-link:hover {
@@ -243,8 +243,8 @@ main {
 }
 .nav-pills .nav-link.active {
   cursor: pointer;
-  color: slategray !important;
-  background-color: rgb(255, 255, 255) !important;
+  color: #fff !important;
+  background-color: #b187d8 !important;
   border-color: #dee2e6 !important;
   opacity: 1;
 }

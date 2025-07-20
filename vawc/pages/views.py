@@ -1,3 +1,4 @@
+import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseNotFound, QueryDict, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
@@ -205,6 +206,7 @@ TOKEN_EXPIRATION_TIMEDELTA = timedelta(minutes=1)
 
 def verify_otp_email_track_case(request):
     if request.method == 'POST':
+        
         otp_entered = ''
         for i in range(1, 7):  # Iterate through OTP fields from 1 to 6
             otp_entered += request.POST.get(f'otp_{i}', '')
@@ -225,7 +227,9 @@ def verify_otp_email_track_case(request):
 
                 # Generate a unique token for password reset using Django's default_token_generator
                 token = generate_token(user_email)
-
+                print('Token generated:', token)
+                print('going to redirect to track_case_info')
+                
                 return JsonResponse({'success': True, 'message': 'OTP verified successfully.', 'user_email': user_email, 'token': token})
             elif timezone.now() >= otp_expiry:
                 return JsonResponse({'success': False, 'message': 'OTP has expired.'})
@@ -278,10 +282,12 @@ def track_case_info_view(request, contact_type, user_contact, token):
             temp_user = User(email=user_contact)
 
     except User.DoesNotExist:
+        print('User does not exist')
         return redirect('error_view')
 
     # Check if the token is valid for the temporary user
     if not default_token_generator.check_token(temp_user, token):
+        print('Token is invalid')
         return redirect('error_view')
 
     # Fetch cases related to the user_contact and prefetch related status history
@@ -292,8 +298,10 @@ def track_case_info_view(request, contact_type, user_contact, token):
         print('contact type: phone')
         cases = Case.objects.filter(phone=user_contact).prefetch_related('status_history')
 
+    cases = cases.order_by('-date_added')
     print(cases)
     # Token is valid, render the template
+    print('Token is valid, rendering track_case_info.html')
     return render(request, 'landing/track_case_info.html', {'contact_type': contact_type, 'user_contact': user_contact, 'token': token, 'cases': cases})
 
 @login_required
