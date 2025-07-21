@@ -305,7 +305,7 @@
         });
 
         $('#otpModal').on('hidden.bs.modal', function () {
-            location.reload();
+//            location.reload();
         });
 
         // otp checking
@@ -319,18 +319,21 @@
             } else if (get_contact_type() == 'phone') {
                 requestURL = "{% url 'verify_otp_phone_track_case' %}"
             }
-
+            
             $.ajax({
                 type: 'POST',
                 url: requestURL,
                 data: formData,
                 success: function(response) {
                     if (response.success) {
+                        
                         //$('#successMessage').text(response.message);
                         $('.toast-body').text('OTP verification successful.');
                         $('#successToast').toast('show');
                         // hide otp modal
                         $('#otpModal').modal('hide');
+                        
+                        
                         var emailValue = $('#email').val();
                         var phoneValue = $('#phone').val();
                         console.log("Email entered(OTP): " + response.user_email);
@@ -345,20 +348,20 @@
 
                         // Replace the placeholders with actual values obtained from the response
                         if(get_contact_type() == 'email') {
-                            trackCaseInfoUrl = trackCaseInfoUrl.replace('__user_contact__', emailValue);
-                            // trackCaseInfoUrl = trackCaseInfoUrl.replace('__user_contact', user_email);
+                            trackCaseInfoUrl = trackCaseInfoUrl.replace('__user_contact__', response.user_email);
                         } else if (get_contact_type() == 'phone') {
-                            trackCaseInfoUrl = trackCaseInfoUrl.replace('__user_contact__', phoneValue);
-                            // trackCaseInfoUrl = trackCaseInfoUrl.replace('__user_contact', user_phone);
+                            trackCaseInfoUrl = trackCaseInfoUrl.replace('__user_contact__', response.user_phone);
                         }
                         trackCaseInfoUrl = trackCaseInfoUrl.replace('__contact_type__', get_contact_type());
                         trackCaseInfoUrl = trackCaseInfoUrl.replace('__token__', response.token);
 
-                        // Redirect to the track_case_info URL after 10 seconds
+                        
+                                  
                         setTimeout(function() {
                             window.location.href = trackCaseInfoUrl;
                         }, 3000);
                     } else {
+                        console.log('i am here in trackcase.html but eeror');
                         $('#otpErrorMessage').text(response.message);
                         if (response.message === 'OTP has expired.' || response.message === 'Incorrect OTP.') {
                             $('.text-danger').show(); // Show the error message div

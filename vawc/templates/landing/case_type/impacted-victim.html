@@ -13,7 +13,7 @@
                         <button class="multisteps-form__progress-btn js-active" type="button" title="Victim-Survivor Info">Victim</button>
                         <button class="multisteps-form__progress-btn" type="button" title="Perpetrator Information" disabled>Perpetrator</button>
                         <button class="multisteps-form__progress-btn" type="button" title="Incident Information" disabled>Incident</button>
-                        <button class="multisteps-form__progress-btn" type="button" title="Service Information" disabled>Service</button>
+                        {% comment %} <button class="multisteps-form__progress-btn" type="button" title="Service Information" disabled>Service</button> {% endcomment %}
                     </div>
                 </div>
             </div>
@@ -544,22 +544,25 @@
                                 <hr>
                                 <div class="d-flex justify-content-between mt-4 col-12">
                                     <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
-                                    <button class="btn btn-primary ml-auto btn-next-service js-btn-next" type="button" title="Next">Next</button>
+                                    <button class="btn btn-primary ml-auto btn-form-submit" type="submit" title="Send" id="submitBtn" >Submit report</button>
+                                    
                                 </div>
                             </div>
                         </div>
                         <!--single form panel--><!--service-->
-                        <div class="multisteps-form__panel" data-animation="slideVert">
+                        {% comment %} <div class="multisteps-form__panel" data-animation="slideVert">
                             <div class="multisteps-form__content col-12 col-md-11 mx-auto">
 
                                 <h2 class="text-center mb-4 mb-md-5"><strong>Service Information</strong></h2>
 
                                 <div class="label-form border rounded p-4 mb-4">
                                     <div class="row g-4 row-cols-1 row-cols-lg-2">
+                                    {% endcomment %}
                                         {% comment %} <div class="col-6">
                                             <input type="radio" class="btn-check" name="service" id="crisis" value="crisis" autocomplete="off" checked>
                                             <label class="btn custom-btn" for="crisis">Crisis Intervention Including Rescue</label>
                                         </div> {% endcomment %}
+                                    {% comment %} 
                                         <label for="crisis" class="col">
                                             <div class="service-option form-check card shadow-sm p-4 h-100 card-link">
                                                 <div class="card-title">
@@ -597,7 +600,7 @@
                                     <button class="btn btn-primary ml-auto btn-form-submit" type="submit" title="Send" id="submitBtn" disabled>Submit Report</button>
                                 </div>
                             </div>
-                        </div>
+                        </div> {% endcomment %}
                     </form>
                 </div>
             </div>
@@ -706,7 +709,7 @@
                         <input class="m-2 text-center form-control rounded" type="text" name="otp_6" maxlength="1" />
                     </div>
                     <div class="text-center mt-4">
-                        <button class="btn btn-primary px-4" type="submit">Validate</button>
+                        <button class="btn btn-primary px-4" id="btn_otp_validate" type="submit">Validate</button>
                     </div>
                     <div class="text-center mt-3 text-danger" style="display: none;">
                         <i class='bx bx-error-circle'></i>
@@ -768,6 +771,7 @@
 <script src="{% static 'js/dynamic_forms.js' %}"></script>
 <script>
     const csrf_token = '{{ csrf_token }}'
+
     function showToast(type, message) {
         var toastId = type === 'success' ? '#successToast' : '#errorToast';
         var toast = new bootstrap.Toast(document.querySelector(toastId));
@@ -785,7 +789,7 @@
             const isStreetValid = !$("#incident-street").hasClass('is-invalid') && streetInputValue !== "";
             const isDescriptionValid = !$("#incident-desc").hasClass('is-invalid') && descriptionInputValue !== "";
 
-            const progressButton = $('button[title="Service Information"]');
+            const progressButton = $('button[title="Incident Information"]');
             const nextButton = $('.btn-next-service');
 
             if (isStreetValid && isDescriptionValid) {
@@ -1018,7 +1022,9 @@
                     contentType: false, // Prevent jQuery from automatically setting contentType
                     processData: false, // Prevent jQuery from automatically processing data
                     dataType: 'json', // Expect JSON response
-                    success: function(response) {
+                    success: function(response) {    
+                        // hide otp modal
+                        $('#otpModal').modal('hide');
                         if (response.success) {
                             $('#staticBackdrop').modal('show'); // Show the success modal
                         } else {
@@ -1027,6 +1033,8 @@
                         }
                     },
                     error: function(xhr, textStatus, errorThrown) {
+                        // hide otp modal
+                        $('#otpModal').modal('hide');
                         console.error('Error:', errorThrown);
                         // Show error toast if response indicates failure
                         showToast('error', 'An error occurred. Please try again.');
@@ -1071,6 +1079,13 @@
                 throw new Error('reCAPTCHA validation failed')
             }
 
+            
+            //show loader and disabled
+            $('#send_email_confirmation').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#send_email_confirmation').css('background-color', '#6c757d'); // Change button color to indicate it's disabled
+            $('#send_email_confirmation').text('Sending...'); // Change button text to indicate validation in progress
+            
+
             $.ajax({
                 url: requestURL, // Modify the URL to point to your Django view endpoint
                 type: 'POST',
@@ -1081,6 +1096,11 @@
                 success: function(response) {
                     // Handle success response
                     console.log(response); // Log the response to the console
+                      //enable button
+                    $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
+                    $('#send_email_confirmation').text('Confirm'); // Change button text to indicate validation in progress
+                    
 
                     // Server-side validation response
                     if (!response.success) {
@@ -1116,6 +1136,13 @@
                     console.error('Error:', errorThrown);
                     // Show error toast if response indicates failure
                     showToast('error', 'An error occurred. Please try again.');
+
+                      //enable button
+                    $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
+                    $('#send_email_confirmation').text('Confirm'); // Change button text to indicate validation in progress
+                    
+
                 }
             });
         });
@@ -1140,6 +1167,17 @@
 
         // otp checking
         $('#otpForm').submit(function(e) {
+            $('#btn_otp_validate').prop('disabled', true).text('Validating...'); // Disable the button to prevent multiple submissions
+
+            // Enable the select for region,barangay, and city
+            $('#victim-region_0').prop('disabled', false);
+            $('#perp-region_0').prop('disabled', false);
+            $('#perp-city_0').prop('disabled', false);
+            $('#perp-barangay_0').prop('disabled', false);
+            $('#incident-region').prop('disabled', false);
+            $('#incident-city').prop('disabled', false);
+            $('#incident-barangay').prop('disabled', false);
+
             e.preventDefault(); // Prevent the default form submission
             var formData = $(this).serialize();
 
@@ -1161,18 +1199,19 @@
                 success: function(response) {
                     if (response.success) {
                         $('#successMessage').text(response.message);
-                        // hide otp modal
-                        $('#otpModal').modal('hide');
+                        
                         var emailValue = $('#email-confirm').val();
                         var phoneValue = $('#phone-confirm').val();
                         console.log("Email entered(OTP): " + emailValue);
                         console.log("Phone entered(OTP): " + phoneValue);
                         $('#email-confirmed').val(emailValue);
                         $('#phone-confirmed').val(phoneValue);
+                        
                         goForSubmission = true
-
+                       
                         // to trigger button of main form
                         document.querySelector(".btn-form-submit").click()
+                        
                         // Log success message to the console
                         console.log('OTP verification successful.');
                     } else {

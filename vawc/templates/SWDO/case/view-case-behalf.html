@@ -1,4 +1,4 @@
-{% extends "../../base/base_barangay.html" %}
+{% extends "../../base/base_SWDO.html" %}
 {% block title %}Report | View Case {% endblock %}
 {% load static %}
 {% block styles %}
@@ -17,7 +17,7 @@
 </script>
 <div class="container-fluid pb-4">
     <div class="pt-1 row">
-        <a class="col text-decoration-none text-dark" href="{% url 'barangay case' %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
+        <a class="col text-decoration-none text-dark" href="{% url 'SWDO case' %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
     </div>
     <div class="row">
         <div class="col-lg-8 col-12">
@@ -31,7 +31,7 @@
                 </a>
             </div>
         {% endif %}
-        <div class="d-grid gap-2 mx-auto d-grid gap-2  mx-auto {% if global.security_status == 'encrypted' %} col-lg-4 {% elif global.security_status == 'decrypted'  %} col-lg-2 {% endif %} col-12">
+        <div class="d-grid gap-2 mx-auto d-grid gap-2  mx-auto col-lg-2">
             <button class="btn btn-danger btn-confirm-delete-case" data-case-id="{{ case.id }}" data-bs-toggle="modal" data-bs-target="#confirmDeletCase" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                 <i class='bx bx-trash me-2'></i>
                 Delete Case
@@ -122,16 +122,16 @@
                         <div class="col-6">
                             <div class="d-flex align-items-center">
                                 <h4><strong>CASE STATUS:</strong></h4>
-                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active" id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %} data-status="Active">
+                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active" id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %} data-status="Active" disabled>
                                 <label class="btn btn-outline-primary mx-2" for="option1">Active</label>
 
-                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close" id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %} data-status="Close">
+                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close" id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %} data-status="Close" disabled>
                                 <label class="btn btn-outline-primary" for="option2">Closed</label>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-floating mb-3">
-                                <input type="date" class="form-control" id="date_closed" name="date_closed" placeholder="name@example.com"  value="{{ case.date_closed|date:'Y-m-d' }}">
+                                <input type="date" class="form-control" id="date_closed" name="date_closed" placeholder="name@example.com"  value="{{ case.date_closed|date:'Y-m-d' }}" disabled>
                                 <label for="date_closed">Date Closed</label>
                             </div>
                         </div>
@@ -139,500 +139,148 @@
                 </div><!--end of container-->
                 <div class="container pt-3 pb-3">
                 </div><!--end of container-->
-                <hr>
-                <div class="container pt-2 pb-3">
-                    <h1 class="text-center">Case Information</h1>
-                    <div class="pt-2">
-                        <div class="row">
-                            <div class="d-flex align-items-center">
-                                <h5>Case Type:</h5>
-                                {% if case.type_of_case == 'Impacted' %}
-                                    <h5 class="lead">Impacted Victim</h5>
-                                {% elif case.type_of_case == 'Behalf' %}
-                                    <h5 class="lead">Reporting on Behalf of Impacted Victim</h5>
-                                {% endif %}
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                        <div class="row">
-                            <div class="d-flex align-items-center">
-                                <h5>Service Type:</h5>
-                                {% if case.service_information == 'crisis' %}
-                                    <h5 class="lead">Crisis Intervention Including Rescue</h5>
-                                {% elif case.service_information == 'issuance' %}
-                                    <h5 class="lead">Issuance / Enforcement of Barangay Protection Order</h5>
-                                {% endif %}
-                            </div><!--end of col-->
-                        </div><!--end of row-->
+                
+                <div class="card border border-dark border-1 border-opacity-10 shadow-lg">
+                    <div class="container-fluid mx-0 p-4">
+                        <h1 class="text-center">Case Information</h1>
+                        <div class="pt-2">
+                            <div class="row">
+                                <div class="d-flex align-items-center">
+                                    <h5>Case Type:</h5>
+                                    {% if case.type_of_case == 'Impacted' %}
+                                        <h5 class="lead">Impacted Victim</h5>
+                                    {% elif case.type_of_case == 'Behalf' %}
+                                        <h5 class="lead">Reporting on Behalf of Impacted Victim</h5>
+                                    {% endif %}
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+                            {% comment %} <div class="row">
+                                <div class="d-flex align-items-center">
+                                    <h5>Service Type:</h5>
+                                    {% if case.service_information == 'crisis' %}
+                                        <h5 class="lead">Crisis Intervention Including Rescue</h5>
+                                    {% elif case.service_information == 'issuance' %}
+                                        <h5 class="lead">Issuance / Enforcement of Barangay Protection Order</h5>
+                                    {% else %}
+                                        <h5 class="lead">Not decided yet</h5>
+                                    {% endif %}
+                                </div><!--end of col-->
+                            </div><!--end of row--> {% endcomment %}
 
-                        <div class="row">
-                            <div class="d-flex align-items-center">
-                                <h5>Email:</h5>
-                                <h5 class="lead"> {{ case.email }}</h5>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
+                            <div class="row">
+                                <div class="d-flex align-items-center">
+                                    <h5>Email:</h5>
+                                    <h5 class="lead"> {{ case.email }}</h5>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
 
-                        
-                    </div><!--end of container-->
-                </div>
-                <div class=" pt-2">
-                    <form id="service_info_form">
-                        {% csrf_token %}
-                        <input type="hidden" name="case_id" value="{{ case.id }}">
-                        <h2>Services Information</h2>
-                       
-                        
-                        <hr>
-                        <div class="row  pt-4">
-                            <div class="col-lg-12 col-md-12 col-sm-8">
-                                <div class="row d-flex align-items-center mb-3">
-                                    <div class="col">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_other_service" id="refer_other_service" value="true" {% if case.refers_to_other_service_provider %} checked {% endif %}>
-                                            <label class="form-check-label" for="refer_other_service"><strong>
-                                                <h4>Refers to Other Service Provider<h4>
-                                            </strong>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_other_service_date" id="refer_other_service_date" value="{{ case.refer_other_service_date|date:'Y-m-d' }}"></div></div>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
+                            <div class="row">
+                                <div class="d-flex align-items-center">
+                                    <h5>Date Refered: </h5>
+                                    <h5 class="lead"> {{ case.refer_social_date|date:"F j, Y" }}</h5>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
 
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-8">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="name_of_service_provider" name="name_of_service_provider" placeholder="none" value="{{ case.other_service_provider_name }}">
-                                    <label for="name_of_service_provider">Name of Service Provider</label>
-                                </div>
-                            </div><!--End of col-->
-                            <div class="col-lg-6 col-md-6 col-sm-8">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" name="type_of_service_provider" id="type_of_service_provider" placeholder="None" value="{{ case.type_of_service}}">
-                                    <label for="type_of_service_provider">Type of Service</label>
-                                </div>
-                            </div><!--End of col-->
-                        </div><!--end of row-->
+                            <div class="row">
+                                <div class="d-flex align-items-center">
+                                    <h5>Date Updated: </h5>
+                                    <h5 class="lead"> {%  if case.refer_to_barangay_from_social_date %}{{ case.refer_to_barangay_from_social_date|date:"F j, Y" }}{%else%} N/A {% endif %}</h5>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
 
-                        <div class="d-flex justify-content-end just">
-                            <button class="btn btn-primary" id="btn-save-service" type="submit" disabled>Save</button>
+                            <div class="row">
+                                <div class="d-flex flex-column align-items-start">
+                                    <h5>Barangay Remark:</h5>
+                                    <textarea class="form-control" id="remarks_to_social_welfare" name="remarks_to_social_welfare" rows="3" disabled>{% if case.remarks_to_social_welfare %}{{ case.remarks_to_social_welfare }}{% else %} No Remark.{% endif %}</textarea>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+
                         </div>
-                    </form>
-                    
-                    <hr>
-
-                    <div id="healthcare-update" class="row pt-4" >
-                        <h4 class="text-left">Healthcare Office Update</h4>
-                        <p> Date Updated : {{ case.refer_to_barangay_from_healthcare_date }}</p>
-
-                        <div class="row pt-1 pb-3 ps-3">
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="provision">
-                                        Provision of appropriate medical treatment
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="issuance_medical_cert">
-                                    Issuance of medical certificate
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="medico_legal">
-                                        Medico-legal Exam
-                                    </label>
-                                </div>
-                            </div><!--end of col-->           
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="healthcare_other" id="healthcare_other" value="true" {% if case.healthcare_other %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="healthcare_other">
-                                        Other
-                                    </label>
-                                </div>
-                            </div><!--end of col-->       
-                        </div><!--end of row-->
-
-                        <div class="row">
-                            <div class="d-flex flex-column align-items-start">
-                                <h5>Healthcare Remark:</h5>
-                                <textarea class="form-control" id="remarks_to_barangay_from_healthcare" name="remarks_to_barangay_from_healthcare" rows="3" disabled>{% if case.remarks_to_barangay_from_healthcare %}{{ case.remarks_to_barangay_from_healthcare }}{% else %}No Remark.{% endif %}</textarea>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                    </div><!--end of SWDO update-->
-                    
-                    <form id="form-refer-healthcare" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="case_id" value="{{ case.id }}">
-                        <input type = "hidden" class="form-control" type="date" name="refer_healthcare_date" id="refer_healthcare_date"  value="{% if case.refer_healthcare_date %}{{ case.refer_healthcare_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
-
-                        <div class="row pt-4">
-                            <div class="col-12">
-                                <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="refer_healthcare" id="refer_healthcare" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %}onclick="return false;">
-                                        <label class="form-check-label" for="refer_healthcare"><strong>
-                                            {% if case.refers_to_healthcare_provider %}
-                                                <h4>Referred to healthcare Office</h4>
-                                            {% else %}
-                                                <h4>Refer to healthcare Office</h4>
-                                            {% endif %}
-                                        </strong>
-                                        </label>
-                                </div>
-                                <div class="col mb-3">{% if case.refer_healthcare_date %}Date Reffered : <strong>{{ case.refer_healthcare_date|date:'M j, Y' }}</strong>{% endif %}</div>
-
-                                <div class="form-floating mb-3">
-                                    <select id="name_of_hospital" name="name_of_hospital" class="form-select">
-                                        <option value="" {% if not case.healthcare_provider_name %}selected{% endif %}>--Select Option--</option>
-                                        {% for hospital in hospitals %}
-                                            <option value="{{ hospital }}" {% if case.healthcare_provider_name == hospital %}selected{% endif %}>
-                                                {{ hospital }}
-                                            </option>
-                                        {% empty %}
-                                            <option>No Hospital found</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label style="font-size: small;" id="name_of_hospital_label" for="name_of_hospital">Hospital</label>
-                                </div>
-
-                            </div>
-
-                        </div><!--end of row-->
-
-                        {% comment %} <div class="row  pt-1">
-                            <div class="col-lg-4 vol-md-4 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}>
-                                    <label class="form-check-label" for="provision">
-                                        Provision of appropriate medical treatment
-                                    </label>
-                                </div>
-                                
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-
-                        {% comment %} <div class="row  pt-1">
-                            <div class="col-lg-4 vol-md-4 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}>
-                                    <label class="form-check-label" for="provision">
-                                        Provision of appropriate medical treatment
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 vol-md-4 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}>
-                                    <label class="form-check-label" for="issuance_medical_cert">
-                                    Issuance of medical certificate
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-4 vol-md-4 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}>
-                                    <label class="form-check-label" for="medico_legal">
-                                        Medico-legal Exam
-                                    </label>
-                                </div>
-                            </div><!--end of col--> {% endcomment %}
-                        </div><!--end of row-->
-
-                        <h5 id="remarks"> Additional Remarks</h5>
-                            <div class="col-lg-12 vol-md-12 col-sm-12">
-                                <div class="form-floating mb-3">
-                                    <textarea class="form-control"
-                                            id="remarks_healthcare"
-                                            name="remarks_healthcare"
-                                            rows="3"
-                                            placeholder="Input any remarks for the Healthcare"
-                                            >{{ case.remarks_to_healthcare|default_if_none:"" }}</textarea>
-                                    <label for="remarks_healthcare">Remarks to Healthcare</label>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!-- Law Enforcement -->
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary" id="btn-submit-healthcare" type="submit">{% if case.refers_to_healthcare_provider %}Update{% else %}Send{% endif %}</button>
-                        </div>
-
-
-                    </form>
-                    <hr>
-
-
-                    <div id="SWDO-update" class="row pt-4" >
-                        <h4 class="text-left">Social Welfare and Development Office Update</h4>
-                        <p> Date Updated : {{ case.refer_to_barangay_from_social_date }}</p>
-
-                        <div class="row pt-1 pb-3 ps-3">
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="psych_service">
-                                        Psychosocial services
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="emergency_shelter">
-                                        Emergency Shelter
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="economic_assist">
-                                        Economic Assistance
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="SWDO_other" id="SWDO_other" value="true" {% if case.SWDO_other %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="SWDO_other">
-                                        Other
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-
-                        <div class="row">
-                            <div class="d-flex flex-column align-items-start">
-                                <h5>SWDO Remark:</h5>
-                                <textarea class="form-control" id="remark_to_barangay_from_SWDO" name="remark_to_barangay_from_SWDO" rows="3" disabled>{% if case.remark_to_barangay_from_SWDO %}{{ case.remark_to_barangay_from_SWDO }}{% else %}No Remark.{% endif %}</textarea>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
                     </div>
 
-                    <form id="form-refer-SWDO" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="case_id" value="{{ case.id }}">
-                        <input type = "hidden" class="form-control" type="date" name="refer_social_date" id="refer_social_date"  value="{% if case.refer_social_date %}{{ case.refer_social_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
-                        <input type="hidden" name="brgy_to_SWDO_form" value="true">
+                    <div class="container-fluid mx-0 p-4">
 
-                        
-                        <div class="row pt-4">
-                            <div class="col-lg-12 col-md-12 col-sm-8">
-                                <div class="row d-flex align-items-center">
-                                    <div class="col">
-                                        <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="refer_SWDO" id="refer_SWDO" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}onclick="return false;">
-                                                <label class="form-check-label" for="refer_SWDO"><strong>
-                                                    {% if case.refers_to_social_welfare %}
-                                                        <h4>Refered to Social Welfare and Development Office</h4>
-                                                    {% else %}
-                                                        <h4>Refer to Social Welfare and Development Office</h4>
-                                                    {% endif %}
-                                                </strong>
+                         <form id="service_info_form">
+                            {% csrf_token %}
+                            <input type="hidden" name="case_id" value="{{ case.id }}">
+                            <input type="hidden" name="today" value="{{ today|date:"Y-m-d" }}">
+                            <input type = "hidden" name="SWDO_to_brgy_form" value="true">
+                            
+                            <div class="row pt-4">
+                                <div class="col-lg-12 col-md-12 col-sm-8">
+                                    <div class="row d-flex align-items-center">
+                                        <div class="col">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="refers_to_barangay_from_SWDO" id="refers_to_barangay_from_SWDO" value="true" {% if case.refers_to_barangay_from_SWDO %} checked {% endif %}onclick="return false;">
+                                                <label class="form-check-label" for="refers_to_barangay_from_SWDO">
+                                                        <h4 id="referral_actions">Update to Barangay</h4>
                                                 </label>
+                                            </div>
                                         </div>
-                                        <div class="col">{% if case.refer_social_date %}Date Reffered : <strong>{{ case.refer_social_date|date:'M j, Y' }}</strong>{% endif %}</div>
-                                    </div>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                        
-                       <h5 id="remarks" class="pt-3"> Additional Remarks</h5>
-                        <div class="col-lg-12 vol-md-12 col-sm-12">
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control"
-                                        id="remarks_SWDO"
-                                        name="remarks_SWDO"
-                                        rows="3"
-                                        placeholder="Input any remarks for the Social Welfare and Development Office"
-                                        >{{ case.remarks_to_social_welfare|default_if_none:"" }}</textarea>
-                                <label for="remarks_SWDO">Remarks to Social Welfare and Development Office</label>
-                            </div>
-                        </div><!--end of col-->
-                    
-                    
-                        <div class="d-flex justify-content-end just">
-                                <button class="btn btn-primary mb-3" id="btn-submit-SWDO" type="submit">{% if case.refers_to_social_welfare %}Update{% else %}Send{% endif %}</button>
-                        </div>
-                    </form>
-                    
-                    <hr>
-
-                    <div id="law-enforcement-update" class="row pt-4" >
-                        <h4 class="text-left">Law Enforcement Update</h4>
-                        <p> Date Updated : {{ case.refer_to_barangay_date }}</p>
-
-                        <div class="row pt-1 p-4">
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="receipt_comp" id="receipt_comp" value="true" {% if case.receipt_and_recording_of_complaints %} checked {% endif %}disabled>
-                                    <label class="form-check-label" for="receipt_comp">
-                                    Receipt and recording of Complaints
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="rescue_operation" id="rescue_operation" value="true" {% if case.rescue_operations_of_vaw_cases %} checked {% endif %}disabled>
-                                    <label class="form-check-label" for="rescue_operation">
-                                        Rescue Operations of VAW Cases
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="forensic_interview" id="forensic_interview" value="true" {% if case.forensic_interview_and_investigation %} checked {% endif %}disabled>
-                                    <label class="form-check-label" for="forensic_interview">
-                                        Forensic Interview and Investigation
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="enforce_protect_order" id="enforce_protect_order" value="true" {% if case.enforcement_of_protection_order %} checked {% endif %}disabled>
-                                    <label class="form-check-label" for="enforce_protect_order">
-                                    Enforcement of Protection Order
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of col--> 
-
-                        <div class="row">
-                            <div class="d-flex flex-column align-items-start">
-                                <h5>Law Enforcement Remark:</h5>
-                                <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" disabled>{% if case.remarks_to_barangay %}{{ case.remarks_to_barangay }}{% else %}No Remark.{% endif %}</textarea>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                        
-                    </div>
-                    <form id="form-refer-law-enforcement">
-                        {% csrf_token %}
-                        <input type="hidden" name="case_id" value="{{ case.id }}">
-                        <input type="hidden" name="barangay_to_law_enforcement_form" value="true">
-                        
-                        <div class="row pt-4">
-                            <div class="col-lg-12 col-md-12 col-sm-12">
-                                <div class="row d-flex align-items-center mb-3">
-                                    <div class="col">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_law_enforce" id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}onclick="return false;">
-                                            <label class="form-check-label" for="refer_law_enforce"><strong>
-                                                {% if case.refers_to_law_enforcement %}
-                                                    <h4>Refered to Law Enforcement</h4>
-                                                {% else %}
-                                                    <h4>Refer to Law Enforcement</h4>
-                                                {% endif %}
-                                            </strong>
-                                            </label>
-                                        </div>
-                                        <p> Date Reffered : {{ case.refer_law_enforcement_date|date:'M j, Y' }}</p>
-                                    </div>
-                                    <div class="col"><div class="col"><input type="hidden" class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{% if case.refer_law_enforcement_date %}{{ case.refer_law_enforcement_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></div></div>
-                                </div>
-
-                                {% comment %} province {% endcomment %}
-                                <div class="row mb-3 flex">
-                                    <div class="form-floating mb-3">
-                                        <select id="name_of_province" name="name_of_province" class="form-select">
-                                            <option value="" {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
-                                            {% for station in default_stations_provinces %}
-                                                <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
-                                                    {{ station }}
-                                                </option>
-                                            {% empty %}
-                                                <option>No Province found</option>
-                                            {% endfor %}
-                                        </select>
-                                        <label id="name_of_province_label" for="name_of_province">Province</label>
+                                        <div class="col"><input type="hidden" class="form-control" type="date" name="refer_to_barangay_from_social_date" id="refer_to_barangay_from_social_date" value="{% if case.refer_to_barangay_from_social_date %}{{ case.refer_to_barangay_from_social_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></div>
                                     </div>
                                     
-                                    {% comment %} end of province {% endcomment %}
+                                    
+                                </div><!--end of col-->
+                            </div><!--end of row-->
 
-                                    <div class="form-floating mb-3">
-                                        <select id="name_of_agency" name="name_of_agency" class="form-select">
-                                            {% comment %} <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
-                                            {% for station in default_stations %}
-                                                {% if case.city == "ZAMBOANGA" %}
-                                                    {% if station.province == "ZAMBOANGA CITY" %}
-                                                    <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
-                                                        {{ station.name }}
-                                                    </option>
-                                                    {% endif %}
-                                                {% else %}
-
-                                                    {% if station.province == case.province %}
-                                                    <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
-                                                        {{ station.name }}
-                                                    </option>
-                                                    {% endif %}
-
-                                                {% endif %}
-                                            {% empty %}
-                                                <option>No data found</option>
-                                            {% endfor %} {% endcomment %}
-                                        </select>
-                                        <label id="name_of_agency_label" for="name_of_agency">Station</label>
-                                    </div>
-                                </div><!--end of address holder-->
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                       
-
-                        <h4 id="service_information"> Service Information</h4>
-                            <div class="label-form border rounded p-4 mb-4">
-                                    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-2">
-
-                                        <label for="crisis" class="col">
-                                            <div class="service-option form-check card shadow-sm p-2 h-100 card-link">
-                                                <div class="card-title ">
-                                                    <h3 class="fw-bold fs-5">Crisis Intervention Including Rescue</h3>
-                                                </div>
-                                                <p class="fw-light">Provides immediate support in emergencies, including rescue operations, temporary shelter, and access to essential resources.</p>
-                                                <div class="d-flex justify-content-end">
-                                                    <input type="radio" class="form-check-input" name="service" id="crisis" value="crisis" autocomplete="off" {% if case.service_information == 'crisis' %}checked{% endif %}>
-                                                </div>
-                                            </div>
+                            <div class="row pt-1 pb-3 ps-3">
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}>
+                                        <label class="form-check-label" for="psych_service">
+                                            Psychosocial services
                                         </label>
-                                        <label for="issuance" class="col">
-                                            <div class="service-option form-check card shadow-sm p-2 h-100 card-link">
-                                                <div class="card-title">
-                                                    <h3 class="fw-bold fs-5">Issuance / Enforcement of Barangay Protection Order</h3>
-                                                </div>
-                                                <p class="fw-light">Issues and enforces protective orders at the barangay to ensure the safety of individuals facing domestic violence.</p>
-                                                <div class="d-flex justify-content-end">
-                                                    <input type="radio" class="form-check-input" name="service" id="issuance" value="issuance" autocomplete="off" {% if case.service_information == 'issuance' %}checked{% endif %}>
-                                                </div>
-                                            </div>
-                                        </label>
-
                                     </div>
-                                </div>
-                        
-                        <h4 id="remarks"> Additional Remarks</h4>
+                                </div><!--end of col-->
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}>
+                                        <label class="form-check-label" for="emergency_shelter">
+                                            Emergency Shelter
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %}>
+                                        <label class="form-check-label" for="economic_assist">
+                                            Economic Assistance
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="SWDO_other" id="SWDO_other" value="true" {% if case.SWDO_other %} checked {% endif %}>
+                                        <label class="form-check-label" for="SWDO_other">
+                                            Other
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+                            
+                            
+                            <h4>Add Case Remarks</h4>
                             <div class="col-lg-12 vol-md-12 col-sm-12">
                                 <div class="form-floating mb-3">
                                     <textarea class="form-control"
-                                            id="remarks_law_enforcement"
-                                            name="remarks_law_enforcement"
+                                            id="remark_to_barangay_from_SWDO"
+                                            name="remark_to_barangay_from_SWDO" 
                                             rows="3"
-                                            placeholder="Input any remarks for the Law Enforcement"
-                                            {% if global.security_status == "encrypted" %}disabled{% endif %}>{{ case.remarks_to_law_enforcement|default_if_none:"" }}</textarea>
-                                    <label for="remarks_law_enforcement">Remarks to Law Enforcement</label>
+                                            placeholder="Input any remarks for the Barangay"
+                                            >{{ case.remark_to_barangay_from_SWDO|default_if_none:"" }}</textarea>
+                                    <label for="remark_to_barangay_from_SWDO">Add remarks for the case.</label>
                                 </div>
                             </div><!--end of col-->
-                        </div><!-- Law Enforcement -->
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary" id="btn-submit-law-enforcement" type="submit">{% if case.refers_to_law_enforcement %}Update{% else %}Send{% endif %}</button>
-                        </div>
-                    </form> <!-- End of Law Enforcement Form -->
 
 
-                </div><!--end of container-->
+                            <div class="d-flex justify-content-end just">
+                                <button class="btn btn-primary" id="btn-send-SWDO" type="submit">Update</button>
+                            </div>
+                        </form>
+                    </div><!--end of container-->
+
+                </div><!--end of case info-->
             </div><!--end of container-->
 
         </div> <!--end of div of status tab-->
@@ -664,14 +312,6 @@
                         <div class="container-fluid h-100">
                             {% if global.security_status == "decrypted" %}
                             <div class="row d-flex justify-content-between mb-3 mt-lg-0 mt-2">
-                                {% if victim.date_of_birth|calculate_age >= 18 %}
-                                    <h4 class="fw-bold ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12  text-lg-start text-center">Victim is above 18.</h4>
-                                {% else %}
-                                    <a href="{% url 'add_parent_victim' case_id=case.id victim_id=victim.id %}" class="btn btn-outline-primary ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12">
-                                        <i class='bx bx-body'></i>
-                                        <span>Add, View, or Delete Parent</span>
-                                    </a>
-                                {% endif %}
                                 <button class="btn btn-danger me-2 btn-confirm-delete-victim col-lg-4 col-12" data-victim-id="{{ victim.id }}" data-bs-toggle="modal" data-bs-target="#confirmVictimDelete">
                                     <i class='bx bx-trash'></i>
                                     <span>Delete Victim</span>
@@ -1005,13 +645,6 @@
                             </form>
                         </div>
                     </div>
-                    <!-- mark -->
-                    <script>
-                        (function() {
-                            const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
-                            addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
-                        })();
-                    </script>                        
                     {% endfor %}
                 {% else %}
                 <div class="tab-pane fade show active h-100" id="v-pills-no-victim" role="tabpanel" aria-labelledby="v-pills-no-victim-tab" tabindex="0">
@@ -1067,6 +700,28 @@
                             </div>
                         </div><!--End of col-->
                     </div><!--End of row-->
+
+                    <div class="row pt-2">
+                        <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="contact_person_relationship_{{ contact_person.id }}" name="contact_person_relationship_{{ contact_person.id }}" value="{{ contact_person.relationship }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <label for="contact_person_relationship_{{ contact_person.id }}">Relationship to the Victim/s</label>
+                            </div>
+                        </div><!--end of col-->
+                        <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="contact_person_contact-number_{{ contact_person.id }}" name="contact_person_contact-number_{{ contact_person.id }}" value="{{ contact_person.contact_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <label for="contact_person_contact-number_{{ contact_person.id }}">Contact No.</label>
+                            </div>
+                        </div><!--end of col-->
+                        <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="contact_person_contact-tel_{{ contact_person.id }}" name="contact_person_contact-tel_{{ contact_person.id }}" value="{{ contact_person.telephone_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <label for="contact_person_contact-tel_{{ contact_person.id }}">Telephone No.</label>
+                            </div>
+                        </div><!--end of col-->
+                    </div><!--end of row-->
+
                     <div class="row pt-2">
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
@@ -1149,13 +804,6 @@
                     <div class="d-flex justify-content-end">
                         <button class="btn btn-primary save-btn-contact_person_{{ contact_person.id }}" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
                     </div>
-                    <script>
-                        // For Address Fields Consistenciess
-                        (function() {
-                            const formElementContact = document.querySelector("#contact_person_form_{{ contact_person.id }}");
-                            addAddressListener(formElementContact, 'contact_person', '{{ contact_person.id }}');
-                        })();
-                    </script>
                 </form>
                 {% endfor %}
             {% else %}
@@ -1198,14 +846,6 @@
                         <div class="container-fluid h-100">
                             {% if global.security_status == "decrypted" %}
                                 <div class="row d-flex justify-content-between mb-3 mt-lg-0 mt-2">
-                                    {% if perpetrator.date_of_birth|calculate_age >= 18 %}
-                                        <h4 class="fw-bold ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12 text-lg-start text-center">Perpetrator is above 18.</h4>
-                                    {% else %}
-                                        <a href="{% url 'add_parent_perp' case_id=case.id perp_id=perpetrator.id %}" class="btn btn-outline-primary ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12">
-                                            <i class='bx bx-body'></i>
-                                            <span>Add, View, or Delete Parent</span>
-                                        </a>
-                                    {% endif %}
                                     <button class="btn btn-danger btn-delete-perpetrator col-lg-4 col-12" data-perpetrator-id="{{ perpetrator.id }}" data-bs-toggle="modal" data-bs-target="#confirmPerpetratorDelete">
                                         <i class='bx bx-trash'></i>
                                         <span>Delete Perpetrator</span>
@@ -1545,13 +1185,6 @@
                             </form>
                         </div>
                     </div>
-                    <script>
-                        // For Address Fields Consistenciess
-                        (function() {
-                            const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
-                            addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}');
-                        })();
-                    </script>
                     {% endfor %}
                 {% else %}
                     <div class="tab-pane fade show active h-100" id="v-pills-no-perp" role="tabpanel" aria-labelledby="v-pills-no-parent-tab" tabindex="0">
@@ -1932,15 +1565,7 @@
                         <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
-                    <script>
-                        // For Generic Address Fields (no prefix)
-                        (function() {
-                            const formElementGeneric = document.querySelector("#incident-form");
-                            addAddressListener(formElementGeneric, '', 0);
-                        })();
-                    </script>
                 </form>
-
             </div><!--end of container-->
 
         </div> <!--end of incident tab pane-->
@@ -2480,6 +2105,7 @@
                             </div>
                         </div><!--End of col-->                     
                     </div><!--End of row-->
+                    
                 </div>
             </div>
             <div class="modal-footer">
@@ -2806,8 +2432,7 @@
                                 <label for="perpetrator_street">Street</label>
                             </div>
                         </div><!--End of col-->
-                    </div><!--End of row-->                    
-                    
+                    </div><!--End of row--> 
                 </div>
             </div>
             <div class="modal-footer">
@@ -2820,10 +2445,7 @@
 </div>
 {% endblock content %}
 {% block scripts %}
-<!-- Load external JS first -->
-
 <script>
-   
     $(document).ready(function() {
         $("#addWitnessBtn").click(function() {
             var witnessDiv = `
@@ -3114,7 +2736,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", function() {
-                
+        
         // Get today's date in the format YYYY-MM-DD
         var today = new Date().toISOString().split('T')[0];
 
@@ -3549,65 +3171,39 @@
             });
         });
 
-
-        $('#btn-submit-law-enforcement').click(function() {
-            // Prevent default form submission
-            event.preventDefault();
-
-            flag = false;
-            // Clear previous error messages
-            $('#name_of_province_label .text-danger').remove();
-            $('#name_of_province_label').text('Province');
-            $('#name_of_agency_label .text-danger').remove();
-            $('#name_of_agency_label').text('Station');
-            $('#service_information .text-danger').remove();
-            $('#service_information').text('Service Information');
-
-            // Check if the form is valid
-            if (!$('#name_of_province').val()) {
-                $('#name_of_province_label').append('<span class="text-danger">*Required</span>');
-                flag = true;
-            }
-            if (!$('#name_of_agency').val()) {
-                $('#name_of_agency_label').append('<span class="text-danger">*Required</span>');
-                flag = true;
-            }
-            var selectedService = $('input[name="service"]:checked').val();
-            if(!selectedService) {
-                $('#service_information').append('<span class="text-danger fs-2">*Required</span>');
-                flag = true;
-            } else {
-                $('#service_information .text-danger').remove();
-                $('#service_information').text('Service Information');
-            }
-
-            if(flag) {
-                // Show error toast
-                $('#errorToast .toast-body').text('Please fill out all required fields.');
+       $('#btn-send-SWDO').click(function() {
+            // Check if at least one referral action is checked
+            if(!$('#psych_service').is(':checked') 
+            && !$('#emergency_shelter').is(':checked')
+            && !$('#economic_assist').is(':checked')
+            && !$('#SWDO_other').is(':checked')
+            ){
+                $('#errorToast .toast-body').text('Check Atleast 1 Refferal Action.');
                 $('#errorToast').toast('show');
-            }
-            else{
                 
-                if($('#btn-submit-law-enforcement').text() === 'Send') {
-                    $('#btn-submit-law-enforcement').text('Sending...').prop('disabled', true);
-                } else {
-                    $('#btn-submit-law-enforcement').text('Updating...').prop('disabled', true);
-                }
+                $('#referral_actions .text-danger').remove();
+                $('#referral_actions').append('<span class="text-danger">*</span>');
+                return false; // Prevent form submission if no action is checked
+            }else{
+                
+                $('#remark_to_barangay_from_SWDO').prop('disabled', false); // Enable the remarks field
+                $('#btn-send-SWDO').prop('disabled', true); // Disable the button to prevent multiple submissions
+                // Prevent default form submission
+                event.preventDefault();
+
 
                 // Create FormData object from the form
-                var formData = new FormData($('#form-refer-law-enforcement')[0]);
+                var formData = new FormData($('#service_info_form')[0]);
 
                 // Send AJAX request
                 $.ajax({
                     type: 'POST',
-                    url: '/refer-law-enforcement/',
+                    url: '/process_service_info/',
                     data: formData,
                     contentType: false, // Prevent jQuery from automatically setting contentType
                     processData: false, // Prevent jQuery from automatically processing data
                     dataType: 'json', // Expect JSON response
                     success: function(response) {
-                        $('#btn-submit-law-enforcement').text('Update').prop('disabled', false);
-                        
                         // Show success toast
                         $('#successToast .toast-body').text(response.message);
                         $('#successToast').toast('show');
@@ -3616,224 +3212,20 @@
                         setTimeout(function() {
                             location.reload();
                         }, 3000);
+                        $('#btn-send-SWDO').prop('disabled', false); // enable the button to prevent multiple submissions
                     },
                     error: function(xhr, errmsg, err) {
                         // Show error toast
+                        $('#btn-send-SWDO').prop('disabled', false); // enable the button to prevent multiple submissions
                         $('#errorToast .toast-body').text('Error occurred while processing the form.');
                         $('#errorToast').toast('show');
                     }
                 });
 
             }
-
-        });
-
-        $('#btn-save-service').click(function() {
-            // Prevent default form submission
-            event.preventDefault();
-
-            // Create FormData object from the form
-            var formData = new FormData($('#service_info_form')[0]);
-
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '/process_service_info/',
-                data: formData,
-                contentType: false, // Prevent jQuery from automatically setting contentType
-                processData: false, // Prevent jQuery from automatically processing data
-                dataType: 'json', // Expect JSON response
-                success: function(response) {
-                    // Show success toast
-                    $('#successToast .toast-body').text(response.message);
-                    $('#successToast').toast('show');
-                    
-                    // Reload page after 3 seconds
-                    setTimeout(function() {
-                        location.reload();
-                    }, 3000);
-                },
-                error: function(xhr, errmsg, err) {
-                    // Show error toast
-                    $('#errorToast .toast-body').text('Error occurred while processing the form.');
-                    $('#errorToast').toast('show');
-                }
-            });
         });
 
 
-
-        $('#name_of_agency').on('change', function() {
-            var selectedStation = $(this).val();
-            if (!selectedStation) {
-                $('#name_of_agency_label').append('<span class="text-danger">*Required</span>');
-            } else {
-                $('#name_of_agency_label .text-danger').remove();
-                $('#name_of_agency_label').text('Station');
-            }
-        })
-         //dynamic values of police stations
-        $('#name_of_province').on('change', function(){
-            var selectedProvince = $(this).val();
-            var stations = JSON.parse('{{ default_stations|safe }}');
-            var filteredStations = stations.filter(function(station) {
-                return station.province === selectedProvince;
-            });
-
-            if (!selectedProvince) {
-                $('#name_of_province_label').append('<span class="text-danger">*Required</span>');   
-            }else{
-                $('#name_of_province_label .text-danger').remove();
-                $('#name_of_province_label').text('Province');
-            }
-
-            var options = '<option value="">--Select Police Station--</option>';
-            filteredStations.forEach(function(station) {
-                if (station.name === '{{ case.law_enforcement_agency_name }}') {
-                    options += `<option value="${station.name}" selected>${station.name}</option>`;
-                } else {
-                    options += `<option value="${station.name}">${station.name}</option>`;
-                }
-            });
-
-            $('#name_of_agency').html(options);
-        })
-
-        $('#name_of_province').trigger('change');
-        $('#name_of_agency').trigger('change');
-
-        no_barangay_remarks = false;
-        if (!$('#remarks_to_barangay').val() || $('#remarks_to_barangay').val().trim() === 'No Remark.') {
-            no_barangay_remarks = true;
-        }
-
-        if (
-            no_barangay_remarks &&
-            !$('#receipt_comp').is(':checked') &&
-            !$('#rescue_operation').is(':checked') &&
-            !$('#forensic_interview').is(':checked') &&
-            !$('#enforce_protect_order').is(':checked')
-        ) {
-            $('#law-enforcement-update').css('display', 'none');
-        }
-        
-        no_SWDO_remarks = false;
-        if (!$('#remark_to_barangay_from_SWDO').val() || $('#remark_to_barangay_from_SWDO').val().trim() === 'No Remark.') {
-            no_SWDO_remarks = true;
-        }
-        if (
-            no_SWDO_remarks &&
-            !$('#psych_service').is(':checked') &&
-            !$('#emergency_shelter').is(':checked') &&
-            !$('#SWDO_other').is(':checked') &&
-            !$('#economic_assist').is(':checked') 
-        ) {
-            $('#SWDO-update').css('display', 'none');
-        }
-
-        $('#btn-submit-SWDO').click(function() {
-            // Prevent default form submission
-            event.preventDefault();
-            var formData = new FormData($('#form-refer-SWDO')[0]);
-
-            $('#btn-submit-SWDO').text('Update').prop('disabled', true);
-
-            if($('#btn-submit-SWDO').text() === 'Send') {
-                    $('#btn-submit-SWDO').text('Sending...').prop('disabled', true);
-                } else {
-                    $('#btn-submit-SWDO').text('Updating...').prop('disabled', true);
-                }
-                
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '/refer-SWDO/',
-                data: formData,
-                contentType: false, // Prevent jQuery from automatically setting contentType
-                processData: false, // Prevent jQuery from automatically processing data
-                dataType: 'json', // Expect JSON response
-                success: function(response) {
-                    $('#btn-submit-SWDO').text('Update').prop('disabled', false);
-                    
-                    // Show success toast
-                    $('#successToast .toast-body').text(response.message);
-                    $('#successToast').toast('show');
-                    
-                    // Reload page after 3 seconds
-                    setTimeout(function() {
-                        location.reload();
-                    }, 3000);
-                },
-                error: function(xhr, errmsg, err) {
-                    // Show error toast
-                     $('#btn-submit-SWDO').text('Update').prop('disabled', false);
-                    $('#errorToast .toast-body').text('Error occurred while processing the form.');
-                    $('#errorToast').toast('show');
-                }
-            });
-        
-        });
-
-        //======================================================
-
-        $('#name_of_hospital').on('change', function(){
-            var selectedHospital = $(this).val();
-    
-            if (!selectedHospital) {
-                $('#name_of_hospital_label').append('<span class="text-danger">*Required</span>');
-            }else{
-                $('#name_of_hospital_label .text-danger').remove();
-                $('#name_of_hospital_label').text('Hospital');
-            }
-    
-            
-        })
-    
-        $('#name_of_hospital').trigger('change');
-
-
-        $('#btn-submit-healthcare').click(function() {
-            // Prevent default form submission
-            event.preventDefault();
-            var formData = new FormData($('#form-refer-healthcare')[0]);
-
-            $('#btn-submit-healthcare').text('Update').prop('disabled', true);
-
-            if($('#btn-submit-healthcare').text() === 'Send') {
-                    $('#btn-submit-healthcare').text('Sending...').prop('disabled', true);
-                } else {
-                    $('#btn-submit-healthcare').text('Updating...').prop('disabled', true);
-                }
-                
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '/refer-healthcare/',
-                data: formData,
-                contentType: false, // Prevent jQuery from automatically setting contentType
-                processData: false, // Prevent jQuery from automatically processing data
-                dataType: 'json', // Expect JSON response
-                success: function(response) {
-                    $('#btn-submit-healthcare').text('Update').prop('disabled', false);
-                    
-                    // Show success toast
-                    $('#successToast .toast-body').text(response.message);
-                    $('#successToast').toast('show');
-                    
-                    // Reload page after 3 seconds
-                    setTimeout(function() {
-                        location.reload();
-                    }, 3000);
-                },
-                error: function(xhr, errmsg, err) {
-                    // Show error toast
-                     $('#btn-submit-healthcare').text('Update').prop('disabled', false);
-                    $('#errorToast .toast-body').text('Error occurred while processing the form.');
-                    $('#errorToast').toast('show');
-                }
-            });
-        
-        });
 
     });
 

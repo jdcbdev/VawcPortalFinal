@@ -9,7 +9,7 @@
 <div class="container-fluid pb-4">
     <div class="row d-flex justify-content-between">
         <div class="col-auto">
-            <h1>Law Enforcement Account</h1>
+            <h1>SWDO Account</h1>
         </div>
         <div class="col-auto">
             <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account"><i class="bx bx-plus"></i> Add Account</button>
@@ -39,7 +39,6 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Station</th>
                     <th scope="col">Date Added</th>
                     <th class="text-center" scope="col">Manage</th>
                 </tr>
@@ -47,10 +46,9 @@
             <tbody class="table-group-divider">
                 {% for account in accounts %}
                     <tr>
-                        <td>{{ account.last_name }},{{ account.first_name }}&nbsp;{{ account.middle_name }}</td>
+                        <td>{{ account.name }}</td>
                         <td>{{ account.user.email }}</td>
                         <td>{{ account.status }}</td>
-                        <td>{{ account.station }}</td>
                         <td>{{ account.user.date_joined }}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-success edit-account-btn" role="button" data-account-id="{{ account.user.id }}">View</button>
@@ -91,7 +89,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Account</h1>
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Add SWDO Account</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -117,49 +115,12 @@
                         Looks good!
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-6 col-12">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="account_fname" name="account_fname" placeholder="name@example.com" >
-                            <label for="account_fname">First Name</label>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-12l">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="account_mname" name="account_mname" placeholder="name@example.com" >
-                            <label for="account_mname">Middle Name</label>
-                        </div>
-                    </div>
-                </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="account_lname" name="account_lname" placeholder="name@example.com" >
-                    <label for="account_lname">Last Name</label>
+                    <input type="text" class="form-control" id="account_fname" name="account_fname" placeholder="name@example.com" >
+                    <label for="account_fname">Name</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="account_region" name="account_region">
-                        <option>--Select Option--</option>
-                        {% for region in default_regions %}
-                            <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
-                    </select>
-                    <label for="victim_region">Region</label>
-                </div>
+               
 
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="account_province" name="account_province" disabled>
-                        <option value="">--Select Option--</option>
-                    </select>
-                    <label for="account_province">Province</label>
-                </div>  
-                
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="account_police_station" name="account_police_station" disabled>
-                        <option value="">--Select Option--</option>
-                    </select>
-                    <label for="account_police_station">Police Station</label>
-                </div>                         
             </form>
         </div>
         <div class="modal-footer">
@@ -181,25 +142,15 @@
         <div class="modal-body">
             <form id="editAccountForm" method="POST">
                 {% csrf_token %}
-                <div class="row">
-                    <input type="hidden" id="account_id" name="account_id" value="0">
-                    <div class="col-lg-6 col-12">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="edit_account_fname" name="edit_account_fname" placeholder="name@example.com" >
-                            <label for="edit_account_fname">First Name</label>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-12l">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="edit_account_mname" name="edit_account_mname" placeholder="name@example.com" >
-                            <label for="edit_account_mname">Middle Name</label>
-                        </div>
-                    </div>
-                </div>
+                
+                <input type="hidden" id="account_id" name="account_id" value="0">
+                    
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="edit_account_lname" name="edit_account_lname" placeholder="name@example.com" >
-                    <label for="edit_account_lname">Last Name</label>
+                    <input type="text" class="form-control" id="edit_account_fname" name="edit_account_fname" placeholder="name@example.com" >
+                    <label for="edit_account_fname">Name</label>
                 </div>
+                    
+                
                 <div class="form-floating mb-3">
                     <select class="form-select" name="edit_status" id="edit_status">
                         <option value="Active">Active</option>
@@ -207,26 +158,7 @@
                     </select>
                     <label for="edit_status">Status</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_region" name="edit_account_region">
-                        <option>--Select Option--</option>
-                    </select>
-                    <label for="edit_account_region">Region</label>
-                </div>
-                
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_province" name="edit_account_province">
-                        <option>--Select Option--</option>
-                    </select>
-                    <label for="edit_account_province">Province</label>
-                </div>  
-                
-                <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_police" name="edit_account_police">
-                        <option>--Select Option--</option>
-                    </select>
-                    <label for="edit_account_police">Police Station</label>
-                </div>    
+              
             </form>
         </div>
         <div class="modal-footer">
@@ -284,9 +216,9 @@
         // Function to handle form submission
         $('#addAccountForm').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
-
+            $('#addAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
             $.ajax({
-                url: '{% url "create law enforcement account" %}',
+                url: '{% url "create SWDO account" %}',
                 method: 'POST',
                 data: $(this).serialize(), // Serialize form data
                 success: function(response) {
@@ -302,9 +234,11 @@
                         $('#errorToast .toast-body').text(response.message);
                         $('#errorToast').toast('show');
                     }
+                    $('#addAccountBtn').prop('disabled', false); // Enable the button after submission
                 },
                 error: function(xhr, errmsg, err) {
                     console.log(xhr.status + ": " + xhr.responseText);
+                    $('#addAccountBtn').prop('disabled', false); // Enable the button after submission
                 }
             });
         });
@@ -313,42 +247,15 @@
             var accountId = $(this).data('account-id');
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_SWDO_account" 0 %}'.replace('0', accountId),
                 method: 'GET',
                 success: function(response) {
                     // console.log("Full response object:", response);
 
-                    setGeoSelect($('#edit_account_region'), 'region', 'default_regions');
-                    setGeoSelect($('#edit_account_province'), 'province', 'default_provinces');
-                    setGeoSelect($('#edit_account_police'), 'name', 'default_police_stations');
-
-                    function setGeoSelect(geoTypeInput, itemKey, dataKey) {
-                        const blankOption = document.createElement('option');
-                        blankOption.textContent = '--Select Option--';
-                        geoTypeInput.empty().append(blankOption);
-
-                        // console.log("response data key: ",response[dataKey]);
-
-                        response[dataKey].forEach(item => {
-                            const value = item[itemKey];
-                            if (!value) return;
-
-                            const option = document.createElement('option');
-                            option.value = value;
-                            option.textContent = value;
-                            geoTypeInput.append(option)
-                        });
-                    }
-
                     // Populate the modal with the data from the response
                     $('#account_id').val(response.account_id);
-                    $('#edit_account_fname').val(response.first_name);
-                    $('#edit_account_mname').val(response.middle_name);
-                    $('#edit_account_lname').val(response.last_name);
+                    $('#edit_account_fname').val(response.name);
                     $('#edit_status').val(response.status);
-                    $('#edit_account_region').val(response.region);
-                    $('#edit_account_province').val(response.province);
-                    $('#edit_account_police').val(response.station);
                     // Show the modal
                     $('#edit_law_enforcement_account').modal('show');
                 },
@@ -361,13 +268,13 @@
 
         $('#saveAccountBtn').on('click', function() {
             var formData = $('#editAccountForm').serialize();
-
+            $('#saveAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
             // Get the accountId from the hidden input field
             var accountId = $('#account_id').val();
             console.log('Account Id:', accountId);
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_SWDO_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
@@ -381,6 +288,7 @@
                     setTimeout(function() {
                         location.reload();
                     }, 2000);
+                    $('#saveAccountBtn').prop('disabled', false); // Enable the button after submission
                     // Refresh the page or update any UI as needed
                 },
                 error: function(xhr, status, error) {
@@ -389,6 +297,7 @@
                     // Display error message
                     $('#errorToast .toast-body').text(response.message);
                     $('#errorToast').toast('show');
+                     $('#saveAccountBtn').prop('disabled', false); // Enable the button after submission
                     // Optionally, show an error message to the user
                 }
             });
@@ -496,171 +405,15 @@
 
     });
 
-    function addAddressListener(formElement, formType, count = 0) {
-        let region = null
-        let province = null
-        let police_station = null
-
-        if(formType === 'perp' || formType === 'victim') {
-            region = formElement.querySelector(`#${formType}_region_${count}`)
-            province = formElement.querySelector(`#${formType}_province_${count}`)
-            police_station = formElement.querySelector(`#${formType}_police_station_${count}`) 
-        } else {
-            region = formElement.querySelector(`#${formType}_region`)   
-            province = formElement.querySelector(`#${formType}_province`)   
-            police_station = formElement.querySelector(`#${formType}_police_station`)   
-        }
-        province.disabled = true
-        police_station.disabled = true
-
-        region.addEventListener('change', (e) => {
-
-            const regionSelect = document.querySelector(`#${formType}_region`);
-            const regionNameRaw = regionSelect.value;
-            const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
-            if(regionName) {
-                setGeoSelectPoliceStation(province, {
-                    region: regionName,
-                    action: 'province',
-                    csrfmiddlewaretoken: csrf_token,
-                });
-                province.disabled=false
-                console.log("enabled police station")
-            } else {
-                console.log('Please select a region.');
-            }
-
-        })
-
-        province.addEventListener('change', (e) => {
-            const provinceName = e.target.value;
-            if (provinceName) {
-                setGeoSelectPoliceStation(police_station, {
-                    province: provinceName,
-                    action: 'police_station',
-                    csrfmiddlewaretoken: csrf_token,
-                });
-                police_station.disabled = false;
-                
-            } else {
-                console.log('Please select a province.');
-            }
-        });
-    }
-    function editAddressListener(formElement, formType, count = 0) {
-        let region = null
-        let province = null
-        let police_station = null
-
-        if(formType === 'perp' || formType === 'victim') {
-            region = formElement.querySelector(`#${formType}_region_${count}`)
-            province = formElement.querySelector(`#${formType}_province_${count}`)
-            police_station = formElement.querySelector(`#${formType}_police_${count}`) 
-        } else {
-            region = formElement.querySelector(`#${formType}_region`)   
-            province = formElement.querySelector(`#${formType}_province`)   
-            police_station = formElement.querySelector(`#${formType}_police`)   
-        }
-
-        region.addEventListener('change', (e) => {
-
-            const regionSelect = document.querySelector(`#${formType}_region`);
-            const regionNameRaw = regionSelect.value;
-            const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
-            if(regionName) {
-                setGeoSelectPoliceStation(province, {
-                    region: regionName,
-                    action: 'province',
-                    csrfmiddlewaretoken: csrf_token,
-                });
-            } else {
-                console.log('Please select a region.');
-            }
-
-        })
-
-        province.addEventListener('change', (e) => {
-            const provinceName = e.target.value;
-            if (provinceName) {
-                setGeoSelectPoliceStation(police_station, {
-                    province: provinceName,
-                    action: 'police_station',
-                    csrfmiddlewaretoken: csrf_token,
-                });
-            } else {
-                console.log('Please select a province.');
-            }
-        });
-    }
     
-    document.addEventListener('DOMContentLoaded', () => {
+    {% comment %} document.addEventListener('DOMContentLoaded', () => {
         addAddressListener(document.querySelector('#addAccountForm'), 'account')
         editAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
     })
+     {% endcomment %}
     
+
     
-    async function setGeoSelect(geoTypeInput, formData) {
-
-        const res = await fetch('/pages/select-address/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrf_token
-            },
-            body: JSON.stringify(formData),
-        })
-
-        const data = await res.json()
-
-        const blankOption = document.createElement('option')
-        blankOption.textContent = '--Select Option--'
-        blankOption.value = ''
-        // clear all options in select element
-        geoTypeInput.replaceChildren()
-
-        // apend blank option as the first selected options
-        geoTypeInput.appendChild(blankOption)
-        // apped data to respective inputs
-        data.forEach(item => {
-            const option = document.createElement('option')
-            option.dataset.code = item.code
-            option.value = item.name
-            option.textContent = item.name
-            geoTypeInput.appendChild(option)
-        })
-    }
-
-    async function setGeoSelectPoliceStation(selectElement, formData) {
-        try {
-            const res = await fetch('/pages/get-police-station/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrf_token
-                },
-                body: new URLSearchParams(formData)
-            });
-
-            if (!res.ok) throw new Error(`Server error: ${res.status}`);
-            const data = await res.json();
-
-            selectElement.innerHTML = '';
-            const blankOption = document.createElement('option');
-            blankOption.textContent = '--Select Option--';
-            blankOption.value = '';
-            selectElement.appendChild(blankOption);
-
-            data.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.name;
-                option.textContent = item.name;
-                selectElement.appendChild(option);
-                console.log(item.name);
-            });
-        } catch (error) {
-            console.error("Failed to fetch police stations:", error);
-        }
-    }
 
 </script>
 {% endblock scripts %}

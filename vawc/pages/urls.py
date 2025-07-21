@@ -44,11 +44,17 @@ urlpatterns = [
     path('admin-vawc/graph-report/', views.admin_graph_view, name='admin graph'),
     path('admin-vawc/manage/account/', views.admin_manage_account_view, name='admin account'),
     path('admin-vawc/manage/law-enforcement-account/', views.law_enforcement_manage_account_view, name='law enforcement account'),
+    path('admin-vawc/manage/healthcare-account/', views.healthcare_manage_account_view, name='healthcare account'),
+    path('admin-vawc/manage/SWDO-account/', views.swdo_manage_account_view, name='SWDO account'),
     path('admin-vawc/manage/passkey/', views.admin_manage_passkey_view, name='admin passkey'),
     path('admin-vawc/create_account/', views.create_account, name='create account'),
     path('admin-vawc/create_law-enforcement-account/', views.create_law_enforcement_account, name='create law enforcement account'),
+    path('admin-vawc/create_healthcare-account/', views.create_healthcare_account, name='create healthcare account'),
+    path('admin-vawc/create_SWDO-account/', views.create_swdo_manage_account, name='create SWDO account'),
     path('admin-vawc/edit_account/<int:account_id>/', views.edit_account_view, name='edit_account'),
     path('admin-vawc/edit_law-enforcement_account/<int:account_id>/', views.edit_law_enforcement_account_view, name='edit_law-enforcement_account'),
+    path('admin-vawc/edit_healthcare_account/<int:account_id>/', views.edit_healthcare_account_view, name='edit_healthcare_account'),
+    path('admin-vawc/edit_SWDO_account/<int:account_id>/', views.edit_swdo_account_view, name='edit_SWDO_account'),
     path('delete_account/', views.delete_account, name='delete_account'),
     path('check_username_email/', views.check_username_email, name='check_username_email'),
     path('admin-vawc/settings/', views.admin_settings_view, name='admin settings'),
@@ -77,8 +83,8 @@ urlpatterns = [
     path('admin-barangay-vawc/view-case/behalf/<int:case_id>/', views.view_case_behalf, name='barangay case behalf view'),
     path('admin-barangay-vawc/view-case/impacted/<int:case_id>/', views.view_case_impact, name='barangay case impacted view'),
     path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
-    path('process_service_info/', views.process_service_info, name='process_service_info'),
-
+    # path('process_service_info/', views.process_service_info, name='process_service_info'),
+    path('refer-law-enforcement/', views.refer_law_enforcement, name='refer_law_enforcement'),
     #law enforcement admin side
     # path('admin-law-enforcement-vawc/dashboard/', views.law_enforcement_dashboard_view, name='law enforcement dashboard'),
     # path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.law_enforcement_dashboard_data, name='law enforcement dashboard data'),
@@ -94,6 +100,21 @@ urlpatterns = [
     path('admin-law-enforcement-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
     path('process_service_info/', views.process_service_info, name='process_service_info'),
     # path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
+
+    # healthcare admin side============================================================================================
+    path('admin-healthcare-vawc/case/', views.healthcare_case_view, name='healthcare case'),
+    path('admin-healthcare-vawc/settings/', views.healthcare_settings_view, name='healthcare settings'),
+    path('refer-healthcare/', views.refer_healthcare, name='refer_healthcare'),
+    path('admin-healthcare-vawc/view-healthcare-case/impacted/<int:case_id>/', views.view_healthcare_case_impact, name='law healthcare case impacted view'),
+    path('admin-healthcare-vawc/view-healthcare-case/behalf/<int:case_id>/', views.view_healthcare_case_behalf, name='law healthcare case behalf view'),
+    
+    # SWDO admin side============================================================================================
+    path('admin-SWDO-vawc/case/', views.SWDO_case_view, name='SWDO case'),
+    path('admin-SWDO-vawc/settings/', views.SWDO_settings_view, name='SWDO settings'),
+    path('admin-SWDO-vawc/view-SWDO-case/behalf/<int:case_id>/', views.view_SWDO_case_behalf, name='SWDO case behalf view'),
+    path('admin-SWDO-vawc/view-SWDO-case/impacted/<int:case_id>/', views.view_SWDO_case_impact, name='SWDO case impacted view'),
+    path('refer-SWDO/', views.refer_SWDO, name='refer_SWDO'),
+
 
     # NOTIF
     path('admin-barangay-vawc/notification', views.admin_notification_view, name="Notification"),

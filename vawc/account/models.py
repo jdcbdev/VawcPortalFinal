@@ -69,6 +69,29 @@ class LawEnforcementAccount(models.Model):
     def __str__(self):
         return self.user.username
     
+class SWDOaccount(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, null=True, blank=True, default='Active')
+    type = models.CharField(max_length=20, default='SWDO')
+    
+    def __str__(self):
+        return self.user.username
+
+class HealthcareAccount(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    first_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, null=True, blank=True, default='Active')
+    region = models.CharField(max_length=100, null=True, blank=True)
+    province = models.CharField(max_length=100, null=True, blank=True)
+    hospital_name = models.CharField(max_length=100, null=True, blank=True)
+    type = models.CharField(max_length=20, default='healthcare')
+    
+    def __str__(self):
+        return self.user.username
+
 class PoliceStations(models.Model):
     name = models.CharField(max_length=255)
     province = models.CharField(max_length=100)
@@ -102,7 +125,7 @@ class Twilio(models.Model):
     account_sid = models.CharField(max_length=50)
     auth_token = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
-    # type = models.CharField(max_length=20, null=True, blank=True)
+    type = models.CharField(max_length=20, null=True, blank=True)
     TYPE_CHOICES = [
         ('local', 'Local'),
         ('deployed', 'Deployed'),

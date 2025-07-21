@@ -9,7 +9,7 @@
 <div class="container-fluid pb-4">
     <div class="row d-flex justify-content-between">
         <div class="col-auto">
-            <h1>Law Enforcement Account</h1>
+            <h1>Healthcare Account</h1>
         </div>
         <div class="col-auto">
             <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account"><i class="bx bx-plus"></i> Add Account</button>
@@ -39,7 +39,7 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Station</th>
+                    <th scope="col">Hospital Name</th>
                     <th scope="col">Date Added</th>
                     <th class="text-center" scope="col">Manage</th>
                 </tr>
@@ -50,7 +50,7 @@
                         <td>{{ account.last_name }},{{ account.first_name }}&nbsp;{{ account.middle_name }}</td>
                         <td>{{ account.user.email }}</td>
                         <td>{{ account.status }}</td>
-                        <td>{{ account.station }}</td>
+                        <td>{{ account.hospital_name }}</td>
                         <td>{{ account.user.date_joined }}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-success edit-account-btn" role="button" data-account-id="{{ account.user.id }}">View</button>
@@ -155,11 +155,10 @@
                 </div>  
                 
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="account_police_station" name="account_police_station" disabled>
-                        <option value="">--Select Option--</option>
-                    </select>
-                    <label for="account_police_station">Police Station</label>
-                </div>                         
+                    <input type="text" class="form-control" id="account_hospital_name" name="account_hospital_name" placeholder="name@example.com" >
+                    <label for="account_hospital_name">Hospital Name</label>
+                </div>
+
             </form>
         </div>
         <div class="modal-footer">
@@ -171,7 +170,7 @@
 </div>
 
 <!-- Modal edit -->
-<div class="modal fade" id="edit_law_enforcement_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="edit_healthcare_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -222,11 +221,9 @@
                 </div>  
                 
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_police" name="edit_account_police">
-                        <option>--Select Option--</option>
-                    </select>
-                    <label for="edit_account_police">Police Station</label>
-                </div>    
+                    <input type="text" class="form-control" id="edit_account_hospital_name" name="edit_account_hospital_name" placeholder="name@example.com" >
+                    <label for="edit_account_hospital_name">Hospital Name</label>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
@@ -284,9 +281,10 @@
         // Function to handle form submission
         $('#addAccountForm').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
-
+            $('#addAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#addAccountBtn').text('Adding...'); // Change button text to indicate loading
             $.ajax({
-                url: '{% url "create law enforcement account" %}',
+                url: '{% url "create healthcare account" %}',
                 method: 'POST',
                 data: $(this).serialize(), // Serialize form data
                 success: function(response) {
@@ -294,16 +292,21 @@
                         // Display success message and reload page after 2 seconds
                         $('#successToast .toast-body').text(response.message);
                         $('#successToast').toast('show');
+                        $('#add_new_account').modal('hide');
                         setTimeout(function() {
                             location.reload();
-                        }, 2000);
+                        }, 1000);
                     } else {
                         // Display error message
                         $('#errorToast .toast-body').text(response.message);
                         $('#errorToast').toast('show');
                     }
+                    $('#addAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#addAccountBtn').text('Add New Account'); // Change button text to indicate loading
                 },
                 error: function(xhr, errmsg, err) {
+                    $('#addAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#addAccountBtn').text('Add New Account'); // Change button text to indicate loading
                     console.log(xhr.status + ": " + xhr.responseText);
                 }
             });
@@ -313,21 +316,20 @@
             var accountId = $(this).data('account-id');
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_healthcare_account" 0 %}'.replace('0', accountId),
                 method: 'GET',
                 success: function(response) {
                     // console.log("Full response object:", response);
-
+                
                     setGeoSelect($('#edit_account_region'), 'region', 'default_regions');
                     setGeoSelect($('#edit_account_province'), 'province', 'default_provinces');
-                    setGeoSelect($('#edit_account_police'), 'name', 'default_police_stations');
 
                     function setGeoSelect(geoTypeInput, itemKey, dataKey) {
                         const blankOption = document.createElement('option');
                         blankOption.textContent = '--Select Option--';
                         geoTypeInput.empty().append(blankOption);
 
-                        // console.log("response data key: ",response[dataKey]);
+                         console.log("response data key: ",response[dataKey]);
 
                         response[dataKey].forEach(item => {
                             const value = item[itemKey];
@@ -348,9 +350,11 @@
                     $('#edit_status').val(response.status);
                     $('#edit_account_region').val(response.region);
                     $('#edit_account_province').val(response.province);
-                    $('#edit_account_police').val(response.station);
+                    $('#edit_account_hospital_name').val(response.hospital_name);
                     // Show the modal
-                    $('#edit_law_enforcement_account').modal('show');
+                    $('#edit_healthcare_account').modal('show');
+                    
+                    
                 },
                 error: function(xhr, status, error) {
                     // Handle error
@@ -361,13 +365,14 @@
 
         $('#saveAccountBtn').on('click', function() {
             var formData = $('#editAccountForm').serialize();
-
+            $('#saveAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#saveAccountBtn').text('Saving...'); // Change button text to indicate loading
             // Get the accountId from the hidden input field
             var accountId = $('#account_id').val();
             console.log('Account Id:', accountId);
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_healthcare_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
@@ -378,12 +383,17 @@
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
+                    $('#edit_healthcare_account').modal('hide');
+                    $('#saveAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#saveAccountBtn').text('Saving Account'); // Change button text to indicate loading
                     setTimeout(function() {
                         location.reload();
-                    }, 2000);
+                    }, 1000);
                     // Refresh the page or update any UI as needed
                 },
                 error: function(xhr, status, error) {
+                    $('#saveAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#saveAccountBtn').text('Saving Account'); // Change button text to indicate loading
                     // Handle error
                     console.error('Error:', error);
                     // Display error message
@@ -398,6 +408,7 @@
         $(document).on('click', '.delete-account-btn', function () {
             // Retrieve the account ID from the data-account-id attribute
             var accountId = $(this).data('account-id');
+           
 
             // Set the account ID value in the modal confirmation button
             $('#confirmAccountDeleteBtn').data('account-id', accountId);
@@ -410,7 +421,8 @@
         $('#confirmAccountDeleteBtn').on('click', function() {
             // Retrieve the account ID from the data-account-id attribute of the Delete button in the modal
             var accountId = $(this).data('account-id');
-            
+            $('#confirmAccountDeleteBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#confirmAccountDeleteBtn').text('Deleting...'); // Change button text to indicate loading
             // Send an AJAX request to delete the account
             $.ajax({
                 url: '{% url "delete_account" %}',
@@ -427,9 +439,13 @@
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
+                    $('#confirmAccountDelete').modal('hide');
+                    $('#confirmAccountDeleteBtn').text('Delete'); // Change button text to indicate loading
+                    $('#confirmAccountDeleteBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
                     setTimeout(function() {
                         location.reload();
-                    }, 2000);
+                    }, 1000);
+
                 },
                 error: function(xhr, status, error) {
                     // Handle error
@@ -438,6 +454,8 @@
                     $('#errorToast .toast-body').text(response.message);
                     $('#errorToast').toast('show');
                     // Optionally, show an error message to the user
+                    $('#confirmAccountDeleteBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#confirmAccountDeleteBtn').text('Delete'); // Change button text to indicate loading
                 }
             });
         });
@@ -504,14 +522,14 @@
         if(formType === 'perp' || formType === 'victim') {
             region = formElement.querySelector(`#${formType}_region_${count}`)
             province = formElement.querySelector(`#${formType}_province_${count}`)
-            police_station = formElement.querySelector(`#${formType}_police_station_${count}`) 
+            
         } else {
             region = formElement.querySelector(`#${formType}_region`)   
             province = formElement.querySelector(`#${formType}_province`)   
-            police_station = formElement.querySelector(`#${formType}_police_station`)   
+            
         }
         province.disabled = true
-        police_station.disabled = true
+        
 
         region.addEventListener('change', (e) => {
 
@@ -537,7 +555,7 @@
             if (provinceName) {
                 setGeoSelectPoliceStation(police_station, {
                     province: provinceName,
-                    action: 'police_station',
+                    action: 'province',
                     csrfmiddlewaretoken: csrf_token,
                 });
                 police_station.disabled = false;
@@ -584,7 +602,7 @@
             if (provinceName) {
                 setGeoSelectPoliceStation(police_station, {
                     province: provinceName,
-                    action: 'police_station',
+                    action: 'province',
                     csrfmiddlewaretoken: csrf_token,
                 });
             } else {

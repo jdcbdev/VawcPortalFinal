@@ -1,3 +1,4 @@
+import time
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseNotFound, QueryDict, HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
@@ -34,6 +35,8 @@ from django.contrib.auth.hashers import make_password
 from account.utils import *
 import requests
 from twilio.rest import Client
+from datetime import datetime
+
 # Create your views here.
 
 from .utils import encrypt_data, decrypt_data
@@ -203,6 +206,7 @@ TOKEN_EXPIRATION_TIMEDELTA = timedelta(minutes=1)
 
 def verify_otp_email_track_case(request):
     if request.method == 'POST':
+        
         otp_entered = ''
         for i in range(1, 7):  # Iterate through OTP fields from 1 to 6
             otp_entered += request.POST.get(f'otp_{i}', '')
@@ -223,7 +227,9 @@ def verify_otp_email_track_case(request):
 
                 # Generate a unique token for password reset using Django's default_token_generator
                 token = generate_token(user_email)
-
+                print('Token generated:', token)
+                print('going to redirect to track_case_info')
+                
                 return JsonResponse({'success': True, 'message': 'OTP verified successfully.', 'user_email': user_email, 'token': token})
             elif timezone.now() >= otp_expiry:
                 return JsonResponse({'success': False, 'message': 'OTP has expired.'})
@@ -276,10 +282,12 @@ def track_case_info_view(request, contact_type, user_contact, token):
             temp_user = User(email=user_contact)
 
     except User.DoesNotExist:
+        print('User does not exist')
         return redirect('error_view')
 
     # Check if the token is valid for the temporary user
     if not default_token_generator.check_token(temp_user, token):
+        print('Token is invalid')
         return redirect('error_view')
 
     # Fetch cases related to the user_contact and prefetch related status history
@@ -290,8 +298,10 @@ def track_case_info_view(request, contact_type, user_contact, token):
         print('contact type: phone')
         cases = Case.objects.filter(phone=user_contact).prefetch_related('status_history')
 
+    cases = cases.order_by('-date_added')
     print(cases)
     # Token is valid, render the template
+    print('Token is valid, rendering track_case_info.html')
     return render(request, 'landing/track_case_info.html', {'contact_type': contact_type, 'user_contact': user_contact, 'token': token, 'cases': cases})
 
 @login_required
@@ -568,7 +578,97 @@ def law_enforcement_manage_account_view(request):
     })
 
 
+@login_required
+def healthcare_manage_account_view(request):
+    # Emails to exclude
+    excluded_emails = ['admin@gmail.com', 'vawcdilg@gmail.com']
 
+    # Default/initial data to use when page loads
+    region_id = 10  # Region 9
+    province_id = 50  # Zamboanga del Sur
+    municipality_id = 1133  # Zamboanga City
+
+    # Exclude the specified emails from the queryset
+    users = CustomUser.objects.exclude(email__in=excluded_emails)
+    accounts = HealthcareAccount.objects.filter(user__in=users)
+
+    regions = Region.objects.filter(id=region_id).values('id', 'code', 'name')
+
+    # Strip names like 'REGION IX (ZAMBOANGA PENINSULA)' → 'REGION IX'
+    for r in regions:
+        if '(' in r['name']:
+            r['name'] = r['name'].split('(')[0].strip()
+
+    return render(request, 'super-admin/healthcare-account.html', {
+        'users': users,
+        'accounts': accounts,
+        'default_regions': regions,
+        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_police_stations': PoliceStations.objects.filter(region="Region 9"),  # 👈 Include this
+    })
+    
+@login_required
+def swdo_manage_account_view(request):
+    # Emails to exclude
+    excluded_emails = ['admin@gmail.com', 'vawcdilg@gmail.com']
+
+
+    # Exclude the specified emails from the queryset
+    users = CustomUser.objects.exclude(email__in=excluded_emails)
+    accounts = SWDOaccount.objects.filter(user__in=users)
+
+    return render(request, 'super-admin/SWDO-account.html', {
+        'users': users,
+        'accounts': accounts,
+    })
+
+
+@login_required
+def create_swdo_manage_account(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('account_username')
+            email = request.POST.get('account_email')
+            name = request.POST.get('account_fname')
+            
+            print(username, email, name)
+            
+            try:
+                password = generate_random_password()
+                passkey = generate_random_password()
+                subject = 'Account Creation from VAWC'
+                message = (
+                    f'--------------------------\n'
+                    f'Account Details\n'
+                    f'--------------------------\n\n'
+                    f'Here is your New Account From VAWC:\n\n'
+                    f'Email:  {email}\n'
+                    f'Username:  {username}\n'
+                    f'Password:  {password}\n\n'
+                    f'--------------------------\n'
+                    f'This email was sent automatically. Please do not reply.'
+                )
+                send_email(email, subject, message)
+                # Create the user with provided data using the CustomUser manager
+                user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                # Create the Account instance and link it to the user
+                account = SWDOaccount.objects.create(
+                    user=user,
+                    name= name,
+                )
+            except:
+                pass
+            # Return success response
+            return JsonResponse({'success': True, 'message': 'SWDO Account created successfully'})
+
+        except Exception as e:
+            # Return error response if something goes wrong
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    else:
+        # Return error response for unsupported methods
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+    
 # def select_police_station(request):
 #     if request.method == "POST":
 #         action = request.POST.get("action")
@@ -589,6 +689,7 @@ def law_enforcement_manage_account_view(request):
 #             return JsonResponse(data, safe=False)
 
 #     return JsonResponse([], safe=False)
+
 
 
 def edit_account_view(request, account_id):
@@ -638,6 +739,7 @@ def edit_account_view(request, account_id):
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
 
+
 def edit_law_enforcement_account_view(request, account_id):
     if request.method == 'GET':
         try: 
@@ -677,6 +779,73 @@ def edit_law_enforcement_account_view(request, account_id):
             police_account.city = request.POST.get('edit_account_police_station')
             police_account.save()
             return JsonResponse({'success': True, 'message': 'Account updated successfully'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+
+def edit_healthcare_account_view(request, account_id):
+    if request.method == 'GET':
+        try: 
+            print(account_id)
+            healthcare_account = get_object_or_404(HealthcareAccount, user_id=account_id)
+            regions = list(HealthcareAccount.objects.values('region').distinct())
+            provinces = list(PoliceStations.objects.values('province').distinct())
+
+            return JsonResponse({
+                'success': True,
+                'account_id': account_id,               
+                'first_name': healthcare_account.first_name,
+                'middle_name': healthcare_account.middle_name,
+                'last_name': healthcare_account.last_name,
+                'status': healthcare_account.status,
+                'region': healthcare_account.region,
+                'province': healthcare_account.province,
+                'default_regions': regions,
+                'default_provinces': provinces,
+                'hospital_name': healthcare_account.hospital_name,
+            })
+        except HealthcareAccount.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Healthcare Account not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    elif request.method == 'POST':
+        try:
+            healthcare_account = get_object_or_404(HealthcareAccount, user__id=account_id)
+            healthcare_account.first_name = request.POST.get('edit_account_fname')
+            healthcare_account.middle_name = request.POST.get('edit_account_mname') 
+            healthcare_account.last_name = request.POST.get('edit_account_lname')
+            healthcare_account.status = request.POST.get('edit_status')
+            healthcare_account.region = request.POST.get('edit_account_region')
+            healthcare_account.province = request.POST.get('edit_account_province')
+            healthcare_account.hospital_name = request.POST.get('edit_account_hospital_name')
+            healthcare_account.save()
+            return JsonResponse({'success': True, 'message': 'Account updated successfully'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+def edit_swdo_account_view(request, account_id):
+    if request.method == 'GET':
+        try: 
+            print(account_id)
+            SWDO_account = get_object_or_404(SWDOaccount, user_id=account_id)
+          
+            return JsonResponse({
+                'success': True,
+                'account_id': account_id,               
+                'name': SWDO_account.name,
+                'status': SWDO_account.status,
+            })
+        except SWDOaccount.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Account not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    elif request.method == 'POST':
+        try:
+            SWDO_account = get_object_or_404(SWDOaccount, user__id=account_id)
+            SWDO_account.name = request.POST.get('edit_account_fname')
+            SWDO_account.status = request.POST.get('edit_status')
+            SWDO_account.save()
+            return JsonResponse({'success': True, 'message': 'SWDO Account updated successfully'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
 
@@ -813,6 +982,68 @@ def create_law_enforcement_account(request):
                     region=region, 
                     province=province, 
                     station=station
+                )
+            except:
+                pass
+            # Return success response
+            return JsonResponse({'success': True, 'message': 'Account created successfully'})
+
+        except Exception as e:
+            # Return error response if something goes wrong
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    else:
+        # Return error response for unsupported methods
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+
+@login_required
+def create_healthcare_account(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('account_username')
+            email = request.POST.get('account_email')
+            first_name = request.POST.get('account_fname')
+            middle_name = request.POST.get('account_mname')
+            last_name = request.POST.get('account_lname')
+            region = request.POST.get('account_region')
+            province = request.POST.get('account_province')
+            hospital_name = request.POST.get('account_hospital_name')
+            
+            print(username, email, first_name, middle_name, last_name, region, province, hospital_name)
+            
+            try:
+                password = generate_random_password()
+                passkey = generate_random_password()
+                subject = 'Account Creation from VAWC'
+                message = (
+                    f'--------------------------\n'
+                    f'Account Details\n'
+                    f'--------------------------\n\n'
+                    f'Here is your New Healthcare Account From VAWC:\n\n'
+                    f'Email:  {email}\n'
+                    f'Username:  {username}\n'
+                    f'Password:  {password}\n\n'
+                    f'First Name:  {first_name}\n'
+                    f'Middle Name:  {middle_name}\n'
+                    f'Last Name:  {last_name}\n\n'
+                    f'Region:  {region}\n'
+                    f'Province:  {province}\n'
+                    f'Hospital Name:  {hospital_name}\n\n'
+                    f'--------------------------\n'
+                    f'This email was sent automatically. Please do not reply.'
+                )
+                send_email(email, subject, message)
+                # Create the user with provided data using the CustomUser manager
+                user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                # Create the Account instance and link it to the user
+                account = HealthcareAccount.objects.create(
+                    user=user,
+                    first_name=first_name,
+                    middle_name=middle_name,
+                    last_name=last_name,
+                    region=region, 
+                    province=province, 
+                    hospital_name=hospital_name
                 )
             except:
                 pass
@@ -1415,6 +1646,15 @@ def law_enforcement_settings_view (request):
     
     return render(request, 'law-enforcement-admin/settings.html', {'global': request.session, 'logged_in_user': logged_in_user})
 
+@login_required
+def healthcare_settings_view (request):
+    if request.user.healthcareaccount.type != 'healthcare':
+        return redirect('login')
+    
+    logged_in_user = request.user
+    
+    return render(request, 'healthcare-admin/settings.html', {'global': request.session, 'logged_in_user': logged_in_user})
+
 
 @login_required
 def law_enforcement_case_view(request):
@@ -1444,6 +1684,32 @@ def law_enforcement_case_view(request):
     })
 
 
+@login_required
+def healthcare_case_view(request):
+    if request.user.healthcareaccount.type != 'healthcare':
+        return redirect('login')
+    
+    logged_in_user = request.user  # Retrieve the logged-in user
+    # Retrieve the Account object associated with the logged-in user
+    try:
+        healthcareaccount = logged_in_user.healthcareaccount
+        hospital_name = healthcareaccount.hospital_name
+    except HealthcareAccount.DoesNotExist:
+        hospital_name = None
+    cases = Case.objects.all()  # Retrieve all cases from the database
+    
+    filtered_cases = []
+    
+    for case in cases:
+        if case.healthcare_provider_name == hospital_name:
+            filtered_cases.append(case)
+
+    return render(request, 'healthcare-admin/case/case.html', {
+        'cases': filtered_cases,
+        'global': request.session,
+        'logged_in_user': logged_in_user,
+        'hospital_name': hospital_name,
+    })
 
 # def select_police_station(request):
 #     if request.method == "POST":
@@ -1465,6 +1731,38 @@ def law_enforcement_case_view(request):
 #             return JsonResponse(data, safe=False)
 
 #     return JsonResponse([], safe=False)
+
+# SWDO ADMIN SIDE===========================================================================================================
+
+@login_required
+def SWDO_case_view(request):
+    if request.user.swdoaccount.type != 'SWDO':
+        return redirect('login')
+    
+    logged_in_user = request.user  # Retrieve the logged-in user
+    
+    cases = Case.objects.all()  # Retrieve all cases from the database
+    
+    filtered_cases = []
+    
+    for case in cases:
+        if case.refers_to_social_welfare == True:
+            filtered_cases.append(case)
+
+    return render(request, 'SWDO/case/case.html', {
+        'cases': filtered_cases,
+        'global': request.session,
+        'logged_in_user': logged_in_user,
+    })
+
+@login_required
+def SWDO_settings_view (request):
+    if request.user.swdoaccount.type != 'SWDO':
+        return redirect('login')
+    
+    logged_in_user = request.user
+    
+    return render(request, 'SWDO/settings.html', {'global': request.session, 'logged_in_user': logged_in_user})
 
 
 
@@ -1534,7 +1832,15 @@ def login_with_otp(request):
                 if user.lawenforcementaccount.status == 'Not Active':
                     return JsonResponse({'success': False, 'message': 'Law Enforcement account is Not Active'})
             except LawEnforcementAccount.DoesNotExist:
-                return JsonResponse({'success': False, 'message': 'User has no linked account.'})
+                try:
+                     if user.swdoaccount.status == 'Not Active':
+                        return JsonResponse({'success': False, 'message': 'SWDO account is Not Active'})
+                except SWDOaccount.DoesNotExist:
+                    try:
+                        if user.healthcareaccount.status == 'Not Active':
+                            return JsonResponse({'success': False, 'message': 'Healthcare account is Not Active'})
+                    except HealthcareAccount.DoesNotExist:
+                        return JsonResponse({'success': False, 'message': 'User has no linked account.'})
 
         # Authenticate
         user_authenticated = authenticate(request, username=email, password=passkey)
@@ -1545,6 +1851,7 @@ def login_with_otp(request):
             request.session['user_email'] = email
             otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
             request.session['otp_expiry'] = otp_expiry.isoformat()
+            print(otp)
             send_otp_email(email, otp)
             return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
         else:       
@@ -1586,7 +1893,7 @@ def verify_otp(request):
         request.session.pop('user_email', None)
 
         # List of related account models to check
-        account_models = [Account, LawEnforcementAccount]
+        account_models = [Account, LawEnforcementAccount, SWDOaccount, HealthcareAccount]
 
         account_type = None
         for model in account_models:
@@ -1659,6 +1966,7 @@ def email_confirm(request):
         otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
         request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
         send_otp_email(email, otp)
+        print('OTP: ' + otp)
         return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
 
 def phone_confirm(request):
@@ -2436,6 +2744,7 @@ def view_case_behalf(request, case_id):
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
         status_history = Status_History.objects.filter(case_status_history=case)
         witnesses = Witness.objects.filter(case_witness=case)
+        hospitals = HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct()
 
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
@@ -2450,6 +2759,7 @@ def view_case_behalf(request, case_id):
             case.province = encrypt_data(case.province)
             case.region = encrypt_data(case.region)
             case.description_of_incident = encrypt_data(case.description_of_incident)
+            case.service_information = encrypt_data(case.service_information)
             case.city = encrypt_data(case.city)
 
             # for victim in victims:
@@ -2565,7 +2875,11 @@ def view_case_behalf(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'today': datetime.today(),
+            'hospitals' : hospitals,
+
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
@@ -2585,6 +2899,7 @@ def view_case_impact(request, case_id):
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
         status_history = Status_History.objects.filter(case_status_history=case)
         witnesses = Witness.objects.filter(case_witness=case)
+        hospitals = HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct()
 
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
@@ -2600,6 +2915,11 @@ def view_case_impact(request, case_id):
             case.region = encrypt_data(case.region)
             case.description_of_incident = encrypt_data(case.description_of_incident)
             case.city = encrypt_data(case.city)
+            case.service_information = encrypt_data(case.service_information)
+
+            
+
+            
 
             # for victim in victims:
             #     victim.description
@@ -2676,11 +2996,16 @@ def view_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'today': datetime.today(),
+            'hospitals' : hospitals,
+
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
         return HttpResponseNotFound("Case not found")
+
 
 @login_required
 def view_enforcement_case_behalf(request, case_id):
@@ -2697,7 +3022,7 @@ def view_enforcement_case_behalf(request, case_id):
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
         status_history = Status_History.objects.filter(case_status_history=case)
         witnesses = Witness.objects.filter(case_witness=case)
-
+    
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
@@ -2712,7 +3037,9 @@ def view_enforcement_case_behalf(request, case_id):
             case.region = encrypt_data(case.region)
             case.description_of_incident = encrypt_data(case.description_of_incident)
             case.city = encrypt_data(case.city)
-
+            case.service_information = encrypt_data(case.service_information)
+            case.remarks_to_law_enforcement = encrypt_data(case.remarks_to_law_enforcement)
+            case.remarks_to_barangay = encrypt_data(case.remarks_to_barangay)
             # for victim in victims:
             #     victim.description
             for victim in victims:
@@ -2826,11 +3153,14 @@ def view_enforcement_case_behalf(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
+            'default_stations': PoliceStations.objects.all(),
+            'service_information': case.service_information,
+            'today': datetime.today(),
         })
     except Case.DoesNotExist: 
         # Handle case not found appropriately, for example, return a 404 page
         return HttpResponseNotFound("Case not found")
+
 
 @login_required
 def view_enforcement_case_impact(request, case_id):
@@ -2861,6 +3191,9 @@ def view_enforcement_case_impact(request, case_id):
             case.region = encrypt_data(case.region)
             case.description_of_incident = encrypt_data(case.description_of_incident)
             case.city = encrypt_data(case.city)
+            case.service_information = encrypt_data(case.service_information)
+            case.remarks_to_law_enforcement = encrypt_data(case.remarks_to_law_enforcement)
+            case.remarks_to_barangay = encrypt_data(case.remarks_to_barangay)
 
             # for victim in victims:
             #     victim.description
@@ -2937,9 +3270,11 @@ def view_enforcement_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
+            'default_stations': PoliceStations.objects.all(),
+            'service_information': case.service_information,
+            'today': datetime.today(),
         })
-    except LawEnforcementReferredCase.DoesNotExist:
+    except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
         return HttpResponseNotFound("Case not found")
 
@@ -3945,7 +4280,7 @@ def process_incident_form(request):
         }
         return JsonResponse(response_data)
 
-from datetime import datetime
+
 
 def process_service_info(request):
     if request.method == 'POST':
@@ -3965,31 +4300,55 @@ def process_service_info(request):
                 return None  # Return None if the date format is invalid
 
         # Extracting and updating data for each field
-        case.refers_to_social_welfare = True if request.POST.get('refer_social_welware') == 'true' else False
-        case.refer_social_date = parse_date(request.POST.get('refer_social_date', ''))
-        case.psychosocial_services = True if request.POST.get('psych_service') == 'true' else False
-        case.emergency_shelter = True if request.POST.get('emergency_shelter') == 'true' else False
-        case.economic_assistance = True if request.POST.get('economic_assist') == 'true' else False
+        if request.POST.get('brgy_to_SWDO_form'):
+            case.refers_to_social_welfare = True if request.POST.get('refer_SWDO') == 'true' else False
+            case.refer_social_date = parse_date(request.POST.get('refer_social_date', ''))
+            case.remarks_to_social_welfare = request.POST.get('remarks_SWDO', '')
 
-        case.refers_to_healthcare_provider = True if request.POST.get('refer_health') == 'true' else False
-        case.refer_healthcare_date = parse_date(request.POST.get('refer_healthcare_date', ''))
-        case.healthcare_provider_name = request.POST.get('name_health', '')
-        case.provision_of_appropriate_medical_treatment = True if request.POST.get('provision') == 'true' else False
-        case.issuance_of_medical_certificate = True if request.POST.get('issuance_medical_cert') == 'true' else False
-        case.medico_legal_exam = True if request.POST.get('medico_legal') == 'true' else False
+        if request.POST.get('SWDO_to_brgy_form'):
+            case.refers_to_barangay_from_SWDO = True if request.POST.get('refers_to_barangay_from_SWDO') == 'true' else False
+            case.psychosocial_services = True if request.POST.get('psych_service') == 'true' else False
+            case.emergency_shelter = True if request.POST.get('emergency_shelter') == 'true' else False
+            case.economic_assistance = True if request.POST.get('economic_assist') == 'true' else False
+            case.SWDO_other = True if request.POST.get('SWDO_other') == 'true' else False
+            case.remark_to_barangay_from_SWDO = request.POST.get('remark_to_barangay_from_SWDO', '')
+            case.refer_to_barangay_from_social_date = parse_date(request.POST.get('refer_to_barangay_from_social_date', ''))
 
-        case.refers_to_law_enforcement = True if request.POST.get('refer_law_enforce') == 'true' else False
-        case.refer_law_enforcement_date = parse_date(request.POST.get('refer_law_enforcement_date', ''))
-        case.law_enforcement_agency_name = request.POST.get('name_of_agency', '')
-        case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
-        case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
-        case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
-        case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
+        if request.POST.get('refer_health'):
+            case.refers_to_healthcare_provider = True if request.POST.get('refer_health') == 'true' else False
+            case.refer_healthcare_date = parse_date(request.POST.get('refer_healthcare_date', ''))
+            case.healthcare_provider_name = request.POST.get('name_health', '')
+            case.provision_of_appropriate_medical_treatment = True if request.POST.get('provision') == 'true' else False
+            case.remarks_to_healthcare = request.POST.get('remarks_healthcare', '')
 
-        case.refers_to_other_service_provider = True if request.POST.get('refer_other_service') == 'true' else False
-        case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))
-        case.other_service_provider_name = request.POST.get('name_of_service_provider', '')
-        case.type_of_service = request.POST.get('type_of_service_provider', '')
+        if(request.POST.get('refer_to_barangay_from_health')):
+            case.issuance_of_medical_certificate = True if request.POST.get('issuance_medical_cert') == 'true' else False
+            case.medico_legal_exam = True if request.POST.get('medico_legal') == 'true' else False
+            case.healthcare_other = True if request.POST.get('healthcare_other') == 'true' else False
+            case.refer_to_barangay_from_healthcare_date = parse_date(request.POST.get('refer_to_barangay_from_healthcare_date', ''))
+            case.remarks_to_barangay_from_healthcare = request.POST.get('remarks_to_barangay_from_healthcare', '')
+
+        if request.POST.get('barangay_to_law_enforcement_form'):
+            case.refers_to_law_enforcement = True if request.POST.get('refer_law_enforce') == 'true' else False
+            case.refer_law_enforcement_date = parse_date(request.POST.get('refer_law_enforcement_date', ''))
+            case.law_enforcement_agency_name = request.POST.get('name_of_agency', '')
+            case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '') 
+            case.service_information = request.POST.get('service', '')
+        
+        if request.POST.get('law_enforcement_to_barangay_form'):
+            case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
+            case.rescue_operations_of_vaw_cases = True if request.POST.get('rescue_operation') == 'true' else False
+            case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
+            case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
+            case.law_enforcement_others = True if request.POST.get('law_enforcement_others') == 'true' else False
+            case.remarks_to_barangay = request.POST.get('remarks_barangay', '')
+            case.refer_to_barangay_date = parse_date(request.POST.get('refer_to_barangay_date', ''))
+            
+        if request.POST.get('refer_other_service'):
+            case.refers_to_other_service_provider = True if request.POST.get('refer_other_service') == 'true' else False
+            case.refer_other_service_date = parse_date(request.POST.get('refer_other_service_date', ''))
+            case.other_service_provider_name = request.POST.get('name_of_service_provider', '')
+            case.type_of_service = request.POST.get('type_of_service_provider', '')
 
         # Saving the updated Case object
         case.save()
@@ -4012,11 +4371,11 @@ def process_service_info(request):
         #     )
 
         # Handle Law Enforcement Referral
-        if case.refers_to_law_enforcement:
-            Case.objects.update_or_create(
-                case_number=case.case_number,
-                defaults=case_data
-            )
+        # if case.refers_to_law_enforcement:
+        #     Case.objects.update_or_create(
+        #         case_number=case.case_number,
+        #         defaults=case_data
+        #     )
 
 
         return JsonResponse({'message': 'Service information saved successfully.'})
@@ -4024,7 +4383,114 @@ def process_service_info(request):
         # Return a JSON response indicating failure
         return JsonResponse({'error': 'Invalid request method.'})
 
+def refer_law_enforcement(request):
+    if request.method == 'POST':
+        case_id = request.POST.get('case_id')
+        try:
+            case = Case.objects.get(id=case_id)
+        except Case.DoesNotExist:
+            return JsonResponse({'error': 'Case not found.'}, status=404)
+        
+        # Helper function to parse and validate date
+        def parse_date(date_string):
+            try:
+                if date_string:
+                    return datetime.strptime(date_string, '%Y-%m-%d').date()
+                return None  # Return None if the date is empty
+            except ValueError:
+                return None  # Return None if the date format is invalid
+            
+        case.refers_to_law_enforcement = True 
+        case.refer_law_enforcement_date = parse_date(request.POST.get('refer_law_enforcement_date', ''))
+        case.law_enforcement_agency_name = request.POST.get('name_of_agency', '')
+        # case.receipt_and_recording_of_complaints = True if request.POST.get('receipt_comp') == 'true' else False
+        # case.rescue_operations_of_vaw_cases = True if request.POST.get('resuce_operation') == 'true' else False
+        # case.forensic_interview_and_investigation = True if request.POST.get('forensic_interview') == 'true' else False
+        # case.enforcement_of_protection_order = True if request.POST.get('enforce_protect_order') == 'true' else False
+        case.service_information = request.POST.get('service', '')
+        case.remarks_to_law_enforcement = request.POST.get('remarks_law_enforcement', '')
+        
+        case.save()
 
+        if request.POST.get('refer_law_enforce') == 'true':
+            message = 'Law enforcement referral information Updated successfully.'
+        else:
+            message = 'Law enforcement referral information sent successfully.'
+            
+        return JsonResponse({'message': message})
+    else:
+        # Return a JSON response indicating failure
+        return JsonResponse({'error': 'Invalid request method.'})
+
+
+def refer_SWDO(request):
+    if request.method == 'POST':
+        case_id = request.POST.get('case_id')
+        try:
+            case = Case.objects.get(id=case_id)
+        except Case.DoesNotExist:
+            return JsonResponse({'error': 'Case not found.'}, status=404)
+        
+        # Helper function to parse and validate date
+        def parse_date(date_string):
+            try:
+                if date_string:
+                    return datetime.strptime(date_string, '%Y-%m-%d').date()
+                return None  # Return None if the date is empty
+            except ValueError:
+                return None  # Return None if the date format is invalid
+
+        case.refers_to_social_welfare = True
+        case.refer_social_date = parse_date(request.POST.get('refer_social_date', ''))
+        case.remarks_to_social_welfare = request.POST.get('remarks_SWDO', '')
+
+        case.save()
+
+        if request.POST.get('refer_SWDO') == 'true':
+            message = 'Social welfare referral information Updated successfully.'
+        else:
+            message = 'Law enforcement referral information sent successfully.'
+            
+        return JsonResponse({'message': message})
+    else:
+        # Return a JSON response indicating failure
+        return JsonResponse({'error': 'Invalid request method.'})
+
+
+def refer_healthcare(request):
+    if request.method == 'POST':
+        case_id = request.POST.get('case_id')
+        try:
+            case = Case.objects.get(id=case_id)
+        except Case.DoesNotExist:
+            return JsonResponse({'error': 'Case not found.'}, status=404)
+        
+        # Helper function to parse and validate date
+        def parse_date(date_string):
+            try:
+                if date_string:
+                    return datetime.strptime(date_string, '%Y-%m-%d').date()
+                return None  # Return None if the date is empty
+            except ValueError:
+                return None  # Return None if the date format is invalid
+
+        case.refers_to_healthcare_provider = True
+        case.refer_healthcare_date = parse_date(request.POST.get('refer_healthcare_date', ''))
+        case.remarks_to_healthcare = request.POST.get('remarks_healthcare', '')
+        case.healthcare_provider_name = request.POST.get('name_of_hospital', '')
+
+        case.save()
+
+        if request.POST.get('refer_healthcare') == 'true':
+            message = 'Healthcare referral information Updated successfully.'
+        else:
+            message = 'Healthcare referral information sent successfully.'
+
+        return JsonResponse({'message': message})
+    else:
+        # Return a JSON response indicating failure
+        return JsonResponse({'error': 'Invalid request method.'})        
+    
 def add_status(request, case_id):
     if request.method == 'POST':
         try:
@@ -4238,3 +4704,556 @@ def get_police_station(request):
             return JsonResponse(data, safe=False)
 
     return JsonResponse([], safe=False)
+
+
+
+@login_required
+def view_SWDO_case_behalf(request, case_id):
+    if request.user.swdoaccount.type != 'SWDO':
+        return redirect('login')
+    
+    try:
+        # Retrieve the case object from the database based on the case_id
+        case = Case.objects.get(id=case_id)
+        # Retrieve related objects such as contact persons, evidence, victims, perpetrators, and parents
+        contact_persons = Contact_Person.objects.filter(case_contact=case)
+        evidences = Evidence.objects.filter(case=case)
+        victims = Victim.objects.filter(case_victim=case)
+        perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
+        status_history = Status_History.objects.filter(case_status_history=case)
+        witnesses = Witness.objects.filter(case_witness=case)
+    
+        # Retrieve only the latest status history entry
+        latest_status_history = status_history.order_by('-status_date_added').first()
+
+        print(request.session['security_status'])
+
+        if request.session['security_status'] == "encrypted":
+            case.street = encrypt_data(case.street)
+            case.barangay = encrypt_data(case.barangay)
+            case.date_latest_incident = encrypt_data(case.date_latest_incident)
+            case.place_of_incident = encrypt_data(case.place_of_incident)
+            case.province = encrypt_data(case.province)
+            case.region = encrypt_data(case.region)
+            case.description_of_incident = encrypt_data(case.description_of_incident)
+            case.city = encrypt_data(case.city)
+            case.service_information = encrypt_data(case.service_information)
+            case.remarks_to_law_enforcement = encrypt_data(case.remarks_to_law_enforcement)
+            case.remarks_to_barangay = encrypt_data(case.remarks_to_barangay)
+            # for victim in victims:
+            #     victim.description
+            for victim in victims:
+                victim.first_name = encrypt_data(victim.first_name)
+                victim.middle_name = encrypt_data(victim.middle_name)
+                victim.last_name = encrypt_data(victim.last_name)
+                victim.suffix = encrypt_data(victim.suffix)
+                victim.date_of_birth = encrypt_data(victim.date_of_birth)
+                victim.sex = encrypt_data(victim.sex)
+                victim.civil_status = encrypt_data(victim.civil_status)
+                victim.nationality = encrypt_data(victim.nationality)
+                victim.contact_number = encrypt_data(victim.contact_number)
+                victim.telephone_number = encrypt_data(victim.telephone_number)
+                victim.house_information = encrypt_data(victim.house_information)
+                victim.street = encrypt_data(victim.street)
+                victim.barangay = encrypt_data(victim.barangay)
+                victim.province = encrypt_data(victim.province)
+                victim.city = encrypt_data(victim.city)
+                victim.region = encrypt_data(victim.region)
+                victim.occupation = encrypt_data(victim.occupation)
+                victim.number_of_children = encrypt_data(victim.number_of_children)
+                victim.ages_of_children = encrypt_data(victim.ages_of_children)
+                
+                print("Here")
+                print(victim.occupation)
+
+            for perpetrator in perpetrators:
+                perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
+                perpetrator.first_name = encrypt_data(perpetrator.first_name)
+                perpetrator.middle_name = encrypt_data(perpetrator.middle_name)
+                perpetrator.last_name = encrypt_data(perpetrator.last_name)
+                perpetrator.suffix = encrypt_data(perpetrator.suffix)
+                perpetrator.identifying_marks = encrypt_data(perpetrator.identifying_marks)
+                perpetrator.alias = encrypt_data(perpetrator.alias)
+                perpetrator.sex = encrypt_data(perpetrator.sex)
+                perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
+                perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
+                print(perpetrator.contact_number)
+                perpetrator.occupation = encrypt_data(perpetrator.occupation)
+                perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
+                perpetrator.nationality = encrypt_data(perpetrator.nationality)
+                perpetrator.house_information = encrypt_data(perpetrator.house_information)
+                perpetrator.street = encrypt_data(perpetrator.street)
+                perpetrator.barangay = encrypt_data(perpetrator.barangay)
+                perpetrator.province = encrypt_data(perpetrator.province)
+                perpetrator.city= encrypt_data(perpetrator.city)
+                perpetrator.region = encrypt_data(perpetrator.region)
+            
+            for contact_person in contact_persons:
+                
+                contact_person.first_name = encrypt_data(contact_person.first_name)
+                contact_person.middle_name = encrypt_data(contact_person.middle_name)
+                contact_person.last_name = encrypt_data(contact_person.last_name)
+                contact_person.barangay = encrypt_data(contact_person.barangay)
+                contact_person.city = encrypt_data(contact_person.city)
+                contact_person.province = encrypt_data(contact_person.province)
+                contact_person.telephone_number = encrypt_data(contact_person.telephone_number)
+                contact_person.contact_number = encrypt_data(contact_person.contact_number)
+                contact_person.street = encrypt_data(contact_person.street)
+                contact_person.bldg_number = encrypt_data(contact_person.bldg_number)
+                contact_person.relationship = encrypt_data(contact_person.relationship)
+
+                # contact num
+                # region
+                # street
+                # relationship
+                # suffix
+
+            # for contact_person in contact_persons:
+            #     contact_person.first_name = decrypt_data(contact_person.first_name)
+            #     contact_person.middle_name = decrypt_data(contact_person.middle_name)
+            #     contact_person.last_name = decrypt_data(contact_person.last_name)
+            #     contact_person.suffix = decrypt_data(contact_person.suffix)
+            #     contact_person.relationship= decrypt_data(contact_person.relationship)
+            #     contact_person.contact_number = decrypt_data(contact_person.contact_number)
+            #     contact_person.telephone_number = decrypt_data(contact_person.telephone_number)
+            #     contact_person.street = decrypt_data(contact_person.street)
+            #     contact_person.city = decrypt_data(contact_person.city)
+            #     contact_person.barangay = decrypt_data(contact_person.barangay)
+            #     contact_person.province = decrypt_data(contact_person.province)
+            #     contact_person.region = decrypt_data(contact_person.region)
+
+        #print(decrypt_data(case.street))
+        # if isinstance(encrypted_data_from_db, bytes):
+        #     print("Decrypted: ", decrypt_data(encrypted_data_from_db))
+        # else:
+        #     print("Decrypted: ", decrypt_data())
+        
+        # for victim in victims:
+        #     encryted_value = encrypt_data(victim.first_name)
+        #     print("Encrypted: ", encryted_value)
+        #     print("Decrypted: ", decrypt_data(encryted_value))
+
+        # Render the view-case.html template with the case and related objects as context
+        
+        region_id = 10 # region 9
+        province_id = 50 # zamboanga del sur
+        municipality_id = 1133 # zamboanga city
+
+        return render(request, 'SWDO/case/view-case-behalf.html', {
+            'case': case,
+            'contact_persons': contact_persons,
+            'evidence': evidences,
+            'victims': victims,
+            'perpetrators': perpetrators,
+            'status_histories': status_history,
+            'witnesses': witnesses,
+            'latest_status_history': latest_status_history,
+            'global': request.session,
+            'default_regions': Region.objects.filter(id=region_id),
+            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_cities': Municipality.objects.filter(province_id=province_id),
+            'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+            'default_stations': PoliceStations.objects.all(),
+            'service_information': case.service_information,
+            'today': datetime.today(),
+        })
+    except Case.DoesNotExist: 
+        # Handle case not found appropriately, for example, return a 404 page
+        return HttpResponseNotFound("Case not found")
+
+@login_required
+def view_SWDO_case_impact(request, case_id):
+    if request.user.swdoaccount.type != 'SWDO':
+        return redirect('login')
+    
+    try:
+        # Retrieve the case object from the database based on the case_id
+        case = Case.objects.get(id=case_id)
+        # Retrieve related objects such as evidence, victims, perpetrators, and parents
+        evidences = Evidence.objects.filter(case=case)
+        victims = Victim.objects.filter(case_victim=case)
+        perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
+        status_history = Status_History.objects.filter(case_status_history=case)
+        witnesses = Witness.objects.filter(case_witness=case)
+
+        # Retrieve only the latest status history entry
+        latest_status_history = status_history.order_by('-status_date_added').first()
+
+        print(request.session['security_status'])
+
+        if request.session['security_status'] == "encrypted":
+            case.street = encrypt_data(case.street)
+            case.barangay = encrypt_data(case.barangay)
+            case.date_latest_incident = encrypt_data(case.date_latest_incident)
+            case.place_of_incident = encrypt_data(case.place_of_incident)
+            case.province = encrypt_data(case.province)
+            case.region = encrypt_data(case.region)
+            case.description_of_incident = encrypt_data(case.description_of_incident)
+            case.city = encrypt_data(case.city)
+            case.service_information = encrypt_data(case.service_information)
+            case.remarks_to_law_enforcement = encrypt_data(case.remarks_to_law_enforcement)
+            case.remarks_to_barangay = encrypt_data(case.remarks_to_barangay)
+
+            # for victim in victims:
+            #     victim.description
+            for victim in victims:
+                victim.first_name = encrypt_data(victim.first_name)
+                victim.middle_name = encrypt_data(victim.middle_name)
+                victim.last_name = encrypt_data(victim.last_name)
+                victim.suffix = encrypt_data(victim.suffix)
+                victim.date_of_birth = encrypt_data(victim.date_of_birth)
+                victim.sex = encrypt_data(victim.sex)
+                victim.civil_status = encrypt_data(victim.civil_status)
+                victim.nationality = encrypt_data(victim.nationality)
+                victim.contact_number = encrypt_data(victim.contact_number)
+                victim.telephone_number = encrypt_data(victim.telephone_number)
+                victim.house_information = encrypt_data(victim.house_information)
+                victim.street = encrypt_data(victim.street)
+                victim.barangay = encrypt_data(victim.barangay)
+                victim.province = encrypt_data(victim.province)
+                victim.city = encrypt_data(victim.city)
+                victim.region = encrypt_data(victim.region)
+                victim.occupation = encrypt_data(victim.occupation)
+                
+                # new
+                victim.type_of_disability = encrypt_data(victim.type_of_disability)
+                victim.educational_attainment = encrypt_data(victim.educational_attainment)
+                victim.religion = encrypt_data(victim.religion)
+                victim.number_of_children = encrypt_data(victim.number_of_children)
+                victim.ages_of_children = encrypt_data(victim.ages_of_children)
+                
+            for perpetrator in perpetrators:
+                perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
+                perpetrator.first_name = encrypt_data(perpetrator.first_name)
+                perpetrator.middle_name = encrypt_data(perpetrator.middle_name)
+                perpetrator.last_name = encrypt_data(perpetrator.last_name)
+                perpetrator.suffix = encrypt_data(perpetrator.suffix)
+                perpetrator.identifying_marks = encrypt_data(perpetrator.identifying_marks)
+                perpetrator.alias = encrypt_data(perpetrator.alias)
+                perpetrator.sex = encrypt_data(perpetrator.sex)
+                perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
+                perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
+                perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
+                perpetrator.nationality = encrypt_data(perpetrator.nationality)
+                perpetrator.house_information = encrypt_data(perpetrator.house_information)
+                perpetrator.street = encrypt_data(perpetrator.street)
+                perpetrator.barangay = encrypt_data(perpetrator.barangay)
+                perpetrator.province = encrypt_data(perpetrator.province)
+                perpetrator.region = encrypt_data(perpetrator.region)
+                
+                # new
+                perpetrator.type_of_disability = encrypt_data(perpetrator.type_of_disability)
+                perpetrator.civil_status = encrypt_data(perpetrator.civil_status)
+                perpetrator.religion = encrypt_data(perpetrator.religion)
+                perpetrator.educational_attainment = encrypt_data(perpetrator.educational_attainment)
+                perpetrator.occupation = encrypt_data(perpetrator.occupation)
+                perpetrator.city = encrypt_data(perpetrator.city)
+                
+
+        # Render the view-case.html template with the case and related objects as context
+        
+        region_id = 10 # region 9
+        province_id = 50 # zamboanga del sur
+        municipality_id = 1133 # zamboanga city
+        
+        return render(request, 'SWDO/case/view-case-impacted.html', {
+            'case': case,
+            'evidence': evidences,
+            'victims': victims,
+            'perpetrators': perpetrators,
+            'status_histories': status_history,
+            'witnesses': witnesses,
+            'latest_status_history': latest_status_history,
+            'global': request.session,
+            'default_regions': Region.objects.filter(id=region_id),
+            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_cities': Municipality.objects.filter(province_id=province_id),
+            'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+            'default_stations': PoliceStations.objects.all(),
+            'service_information': case.service_information,
+            'today': datetime.today(),
+        })
+    except Case.DoesNotExist:
+        # Handle case not found appropriately, for example, return a 404 page
+        return HttpResponseNotFound("Case not found")
+    
+
+
+@login_required
+def view_healthcare_case_impact(request, case_id):
+    if request.user.healthcareaccount.type != 'healthcare':
+        return redirect('login')
+    
+    try:
+        # Retrieve the case object from the database based on the case_id
+        case = Case.objects.get(id=case_id)
+        # Retrieve related objects such as evidence, victims, perpetrators, and parents
+        evidences = Evidence.objects.filter(case=case)
+        victims = Victim.objects.filter(case_victim=case)
+        perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
+        status_history = Status_History.objects.filter(case_status_history=case)
+        witnesses = Witness.objects.filter(case_witness=case)
+
+        # Retrieve only the latest status history entry
+        latest_status_history = status_history.order_by('-status_date_added').first()
+
+        print(request.session['security_status'])
+
+        if request.session['security_status'] == "encrypted":
+            case.street = encrypt_data(case.street)
+            case.barangay = encrypt_data(case.barangay)
+            case.date_latest_incident = encrypt_data(case.date_latest_incident)
+            case.place_of_incident = encrypt_data(case.place_of_incident)
+            case.province = encrypt_data(case.province)
+            case.region = encrypt_data(case.region)
+            case.description_of_incident = encrypt_data(case.description_of_incident)
+            case.city = encrypt_data(case.city)
+            case.service_information = encrypt_data(case.service_information)
+            case.remarks_to_law_enforcement = encrypt_data(case.remarks_to_law_enforcement)
+            case.remarks_to_barangay = encrypt_data(case.remarks_to_barangay)
+            case.healthcare_provider_name = encrypt_data(case.healthcare_provider_name)
+            case.refer_healthcare_date = encrypt_data(case.refer_healthcare_date)
+            case.remarks_to_healthcare = encrypt_data(case.remarks_to_healthcare)
+            
+
+            # for victim in victims:
+            #     victim.description
+            for victim in victims:
+                victim.first_name = encrypt_data(victim.first_name)
+                victim.middle_name = encrypt_data(victim.middle_name)
+                victim.last_name = encrypt_data(victim.last_name)
+                victim.suffix = encrypt_data(victim.suffix)
+                victim.date_of_birth = encrypt_data(victim.date_of_birth)
+                victim.sex = encrypt_data(victim.sex)
+                victim.civil_status = encrypt_data(victim.civil_status)
+                victim.nationality = encrypt_data(victim.nationality)
+                victim.contact_number = encrypt_data(victim.contact_number)
+                victim.telephone_number = encrypt_data(victim.telephone_number)
+                victim.house_information = encrypt_data(victim.house_information)
+                victim.street = encrypt_data(victim.street)
+                victim.barangay = encrypt_data(victim.barangay)
+                victim.province = encrypt_data(victim.province)
+                victim.city = encrypt_data(victim.city)
+                victim.region = encrypt_data(victim.region)
+                victim.occupation = encrypt_data(victim.occupation)
+                
+                # new
+                victim.type_of_disability = encrypt_data(victim.type_of_disability)
+                victim.educational_attainment = encrypt_data(victim.educational_attainment)
+                victim.religion = encrypt_data(victim.religion)
+                victim.number_of_children = encrypt_data(victim.number_of_children)
+                victim.ages_of_children = encrypt_data(victim.ages_of_children)
+                
+            for perpetrator in perpetrators:
+                perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
+                perpetrator.first_name = encrypt_data(perpetrator.first_name)
+                perpetrator.middle_name = encrypt_data(perpetrator.middle_name)
+                perpetrator.last_name = encrypt_data(perpetrator.last_name)
+                perpetrator.suffix = encrypt_data(perpetrator.suffix)
+                perpetrator.identifying_marks = encrypt_data(perpetrator.identifying_marks)
+                perpetrator.alias = encrypt_data(perpetrator.alias)
+                perpetrator.sex = encrypt_data(perpetrator.sex)
+                perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
+                perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
+                perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
+                perpetrator.nationality = encrypt_data(perpetrator.nationality)
+                perpetrator.house_information = encrypt_data(perpetrator.house_information)
+                perpetrator.street = encrypt_data(perpetrator.street)
+                perpetrator.barangay = encrypt_data(perpetrator.barangay)
+                perpetrator.province = encrypt_data(perpetrator.province)
+                perpetrator.region = encrypt_data(perpetrator.region)
+                
+                # new
+                perpetrator.type_of_disability = encrypt_data(perpetrator.type_of_disability)
+                perpetrator.civil_status = encrypt_data(perpetrator.civil_status)
+                perpetrator.religion = encrypt_data(perpetrator.religion)
+                perpetrator.educational_attainment = encrypt_data(perpetrator.educational_attainment)
+                perpetrator.occupation = encrypt_data(perpetrator.occupation)
+                perpetrator.city = encrypt_data(perpetrator.city)
+                
+
+        # Render the view-case.html template with the case and related objects as context
+        
+        region_id = 10 # region 9
+        province_id = 50 # zamboanga del sur
+        municipality_id = 1133 # zamboanga city
+        
+        return render(request, 'healthcare-admin/case/view-case-impacted.html', {
+            'case': case,
+            'evidence': evidences,
+            'victims': victims,
+            'perpetrators': perpetrators,
+            'status_histories': status_history,
+            'witnesses': witnesses,
+            'latest_status_history': latest_status_history,
+            'global': request.session,
+            'default_regions': Region.objects.filter(id=region_id),
+            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_cities': Municipality.objects.filter(province_id=province_id),
+            'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+
+            'service_information': case.service_information,
+            'today': datetime.today(),
+        })
+    except Case.DoesNotExist:
+        # Handle case not found appropriately, for example, return a 404 page
+        return HttpResponseNotFound("Case not found")
+
+
+
+
+@login_required
+def view_healthcare_case_behalf(request, case_id):
+    if request.user.healthcareaccount.type != 'healthcare':
+        return redirect('login')
+    
+    try:
+        # Retrieve the case object from the database based on the case_id
+        case = Case.objects.get(id=case_id)
+        # Retrieve related objects such as contact persons, evidence, victims, perpetrators, and parents
+        contact_persons = Contact_Person.objects.filter(case_contact=case)
+        evidences = Evidence.objects.filter(case=case)
+        victims = Victim.objects.filter(case_victim=case)
+        perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
+        status_history = Status_History.objects.filter(case_status_history=case)
+        witnesses = Witness.objects.filter(case_witness=case)
+    
+        # Retrieve only the latest status history entry
+        latest_status_history = status_history.order_by('-status_date_added').first()
+
+        print(request.session['security_status'])
+
+        if request.session['security_status'] == "encrypted":
+            case.street = encrypt_data(case.street)
+            case.barangay = encrypt_data(case.barangay)
+            case.date_latest_incident = encrypt_data(case.date_latest_incident)
+            case.place_of_incident = encrypt_data(case.place_of_incident)
+            case.province = encrypt_data(case.province)
+            case.region = encrypt_data(case.region)
+            case.description_of_incident = encrypt_data(case.description_of_incident)
+            case.city = encrypt_data(case.city)
+            case.service_information = encrypt_data(case.service_information)
+            case.remarks_to_law_enforcement = encrypt_data(case.remarks_to_law_enforcement)
+            case.remarks_to_barangay = encrypt_data(case.remarks_to_barangay)
+            case.healthcare_provider_name = encrypt_data(case.healthcare_provider_name)
+            case.refer_healthcare_date = encrypt_data(case.refer_healthcare_date)
+            case.remarks_to_healthcare = encrypt_data(case.remarks_to_healthcare)
+            # for victim in victims:
+            #     victim.description
+            for victim in victims:
+                victim.first_name = encrypt_data(victim.first_name)
+                victim.middle_name = encrypt_data(victim.middle_name)
+                victim.last_name = encrypt_data(victim.last_name)
+                victim.suffix = encrypt_data(victim.suffix)
+                victim.date_of_birth = encrypt_data(victim.date_of_birth)
+                victim.sex = encrypt_data(victim.sex)
+                victim.civil_status = encrypt_data(victim.civil_status)
+                victim.nationality = encrypt_data(victim.nationality)
+                victim.contact_number = encrypt_data(victim.contact_number)
+                victim.telephone_number = encrypt_data(victim.telephone_number)
+                victim.house_information = encrypt_data(victim.house_information)
+                victim.street = encrypt_data(victim.street)
+                victim.barangay = encrypt_data(victim.barangay)
+                victim.province = encrypt_data(victim.province)
+                victim.city = encrypt_data(victim.city)
+                victim.region = encrypt_data(victim.region)
+                victim.occupation = encrypt_data(victim.occupation)
+                victim.number_of_children = encrypt_data(victim.number_of_children)
+                victim.ages_of_children = encrypt_data(victim.ages_of_children)
+                
+                print("Here")
+                print(victim.occupation)
+
+            for perpetrator in perpetrators:
+                perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
+                perpetrator.first_name = encrypt_data(perpetrator.first_name)
+                perpetrator.middle_name = encrypt_data(perpetrator.middle_name)
+                perpetrator.last_name = encrypt_data(perpetrator.last_name)
+                perpetrator.suffix = encrypt_data(perpetrator.suffix)
+                perpetrator.identifying_marks = encrypt_data(perpetrator.identifying_marks)
+                perpetrator.alias = encrypt_data(perpetrator.alias)
+                perpetrator.sex = encrypt_data(perpetrator.sex)
+                perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
+                perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
+                print(perpetrator.contact_number)
+                perpetrator.occupation = encrypt_data(perpetrator.occupation)
+                perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
+                perpetrator.nationality = encrypt_data(perpetrator.nationality)
+                perpetrator.house_information = encrypt_data(perpetrator.house_information)
+                perpetrator.street = encrypt_data(perpetrator.street)
+                perpetrator.barangay = encrypt_data(perpetrator.barangay)
+                perpetrator.province = encrypt_data(perpetrator.province)
+                perpetrator.city= encrypt_data(perpetrator.city)
+                perpetrator.region = encrypt_data(perpetrator.region)
+            
+            for contact_person in contact_persons:
+                
+                contact_person.first_name = encrypt_data(contact_person.first_name)
+                contact_person.middle_name = encrypt_data(contact_person.middle_name)
+                contact_person.last_name = encrypt_data(contact_person.last_name)
+                contact_person.barangay = encrypt_data(contact_person.barangay)
+                contact_person.city = encrypt_data(contact_person.city)
+                contact_person.province = encrypt_data(contact_person.province)
+                contact_person.telephone_number = encrypt_data(contact_person.telephone_number)
+                contact_person.contact_number = encrypt_data(contact_person.contact_number)
+                contact_person.street = encrypt_data(contact_person.street)
+                contact_person.bldg_number = encrypt_data(contact_person.bldg_number)
+                contact_person.relationship = encrypt_data(contact_person.relationship)
+
+                # contact num
+                # region
+                # street
+                # relationship
+                # suffix
+
+            # for contact_person in contact_persons:
+            #     contact_person.first_name = decrypt_data(contact_person.first_name)
+            #     contact_person.middle_name = decrypt_data(contact_person.middle_name)
+            #     contact_person.last_name = decrypt_data(contact_person.last_name)
+            #     contact_person.suffix = decrypt_data(contact_person.suffix)
+            #     contact_person.relationship= decrypt_data(contact_person.relationship)
+            #     contact_person.contact_number = decrypt_data(contact_person.contact_number)
+            #     contact_person.telephone_number = decrypt_data(contact_person.telephone_number)
+            #     contact_person.street = decrypt_data(contact_person.street)
+            #     contact_person.city = decrypt_data(contact_person.city)
+            #     contact_person.barangay = decrypt_data(contact_person.barangay)
+            #     contact_person.province = decrypt_data(contact_person.province)
+            #     contact_person.region = decrypt_data(contact_person.region)
+
+        #print(decrypt_data(case.street))
+        # if isinstance(encrypted_data_from_db, bytes):
+        #     print("Decrypted: ", decrypt_data(encrypted_data_from_db))
+        # else:
+        #     print("Decrypted: ", decrypt_data())
+        
+        # for victim in victims:
+        #     encryted_value = encrypt_data(victim.first_name)
+        #     print("Encrypted: ", encryted_value)
+        #     print("Decrypted: ", decrypt_data(encryted_value))
+
+        # Render the view-case.html template with the case and related objects as context
+        
+        region_id = 10 # region 9
+        province_id = 50 # zamboanga del sur
+        municipality_id = 1133 # zamboanga city
+
+        return render(request, 'healthcare-admin/case/view-case-behalf.html', {
+            'case': case,
+            'contact_persons': contact_persons,
+            'evidence': evidences,
+            'victims': victims,
+            'perpetrators': perpetrators,
+            'status_histories': status_history,
+            'witnesses': witnesses,
+            'latest_status_history': latest_status_history,
+            'global': request.session,
+            'default_regions': Region.objects.filter(id=region_id),
+            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_cities': Municipality.objects.filter(province_id=province_id),
+            'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+            'service_information': case.service_information,
+            'today': datetime.today(),
+        })
+    except Case.DoesNotExist: 
+        # Handle case not found appropriately, for example, return a 404 page
+        return HttpResponseNotFound("Case not found")

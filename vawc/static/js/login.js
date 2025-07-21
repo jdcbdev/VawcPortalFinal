@@ -14,9 +14,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const delayBetweenMessages = 2000;
     const typingText = document.querySelector(".typing-text");
 
+    
+    if (!typingText) return; // Exit if element doesn't exist
     function formatTextWithBreaks(text) {
         return text.replace(/\.(?=\s)/g, ".<br>");
     }
+
+
 
     function typeMessage() {
         if (charIndex < messages[index].length) {
@@ -40,6 +44,5 @@ document.addEventListener("DOMContentLoaded", function () {
             setTimeout(typeMessage, typingSpeed);
         }
     }
-
     typeMessage();
 });
