@@ -38,6 +38,8 @@
                                             <button class="nav-link" id="phone-tab" data-bs-toggle="tab" data-bs-target="#phone-panel" type="button" role="tab" aria-controls="phone" aria-selected="false">Phone</button>
                                         </li>                                        
                                     </ul>
+
+                                    
                                     <div class="tab-content mb-3" id="myTabContent">
                                         <div class="tab-pane fade show active" id="email-panel" role="tabpanel" aria-labelledby="email-tab">
                                             <input type="email" class="form-control" id="email" name="email" aria-describedby="emailFeedback" placeholder="example@email.com">
@@ -54,6 +56,15 @@
                                                 No Account Associated with any Case.
                                             </div>
                                         </div>
+                                        <div>
+                                            <label for="case_num" class="form-label mt-3" style="color: #8a2be2; font-weight: bold;"> Case Number</label>
+                                            <input type="number" class="form-control" id="case_num" name="case_num" aria-describedby="casefeedback" placeholder="000">
+                                            <div id="caseFeedback" class="invalid-feedback err-msg-case">
+                                                No case with this Case Number.
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                     <div class="g-recaptcha d-flex justify-content-center" data-callback="err_captcha_reset" data-sitekey="{{ site_key }}"></div>
                                     <div class="err-msg-recaptcha fs-7 text-danger"></div>
@@ -155,7 +166,8 @@
             // Get the email value from the input field
             var emailValue = $('#email').val();
             var phoneValue = $('#phone').val();
-            let contactValue = ''
+            let contactValue = '';
+            
             
             // For example, you can log it to the console
             console.log("Email entered: " + emailValue);
@@ -170,7 +182,8 @@
                 requestURL = "{% url 'check_phone_case' %}"
                 contactValue = isvalid_phone_number(phoneValue)
             }
- 
+            
+            
 
             // Check recaptcha if puzzle is solved
             const captchaRes = grecaptcha.getResponse()
@@ -200,6 +213,7 @@
 
                     // Server-side validation response
                     if (!response.success) {
+                        
                         if(get_contact_type() == 'email') {
                             $('#email').addClass('is-invalid')
                             $('.err-msg-email').text(response.message)
@@ -209,55 +223,92 @@
                             $('.err-msg-phone').text(response.message)
                         }
 
+
+                        
                         $('.spinner-border').hide();
                         $('#submitButton').prop('disabled', false);
                         
                         throw new Error(response.message)
                     }
+                    
 
                     if (response.success) {
-                        // If email exists in the database, proceed with email confirmation
 
-                        let requestURL = ''
-                        if(get_contact_type() == 'email') {
-                            requestURL = "{% url 'email_confirm' %}"
-                        } else if (get_contact_type() == 'phone') {
-                            requestURL = "{% url 'phone_confirm' %}"
-                        }
+                        // Validate case number
+                        requestURL = "{% url 'check_case_number' %}"
+                        case_num = isvalid_case_number($('#case_num').val())
 
+                        // AJAX request to check if the case exists
                         $.ajax({
                             url: requestURL, // Modify the URL to point to your Django view endpoint
                             type: 'POST',
-                            data: { contactConfirm: contactValue, 'g-recaptcha-response': grecaptcha.getResponse() }, // Pass the email value in the data object
+                            data: { contact: case_num }, // Pass the case value in the data object
                             headers: {
                                 'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                             },
                             success: function(response) {
-                                // Handle success response
-                                console.log(response); // Log the response to the console
-
-                                // Check if reCAPTCHA serverside validation is not successful
-                                if (!response.success) {
+                                
+                                if(!response.success){
+                                    $('.err-msg-case').text(response.message_case)
                                     $('.spinner-border').hide();
                                     $('#submitButton').prop('disabled', false);
-                                    $('#email').val('');
-                                    throw new Error('reCaptcha validation failed')
-                                }
+                                    $('#case_num').addClass('is-invalid')
+                                    $('#case_num').parent().addClass('is-invalid')
+                                    
 
-                                const userEmail = $('#email').val();
-                                if (userEmail) {
-                                    // Hide part of the email
-                                    const hiddenEmail = userEmail.replace(/^(.)(.*)(@.*)$/, (match, p1, p2, p3) => {
-                                        return p1 + '*'.repeat(p2.length) + p3;
+                                    throw new Error(response.message_case)
+                                }else{
+
+                                    
+                                    // If email exists in the database, proceed with email confirmation
+                                    let requestURL = ''
+                                    if(get_contact_type() == 'email') {
+                                        requestURL = "{% url 'email_confirm' %}"
+                                    } else if (get_contact_type() == 'phone') {
+                                        requestURL = "{% url 'phone_confirm' %}"
+                                    }
+
+                                    $.ajax({
+                                        url: requestURL, // Modify the URL to point to your Django view endpoint
+                                        type: 'POST',
+                                        data: { contactConfirm: contactValue, 'g-recaptcha-response': grecaptcha.getResponse() }, // Pass the email value in the data object
+                                        headers: {
+                                            'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
+                                        },
+                                        success: function(response) {
+                                            // Handle success response
+                                            console.log(response); // Log the response to the console
+
+                                            // Check if reCAPTCHA serverside validation is not successful
+                                            if (!response.success) {
+                                                $('.spinner-border').hide();
+                                                $('#submitButton').prop('disabled', false);
+                                                $('#email').val('');
+                                                throw new Error('reCaptcha validation failed')
+                                            }
+
+                                            const userEmail = $('#email').val();
+                                            if (userEmail) {
+                                                // Hide part of the email
+                                                const hiddenEmail = userEmail.replace(/^(.)(.*)(@.*)$/, (match, p1, p2, p3) => {
+                                                    return p1 + '*'.repeat(p2.length) + p3;
+                                                });
+
+                                                $('#hidden_email').text(hiddenEmail);
+                                            }
+
+                                            // Show the OTP modal
+                                            $('#otpModal').modal('show');
+                                            $('.spinner-border').hide();
+                                            $('#submitButton').prop('disabled', false);
+                                        },
+                                        error: function(xhr, textStatus, errorThrown) {
+                                            console.error('Error:', errorThrown);
+                                            // Show error toast if response indicates failure
+                                            showToast('error', 'An error occurred. Please try again.');
+                                        }
                                     });
-
-                                    $('#hidden_email').text(hiddenEmail);
                                 }
-
-                                // Show the OTP modal
-                                $('#otpModal').modal('show');
-                                $('.spinner-border').hide();
-                                $('#submitButton').prop('disabled', false);
                             },
                             error: function(xhr, textStatus, errorThrown) {
                                 console.error('Error:', errorThrown);
@@ -265,6 +316,8 @@
                                 showToast('error', 'An error occurred. Please try again.');
                             }
                         });
+
+                        
                     } else {
                          // If email doesn't exist in the database, show an error message
                         //showToast('error', 'Email not found. Please enter a valid email.');
@@ -344,7 +397,7 @@
                         console.log('Token:', response.token);
 
                         // Get the URL for track_case_info view with placeholders for user_email and token
-                        var trackCaseInfoUrl = "{% url 'track_case_info' contact_type='__contact_type__'  user_contact='__user_contact__' token='__token__' %}";
+                        var trackCaseInfoUrl = "{% url 'track_case_info' contact_type='__contact_type__'  user_contact='__user_contact__' case_num='__case_num__' token='__token__' %}";
 
                         // Replace the placeholders with actual values obtained from the response
                         if(get_contact_type() == 'email') {
@@ -354,9 +407,7 @@
                         }
                         trackCaseInfoUrl = trackCaseInfoUrl.replace('__contact_type__', get_contact_type());
                         trackCaseInfoUrl = trackCaseInfoUrl.replace('__token__', response.token);
-
-                        
-                                  
+                        trackCaseInfoUrl = trackCaseInfoUrl.replace('__case_num__', $('#case_num').val());
                         setTimeout(function() {
                             window.location.href = trackCaseInfoUrl;
                         }, 3000);
@@ -481,8 +532,23 @@
                 return email
             }
         }
+        function isvalid_case_number(case_num) {
+            if(case_num.trim().length <= 0) {
+                $('.err-msg-case').text('Please enter your case number')
+                $('#case_num').addClass('is-invalid')
+                $('.spinner-border').hide();
+                $('#submitButton').prop('disabled', false);
+                throw new Error('No input detected')
+            } else {
+                $('#case_num').removeClass('is-invalid')
+                return case_num
+            }
+        }
 
-        
+        $('#case_num').on('input', function() {
+            // Remove any non-numeric character
+            $(this).val($(this).val().replace(/[^0-9]/g, ''));
+        });
     });
     
     function err_captcha_reset() {

@@ -21,9 +21,10 @@ urlpatterns = [
     path('track_case/', views.track_case_view, name='track_case'),
     path('check_email_case/', views.check_email_case, name='check_email_case'),
     path('check_phone_case/', views.check_phone_case, name='check_phone_case'),
+    path('check_case_number/', views.check_case_number, name='check_case_number'),
     path('verify-otp-email-case/', views.verify_otp_email_track_case, name='verify_otp_email_track_case'),
     path('verify-otp-phone-case/', views.verify_otp_phone_track_case, name='verify_otp_phone_track_case'),
-    path('track_case_info/<str:contact_type>/<str:user_contact>/<str:token>/', views.track_case_info_view, name='track_case_info'),
+    path('track_case_info/<str:contact_type>/<str:user_contact>/<str:case_num>/<str:token>/', views.track_case_info_view, name='track_case_info'),
     path('error_404/', views.error_view, name='error_view'),
     
     #anonymouse side

@@ -201,6 +201,18 @@ def check_phone_case(request):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
+
+def check_case_number(request):
+    if request.method == 'POST':
+        case_num = request.POST.get('contact', None)  # Get the case number from the POST data
+        if case_num:
+            # Check if there is any case associated with the given case number
+            if Case.objects.filter(case_number=case_num).exists():
+                return JsonResponse({'success': True, 'message_case': 'There is a Case Number associated with at least one case.'})
+            else:
+                return JsonResponse({'success': False, 'message_case': 'No Case Number Associated with any Case.'})
+        else:
+            return JsonResponse({'success': False, 'message_case': 'No case number provided.'})
 # Set expiration time for tokens (30 minutes)
 TOKEN_EXPIRATION_TIMEDELTA = timedelta(minutes=1)
 
@@ -214,6 +226,7 @@ def verify_otp_email_track_case(request):
         otp_saved = request.session.get('otp')
         otp_expiry_str = request.session.get('otp_expiry')
         user_email = request.session.get('user_email')  # Retrieving user email from session
+        
         print(user_email)
 
         if otp_saved and otp_expiry_str and user_email:  # Check if user_email exists
@@ -223,13 +236,16 @@ def verify_otp_email_track_case(request):
                 request.session.pop('otp')
                 request.session.pop('otp_expiry')
                 request.session.pop('user_email')
+                
                 print('OTP Verified Succesfully, Used Email:', user_email)
 
                 # Generate a unique token for password reset using Django's default_token_generator
                 token = generate_token(user_email)
                 print('Token generated:', token)
                 print('going to redirect to track_case_info')
+
                 
+
                 return JsonResponse({'success': True, 'message': 'OTP verified successfully.', 'user_email': user_email, 'token': token})
             elif timezone.now() >= otp_expiry:
                 return JsonResponse({'success': False, 'message': 'OTP has expired.'})
@@ -272,7 +288,7 @@ def generate_token(user_email):
     timestamp = timezone.now()
     return token
 
-def track_case_info_view(request, contact_type, user_contact, token):
+def track_case_info_view(request, contact_type, user_contact, case_num, token):
     try:
         # Create a temporary user object with the email address
         temp_user = None
@@ -293,12 +309,11 @@ def track_case_info_view(request, contact_type, user_contact, token):
     # Fetch cases related to the user_contact and prefetch related status history
     cases = None
     if contact_type == 'email':
-        cases = Case.objects.filter(email=user_contact).prefetch_related('status_history')
+        cases = Case.objects.filter(email=user_contact, case_number=case_num).prefetch_related('status_history')
     elif contact_type == 'phone':
         print('contact type: phone')
-        cases = Case.objects.filter(phone=user_contact).prefetch_related('status_history')
+        cases = Case.objects.filter(phone=user_contact, case_number=case_num).prefetch_related('status_history')
 
-    cases = cases.order_by('-date_added')
     print(cases)
     # Token is valid, render the template
     print('Token is valid, rendering track_case_info.html')
