@@ -343,9 +343,9 @@
                                         Medico-legal Exam
                                     </label>
                                 </div>
-                            </div><!--end of col--> {% endcomment %}
-                        </div><!--end of row-->
-
+                            </div><!--end of col--> 
+                        </div><!--end of row-->{% endcomment %}s
+                            
                         <h5 id="remarks"> Additional Remarks</h5>
                             <div class="col-lg-12 vol-md-12 col-sm-12">
                                 <div class="form-floating mb-3">
@@ -3523,9 +3523,7 @@
         
         });
 
-    });
-    
-    no_healthcare_remarks = false;
+        no_healthcare_remarks = false;
         if (!$('#remarks_to_barangay_from_healthcare').val() || $('#remarks_to_barangay_from_healthcare').val().trim() === 'No Remark.') {
             no_healthcare_remarks = true;
         }
@@ -3538,6 +3536,8 @@
         ) {
             $('#healthcare-update').css('display', 'none');
         }
+    });
+    
 
 
 

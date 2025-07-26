@@ -2647,7 +2647,8 @@ def view_admin_case_impact(request, case_id):
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
         status_history = Status_History.objects.filter(case_status_history=case)
         witnesses = Witness.objects.filter(case_witness=case)
-
+        hospitals = HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct()
+        
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
@@ -2662,6 +2663,7 @@ def view_admin_case_impact(request, case_id):
             case.region = encrypt_data(case.region)
             case.description_of_incident = encrypt_data(case.description_of_incident)
             case.city = encrypt_data(case.city)
+            
 
             # for victim in victims:
             #     victim.description
@@ -2738,7 +2740,10 @@ def view_admin_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all()
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'today': datetime.today(),
+            'hospitals' : hospitals,
         })
     except Case.DoesNotExist:
         # Handle case not found appropriately, for example, return a 404 page
