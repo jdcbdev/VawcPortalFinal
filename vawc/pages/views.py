@@ -2766,9 +2766,9 @@ def view_case_behalf(request, case_id):
         evidences = Evidence.objects.filter(case=case)
         victims = Victim.objects.filter(case_victim=case)
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
-        status_history = Status_History.objects.filter(case_status_history=case)
         witnesses = Witness.objects.filter(case_witness=case)
         hospitals = HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct()
+        status_history = Status_History.objects.filter(case_status_history=case)
 
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()

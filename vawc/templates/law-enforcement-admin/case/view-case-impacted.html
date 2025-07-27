@@ -2178,9 +2178,12 @@
             lengthMenu: [[3, 6, 9, 15, -1], [3, 6, 9, 15, "All"]],
             order: [[0, 'desc']],
             language: {
-                // Set the entries label to an empty string
                 lengthMenu: '_MENU_'
-            }
+            },
+            // Add scrolling options
+            scrollY: '300px',    // Height of the vertical scroll area
+            scrollCollapse: true, // Enables the table to reduce in height when limited records
+            scrollX: true        // Enables horizontal scrolling
         });
         // Intercept the form submission
         $('#submit_status').on('click', function(event) {

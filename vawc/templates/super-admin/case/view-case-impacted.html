@@ -2566,14 +2566,17 @@
             lengthMenu: [[3, 6, 9, 15, -1], [3, 6, 9, 15, "All"]],
             order: [[0, 'desc']],
             language: {
-                // Set the entries label to an empty string
                 lengthMenu: '_MENU_'
-            }
+            },
+            // Add scrolling options
+            scrollY: '300px',    // Height of the vertical scroll area
+            scrollCollapse: true, // Enables the table to reduce in height when limited records
+            scrollX: true        // Enables horizontal scrolling
         });
         // Intercept the form submission
         $('#submit_status').on('click', function(event) {
             event.preventDefault(); // Prevent default form submission
-            
+            $('#submit_status').prop('disabled', true); // Disable the button to prevent multiple submissions
             // Collect form data
             var formData = {
                 'case_id': $('#caseId').val(),
@@ -2598,19 +2601,23 @@
                         // Close modal after 2 seconds
                         setTimeout(function() {
                             $('#statusAdd').modal('hide'); // Close modal
+                            $('#submit_status').prop('disabled', false); // enable the button to prevent multiple submissions
                             location.reload(); // Reload the page
-                        }, 2000);
+                        }, 1000);
                     } else {
                         // Display error toast
                         $('.toast-body').text('Error: ' + response.message);
                         $('#errorToast').toast('show');
+                        $('#submit_status').prop('disabled', false); // enable the button to prevent multiple submissions
                     }
+                    
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX Error:', status, error);
                     // Display error toast
                     $('.toast-body').text('AJAX Error: ' + error);
                     $('#errorToast').toast('show');
+                    $('#submit_status').prop('disabled', false); // enable the button to prevent multiple submissions
                 }
             });
         });
@@ -3258,6 +3265,20 @@
                     processData: false, // Prevent jQuery from automatically processing data
                     dataType: 'json', // Expect JSON response
                     success: function(response) {
+
+                        const now = new Date();
+                        if($('#btn-submit-law-enforcement').text() == 'Updating...'){
+                            statusTitle = 'Updates Law Enforcement Refferal';
+                            statusText = 'Law Enforcement information has been updated.';
+                            successMessage = 'HealthcLaw Enforcement information updated successfully.';
+                        }else{
+                            statusTitle = 'Reffered to Law Enforcement';
+                            statusText = 'Law Enforcement Refferal is Succesfull.';
+                            successMessage = 'Law Enforcement Reffered successfully.';
+                        }
+                        statusEventDate = getDateNow();
+                        addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
+                        
                         $('#btn-submit-law-enforcement').text('Update').prop('disabled', false);
                         
                         // Show success toast
@@ -3372,8 +3393,21 @@
                 processData: false, // Prevent jQuery from automatically processing data
                 dataType: 'json', // Expect JSON response
                 success: function(response) {
+
+                    const now = new Date();
+                    if($('#btn-submit-SWDO').text() == 'Updating...'){
+                        statusTitle = 'Updates SWDO Refferal';
+                        statusText = 'SWDO information has been updated.';
+                        successMessage = 'SWDO information updated successfully.';
+                    }else{
+                        statusTitle = 'Reffered to SWDO';
+                        statusText = 'SWDO Refferal is Succesfull.';
+                        successMessage = 'SWDO Reffered successfully.';
+                    }
+                    statusEventDate = getDateNow();
+                    addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
+
                     $('#btn-submit-SWDO').text('Update').prop('disabled', false);
-                    
                     // Show success toast
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
@@ -3433,16 +3467,30 @@
                 processData: false, // Prevent jQuery from automatically processing data
                 dataType: 'json', // Expect JSON response
                 success: function(response) {
+                    const now = new Date();
+                    if($('#btn-submit-healthcare').text() == 'Updating...'){
+                        statusTitle = 'Updates Healthcare Refferal';
+                        statusText = 'Healthcare information has been updated.';
+                        successMessage = 'Healthcare information updated successfully.';
+                    }else{
+                        statusTitle = 'Reffered to Healthcare';
+                        statusText = 'Healthcare Refferal is Succesfull.';
+                        successMessage = 'Healthcare Reffered successfully.';
+                    }
+                    statusEventDate = getDateNow();
+                    addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
+
                     $('#btn-submit-healthcare').text('Update').prop('disabled', false);
                     
                     // Show success toast
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
                     
-                    // Reload page after 3 seconds
+
+                    // Reload page after seconds
                     setTimeout(function() {
                         location.reload();
-                    }, 3000);
+                    }, 1000);
                 },
                 error: function(xhr, errmsg, err) {
                     // Show error toast
@@ -3468,7 +3516,58 @@
             $('#healthcare-update').css('display', 'none');
         }
 
+
+
+        function addingStatusPerAction( caseId, statusTitle, statusText, statusEventDate, successMessage) {
+         
+            var formData = {
+                    'case_id': caseId,
+                    'status_title': statusTitle,
+                    'status_text': statusText,
+                    'status_event_date': statusEventDate,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}' // Include the CSRF token
+                };
+
+            // Send AJAX POST request
+            $.ajax({
+                type: 'POST',
+                url: '/add_status/' + formData.case_id + '/', // Specify the URL
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        // Display success toast
+                        //$('.toast-body').text(successMessage);
+                        //$('#successToast').toast('show');
+                        
+                        // Close modal after 2 seconds
+                        setTimeout(function() {
+                            location.reload(); // Reload the page
+                        }, 1000);
+                    } else {
+                        // Display error toast
+                        $('.toast-body').text('Error: ' + response.message);
+                        $('#errorToast').toast('show');
+                        
+                    }
+                    
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    // Display error toast
+                    $('.toast-body').text('AJAX Error: ' + error);
+                    $('#errorToast').toast('show');
+                    
+                }
+            });
+    
+        }
+
+
+
     });
 
+
+    
 </script>
 {% endblock scripts %}
