@@ -342,9 +342,9 @@
                                         Medico-legal Exam
                                     </label>
                                 </div>
-                            </div><!--end of col--> {% endcomment %}
+                            </div><!--end of col--> 
                         </div><!--end of row-->
-
+                        {% endcomment %}
                         <h5 id="remarks"> Additional Remarks</h5>
                             <div class="col-lg-12 vol-md-12 col-sm-12">
                                 <div class="form-floating mb-3">
@@ -357,7 +357,7 @@
                                     <label for="remarks_healthcare">Remarks to Healthcare</label>
                                 </div>
                             </div><!--end of col-->
-                        </div><!-- Law Enforcement -->
+                        
                         <div class="d-flex justify-content-end">
                             <button class="btn btn-primary" id="btn-submit-healthcare" type="submit">{% if case.refers_to_healthcare_provider %}Update{% else %}Send{% endif %}</button>
                         </div>
@@ -625,7 +625,7 @@
                                     <label for="remarks_law_enforcement">Remarks to Law Enforcement</label>
                                 </div>
                             </div><!--end of col-->
-                        </div><!-- Law Enforcement -->
+                        
                         <div class="d-flex justify-content-end">
                             <button class="btn btn-primary" id="btn-submit-law-enforcement" type="submit">{% if case.refers_to_law_enforcement %}Update{% else %}Send{% endif %}</button>
                         </div>
