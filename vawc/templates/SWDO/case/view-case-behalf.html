@@ -3207,6 +3207,18 @@
                     processData: false, // Prevent jQuery from automatically processing data
                     dataType: 'json', // Expect JSON response
                     success: function(response) {
+                        const now = new Date();
+                        if($('#btn-send-SWDO').text() == 'Update'){
+                            statusTitle = ' SWDO Updates Refferal';
+                            statusText = 'SWDO have taken action for the refferal.';
+                            successMessage = 'SWDO updated response successfully.';
+                        }else{
+                            statusTitle = 'SWDO have Respond.';
+                            statusText = 'SWDO responds on the case.';
+                            successMessage = 'SWDO responds successfully.';
+                        }
+                        statusEventDate = getDateNow();
+                        addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
                         // Show success toast
                         $('#successToast .toast-body').text(response.message);
                         $('#successToast').toast('show');
@@ -3228,6 +3240,62 @@
             }
         });
 
+
+        function addingStatusPerAction( caseId, statusTitle, statusText, statusEventDate, successMessage) {
+         
+            var formData = {
+                    'case_id': caseId,
+                    'status_title': statusTitle,
+                    'status_text': statusText,
+                    'status_event_date': statusEventDate,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}' // Include the CSRF token
+                };
+
+            // Send AJAX POST request
+            $.ajax({
+                type: 'POST',
+                url: '/add_status/' + formData.case_id + '/', // Specify the URL
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        // Display success toast
+                        //$('.toast-body').text(successMessage);
+                        //$('#successToast').toast('show');
+                        
+                        // Close modal after 2 seconds
+                        setTimeout(function() {
+                            location.reload(); // Reload the page
+                        }, 1000);
+                    } else {
+                        // Display error toast
+                        $('.toast-body').text('Error: ' + response.message);
+                        $('#errorToast').toast('show');
+                        
+                    }
+                    
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    // Display error toast
+                    $('.toast-body').text('AJAX Error: ' + error);
+                    $('#errorToast').toast('show');
+                    
+                }
+            });
+    
+        }
+
+        function getDateNow(){
+            var now = new Date();
+            var statusEventDate = now.getFullYear() + '-' + 
+                            String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                            String(now.getDate()).padStart(2, '0') + ' ' + 
+                            String(now.getHours()).padStart(2, '0') + ':' + 
+                            String(now.getMinutes()).padStart(2, '0') + ':' + 
+                            String(now.getSeconds()).padStart(2, '0');
+            return statusEventDate;
+        }
 
 
     });
