@@ -3045,6 +3045,7 @@ def view_enforcement_case_behalf(request, case_id):
         victims = Victim.objects.filter(case_victim=case)
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
         status_history = Status_History.objects.filter(case_status_history=case)
+        
         witnesses = Witness.objects.filter(case_witness=case)
     
         # Retrieve only the latest status history entry
