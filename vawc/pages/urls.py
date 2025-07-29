@@ -95,6 +95,8 @@ urlpatterns = [
     path('edit_status/<int:status_id>/', views.edit_status, name='edit_status'),
     path('delete_status/<int:status_id>/', views.delete_status, name='delete_status'),
 
+    path('admin-law-enforcement-vawc/dashboard/', views.lawEnforcement_dashboard_view, name='law enforcement dashboard'),
+    path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.LawEnforcement_dashboard_data, name='law enforcement dashboard data'),
     path('admin-law-enforcement-vawc/case/', views.law_enforcement_case_view, name='law enforcement case'),
     path('admin-law-enforcement-vawc/view-law-enforcement-case/behalf/<int:case_id>/', views.view_enforcement_case_behalf, name='law enforcement case behalf view'),
     path('admin-law-enforcement-vawc/view-law-enforcement-case/impacted/<int:case_id>/', views.view_enforcement_case_impact, name='law enforcement case impacted view'),
