@@ -1797,6 +1797,24 @@
         </div>
     </div>
 </div>
+<!-- Modal confrim victim delete -->
+<div class="modal fade" id="confirmCaseClosed" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Case Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmCloseCaseBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal -->
 <div class="modal fade" id="warrantlessArrest" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="warrantlessArrestLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -2784,32 +2802,137 @@
             });
         });
 
-        $('.btn-check-update').on('change', function() {
-            var status = $(this).data('status');
-            var caseId = "{{ case.pk }}";
-            var csrfToken = '{{ csrf_token }}';  // Fetch CSRF token from the cookie
+        // Store the current status when page loads
+        let originalStatus = $('input[name="status_case"]:checked').val();
 
-            $.ajax({
-                type: 'POST',
-                url: '{% url "update_case_status" case_id=0 %}'.replace('0', caseId),
-                data: {'status_case': status, 'csrfmiddlewaretoken': csrfToken},  // Include CSRF token in the data
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        console.log('Case status updated successfully');
-                        $('.toast-body').text('Case status updated successfully');
-                        $('#successToast').toast('show');
-                    } else {
-                        console.error('Failed to update case status:', response.error);
-                        $('.toast-body').text('Failed to update case status:', response.error);
+        $('.btn-check-update').on('click', function(e) {
+            // Prevent the default radio button behavior
+            e.preventDefault();
+            
+            // Get which button was clicked (Active or Close)
+            let clickedValue = $(this).val();
+            
+            // Show the confirmation modal
+            $('#confirmCaseClosed').modal('show');
+            
+            // Set appropriate message
+            if (clickedValue == 'Close') {
+                $('.modal-body').text('Are you sure you want to CLOSE this case?');
+            } else {
+                $('.modal-body').text('Are you sure you want to ACTIVATE this case?');
+            }
+            
+            // Remove any previous click handler
+            $('#confirmCloseCaseBtn').off('click');
+            
+            // Add new click handler
+            $('#confirmCloseCaseBtn').on('click', function() {
+                // Update the radio button selection on confirmation
+                $(`input[name="status_case"][value="${clickedValue}"]`).prop('checked', true);
+                
+                var status = clickedValue;
+                var caseId = "{{ case.pk }}";
+                var csrfToken = '{{ csrf_token }}';
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "update_case_status" case_id=0 %}'.replace('0', caseId),
+                    data: {'status_case': status, 'csrfmiddlewaretoken': csrfToken},
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            console.log('Case status updated successfully');
+                            $('.toast-body').text('Case status updated successfully');
+                            $('#successToast').toast('show');
+                            // Update original status to the new status
+                            originalStatus = clickedValue;
+
+                            if(originalStatus === 'Close') {
+                                var dateStatus = new Date().toISOString().split('T')[0];
+                            }
+                            else{
+                                var dateStatus = ''; // No date update for Active status
+                            }
+                            
+                            var caseId = "{{ case.pk }}";
+                            var csrfToken = '{{ csrf_token }}';  // Fetch CSRF token from the cookie
+                        
+                            $.ajax({
+                                type: 'POST',
+                                url: '{% url "update_case_date_closed" case_id=0 %}'.replace('0', caseId),
+                                data: {'date_closed': dateStatus},  // Include CSRF token in the data
+                                headers: {
+                                    'X-CSRFToken': csrfToken
+                                },
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.success) {
+                                        if(originalStatus === 'Close') {
+                                            console.log('Case Date Closed updated successfully');
+                                            $('.toast-body').text('Case Date Closed updated successfully');
+                                            $('#successToast').toast('show');
+
+                                            const now = new Date();
+                                            statusTitle = 'Case Closed';
+                                            statusText = 'Cased closed by Super Admin.';
+                                            successMessage = 'Case closed successfully.';
+                                            statusEventDate = getDateNow();
+                                            addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
+                                            
+                                        }else{
+                                            console.log('Case Date Activated updated successfully');
+                                            $('.toast-body').text('Case Date Activated successfully');
+                                            $('#successToast').toast('show');
+
+                                            const now = new Date();
+                                            statusTitle = 'Case Reactivated';
+                                            statusText = 'Case Reactivated by Super Admin.';
+                                            successMessage = 'Case Reactivation successfull.';
+                                            statusEventDate = getDateNow();
+                                            addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
+                                        }
+                                         setTimeout(function() {
+                                            location.reload();
+                                        }, 2000);
+                                    } else {
+                                        console.error('Failed to update case status:', response.error);
+                                        $('.toast-body').text('Failed to Update:', response.error);
+                                        $('#errorToast').toast('show');
+                                    }
+                                   
+                                },
+                                error: function(xhr, errmsg, err) {
+                                    console.error('Failed to update case status:', errmsg);
+                                    $('.toast-body').text('Failed to update case status:', errmsg);
+                                    $('#errorToast').toast('show');
+                                }
+                            });
+            
+                        } else {
+                            console.error('Failed to update case status:', response.error);
+                            $('.toast-body').text('Failed to update case status: ' + response.error);
+                            $('#errorToast').toast('show');
+                            // Reset to original selection if failed
+                            $(`input[name="status_case"][value="${originalStatus}"]`).prop('checked', true);
+                        }
+                  
+                    },
+                    error: function(xhr, errmsg, err) {
+                        console.error('Failed to update case status:', errmsg);
+                        $('.toast-body').text('Failed to update case status: ' + errmsg);
                         $('#errorToast').toast('show');
+                        // Reset to original selection if error
+                        $(`input[name="status_case"][value="${originalStatus}"]`).prop('checked', true);
                     }
-                },
-                error: function(xhr, errmsg, err) {
-                    console.error('Failed to update case status:', errmsg);
-                    $('.toast-body').text('Failed to update case status:', errmsg);
-                    $('#errorToast').toast('show');
-                }
+                });
+                
+                // Close the modal
+                $('#confirmCaseClosed').modal('hide');
+            });
+            
+            // When user cancels, make sure the original radio button stays selected
+            $('#confirmCaseClosed').on('hidden.bs.modal', function() {
+                $(`input[name="status_case"][value="${originalStatus}"]`).prop('checked', true);
             });
         });
 
@@ -3516,58 +3639,68 @@
             $('#healthcare-update').css('display', 'none');
         }
 
+        
+        
+        
+    });
+    
+    
+    function addingStatusPerAction( caseId, statusTitle, statusText, statusEventDate, successMessage) {
+    
+        var formData = {
+                'case_id': caseId,
+                'status_title': statusTitle,
+                'status_text': statusText,
+                'status_event_date': statusEventDate,
+                'csrfmiddlewaretoken': '{{ csrf_token }}' // Include the CSRF token
+            };
 
-
-        function addingStatusPerAction( caseId, statusTitle, statusText, statusEventDate, successMessage) {
-         
-            var formData = {
-                    'case_id': caseId,
-                    'status_title': statusTitle,
-                    'status_text': statusText,
-                    'status_event_date': statusEventDate,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}' // Include the CSRF token
-                };
-
-            // Send AJAX POST request
-            $.ajax({
-                type: 'POST',
-                url: '/add_status/' + formData.case_id + '/', // Specify the URL
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        // Display success toast
-                        //$('.toast-body').text(successMessage);
-                        //$('#successToast').toast('show');
-                        
-                        // Close modal after 2 seconds
-                        setTimeout(function() {
-                            location.reload(); // Reload the page
-                        }, 1000);
-                    } else {
-                        // Display error toast
-                        $('.toast-body').text('Error: ' + response.message);
-                        $('#errorToast').toast('show');
-                        
-                    }
+        // Send AJAX POST request
+        $.ajax({
+            type: 'POST',
+            url: '/add_status/' + formData.case_id + '/', // Specify the URL
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    // Display success toast
+                    //$('.toast-body').text(successMessage);
+                    //$('#successToast').toast('show');
                     
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', status, error);
+                    // Close modal after 2 seconds
+                    setTimeout(function() {
+                        location.reload(); // Reload the page
+                    }, 1000);
+                } else {
                     // Display error toast
-                    $('.toast-body').text('AJAX Error: ' + error);
+                    $('.toast-body').text('Error: ' + response.message);
                     $('#errorToast').toast('show');
                     
                 }
-            });
-    
-        }
+                
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+                // Display error toast
+                $('.toast-body').text('AJAX Error: ' + error);
+                $('#errorToast').toast('show');
+                
+            }
+        });
+
+    }
 
 
-
-    });
-
-
+    function getDateNow(){
+        var now = new Date();
+        var statusEventDate = now.getFullYear() + '-' + 
+                        String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(now.getDate()).padStart(2, '0') + ' ' + 
+                        String(now.getHours()).padStart(2, '0') + ':' + 
+                        String(now.getMinutes()).padStart(2, '0') + ':' + 
+                        String(now.getSeconds()).padStart(2, '0');
+        return statusEventDate;
+    }
     
 </script>
 {% endblock scripts %}

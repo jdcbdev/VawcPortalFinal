@@ -4609,14 +4609,25 @@ def update_case_status(request, case_id):
         return JsonResponse({'success': False, 'error': 'Invalid request method'})  # Return an error response if the request method is not POST
     
 def update_case_date_closed(request, case_id):
+    print(f"Request method: {request.method}")
+    print(f"Request data: {request.POST}")
     if request.method == 'POST':
-        new_status_date = request.POST.get('date_closed')  # Get the new status from the form data
+        new_status_date = request.POST.get('date_closed')  # Get the date from the form data
         case = get_object_or_404(Case, pk=case_id)  # Get the case object
-        case.date_closed = new_status_date  # Update the status
+        
+        # If the date is empty string, set to None (NULL in database)
+        if new_status_date == '':
+            case.date_closed = None
+        else:
+            case.date_closed = new_status_date
+            
         case.save()  # Save the changes
         return JsonResponse({'success': True})  # Return a JSON response indicating success
     else:
-        return JsonResponse({'success': False, 'error': 'Invalid request method'})
+        return JsonResponse({
+            'success': False, 
+            'error': f'Invalid request method: {request.method}. Only POST is allowed.'
+        })
 
 # def encrypt_decrypt(request):
 

@@ -3185,6 +3185,8 @@
         </div>
     </div>
 </div>
+
+
 <!-- Modal confirm perp delete -->
 <div class="modal fade" id="confirmPerpetratorDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -3758,6 +3760,11 @@
         });
 
         $('.btn-check-update').on('change', function() {
+
+            //$('#confirmCaseClosed').modal('show'); // Show the confirmation modal
+            //===
+            
+
             var status = $(this).data('status');
             var caseId = "{{ case.pk }}";
             var csrfToken = '{{ csrf_token }}';  // Fetch CSRF token from the cookie
