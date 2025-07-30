@@ -1,4 +1,4 @@
-{% extends "../base/base_healthcare.html" %}
+{% extends "../base/base_law_enforcement.html" %}
 {% block title %}Home | Dashboard{% endblock %}
 {% load static %}
 {% block styles %}
@@ -277,7 +277,7 @@ $(document).ready(function() {
 
         $('#select-year-data-loading').addClass('spinner-border')
         $('#select-year-data').prop('disabled', true) 
-        const res = await fetch(`/admin-healthcare-vawc/healthcare-dashboard-data/${get_year}/`)
+        const res = await fetch(`/admin-law-enforcement-vawc/law-enforcement-dashboard-data/${get_year}/`)
         if(!res.ok) {
             return
         }

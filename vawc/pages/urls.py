@@ -114,6 +114,9 @@ urlpatterns = [
     path('admin-healthcare-vawc/view-healthcare-case/behalf/<int:case_id>/', views.view_healthcare_case_behalf, name='healthcare case behalf view'),
     
     # SWDO admin side============================================================================================
+
+    path('admin-SWDO-vawc/dashboard/', views.SWDO_dashboard_view, name='SWDO dashboard'),
+    path('admin-SWDO-vawc/SWDO-dashboard-data/<int:get_year>/', views.SWDO_dashboard_data, name='SWDO dashboard data'),
     path('admin-SWDO-vawc/case/', views.SWDO_case_view, name='SWDO case'),
     path('admin-SWDO-vawc/settings/', views.SWDO_settings_view, name='SWDO settings'),
     path('admin-SWDO-vawc/view-SWDO-case/behalf/<int:case_id>/', views.view_SWDO_case_behalf, name='SWDO case behalf view'),
