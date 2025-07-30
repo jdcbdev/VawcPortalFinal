@@ -5428,3 +5428,138 @@ def LawEnforcement_dashboard_data(request, get_year):
         'barangay': station,
         # 'global': request.session,
     })
+
+
+@login_required
+def healthcare_dashboard_view(request):
+    # Check if user has a law enforcement account
+    
+    # Try to get the law enforcement account for this user
+    healthcare_account = request.user.healthcareaccount
+    hospital_name = healthcare_account.hospital_name
+
+    # Get the list of years for which we have cases for this station
+    year_list = Case.objects.filter(healthcare_provider_name=hospital_name).annotate(
+        year=ExtractYear('date_added')
+    ).values_list('year', flat=True).distinct()
+    
+    return render(request, 'law-enforcement-admin/dashboard.html', {
+        "year_list": year_list, 
+        "hospital": hospital_name
+    })
+        
+
+def healthcare_dashboard_data(request, get_year):
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+
+    logged_in_user = request.user  # Retrieve the logged-in user
+    # Retrieve the Account object associated with the logged-in user
+    try:
+        healthcare_account = request.user.healthcareaccount
+        hospital_name = healthcare_account.hospital_name
+    except Account.DoesNotExist:
+        hospital_name = None
+    
+    if get_year == 0:
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(healthcare_provider_name=hospital_name)
+    else:
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( healthcare_provider_name=hospital_name, date_added__year = get_year)
+
+    
+    total_cases = cases.count() or 0
+    ongoing_cases = cases.filter(status='Active').count() or 0
+    resolved_cases = cases.filter(status='Close').count() or 0
+    services_provided = 0
+    bpo_count = 0
+    tpo_count = 0
+    ppo_count = 0
+    ra_9262 = 0
+    ra_8353 = 0
+    ra_7877 = 0
+    ra_7610 = 0
+    ra_9775 = 0
+    annual_cases = defaultdict(lambda:defaultdict(int))
+    cases_w_criminal_cases = 0
+    barangay_case_list = []
+    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    for month_temp in all_months:   
+        annual_cases[month_temp] = 0
+
+    # Iterate through filtered cases
+    for case in cases:
+
+        # count all the services of resolved case
+        if (case.status == 'Close'):
+            services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
+
+        # count bpo, tpo, ppo
+        if case.service_information == 'issuance':
+            bpo_count += 1
+            if case.enforcement_of_protection_order:
+                ppo_count += 1
+            else:
+                tpo_count += 1
+
+         # count RAs
+        ra_9262 += case.checkbox_ra_9262
+        ra_8353 += case.checkbox_ra_8353
+        ra_7877 += case.checkbox_ra_7877
+        ra_7610 += case.checkbox_a_7610
+        ra_9775 += case.checkbox_ra_9775
+
+        # no of cases with criminal case
+        if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
+            cases_w_criminal_cases += 1
+
+        # increment case count per month    
+        month = case.date_added.strftime('%b') 
+        annual_cases[month] += 1
+
+        case_dict_data = {
+            'case_number': case.case_number,
+            'date_added': case.date_added,
+            'barangay': case.law_enforcement_agency_name,
+            'city': case.city,
+            'province': case.province,
+            'checkbox_ra_8353': case.checkbox_ra_8353,
+            'checkbox_ra_9262': case.checkbox_ra_9262,
+            'checkbox_ra_7877': case.checkbox_ra_7877,
+            'checkbox_ra_9775': case.checkbox_ra_9775,
+            'checkbox_a_7610': case.checkbox_a_7610,
+        }
+        case_dict = {
+            'data': case_dict_data,
+            'victims': list(case.victim_set.values()),
+            'perpetrators': list(case.perpetrator.values())
+        }
+        barangay_case_list.append(case_dict)
+
+
+
+    republic_acts = {
+        'RA 9262': ra_9262,
+        'RA 8353': ra_8353,
+        'RA 7877': ra_7877,
+        'RA 7610': ra_7610,
+        'RA 9775': ra_9775
+    }
+
+    return JsonResponse({
+        #'cases': filtered_cases,
+        'total_cases': total_cases,
+        'ongoing_cases': ongoing_cases,
+        'resolved_cases': resolved_cases,
+        'services_provided': services_provided,
+        'bpo_count': bpo_count,
+        'ppo_count': ppo_count,
+        'tpo_count': tpo_count,
+        'cases_w_criminal_cases': cases_w_criminal_cases,
+        'republic_acts': republic_acts,
+        'annual_cases': annual_cases,
+        'barangay_case_list': barangay_case_list,
+        # 'logged_in_user': logged_in_user,
+        # 'email' : logged_in_user.email,
+        'barangay': hospital_name,
+        # 'global': request.session,
+    })

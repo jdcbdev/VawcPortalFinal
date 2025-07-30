@@ -88,9 +88,9 @@
                     <td>{{ case.date_added|date:"m/d/Y" }}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
-                            <a class="btn btn-outline-success" href="{% url 'law healthcare case impacted view' case_id=case.id %}" role="button">View</a>
+                            <a class="btn btn-outline-success" href="{% url 'healthcare case impacted view' case_id=case.id %}" role="button">View</a>
                         {% elif case.type_of_case == 'Behalf' %}
-                            <a class="btn btn-outline-success" href="{% url 'law healthcare case behalf view' case_id=case.id %}" role="button">View</a>
+                            <a class="btn btn-outline-success" href="{% url 'healthcare case behalf view' case_id=case.id %}" role="button">View</a>
                         {% endif %}
                     </td>
                 </tr>

@@ -1,4 +1,4 @@
-{% extends "../base/base_law_enforcement.html" %}
+{% extends "../base/base_healthcare.html" %}
 {% block title %}Home | Dashboard{% endblock %}
 {% load static %}
 {% block styles %}
@@ -12,7 +12,7 @@
     <div class="d-flex align-items-center justify-content-between flex-wrap mb-3 gap-3">
         <div class="d-flex align-items-center">
             <h1 class="pe-3 mb-0" style="border-right: 1px solid #dcdcdc;">Dashboard</h1>
-            <h2 class="ms-3 mb-0 fs-5 text-primary">{{ station }}</h2>
+            <h2 class="ms-3 mb-0 fs-5 text-primary">{{ hospital_name }}</h2>
         </div>
         <div class="d-flex align-items-center gap-3 ms-auto">
             <div class="spinner-border-sm test-primary" id="select-year-data-loading" role="status">
@@ -277,7 +277,7 @@ $(document).ready(function() {
 
         $('#select-year-data-loading').addClass('spinner-border')
         $('#select-year-data').prop('disabled', true) 
-        const res = await fetch(`/admin-law-enforcement-vawc/law-enforcement-dashboard-data/${get_year}/`)
+        const res = await fetch(`/admin-healthcare-vawc/healthcare-dashboard-data/${get_year}/`)
         if(!res.ok) {
             return
         }

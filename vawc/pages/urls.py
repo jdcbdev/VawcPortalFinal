@@ -105,11 +105,13 @@ urlpatterns = [
     # path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
 
     # healthcare admin side============================================================================================
+    path('admin-healthcare-vawc/dashboard/', views.healthcare_dashboard_view, name='healthcare dashboard'),
+    path('admin-healthcare-vawc/healthcare-dashboard-data/<int:get_year>/', views.healthcare_dashboard_data, name='healthcare dashboard data'),
     path('admin-healthcare-vawc/case/', views.healthcare_case_view, name='healthcare case'),
     path('admin-healthcare-vawc/settings/', views.healthcare_settings_view, name='healthcare settings'),
     path('refer-healthcare/', views.refer_healthcare, name='refer_healthcare'),
-    path('admin-healthcare-vawc/view-healthcare-case/impacted/<int:case_id>/', views.view_healthcare_case_impact, name='law healthcare case impacted view'),
-    path('admin-healthcare-vawc/view-healthcare-case/behalf/<int:case_id>/', views.view_healthcare_case_behalf, name='law healthcare case behalf view'),
+    path('admin-healthcare-vawc/view-healthcare-case/impacted/<int:case_id>/', views.view_healthcare_case_impact, name='healthcare case impacted view'),
+    path('admin-healthcare-vawc/view-healthcare-case/behalf/<int:case_id>/', views.view_healthcare_case_behalf, name='healthcare case behalf view'),
     
     # SWDO admin side============================================================================================
     path('admin-SWDO-vawc/case/', views.SWDO_case_view, name='SWDO case'),
