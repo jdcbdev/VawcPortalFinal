@@ -4,7 +4,7 @@
     <!-- Sidebar scroll-->
     <div>
       <div class="brand-logo d-flex align-items-center justify-content-between" style="background-color:#7131ac;">
-        <a href="" class="text-nowrap logo-img" disabled>
+        <a href="{% url 'home' %}" class="text-nowrap logo-img">
           <img src="{% static 'img/VAWC-DESK-PORTAL.png' %}" width="auto" height="50" alt="" />
         </a>
         <div class="text-white d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -56,31 +56,7 @@
               <span>
                 <i class='bx bx-user'></i>
               </span>
-              <span class="hide-menu">Admin Accounts</span>
-            </a>
-          </li>
-          <li class="sidebar-item">
-            <a class="sidebar-link" href="{% url 'law enforcement account' %}" aria-expanded="false">
-              <span>
-                <i class='bx bx-user'></i>
-              </span>
-              <span class="hide-menu">Police Accounts</span>
-            </a>
-          </li>
-          <li class="sidebar-item">
-            <a class="sidebar-link" href="{% url 'SWDO account' %}" aria-expanded="false">
-              <span>
-                <i class='bx bx-user'></i>
-              </span>
-              <span class="hide-menu">SWDO account</span>
-            </a>
-          </li>
-          <li class="sidebar-item">
-            <a class="sidebar-link" href="{% url 'healthcare account' %}" aria-expanded="false">
-              <span>
-                <i class='bx bx-user'></i>
-              </span>
-              <span class="hide-menu">Healthcare Accounts</span>
+              <span class="hide-menu">Accounts</span>
             </a>
           </li>
           <!-- <li class="sidebar-item">

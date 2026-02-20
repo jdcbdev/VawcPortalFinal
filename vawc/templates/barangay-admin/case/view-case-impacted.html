@@ -7,14 +7,6 @@
 {% endblock %}
 {% load custom_filter %}
 {% block content %}
-<script src="{% static 'js/address-fields.js' %}"></script>
-<!-- Declare CSRF token globally -->
-<script>
-    const csrf_token_generic = '{{ csrf_token }}';
-    const csrf_token_victim = csrf_token_generic;
-    const csrf_token_perpetrator = csrf_token_generic;
-    const csrf_token_contact = csrf_token_generic;
-</script>
 <div class="container-fluid pb-4">
     <div class="pt-1 row">
         <a class="col text-decoration-none text-dark" href="{% url 'barangay case' %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
@@ -139,8 +131,6 @@
                 <div class="container pt-3 pb-3">
                 </div><!--end of container-->
                 <hr>
-
-
                 <div class="container-fluid mx-0 pt-2 pb-3">
                     <h1 class="text-center">Case Information</h1>
                     <div class="pt-2">
@@ -174,14 +164,162 @@
                     </div>
                 </div>
 
-                   
                 <div class=" pt-2">
                     <form id="service_info_form">
                         {% csrf_token %}
                         <input type="hidden" name="case_id" value="{{ case.id }}">
                         <h2>Services Information</h2>
-                        
-                        
+                        <div class="row pt-4">
+                            <div class="col-lg-12 col-md-12 col-sm-8">
+                                <div class="row d-flex align-items-center">
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="refer_social_welware" id="refer_social_welware" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}>
+                                            <label class="form-check-label" for="refer_social_welware">
+                                                <strong><h4>Refers to Social Welfare and Development Office<h4></strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col"><input class="form-control" type="date" name="refer_social_date" id="refer_social_date" value="{{ case.refer_social_date|date:'Y-m-d' }}"></div>
+                                </div>
+                                
+                                
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+
+                        <div class="row pt-1">
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}>
+                                    <label class="form-check-label" for="psych_service">
+                                        Psychosocial services
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}>
+                                    <label class="form-check-label" for="emergency_shelter">
+                                        Emergency Shelter
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %}>
+                                    <label class="form-check-label" for="economic_assist">
+                                        Economic Assistance
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+                        <hr>
+                        <div class="row pt-4">
+                            <div class="col-12">
+                                <div class="row d-flex align-items-center mb-3">
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="refer_health" id="refer_health" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %}>
+                                            <label class="form-check-label" for="refer_health">
+                                                <strong>
+                                                    <h4>Refers to Healthcare provider<h4>
+                                                </strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_healthcare_date" id="refer_healthcare_date" value="{{ case.refer_healthcare_date|date:'Y-m-d' }}"></div></div>
+                                </div>
+                                
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" name="name_health" id="name_health" placeholder="none" value="{{case.healthcare_provider_name }}">
+                                    <label for="name_health">Name of Healthcare Provider</label>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+
+                        <div class="row  pt-1">
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}>
+                                    <label class="form-check-label" for="provision">
+                                        Provision of appropriate medical treatment
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}>
+                                    <label class="form-check-label" for="issuance_medical_cert">
+                                    Issuance of medical certificate
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-4 vol-md-4 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}>
+                                    <label class="form-check-label" for="medico_legal">
+                                        Medico-legal Exam
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+                        <hr>
+                        <div class="row pt-4">
+                            <div class="col-lg-12 col-md-6 col-sm-12">
+                                <div class="row d-flex align-items-center mb-3">
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="refer_law_enforce" id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}>
+                                            <label class="form-check-label" for="refer_law_enforce"><strong>
+                                                <h4>Refers to Law Enforcement<h4>
+                                            </strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col"><div class="col"><input class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{{ case.refer_law_enforcement_date|date:'Y-m-d' }}"></div></div>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="name_of_agency" name="name_of_agency" placeholder="none" value="{{ case.law_enforcement_agency_name }}">
+                                    <label for="name_of_agency">Name of Agency</label>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
+
+                        <div class="row pt-1">
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="receipt_comp" id="receipt_comp" value="true" {% if case.receipt_and_recording_of_complaints %} checked {% endif %}>
+                                    <label class="form-check-label" for="receipt_comp">
+                                    Receipt and recording of Complaints
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="resuce_operation" id="resuce_operation" value="true" {% if case.rescue_operations_of_vaw_cases %} checked {% endif %}>
+                                    <label class="form-check-label" for="resuce_operation">
+                                        Rescue Operations of VAW Cases
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="forensic_interview" id="forensic_interview" value="true" {% if case.forensic_interview_and_investigation %} checked {% endif %}>
+                                    <label class="form-check-label" for="forensic_interview">
+                                        Forensic Interview and Investigation
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                            <div class="col-lg-6 vol-md-6 col-sm-8">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="enforce_protect_order" id="enforce_protect_order" value="true" {% if case.enforcement_of_protection_order %} checked {% endif %}>
+                                    <label class="form-check-label" for="enforce_protect_order">
+                                    Enforcement of Protection Order
+                                    </label>
+                                </div>
+                            </div><!--end of col-->
+                        </div><!--end of row-->
                         <hr>
                         <div class="row  pt-4">
                             <div class="col-lg-12 col-md-12 col-sm-8">
@@ -216,385 +354,9 @@
                         </div><!--end of row-->
 
                         <div class="d-flex justify-content-end just">
-                            <button class="btn btn-primary" id="btn-save-service" type="submit" disabled>Save</button>
+                            <button class="btn btn-primary" id="btn-save-service" type="submit">Save</button>
                         </div>
                     </form>
-
-                    <hr>
-                     
-                    <div id="healthcare-update" class="row pt-4" >
-                        <h4 class="text-left">Healthcare Office Update</h4>
-                        <p> Date Updated : {{ case.refer_to_barangay_from_healthcare_date }}</p>
-
-                        <div class="row pt-1 pb-3 ps-3">
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="provision">
-                                        Provision of appropriate medical treatment
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="issuance_medical_cert">
-                                    Issuance of medical certificate
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="medico_legal">
-                                        Medico-legal Exam
-                                    </label>
-                                </div>
-                            </div><!--end of col-->           
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="healthcare_other" id="healthcare_other" value="true" {% if case.healthcare_other %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="healthcare_other">
-                                        Other
-                                    </label>
-                                </div>
-                            </div><!--end of col-->       
-                        </div><!--end of row-->
-
-                        <div class="row">
-                            <div class="d-flex flex-column align-items-start">
-                                <h5>Healthcare Remark:</h5>
-                                <textarea class="form-control" id="remarks_to_barangay_from_healthcare" name="remarks_to_barangay_from_healthcare" rows="3" disabled>{% if case.remarks_to_barangay_from_healthcare %}{{ case.remarks_to_barangay_from_healthcare }}{% else %}No Remark.{% endif %}</textarea>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                    </div><!--end of SWDO update-->
-
-                    <form id="form-refer-healthcare" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="case_id" value="{{ case.id }}">
-                        <input type = "hidden" class="form-control" type="date" name="refer_healthcare_date" id="refer_healthcare_date"  value="{% if case.refer_healthcare_date %}{{ case.refer_healthcare_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
-
-                        <div class="row pt-4">
-                            <div class="col-12">
-                                <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="refer_healthcare" id="refer_healthcare" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %}onclick="return false;">
-                                        <label class="form-check-label" for="refer_healthcare"><strong>
-                                            {% if case.refers_to_healthcare_provider %}
-                                                <h4>Referred to healthcare Office</h4>
-                                            {% else %}
-                                                <h4>Refer to healthcare Office</h4>
-                                            {% endif %}
-                                        </strong>
-                                        </label>
-                                </div>
-                                <div class="col mb-3">{% if case.refer_healthcare_date %}Date Reffered : <strong>{{ case.refer_healthcare_date|date:'M j, Y' }}</strong>{% endif %}</div>
-
-                                <div class="form-floating mb-3">
-                                    <select id="name_of_hospital" name="name_of_hospital" class="form-select">
-                                        <option value="" {% if not case.healthcare_provider_name %}selected{% endif %}>--Select Option--</option>
-                                        {% for hospital in hospitals %}
-                                            <option value="{{ hospital }}" {% if case.healthcare_provider_name == hospital %}selected{% endif %}>
-                                                {{ hospital }}
-                                            </option>
-                                        {% empty %}
-                                            <option>No Hospital found</option>
-                                        {% endfor %}
-                                    </select>
-                                    <label style="font-size: small;" id="name_of_hospital_label" for="name_of_hospital">Hospital</label>
-                                </div>
-
-                            </div>
-
-                        </div><!--end of row-->
-
-                            
-                        <h5 id="remarks"> Additional Remarks</h5>
-                        <div class="col-lg-12 vol-md-12 col-sm-12">
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control"
-                                        id="remarks_healthcare"
-                                        name="remarks_healthcare"
-                                        rows="3"
-                                        placeholder="Input any remarks for the Healthcare"
-                                        >{{ case.remarks_to_healthcare|default_if_none:"" }}</textarea>
-                                <label for="remarks_healthcare">Remarks to Healthcare</label>
-                            </div>
-                        </div><!--end of col-->
-                        
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary" id="btn-submit-healthcare" type="submit">{% if case.refers_to_healthcare_provider %}Update{% else %}Send{% endif %}</button>
-                        </div>
-
-
-                    </form>
-                    <hr>
-                     
-                    <div id="SWDO-update" class="row pt-4" >
-                        <h4 class="text-left">Social Welfare and Development Office Update</h4>
-                        <p> Date Updated : {{ case.refer_to_barangay_from_social_date }}</p>
-
-                        <div class="row pt-1 pb-3 ps-3">
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="psych_service">
-                                        Psychosocial services
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}onclick="return false;">
-                                    <label class="form-check-label" for="emergency_shelter">
-                                        Emergency Shelter
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %} onclick="return false;">
-                                    <label class="form-check-label" for="economic_assist">
-                                        Economic Assistance
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="SWDO_other" id="SWDO_other" value="true" {% if case.SWDO_other %} checked {% endif %} onclick="return false;">
-                                    <label class="form-check-label" for="SWDO_other">
-                                        Other
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-
-                        <div class="row">
-                            <div class="d-flex flex-column align-items-start">
-                                <h5>SWDO Remark:</h5>
-                                <textarea class="form-control" id="remark_to_barangay_from_SWDO" name="remark_to_barangay_from_SWDO" rows="3" disabled>{% if case.remark_to_barangay_from_SWDO %}{{ case.remark_to_barangay_from_SWDO }}{% else %}No Remark.{% endif %}</textarea>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                    </div><!--end of SWDO update-->
-
-                    <form id="form-refer-SWDO" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="case_id" value="{{ case.id }}">
-                        <input type = "hidden" class="form-control" type="date" name="refer_social_date" id="refer_social_date"  value="{% if case.refer_social_date %}{{ case.refer_social_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
-                        <input type="hidden" name="brgy_to_SWDO_form" value="true">
-
-                        
-                        <div class="row pt-4">
-                            <div class="col-lg-12 col-md-12 col-sm-8">
-                                <div class="row d-flex align-items-center">
-                                    <div class="col">
-                                        <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="refer_SWDO" id="refer_SWDO" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}onclick="return false;">
-                                                <label class="form-check-label" for="refer_SWDO"><strong>
-                                                    {% if case.refers_to_social_welfare %}
-                                                        <h4>Refered to Social Welfare and Development Office</h4>
-                                                    {% else %}
-                                                        <h4>Refer to Social Welfare and Development Office</h4>
-                                                    {% endif %}
-                                                </strong>
-                                                </label>
-                                        </div>
-                                        <div class="col">{% if case.refer_social_date %}Date Reffered : <strong>{{ case.refer_social_date|date:'M j, Y' }}</strong>{% endif %}</div>
-                                    </div>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                        
-                       <h5 id="remarks" class="pt-3"> Additional Remarks</h5>
-                        <div class="col-lg-12 vol-md-12 col-sm-12">
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control"
-                                        id="remarks_SWDO"
-                                        name="remarks_SWDO"
-                                        rows="3"
-                                        placeholder="Input any remarks for the Social Welfare and Development Office"
-                                        >{{ case.remarks_to_social_welfare|default_if_none:"" }}</textarea>
-                                <label for="remarks_SWDO">Remarks to Social Welfare and Development Office</label>
-                            </div>
-                        </div><!--end of col-->
-                    
-                    
-                        <div class="d-flex justify-content-end just">
-                                <button class="btn btn-primary" id="btn-submit-SWDO" type="submit">{% if case.refers_to_social_welfare %}Update{% else %}Send{% endif %}</button>
-                        </div>
-                    </form>
-                    <hr>
-
-                    <div id="law-enforcement-update" class="row pt-4" >
-                        <h5 class="text-left">Law Enforcement Update</h5>
-                        <p> Date Updated : {{ case.refer_to_barangay_date }}</p>
-
-                        <div class="row pt-1 p-4">
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="receipt_comp" id="receipt_comp" value="true" {% if case.receipt_and_recording_of_complaints %} checked {% endif %}disabled>
-                                    <label class="form-check-label" for="receipt_comp">
-                                    Receipt and recording of Complaints
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="rescue_operation" id="rescue_operation" value="true" {% if case.rescue_operations_of_vaw_cases %} checked {% endif %}disabled>
-                                    <label class="form-check-label" for="rescue_operation">
-                                        Rescue Operations of VAW Cases
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="forensic_interview" id="forensic_interview" value="true" {% if case.forensic_interview_and_investigation %} checked {% endif %}disabled>
-                                    <label class="form-check-label" for="forensic_interview">
-                                        Forensic Interview and Investigation
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                            <div class="col-lg-6 vol-md-6 col-sm-8">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="enforce_protect_order" id="enforce_protect_order" value="true" {% if case.enforcement_of_protection_order %} checked {% endif %}disabled>
-                                    <label class="form-check-label" for="enforce_protect_order">
-                                    Enforcement of Protection Order
-                                    </label>
-                                </div>
-                            </div><!--end of col-->
-                        </div><!--end of col--> 
-
-                        <div class="row">
-                            <div class="d-flex flex-column align-items-start">
-                                <h5>Law Enforcement Remark:</h5>
-                                <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" disabled>{% if case.remarks_to_barangay %}{{ case.remarks_to_barangay }}{% else %}No Remark.{% endif %}</textarea>
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                        
-                    </div>
-                
-
-                    <form id="form-refer-law-enforcement">
-                        {% csrf_token %}
-                        <input type="hidden" name="case_id" value="{{ case.id }}">
-                        
-                        <div class="row pt-4">
-                            <div class="col-lg-12 col-md-12 col-sm-12">
-                                <div class="row d-flex align-items-center mb-3">
-                                    <div class="col">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_law_enforce" id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}onclick="return false;">
-                                            <label class="form-check-label" for="refer_law_enforce"><strong>
-                                                {% if case.refers_to_law_enforcement %}
-                                                    <h4>Refered to Law Enforcement</h4>
-                                                {% else %}
-                                                    <h4>Refer to Law Enforcement</h4>
-                                                {% endif %}
-                                            </strong>
-                                            </label>
-                                        </div>
-                                        <div class="col">{% if case.refer_law_enforcement_date %}Date Reffered : <strong>{{case.refer_law_enforcement_date|date:'M j, Y'}}</strong>{%endif%}</div>
-                                    </div>
-                                    
-                                    <div  class="col"><div class="col"><input type = "hidden" class="form-control" type="date" name="refer_law_enforcement_date" id="refer_law_enforcement_date" value="{% if case.refer_law_enforcement_date %}{{ case.refer_law_enforcement_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></div></div>
-                                </div>
-
-                                {% comment %} province {% endcomment %}
-                                <div class="row mb-3 flex">
-                                    <div class="form-floating mb-3">
-                                        <select id="name_of_province" name="name_of_province" class="form-select">
-                                            <option value="" {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
-                                            {% for station in default_stations_provinces %}
-                                                <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
-                                                    {{ station }}
-                                                </option>
-                                            {% empty %}
-                                                <option>No Province found</option>
-                                            {% endfor %}
-                                        </select>
-                                        <label id="name_of_province_label" for="name_of_province">Province</label>
-                                    </div>
-                                    
-                                    {% comment %} end of province {% endcomment %}
-
-                                    <div class="form-floating mb-3">
-                                        <select id="name_of_agency" name="name_of_agency" class="form-select">
-                                            {% comment %} <option {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
-                                            {% for station in default_stations %}
-                                                {% if case.city == "ZAMBOANGA" %}
-                                                    {% if station.province == "ZAMBOANGA CITY" %}
-                                                    <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
-                                                        {{ station.name }}
-                                                    </option>
-                                                    {% endif %}
-                                                {% else %}
-
-                                                    {% if station.province == case.province %}
-                                                    <option value="{{ station.name }}" {% if case.law_enforcement_agency_name == station.name %}selected{% endif %}>
-                                                        {{ station.name }}
-                                                    </option>
-                                                    {% endif %}
-
-                                                {% endif %}
-                                            {% empty %}
-                                                <option>No data found</option>
-                                            {% endfor %} {% endcomment %}
-                                        </select>
-                                        <label id="name_of_agency_label" for="name_of_agency">Station</label>
-                                    </div>
-                                </div><!--end of address holder-->
-                            </div><!--end of col-->
-                        </div><!--end of row-->
-                       
-
-                        <h5 id="service_information"> Service Information</h5>
-                        <div class="label-form border rounded p-4 mb-4">
-                            <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-2">
-
-                                <label for="crisis" class="col">
-                                    <div class="service-option form-check card shadow-sm p-2 h-100 card-link">
-                                        <div class="card-title ">
-                                            <h3 class="fw-bold fs-5">Crisis Intervention Including Rescue</h3>
-                                        </div>
-                                        <p class="fw-light">Provides immediate support in emergencies, including rescue operations, temporary shelter, and access to essential resources.</p>
-                                        <div class="d-flex justify-content-end">
-                                            <input type="radio" class="form-check-input" name="service" id="crisis" value="crisis" autocomplete="off" {% if case.service_information == 'crisis' %}checked{% endif %}>
-                                        </div>
-                                    </div>
-                                </label>
-                                <label for="issuance" class="col">
-                                    <div class="service-option form-check card shadow-sm p-2 h-100 card-link">
-                                        <div class="card-title">
-                                            <h3 class="fw-bold fs-5">Issuance / Enforcement of Barangay Protection Order</h3>
-                                        </div>
-                                        <p class="fw-light">Issues and enforces protective orders at the barangay to ensure the safety of individuals facing domestic violence.</p>
-                                        <div class="d-flex justify-content-end">
-                                            <input type="radio" class="form-check-input" name="service" id="issuance" value="issuance" autocomplete="off" {% if case.service_information == 'issuance' %}checked{% endif %}>
-                                        </div>
-                                    </div>
-                                </label>
-
-                            </div>
-                        </div>
-                        
-                        <h5 id="remarks"> Additional Remarks</h5>
-                        <div class="col-lg-12 vol-md-12 col-sm-12">
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control"
-                                        id="remarks_law_enforcement"
-                                        name="remarks_law_enforcement"
-                                        rows="3"
-                                        placeholder="Input any remarks for the Law Enforcement"
-                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>{{ case.remarks_to_law_enforcement|default_if_none:"" }}</textarea>
-                                <label for="remarks_law_enforcement">Remarks to Law Enforcement</label>
-                            </div>
-                        </div><!--end of col-->
-                        
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary" id="btn-submit-law-enforcement" type="submit">{% if case.refers_to_law_enforcement %}Update{% else %}Send{% endif %}</button>
-                        </div>
-
-                    </form> <!-- End of Law Enforcement Form -->
-                    
                 </div><!--end of container-->
             </div><!--end of container-->
 
@@ -630,7 +392,7 @@
                                 {% if victim.date_of_birth|calculate_age >= 18 %}
                                     <h4 class="fw-bold ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12z text-lg-start text-center">Victim is above 18.</h4>
                                 {% else %}
-                                    <a href="{% url 'add_parent_victim' case_id=case.id victim_id=victim.id %}" class="btn btn-outline-primary ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12">
+                                    <a href="{% url 'add_parent' case_id=case.id victim_id=victim.id %}" class="btn btn-outline-primary ms-lg-3 me-2 mb-lg-0 mb-2 col-lg-4 col-12">
                                         <i class='bx bx-body'></i>
                                         <span>Add, View, or Delete Parent</span>
                                     </a>
@@ -844,17 +606,18 @@
                                         </div><!--End of col-->
                                     </div><!--End of row-->
                                     <div class="row">
-                                        <div class="col-lg-3 col-12">
+                                        <div class="col-lg-6 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select"
-                                                    id="victim_region_{{ victim.id }}"
-                                                    name="victim_region_{{ victim.id }}"
-                                                    data-selected="{{ victim.region }}"
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="victim_house_information_{{ victim.id }}" name="victim_house_information_{{ victim.id }}" value="{{ victim.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <label for="victim_house_information_{{ victim.id }}">House Information</label>
+                                            </div>
+                                        </div><!--End of col-->
+                                        <div class="col-lg-6 col-12 mb-3">
+                                            <div class="form-floating">
+                                                <select class="form-select" id="victim_region_{{ victim.id }}" name="victim_region_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">--Select Option--</option>
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
-                                                            {% if region.name == victim.region %}selected{% endif %}>
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == victim.region %}selected{% endif %}>
                                                             {{ region.name }}
                                                         </option>
                                                     {% empty %}
@@ -864,18 +627,14 @@
                                                 <label for="victim_region_{{ victim.id }}">Region</label>
                                             </div>
                                         </div><!--End of col-->
-                                    
-                                        <div class="col-lg-3 col-12">
-                                            <div class="form-floating mb-3">
-                                                <select class="form-select"
-                                                    id="victim_province_{{ victim.id }}"
-                                                    name="victim_province_{{ victim.id }}"
-                                                    data-selected="{{ victim.province }}"
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    </div><!--End of row-->
+                                    <div class="row">
+                                        <div class="col-lg-3 mb-3">
+                                            <div class="form-floating">
+                                                <select class="form-select" id="victim_province_{{ victim.id }}" name="victim_province_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                            {% if province.name == victim.province %}selected{% endif %}>
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>
                                                             {{ province.name }}
                                                         </option>
                                                     {% empty %}
@@ -885,18 +644,12 @@
                                                 <label for="victim_province_{{ victim.id }}">Province</label>
                                             </div>
                                         </div><!--End of col-->
-                                    
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select"
-                                                    id="victim_city_{{ victim.id }}"
-                                                    name="victim_city_{{ victim.id }}"
-                                                    data-selected="{{ victim.city }}"
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="victim_city_{{ victim.id }}" name="victim_city_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
-                                                            {% if city.name == victim.city %}selected{% endif %}>
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
                                                             {{ city.name }}
                                                         </option>
                                                     {% empty %}
@@ -906,18 +659,12 @@
                                                 <label for="victim_city_{{ victim.id }}">City</label>
                                             </div>
                                         </div><!--End of col-->
-                                    
-                                        <div class="col-lg-3 col-12">
+                                        <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select"
-                                                    id="victim_barangay_{{ victim.id }}"
-                                                    name="victim_barangay_{{ victim.id }}"
-                                                    data-selected="{{ victim.barangay }}"
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="victim_barangay_{{ victim.id }}" name="victim_barangay_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                            {% if barangay.name == victim.barangay %}selected{% endif %}>
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == victim.barangay %}selected{% endif %}>
                                                             {{ barangay.name }}
                                                         </option>
                                                     {% empty %}
@@ -927,21 +674,13 @@
                                                 <label for="victim_barangay_{{ victim.id }}">Barangay</label>
                                             </div>
                                         </div><!--End of col-->
-                                    </div><!--End of row-->                                    
-                                    <div class="row">
-                                        <div class="col-lg-6 col-md-12 col-sm-8">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="victim_house_information_{{ victim.id }}" name="victim_house_information_{{ victim.id }}" value="{{ victim.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <label for="victim_house_information_{{ victim.id }}">House Information</label>
-                                            </div>
-                                        </div><!--End of col-->
-                                        <div class="col-lg-6 col-md-12 col-sm-8">
+                                        <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="victim_street_{{ victim.id }}" name="victim_street_{{ victim.id }}" value="{{ victim.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_street_{{ victim.id }}">Street</label>
                                             </div>
                                         </div><!--End of col-->
-                                    </div><!--End of row-->
+                                    </div>
                                 </div>
                                 <div class="d-flex justify-content-end mt-lg-2 mt-2">
                                     <button class="btn btn-primary save-btn-victim_{{ victim.id }}" id="save-btn-victim" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
@@ -949,14 +688,6 @@
                             </form>
                         </div>
                     </div>
-                    <!-- mark -->
-                    <script>
-                        // For Address Fields Consistenciess'
-                        (function() {
-                            const formElementVict = document.querySelector("#victim_form_{{ victim.id }}");
-                            addAddressListener(formElementVict, 'victim', '{{ victim.id }}');
-                        })();
-                    </script>
                     {% endfor %}
                 {% else %}
                 <div class="tab-pane fade show active h-100" id="v-pills-no-victim" role="tabpanel" aria-labelledby="v-pills-no-victim-tab" tabindex="0">
@@ -1262,17 +993,18 @@
                                     </div><!--End of row-->
 
                                     <div class="row">
-                                        <div class="col-lg-3 col-12">
+                                        <div class="col-lg-6 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select"
-                                                        id="perpetrator_region_{{ perpetrator.id }}"
-                                                        name="perpetrator_region_{{ perpetrator.id }}"
-                                                        data-selected="{{ perpetrator.region }}"
-                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_house_information_{{ perpetrator.id }}" name="perpetrator_house_information_{{ perpetrator.id }}" value="{{ perpetrator.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <label for="perpetrator_house_information_{{ perpetrator.id }}">House Information</label>
+                                            </div>
+                                        </div><!--End of col-->
+                                        <div class="col-lg-6 col-12">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="perpetrator_region_{{ perpetrator.id }}" name="perpetrator_region_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">--Select Region--</option>
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
-                                                            {% if region.name == perpetrator.region %}selected{% endif %}>
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if perpetrator.name == case.region %}selected{% endif %}>
                                                             {{ region.name }}
                                                         </option>
                                                     {% empty %}
@@ -1281,18 +1013,13 @@
                                                 </select>
                                                 <label for="perpetrator_region_{{ perpetrator.id }}">Region</label>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-3 col-12">
+                                        </div><!--End of col-->
+                                        <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select"
-                                                        id="perpetrator_province_{{ perpetrator.id }}"
-                                                        name="perpetrator_province_{{ perpetrator.id }}"
-                                                        data-selected="{{ perpetrator.province }}"
-                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_province_{{ perpetrator.id }}" name="perpetrator_province_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                            {% if province.name == perpetrator.province %}selected{% endif %}>
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == perpetrator.province %}selected{% endif %}>
                                                             {{ province.name }}
                                                         </option>
                                                     {% empty %}
@@ -1301,18 +1028,13 @@
                                                 </select>
                                                 <label for="perpetrator_province_{{ perpetrator.id }}">Province</label>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-3 col-12">
+                                        </div><!--End of col-->
+                                        <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select"
-                                                        id="perpetrator_city_{{ perpetrator.id }}"
-                                                        name="perpetrator_city_{{ perpetrator.id }}"
-                                                        data-selected="{{ perpetrator.city }}"
-                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_city_{{ perpetrator.id }}" name="perpetrator_city_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
-                                                            {% if city.name == perpetrator.city %}selected{% endif %}>
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == perpetrator.city %}selected{% endif %}>
                                                             {{ city.name }}
                                                         </option>
                                                     {% empty %}
@@ -1321,18 +1043,13 @@
                                                 </select>
                                                 <label for="perpetrator_city_{{ perpetrator.id }}">City</label>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-3 col-12">
+                                        </div><!--End of col-->
+                                        <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select"
-                                                        id="perpetrator_barangay_{{ perpetrator.id }}"
-                                                        name="perpetrator_barangay_{{ perpetrator.id }}"
-                                                        data-selected="{{ perpetrator.barangay }}"
-                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_barangay_{{ perpetrator.id }}" name="perpetrator_barangay_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                            {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
                                                             {{ barangay.name }}
                                                         </option>
                                                     {% empty %}
@@ -1341,16 +1058,8 @@
                                                 </select>
                                                 <label for="perpetrator_barangay_{{ perpetrator.id }}">Barangay</label>
                                             </div>
-                                        </div> <!--End of col-->
-                                    </div> <!--End of row-->
-                                    <div class="row">                            
-                                        <div class="col-lg-6 col-md-12 col-sm-8">
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_house_information_{{ perpetrator.id }}" name="perpetrator_house_information_{{ perpetrator.id }}" value="{{ perpetrator.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                <label for="perpetrator_house_information_{{ perpetrator.id }}">House Information</label>
-                                            </div>
                                         </div><!--End of col-->
-                                        <div class="col-lg-6 col-md-12 col-sm-8">
+                                        <div class="col-lg-3 col-md-4 col-sm-8">
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control" id="perpetrator_street_{{ perpetrator.id }}" name="perpetrator_street_{{ perpetrator.id }}" value="{{ perpetrator.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_street_{{ perpetrator.id }}">Street</label>
@@ -1364,13 +1073,6 @@
                             </form>
                         </div>
                     </div>
-                    <script>
-                        // For Address Fields Consistenciess
-                        (function() {
-                            const formElementPerp = document.querySelector('#perpetrator_form_{{ perpetrator.id }}');
-                            addAddressListener(formElementPerp, 'perpetrator', '{{ perpetrator.id }}')
-                        })();
-                    </script>
                     {% endfor %}
                 {% else %}
                     <div class="tab-pane fade show active h-100" id="v-pills-no-perp" role="tabpanel" aria-labelledby="v-pills-no-parent-tab" tabindex="0">
@@ -1526,79 +1228,6 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
                             <div class="form-floating">
-                                <select class="form-select" id="region" name="region"
-                                    data-selected="{{ case.region }}"
-                                    aria-label="Floating label select example"
-                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">--Select Region--</option>
-                                    {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
-                                            {{ region.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option value="">No data found</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="region">Region</label>
-                            </div>
-                        </div><!--End of col-->
-                        
-                        <div class="col-lg-4 col-md-4 col-sm-8">
-                            <div class="form-floating mb-3">
-                                <select class="form-select" id="province" name="province"
-                                    data-selected="{{ case.province }}"
-                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select Province --</option>
-                                    {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
-                                            {{ province.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option value="">No data found</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="province">Province</label>
-                            </div>
-                        </div><!--End of col-->
-                        
-                        <div class="col-lg-4 col-md-4 col-sm-8">
-                            <div class="form-floating mb-3">
-                                <select class="form-select" id="city" name="city"
-                                    data-selected="{{ case.city }}"
-                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select City --</option>
-                                    {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
-                                            {{ city.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option>No data found</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="city">City / Mun</label>
-                            </div>
-                        </div><!--End of col-->                        
-                    </div><!--end or row-->
-                    <div class="row">
-                        <div class="col-lg-4 col-md-4 col-sm-8">
-                            <div class="form-floating mb-3">
-                                <select class="form-select" id="barangay" name="barangay"
-                                    data-selected="{{ case.barangay }}"
-                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    <option value="">-- Select Barangay --</option>
-                                    {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
-                                            {{ barangay.name }}
-                                        </option>
-                                    {% empty %}
-                                        <option>No data found</option>
-                                    {% endfor %}
-                                </select>                                
-                                <label for="barangay">Barangay</label>
-                            </div>
-                        </div><!--End of col-->                        
-                        <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
-                            <div class="form-floating">
                                 <select class="form-select" id="place_of_incident" name="place_of_incident" aria-label="Floating label select example" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     {% if global.security_status == "decrypted" %}
                                     <option value="house" {% if case.place_of_incident == 'house' %} selected {% endif %}>House</option>
@@ -1621,8 +1250,71 @@
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="street" name="street" value="{{ case.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="street" name="street" placeholder="Zamboanga Del Sur" value="{{ case.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 <label for="street">Street</label>
+                            </div>
+                        </div><!--End of col-->
+                        <div class="col-lg-4 col-md-4 col-sm-8">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="barangay" name="barangay" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Barangay --</option>
+                                    {% for barangay in default_barangays %}
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
+                                            {{ barangay.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="barangay">Barangay</label>
+                            </div>
+                        </div><!--End of col-->
+                    </div><!--end or row-->
+
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-8">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="city" name="city" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select City --</option>
+                                    {% for city in default_cities %}
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
+                                            {{ city.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option>No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="city">City / Mun</label>
+                            </div>
+                        </div><!--End of col-->
+                        <div class="col-lg-4 col-md-4 col-sm-8">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="province" name="province" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">-- Select Province --</option>
+                                    {% for province in default_provinces %}
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
+                                            {{ province.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="province">Province</label>
+                            </div>
+                        </div><!--End of col-->
+                        <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="region" name="region" aria-label="Floating label select example" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    <option value="">--Select Region--</option>
+                                    {% for region in default_regions %}
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
+                                            {{ region.name }}
+                                        </option>
+                                    {% empty %}
+                                        <option value="">No data found</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="region">Region</label>
                             </div>
                         </div><!--End of col-->
                     </div><!--End of row-->
@@ -1752,13 +1444,7 @@
                         <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
-                    <script>
-                        // For Generic Address Fields (no prefix)
-                        (function() {
-                            const formElementGeneric = document.querySelector("#incident-form");
-                            addAddressListener(formElementGeneric, '', 0);
-                        })();
-                    </script>
+
                 </form>
 
             </div><!--end of container-->
@@ -1843,24 +1529,7 @@
       </div>
     </div>
 </div>
-<!-- Modal confrim victim delete -->
-<div class="modal fade" id="confirmCaseClosed" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Case Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmCloseCaseBtn">Confirm</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 <!-- Modal status edit -->
 <div class="modal fade" id="statusEdit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -2185,6 +1854,7 @@
                             </div>
                         </div><!--End of col-->
                     </div>
+                    
                 </div>
             </div>
             <div class="modal-footer">
@@ -2507,7 +2177,7 @@
     </div>
 </div>
 {% endblock content %}
-{% block scripts %} 
+{% block scripts %}
 <script>
     $(document).ready(function() {
         $("#addWitnessBtn").click(function() {
@@ -2556,17 +2226,14 @@
             lengthMenu: [[3, 6, 9, 15, -1], [3, 6, 9, 15, "All"]],
             order: [[0, 'desc']],
             language: {
+                // Set the entries label to an empty string
                 lengthMenu: '_MENU_'
-            },
-            // Add scrolling options
-            scrollY: '300px',    // Height of the vertical scroll area
-            scrollCollapse: true, // Enables the table to reduce in height when limited records
-            scrollX: true        // Enables horizontal scrolling
+            }
         });
         // Intercept the form submission
         $('#submit_status').on('click', function(event) {
             event.preventDefault(); // Prevent default form submission
-            $('#submit_status').prop('disabled', true); // Disable the button to prevent multiple submissions
+            
             // Collect form data
             var formData = {
                 'case_id': $('#caseId').val(),
@@ -2770,143 +2437,38 @@
             });
         });
 
-        // Store the current status when page loads
-        let originalStatus = $('input[name="status_case"]:checked').val();
+        $('.btn-check-update').on('change', function() {
+            var status = $(this).data('status');
+            var caseId = {{ case.pk }};
+            var csrfToken = '{{ csrf_token }}';  // Fetch CSRF token from the cookie
 
-        $('.btn-check-update').on('click', function(e) {
-            // Prevent the default radio button behavior
-            e.preventDefault();
-            
-            // Get which button was clicked (Active or Close)
-            let clickedValue = $(this).val();
-            
-            // Show the confirmation modal
-            $('#confirmCaseClosed').modal('show');
-            
-            // Set appropriate message
-            if (clickedValue == 'Close') {
-                $('.modal-body').text('Are you sure you want to CLOSE this case?');
-            } else {
-                $('.modal-body').text('Are you sure you want to ACTIVATE this case?');
-            }
-            
-            // Remove any previous click handler
-            $('#confirmCloseCaseBtn').off('click');
-            
-            // Add new click handler
-            $('#confirmCloseCaseBtn').on('click', function() {
-                // Update the radio button selection on confirmation
-                $(`input[name="status_case"][value="${clickedValue}"]`).prop('checked', true);
-                
-                var status = clickedValue;
-                var caseId = "{{ case.pk }}";
-                var csrfToken = '{{ csrf_token }}';
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url "update_case_status" case_id=0 %}'.replace('0', caseId),
-                    data: {'status_case': status, 'csrfmiddlewaretoken': csrfToken},
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            console.log('Case status updated successfully');
-                            $('.toast-body').text('Case status updated successfully');
-                            $('#successToast').toast('show');
-                            // Update original status to the new status
-                            originalStatus = clickedValue;
-
-                            if(originalStatus === 'Close') {
-                                var dateStatus = new Date().toISOString().split('T')[0];
-                            }
-                            else{
-                                var dateStatus = ''; // No date update for Active status
-                            }
-                            
-                            var caseId = "{{ case.pk }}";
-                            var csrfToken = '{{ csrf_token }}';  // Fetch CSRF token from the cookie
-                        
-                            $.ajax({
-                                type: 'POST',
-                                url: '{% url "update_case_date_closed" case_id=0 %}'.replace('0', caseId),
-                                data: {'date_closed': dateStatus},  // Include CSRF token in the data
-                                headers: {
-                                    'X-CSRFToken': csrfToken
-                                },
-                                dataType: 'json',
-                                success: function(response) {
-                                    if (response.success) {
-                                        if(originalStatus === 'Close') {
-                                            console.log('Case Date Closed updated successfully');
-                                            $('.toast-body').text('Case Date Closed updated successfully');
-                                            $('#successToast').toast('show');
-
-                                            const now = new Date();
-                                            statusTitle = 'Case Closed';
-                                            statusText = 'Cased closed by barangay.';
-                                            successMessage = 'Case closed successfully.';
-                                            statusEventDate = getDateNow();
-                                            addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
-                                            
-                                        }else{
-                                            console.log('Case Date Activated updated successfully');
-                                            $('.toast-body').text('Case Date Activated successfully');
-                                            $('#successToast').toast('show');
-
-                                            const now = new Date();
-                                            statusTitle = 'Case Reactivated';
-                                            statusText = 'Case Reactivated by Barangay.';
-                                            successMessage = 'Case Reactivation successfull.';
-                                            statusEventDate = getDateNow();
-                                            addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
-                                        }
-                                         setTimeout(function() {
-                                            location.reload();
-                                        }, 2000);
-                                    } else {
-                                        console.error('Failed to update case status:', response.error);
-                                        $('.toast-body').text('Failed to Update:', response.error);
-                                        $('#errorToast').toast('show');
-                                    }
-                                   
-                                },
-                                error: function(xhr, errmsg, err) {
-                                    console.error('Failed to update case status:', errmsg);
-                                    $('.toast-body').text('Failed to update case status:', errmsg);
-                                    $('#errorToast').toast('show');
-                                }
-                            });
-            
-                        } else {
-                            console.error('Failed to update case status:', response.error);
-                            $('.toast-body').text('Failed to update case status: ' + response.error);
-                            $('#errorToast').toast('show');
-                            // Reset to original selection if failed
-                            $(`input[name="status_case"][value="${originalStatus}"]`).prop('checked', true);
-                        }
-                  
-                    },
-                    error: function(xhr, errmsg, err) {
-                        console.error('Failed to update case status:', errmsg);
-                        $('.toast-body').text('Failed to update case status: ' + errmsg);
+            $.ajax({
+                type: 'POST',
+                url: '{% url "update_case_status" case_id=0 %}'.replace('0', caseId),
+                data: {'status_case': status, 'csrfmiddlewaretoken': csrfToken},  // Include CSRF token in the data
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        console.log('Case status updated successfully');
+                        $('.toast-body').text('Case status updated successfully');
+                        $('#successToast').toast('show');
+                    } else {
+                        console.error('Failed to update case status:', response.error);
+                        $('.toast-body').text('Failed to update case status:', response.error);
                         $('#errorToast').toast('show');
-                        // Reset to original selection if error
-                        $(`input[name="status_case"][value="${originalStatus}"]`).prop('checked', true);
                     }
-                });
-                
-                // Close the modal
-                $('#confirmCaseClosed').modal('hide');
-            });
-            
-            // When user cancels, make sure the original radio button stays selected
-            $('#confirmCaseClosed').on('hidden.bs.modal', function() {
-                $(`input[name="status_case"][value="${originalStatus}"]`).prop('checked', true);
+                },
+                error: function(xhr, errmsg, err) {
+                    console.error('Failed to update case status:', errmsg);
+                    $('.toast-body').text('Failed to update case status:', errmsg);
+                    $('#errorToast').toast('show');
+                }
             });
         });
 
         $('#date_closed').on('input', function() {
             var dateStatus = $(this).val();  // Get the value of the date input
-            var caseId = "{{ case.pk }}";
+            var caseId = {{ case.pk }};
             var csrfToken = '{{ csrf_token }}';  // Fetch CSRF token from the cookie
         
             $.ajax({
@@ -2934,73 +2496,6 @@
         });
 
     });
-
-    // function addressListener(formElement, formType, count = 0) {
-    //     let region = null
-    //     let province = null
-    //     let city = null
-    //     let barangay = null
-    
-    //     if(formType === 'perp' || formType === 'victim') {
-    //         region = formElement.querySelector(`#${formType}-region_${count}`)
-    //         province = formElement.querySelector(`#${formType}-province_${count}`)
-    //         city = formElement.querySelector(`#${formType}-city_${count}`)
-    //         barangay = formElement.querySelector(`#${formType}-barangay_${count}`)
-    //     } else {
-    //         region = formElement.querySelector(`#${formType}_region`)
-    //         province = formElement.querySelector(`#${formType}_province`)
-    //         city = formElement.querySelector(`#${formType}_city`)
-    //         barangay = formElement.querySelector(`#${formType}_barangay`)
-    //     }
-    //     if (formType === 'account'){
-    //         province.disabled = true
-    //         city.disabled = true
-    //         barangay.disabled = true
-    //     }
-
-    //     region.addEventListener('change', (e) => {
-
-    //         const regionId = e.target.options[e.target.selectedIndex].dataset.code
-
-    //         if(regionId) {
-    //             setGeoSelect(province, {
-    //                 filter: regionId,
-    //                 action: 'province',
-    //                 csrfmiddlewaretoken: csrf_token,
-    //             }, {passive: true})
-    //             province.disabled=false
-    //         }
-
-    //     })
-
-    //     province.addEventListener('change', (e) => {
-
-    //         const provinceId = e.target.options[e.target.selectedIndex].dataset.code
-
-    //         if(provinceId) {
-    //             setGeoSelect(city, {
-    //                 filter: provinceId,
-    //                 action: 'city',
-    //                 csrfmiddlewaretoken: csrf_token,
-    //             }, {passive: true})
-    //             city.disabled=false
-    //         }
-
-    //     })
-    
-    //     city.addEventListener('change', (e) => {
-
-    //         const cityId = e.target.options[e.target.selectedIndex].dataset.code
-    //         if(cityId) {
-    //             setGeoSelect(barangay, {
-    //                 filter: cityId,
-    //                 action: 'barangay',
-    //                 csrfmiddlewaretoken: csrf_token,
-    //             }, {passive: true})
-    //             barangay.disabled=false
-    //         }
-    //     })
-    // }
 
     document.addEventListener("DOMContentLoaded", function() {
 
@@ -3356,6 +2851,7 @@
         });
 
 
+<<<<<<< HEAD
 
         
         $('#btn-submit-law-enforcement').click(function() {
@@ -3664,63 +3160,9 @@
         }
 
 
+=======
+>>>>>>> main
     });
-    function addingStatusPerAction( caseId, statusTitle, statusText, statusEventDate, successMessage) {
-    
-       var formData = {
-               'case_id': caseId,
-               'status_title': statusTitle,
-               'status_text': statusText,
-               'status_event_date': statusEventDate,
-               'csrfmiddlewaretoken': '{{ csrf_token }}' // Include the CSRF token
-           };
 
-       // Send AJAX POST request
-       $.ajax({
-           type: 'POST',
-           url: '/add_status/' + formData.case_id + '/', // Specify the URL
-           data: formData,
-           dataType: 'json',
-           success: function(response) {
-               if (response.success) {
-                   // Display success toast
-                   //$('.toast-body').text(successMessage);
-                   //$('#successToast').toast('show');
-                   
-                   // Close modal after 2 seconds
-                   setTimeout(function() {
-                       location.reload(); // Reload the page
-                   }, 1000);
-               } else {
-                   // Display error toast
-                   $('.toast-body').text('Error: ' + response.message);
-                   $('#errorToast').toast('show');
-                   
-               }
-               
-           },
-           error: function(xhr, status, error) {
-               console.error('AJAX Error:', status, error);
-               // Display error toast
-               $('.toast-body').text('AJAX Error: ' + error);
-               $('#errorToast').toast('show');
-               
-           }
-       });
-
-   }
-
-
-   function getDateNow(){
-       var now = new Date();
-       var statusEventDate = now.getFullYear() + '-' + 
-                       String(now.getMonth() + 1).padStart(2, '0') + '-' + 
-                       String(now.getDate()).padStart(2, '0') + ' ' + 
-                       String(now.getHours()).padStart(2, '0') + ':' + 
-                       String(now.getMinutes()).padStart(2, '0') + ':' + 
-                       String(now.getSeconds()).padStart(2, '0');
-       return statusEventDate;
-   }
-    
 </script>
 {% endblock scripts %}
