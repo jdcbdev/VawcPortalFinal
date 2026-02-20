@@ -21,10 +21,9 @@ urlpatterns = [
     path('track_case/', views.track_case_view, name='track_case'),
     path('check_email_case/', views.check_email_case, name='check_email_case'),
     path('check_phone_case/', views.check_phone_case, name='check_phone_case'),
-    path('check_case_number/', views.check_case_number, name='check_case_number'),
     path('verify-otp-email-case/', views.verify_otp_email_track_case, name='verify_otp_email_track_case'),
     path('verify-otp-phone-case/', views.verify_otp_phone_track_case, name='verify_otp_phone_track_case'),
-    path('track_case_info/<str:contact_type>/<str:user_contact>/<str:case_num>/<str:token>/', views.track_case_info_view, name='track_case_info'),
+    path('track_case_info/<str:contact_type>/<str:user_contact>/<str:token>/', views.track_case_info_view, name='track_case_info'),
     path('error_404/', views.error_view, name='error_view'),
     
     #anonymouse side
@@ -32,7 +31,7 @@ urlpatterns = [
     path('impact-victim-survivor/', views.impact_victim_view, name='impact victim'),
     path('behalf-victim-survivor/', views.behalf_victim_view, name='behalf impact victim'),
     path('add-case/', views.add_case, name='add_case'),
-    path('email-confirm/', views.email_confirm, name='email_confirm'),
+    path('email-confrim/', views.email_confirm, name='email_confirm'),
     path('phone-confirm/', views.phone_confirm, name='phone_confirm'),
     path('verify-otp-email/', views.verify_otp_email, name='verify_otp_email'),
     path('verify-otp-phone/', views.verify_otp_phone, name='verify_otp_phone'),
@@ -44,18 +43,9 @@ urlpatterns = [
     path('admin-vawc/admin-dashboard-data/<int:get_year>/', views.admin_dashboard_data, name='admin dashboard data'),
     path('admin-vawc/graph-report/', views.admin_graph_view, name='admin graph'),
     path('admin-vawc/manage/account/', views.admin_manage_account_view, name='admin account'),
-    path('admin-vawc/manage/law-enforcement-account/', views.law_enforcement_manage_account_view, name='law enforcement account'),
-    path('admin-vawc/manage/healthcare-account/', views.healthcare_manage_account_view, name='healthcare account'),
-    path('admin-vawc/manage/SWDO-account/', views.swdo_manage_account_view, name='SWDO account'),
     path('admin-vawc/manage/passkey/', views.admin_manage_passkey_view, name='admin passkey'),
     path('admin-vawc/create_account/', views.create_account, name='create account'),
-    path('admin-vawc/create_law-enforcement-account/', views.create_law_enforcement_account, name='create law enforcement account'),
-    path('admin-vawc/create_healthcare-account/', views.create_healthcare_account, name='create healthcare account'),
-    path('admin-vawc/create_SWDO-account/', views.create_swdo_manage_account, name='create SWDO account'),
     path('admin-vawc/edit_account/<int:account_id>/', views.edit_account_view, name='edit_account'),
-    path('admin-vawc/edit_law-enforcement_account/<int:account_id>/', views.edit_law_enforcement_account_view, name='edit_law-enforcement_account'),
-    path('admin-vawc/edit_healthcare_account/<int:account_id>/', views.edit_healthcare_account_view, name='edit_healthcare_account'),
-    path('admin-vawc/edit_SWDO_account/<int:account_id>/', views.edit_swdo_account_view, name='edit_SWDO_account'),
     path('delete_account/', views.delete_account, name='delete_account'),
     path('check_username_email/', views.check_username_email, name='check_username_email'),
     path('admin-vawc/settings/', views.admin_settings_view, name='admin settings'),
@@ -63,8 +53,6 @@ urlpatterns = [
 
     path('admin-vawc/case/', views.admin_case_view, name='admin case'),
     path('add-new-case/', views.add_new_case, name='add_new_case'),
-    path('admin-barangay-vawc/admin_parent_victim/<int:case_id>/<int:victim_id>/', views.add_parent_admin_view, name='add_parent'),
-    path('admin-barangay-vawc/admin_parent_perpetrator/<int:case_id>/<int:perp_id>/', views.add_parent_perp_admin_view, name='add_parent_perp_admin'),
     path('admin-vawc/view-case/behalf/<int:case_id>/', views.view_admin_case_behalf, name='admin case behalf view'),
     path('admin-vawc/view-case/impacted/<int:case_id>/', views.view_admin_case_impact, name='admin case impacted view'),
     path('admin-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
@@ -84,48 +72,8 @@ urlpatterns = [
     path('admin-barangay-vawc/view-case/behalf/<int:case_id>/', views.view_case_behalf, name='barangay case behalf view'),
     path('admin-barangay-vawc/view-case/impacted/<int:case_id>/', views.view_case_impact, name='barangay case impacted view'),
     path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
-    # path('process_service_info/', views.process_service_info, name='process_service_info'),
-    path('refer-law-enforcement/', views.refer_law_enforcement, name='refer_law_enforcement'),
-    #law enforcement admin side
-    # path('admin-law-enforcement-vawc/dashboard/', views.law_enforcement_dashboard_view, name='law enforcement dashboard'),
-    # path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.law_enforcement_dashboard_data, name='law enforcement dashboard data'),
-    path('admin-law-enforcement-vawc/settings/', views.law_enforcement_settings_view, name='law enforcement settings'),
-
-    path('add_status/<int:case_id>/', views.add_status, name='add_status'),
-    path('edit_status/<int:status_id>/', views.edit_status, name='edit_status'),
-    path('delete_status/<int:status_id>/', views.delete_status, name='delete_status'),
-
-    path('admin-law-enforcement-vawc/dashboard/', views.lawEnforcement_dashboard_view, name='law enforcement dashboard'),
-    path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.LawEnforcement_dashboard_data, name='law enforcement dashboard data'),
-    path('admin-law-enforcement-vawc/case/', views.law_enforcement_case_view, name='law enforcement case'),
-    path('admin-law-enforcement-vawc/view-law-enforcement-case/behalf/<int:case_id>/', views.view_enforcement_case_behalf, name='law enforcement case behalf view'),
-    path('admin-law-enforcement-vawc/view-law-enforcement-case/impacted/<int:case_id>/', views.view_enforcement_case_impact, name='law enforcement case impacted view'),
-    path('admin-law-enforcement-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
     path('process_service_info/', views.process_service_info, name='process_service_info'),
-    # path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
 
-    # healthcare admin side============================================================================================
-    path('admin-healthcare-vawc/dashboard/', views.healthcare_dashboard_view, name='healthcare dashboard'),
-    path('admin-healthcare-vawc/healthcare-dashboard-data/<int:get_year>/', views.healthcare_dashboard_data, name='healthcare dashboard data'),
-    path('admin-healthcare-vawc/case/', views.healthcare_case_view, name='healthcare case'),
-    path('admin-healthcare-vawc/settings/', views.healthcare_settings_view, name='healthcare settings'),
-    path('refer-healthcare/', views.refer_healthcare, name='refer_healthcare'),
-    path('admin-healthcare-vawc/view-healthcare-case/impacted/<int:case_id>/', views.view_healthcare_case_impact, name='healthcare case impacted view'),
-    path('admin-healthcare-vawc/view-healthcare-case/behalf/<int:case_id>/', views.view_healthcare_case_behalf, name='healthcare case behalf view'),
-    
-    # SWDO admin side============================================================================================
-
-    path('admin-SWDO-vawc/dashboard/', views.SWDO_dashboard_view, name='SWDO dashboard'),
-    path('admin-SWDO-vawc/SWDO-dashboard-data/<int:get_year>/', views.SWDO_dashboard_data, name='SWDO dashboard data'),
-    path('admin-SWDO-vawc/case/', views.SWDO_case_view, name='SWDO case'),
-    path('admin-SWDO-vawc/settings/', views.SWDO_settings_view, name='SWDO settings'),
-    path('admin-SWDO-vawc/view-SWDO-case/behalf/<int:case_id>/', views.view_SWDO_case_behalf, name='SWDO case behalf view'),
-    path('admin-SWDO-vawc/view-SWDO-case/impacted/<int:case_id>/', views.view_SWDO_case_impact, name='SWDO case impacted view'),
-    path('refer-SWDO/', views.refer_SWDO, name='refer_SWDO'),
-    path('admin-SWDO-vawc/acc_city', views.acc_city, name='acc city'),
-    path('admin-SWDO-vawc/get_city_by_province/<int:province_id>/', views.get_city_by_province, name='get city by province'),
-    path('admin-SWDO-vawc/get_province_id', views.get_province_id, name='get province id'),
-    
     # NOTIF
     path('admin-barangay-vawc/notification', views.admin_notification_view, name="Notification"),
     path('read_notification/', views.read_notification, name='read_notification'),
@@ -151,7 +99,7 @@ urlpatterns = [
     path('update_case_status/<int:case_id>/', views.update_case_status, name='update_case_status'),
     path('update_case_date_closed/<int:case_id>/', views.update_case_date_closed, name='update_case_date_closed'),
 
-    path('admin-barangay-vawc/parent_victim/<int:case_id>/<int:victim_id>/', views.add_parent_view, name='add_parent_victim'),
+    path('admin-barangay-vawc/parent_victim/<int:case_id>/<int:victim_id>/', views.add_parent_view, name='add_parent'),
     path('save_parent_data/<int:parent_id>/', views.save_parent_data, name='save_parent_data'),
     path('add_new_parent_data/', views.add_new_parent_form, name='add_new_parent_form'),
     path('check_parent_count/', views.check_parent_count, name='check_parent_count'),
@@ -169,10 +117,7 @@ urlpatterns = [
 
 
     #misc
-    path('pages/select-address/', views.ph_address, name='ph_address'),
-    path('pages/get-police-station/', views.get_police_station, name='get police station'),
-    
-    
+    path('pages/select-address/', views.ph_address, name='ph_address')
 ]
 
 # Serve media files during development
