@@ -133,7 +133,7 @@
         if(e.target === requestPasskeyBtn) {
             let requester = '{{ logged_in_user.email }}'
             $.ajax({
-                url: '{% url 'request_passkey'  %}', // Modify the URL to point to your Django view endpoint
+                url: "{% url 'request_passkey'  %}", // Modify the URL to point to your Django view endpoint
                 method: 'POST',
                 data: {
                     'requester': requester  // Pass the notification ID as data

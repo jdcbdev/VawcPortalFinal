@@ -45,7 +45,7 @@
       let notification_icon_parent = document.querySelector(".list-notification")
 
       $.ajax({
-        url: '{% url 'get_all_notification_barangay'  %}',
+        url: "{% url 'get_all_notification_barangay'  %}",
         method: 'GET',
         headers: {
             'X-CSRFToken': '{{ csrf_token }}'

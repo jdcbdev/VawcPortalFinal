@@ -96,10 +96,15 @@ class Case(models.Model):
     checkbox_ra_9775 = models.BooleanField(default=False)
 
     refers_to_social_welfare = models.BooleanField(default=False)
+    refers_to_barangay_from_SWDO = models.BooleanField(default=False)
     refer_social_date = models.DateField(null=True, blank=True)
+    refer_to_barangay_from_social_date = models.DateField(null=True, blank=True)
     psychosocial_services = models.BooleanField(default=False)
     emergency_shelter = models.BooleanField(default=False)
     economic_assistance = models.BooleanField(default=False)
+    SWDO_other = models.BooleanField(default=False)
+    remarks_to_social_welfare = models.TextField(null=True, blank=True)
+    remark_to_barangay_from_SWDO = models.TextField(null=True, blank=True)
 
     refers_to_healthcare_provider = models.BooleanField(default=False)
     refer_healthcare_date = models.DateField(null=True, blank=True)
@@ -107,6 +112,10 @@ class Case(models.Model):
     provision_of_appropriate_medical_treatment = models.BooleanField(default=False)
     issuance_of_medical_certificate = models.BooleanField(default=False)
     medico_legal_exam = models.BooleanField(default=False)
+    healthcare_other = models.BooleanField(default=False)
+    refer_to_barangay_from_healthcare_date = models.DateField(null=True, blank=True)
+    remarks_to_healthcare = models.TextField(null=True, blank=True)
+    remarks_to_barangay_from_healthcare = models.TextField(null=True, blank=True)
 
     # Law enforcement related options
     refers_to_law_enforcement = models.BooleanField(default=False)
@@ -116,10 +125,14 @@ class Case(models.Model):
     rescue_operations_of_vaw_cases = models.BooleanField(default=False)
     forensic_interview_and_investigation = models.BooleanField(default=False)
     enforcement_of_protection_order = models.BooleanField(default=False)
+    law_enforcement_others = models.BooleanField(default=False)
+    remarks_to_law_enforcement = models.TextField(null=True, blank=True)
+    remarks_to_barangay = models.TextField(null=True, blank=True)
 
     # Other service provider related options
     refers_to_other_service_provider = models.BooleanField(default=False)
     refer_other_service_date = models.DateField(null=True, blank=True)
+    refer_to_barangay_date = models.DateField(null=True, blank=True)    
     other_service_provider_name = models.CharField(max_length=250, blank=True)
     type_of_service = models.CharField(max_length=250, blank=True)
     

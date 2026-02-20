@@ -1,0 +1,98 @@
+{% extends "../base/base_barangay.html" %}
+{% load static %}
+{% block title %}Notification{% endblock %}
+{% block styles %}
+  <style>
+    /* Custom CSS for DataTables pagination */
+    .dataTables_wrapper .dataTables_paginate {
+      margin-right: 10px;
+    }
+  </style>
+{% endblock styles %}
+{% block content %}
+<div class="container-fluid">
+  <div class="notification-container">
+    <div class="w-100 py-4 px-1 px-lg-2" style="min-height: 450px;">
+    <div class="card border-0 shadow-lg rounded-3">
+        <div class="d-flex flex-row-reverse bd-highlight my-1">
+            <div class="p-2 bd-highlight">
+            </div>
+        </div>
+        <table class="table" id="notif_tbl">
+            <thead>
+                <th class="p-0 m-0 col-10"></th>
+                <th class="p-0 m-0 col-2"></th>
+            </thead>
+            <tbody id ="notification-content">
+                {% for notification in notifications %}
+                <tr {% if notification.read %}  class="bg-light-subtle" {% else %} class="bg-body-secondary" {% endif %}>
+                  <td class="col-10 align-middle">
+                    <div class="mb-0">
+                      <p>{{ notification.message }}</p>
+                    </div>
+                    <div class="mt-0">
+                      <p>{{notification.date}}</p>
+                    </div>
+                  </td>
+                  <td class="col-2 align-middle">
+                    <p class="d-none">{{notification.read}}</p>
+                    <p class="d-none">{{notification.id}}</p>
+                    {% if notification.link != "#" %}
+                      <a href="{{notification.link}}" class="btn btn-sm btn-primary mb-lg-0 mb-2">View</a>
+                    {% endif %}
+                    <a href="#{{notification.id}}" class="btn btn-sm btn-danger read-notif dismiss-notification">Read</a>
+                  </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script>
+  $('#notif_tbl').DataTable({
+    dom: '<"top"f>rt<"bottom"lp><"clear">',
+    responsive: true,
+    fixedHeader: true,
+    lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+    order: [[0, 'desc']],
+    "bLengthChange": false,
+    "ordering": false,
+    "bFilter": false,
+  });
+
+  let notification_parent = document.querySelector(".notification-container")
+
+
+  notification_parent.addEventListener("click", function handleEvent(e) {
+    if(e.target.classList.contains("read-notif")) {
+      let hrefValue = e.target.getAttribute("href");
+      hrefValue = hrefValue.replace("#", "");
+      let newId = parseInt(hrefValue)
+
+      $.ajax({
+        url: "{% url 'read_notification'  %}", // Modify the URL to point to your Django view endpoint
+        method: 'POST',
+        data: {
+            'id': newId  // Pass the notification ID as data
+        },
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
+        },
+        success: function(response) {
+            console.log('Notification marked as read');
+            location.reload();
+            // You can perform any additional actions here after the notification is marked as read
+        },
+        error: function(xhr, status, error) {
+            console.error('Error marking notification as read:', error);
+        }
+      });
+    }
+  })
+
+</script>
+{% endblock scripts %}

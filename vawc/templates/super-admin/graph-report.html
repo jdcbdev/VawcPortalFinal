@@ -271,7 +271,7 @@
             // Send AJAX request
             $.ajax({
                 type: 'POST',
-                url: '{% url 'send_email_report' %}',
+                url: "{% url 'send_email_report' %}",
                 data: {
                     'email': email,
                     'total_cases': total_cases,

@@ -74,7 +74,7 @@
       let newId = parseInt(hrefValue)
 
       $.ajax({
-        url: '{% url 'read_notification'  %}', // Modify the URL to point to your Django view endpoint
+        url: "{% url 'read_notification'  %}", // Modify the URL to point to your Django view endpoint
         method: 'POST',
         data: {
             'id': newId  // Pass the notification ID as data

@@ -1,0 +1,397 @@
+{% extends "../base/base_healthcare.html" %}
+{% block title %}Home | Settings {% endblock %}
+{% load static %}
+{% block styles %}
+<style>
+    input[type="checkbox"] { 
+        transform: scale(1.5); 
+    } 
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h1 class="pt-2">Settings</h1>
+    <hr>
+    <div class="d-flex justify-content-start align-items-center my-2 d-none">
+        <label for="switchencrypt">Encrypt</label>
+        <div class="form-check form-switch text-center ms-3 me-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="switchencrypt" {% if global.security_status == "encrypted" %}checked{% endif %}>
+        </div>
+    </div>
+    
+    <h3 class="mt-4">Change Password</h3>
+    <hr>
+    <div class="d-flex flex-row bd-highlight mb-3">
+        <div class="pe-3"><h4>Password</h4></div>
+        <div class="bg-danger text-danger bg-opacity-10 rounded border border-danger" style="display:none;"><i class='bx bx-info-circle align-middle ms-2'></i><span class="px-2 align-middle me-1"></span></div>
+        <div class="bg-success text-success bg-opacity-10 rounded border border-success" style="display:none;"><i class='bx bx-check-circle align-middle ms-2'></i><span class="px-2 align-middle me-1">Correct</span></div>
+    </div>
+    <form class="row" id="passwordChangeForm" method="post" data-url="{% url 'custom_password_change' %}">
+        {% csrf_token %}
+        <div class="col-lg-4">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="currentPassword" name="current_password">
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <label for="newPassword1" class="form-label">New Password</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="newPassword1" name="new_password1">
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <label for="newPassword2" class="form-label">Confirm New Password</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="newPassword2" name="new_password2">
+            </div>
+        </div>
+        <div class="form-check ms-3 mt-3">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+              Show Password
+            </label>
+        </div>
+        <div class="d-flex flex-row-reverse">
+            <div class="mt-2"><button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button></div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmDecrpyt" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Confrim Decrpyt</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+  
+          <form id="encrypt_form" method="post">
+              {% csrf_token %}
+  
+              <div class="modal-body">
+                  <input type="hidden" class="security_status" name="security_status" value="{{ global.security_status }}">
+                  <div class="form-floating">
+                    <input type="text" class="form-control user_passkey" name="user_passkey" id="user_passkey" placeholder="none">
+                    <label for="user_passkey">Passkey</label>
+                  </div>
+                  <p class="passkey-result"></p>
+                  <a class="request-passkey" href="#">Request a new passkey</a>
+              </div>
+  
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button class="btn_security_status btn btn-primary" type="submit" class="">Decrypt</button>
+              </div>
+          </form>	
+      </div>
+    </div>
+</div>
+<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
+<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Success</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+            Password changed successfully!
+        </div>
+    </div>
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Error</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+            Error changing password. Please check your input.
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script>
+    const userPasskey = document.querySelector(".user_passkey")
+    const dataEncrypt = document.querySelector(".data_encrypt")
+    const buttonDecrypt = document.querySelector(".btn_security_status")
+    const parentModal = document.querySelector(".modal-content")
+    const passkeyResult = document.querySelector(".passkey-result")
+    const security_status = document.querySelector(".security_status")
+    const encrypt_form = document.querySelector("#encrypt_form")
+
+    const modalContainer =  document.querySelector(".modal")
+    const requestPasskeyBtn = document.querySelector(".request-passkey")
+
+    modalContainer.addEventListener("click", function(e) {
+
+        if(e.target === requestPasskeyBtn) {
+            let requester = '{{ logged_in_user.email }}'
+            $.ajax({
+                url: "{% url 'request_passkey'  %}", // Modify the URL to point to your Django view endpoint
+                method: 'POST',
+                data: {
+                    'requester': requester  // Pass the notification ID as data
+                }, 
+                headers: {
+                  'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
+                },
+                success: function(response) {
+                    console.log(response)
+
+                        let newElementHTML = `<div class="modal-body">
+                            <p class="text-center">${response.message}</p>
+                        </div>`;
+        
+                        // Insert the new element after the `encrypt_form` element
+                        encrypt_form.insertAdjacentHTML('afterend', newElementHTML);
+        
+                        // Remove the `encrypt_form` element
+                        encrypt_form.remove();        
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error marking notification as read:', error);
+                }
+              });
+        }
+    })
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const switchEncrypt = document.getElementById("switchencrypt");
+        const confirmDecryptModal = new bootstrap.Modal(document.getElementById("confirmDecrpyt"));
+        let switchToggledOff = false; // Variable to track if the switch is toggled off
+
+
+
+        // Listen for the switch change event
+        switchEncrypt.addEventListener("change", function(e) {
+
+            console.log('change detected')
+
+            if (!this.checked) {
+                // If the switch is toggled off, prevent the default behavior
+                e.preventDefault();
+                // Show the modal when the switch is turned off
+                confirmDecryptModal.show();
+                buttonDecrypt.addEventListener("click", function(e) {
+                    $('#encrypt_form').submit(function(event) {
+                        event.preventDefault();
+
+                        var formData = $(this).serialize();
+                        var logged_in_user = '{{ logged_in_user }}'
+
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '{% url "encrypt_decrypt" %}',
+                            data: {
+                                'formData': formData,
+                                'logged_in_user': logged_in_user
+                            },
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
+                            },
+                            success: function(response) {
+                                console.log(response.message)
+                
+                                if (response.success) {
+                                    console.log("good")
+                                    location.reload();
+                                } else {
+                                    passkeyResult.innerHTML = response.message
+                                    console.log("bad")
+                                }
+                            },
+                            error: function(xhr, errmsg, err) {
+                                $('#errorMessage').text('Error occurred. Please try again.');
+                            }
+                        });
+                    });
+                
+                })
+    
+                // Set the switchToggledOff flag to true
+                switchToggledOff = true;
+            } else {
+                var logged_in_user = '{{ logged_in_user }}'
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "encrypt_decrypt" %}',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    data: {
+                        'logged_in_user': logged_in_user,
+                        'security_status': 'decrypted'
+                    },
+                    success: function(response) {
+                        console.log(response.message)
+
+                        if (response.success) {
+                            console.log("good")
+                            location.reload();
+                        } else {
+                            passkeyResult.innerHTML = response.message
+                            console.log("bad")
+                        }
+                    },
+                    error: function(xhr, errmsg, err) {
+                        $('#errorMessage').text('Error occurred. Please try again.');
+                    }
+                });
+            }
+        });
+    
+        // Listen for the modal hide event
+        confirmDecryptModal._element.addEventListener('hide.bs.modal', function () {
+            
+            // If the switch was toggled off, update its state to off
+            if(security_status.value === "encrypted") {
+                switchEncrypt.checked = true;
+                // Reset the switchToggledOff flag
+                switchToggledOff = true;
+            }
+        });
+
+        
+    });
+</script>
+<script>
+    function showToast(type) {
+        var toastId = type === 'success' ? '#successToast' : '#errorToast';
+        var toast = new bootstrap.Toast(document.querySelector(toastId));
+        toast.show();
+    }
+    function togglePasswordVisibility() {
+        var currentPasswordInput = document.getElementById('currentPassword');
+        var passwordInput = document.getElementById('newPassword1');
+        var confirmPasswordInput = document.getElementById('newPassword2');
+        var showPasswordCheckbox = document.getElementById('flexCheckDefault');
+    
+        if (showPasswordCheckbox.checked) {
+            currentPasswordInput.type = 'text';
+            passwordInput.type = 'text';
+            confirmPasswordInput.type = 'text';
+        } else {
+            currentPasswordInput.type = 'password';
+            passwordInput.type = 'password';
+            confirmPasswordInput.type = 'password';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const newPasswordInput = document.getElementById('newPassword1');
+        const confirmNewPasswordInput = document.getElementById('newPassword2');
+        const validationMessageContainer = document.querySelector('.bg-danger');
+        const correctMessageContainer = document.querySelector('.bg-success');
+        const validationMessage = document.querySelector('.bg-danger span');
+        const confirmPasswordBtn = document.querySelector('#confirmPasswordBtn');
+    
+        const updateValidationMessage = (message) => {
+            validationMessage.textContent = message;
+            validationMessageContainer.style.display = 'block';
+            correctMessageContainer.style.display = 'none';
+            disableConfirmButton();
+        };
+    
+        const updateCorrectMessage = () => {
+            validationMessageContainer.style.display = 'none';
+            correctMessageContainer.style.display = 'block';
+            enableConfirmButton();
+        };
+    
+        const clearMessages = () => {
+            validationMessage.textContent = '';
+            validationMessageContainer.style.display = 'none';
+            correctMessageContainer.style.display = 'none';
+            enableConfirmButton();  // Ensure the button is initially enabled
+        };
+    
+        const enableConfirmButton = () => {
+            confirmPasswordBtn.disabled = false;
+        };
+    
+        const disableConfirmButton = () => {
+            confirmPasswordBtn.disabled = true;
+        };
+    
+        const validatePassword = () => {
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmNewPasswordInput.value;
+    
+            // Password length validation
+            if (newPassword.length < 8) {
+                updateValidationMessage('Password should be at least 8 characters.');
+                return;
+            }
+    
+            // Password match validation
+            if (newPassword !== confirmPassword) {
+                updateValidationMessage('Passwords do not match.');
+                return;
+            }
+    
+            // Special character validation
+            const specialCharacterRegex = /[!@#$%^&*(),.?":{}|<>_]/;
+            if (!specialCharacterRegex.test(newPassword)) {
+                updateValidationMessage('Password should have at least one special character.');
+                return;
+            }
+    
+            // Uppercase letter validation
+            const uppercaseLetterRegex = /[A-Z]/;
+            if (!uppercaseLetterRegex.test(newPassword)) {
+                updateValidationMessage('Password should have at least one uppercase letter.');
+                return;
+            }
+    
+            // All validations passed
+            updateCorrectMessage();
+        };
+    
+        newPasswordInput.addEventListener('input', validatePassword);
+        confirmNewPasswordInput.addEventListener('input', validatePassword);
+    
+        // Reset messages on input focus
+        newPasswordInput.addEventListener('focus', clearMessages);
+        confirmNewPasswordInput.addEventListener('focus', clearMessages);
+    });
+
+    function changePassword() {
+        var form = $('#passwordChangeForm');
+        var url = form.data('url');
+        var formData = form.serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            success: function (data) {
+                if (data.success) {
+                    showToast('success');
+                    // Reload the page after 3 seconds
+                    setTimeout(function () {
+                        location.reload();
+                    }, 3000);
+                } else {
+                    showToast('error');
+                    // Handle form validation errors here if needed
+                    console.log(data.errors);
+                }
+            },
+            error: function () {
+                showToast('error');
+            }
+        });
+    }
+    // Attach the togglePasswordVisibility function to the checkbox change event
+    document.getElementById('flexCheckDefault').addEventListener('change', togglePasswordVisibility);
+</script>
+
+{% endblock scripts %}
+
