@@ -103,30 +103,6 @@ class PoliceStations(models.Model):
     def __str__(self):
         return self.name
 
-class LawEnforcementAccount(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    first_name = models.CharField(max_length=100)
-    middle_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=100)
-    YES, NO = 'Yes', 'No'
-    VERIFIED_CHOICES = [(YES, 'Yes'), (NO, 'No')]
-    verified = models.CharField(
-        max_length=3,
-        choices=VERIFIED_CHOICES,
-        null=True,
-        blank=True,
-        default=NO
-    )
-    status = models.CharField(max_length=100, null=True, blank=True, default='Active')
-    region = models.CharField(max_length=100, null=True, blank=True)
-    province = models.CharField(max_length=100, null=True, blank=True)
-    station = models.CharField(max_length=100, null=True, blank=True)
-    type = models.CharField(max_length=20, default='law_enforcement')
-    passkey = models.CharField(max_length=100, null=True, blank=True)
-    
-    def __str__(self):
-        return self.user.username
-
 class PoliceStation(models.Model):
     name = models.CharField(max_length=255)
     region = models.CharField(max_length=255)
