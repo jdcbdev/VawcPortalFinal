@@ -1,4 +1,4 @@
-{% extends "../../base/base_healthcare.html" %}
+﻿{% extends "../../base/base_healthcare.html" %}
 {% block title %}Report | View Case {% endblock %}
 {% load static %}
 {% block styles %}
@@ -242,6 +242,11 @@
                             
                             <hr>
 
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary" id="btn-save-service" type="submit">Save</button>
+                            </div>
+                        </form>
+
                         <div id="healthcare-update" class="row pt-4" >
                             <h4 class="text-left">Healthcare Office Update</h4>
                             <p> Date Updated : {{ case.refer_to_barangay_from_healthcare_date }}</p>
@@ -287,6 +292,7 @@
                                     <textarea class="form-control" id="remarks_to_barangay_from_healthcare" name="remarks_to_barangay_from_healthcare" rows="3" disabled>{% if case.remarks_to_barangay_from_healthcare %}{{ case.remarks_to_barangay_from_healthcare }}{% else %}No Remark.{% endif %}</textarea>
                                 </div><!--end of col-->
                             </div><!--end of row-->
+                        </div>
 
                         
                         <form id="form-refer-healthcare" method="POST">
@@ -3775,41 +3781,6 @@
 
         });
 
-        $('#btn-save-service').click(function() {
-            // Prevent default form submission
-            event.preventDefault();
-
-            // Create FormData object from the form
-            var formData = new FormData($('#service_info_form')[0]);
-
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: '/process_service_info/',
-                data: formData,
-                contentType: false, // Prevent jQuery from automatically setting contentType
-                processData: false, // Prevent jQuery from automatically processing data
-                dataType: 'json', // Expect JSON response
-                success: function(response) {
-                    // Show success toast
-                    $('#successToast .toast-body').text(response.message);
-                    $('#successToast').toast('show');
-                    
-                    // Reload page after 3 seconds
-                    setTimeout(function() {
-                        location.reload();
-                    }, 3000);
-                },
-                error: function(xhr, errmsg, err) {
-                    // Show error toast
-                    $('#errorToast .toast-body').text('Error occurred while processing the form.');
-                    $('#errorToast').toast('show');
-                }
-            });
-        });
-
-
-
         $('#name_of_agency').on('change', function() {
             var selectedStation = $(this).val();
             if (!selectedStation) {
@@ -3820,9 +3791,10 @@
             }
         })
          //dynamic values of police stations
+        var stationsData = {{ default_stations|safe }};
         $('#name_of_province').on('change', function(){
             var selectedProvince = $(this).val();
-            var stations = JSON.parse('{{ default_stations|safe }}');
+            var stations = stationsData;
             var filteredStations = stations.filter(function(station) {
                 return station.province === selectedProvince;
             });
@@ -3883,13 +3855,11 @@
             event.preventDefault();
             var formData = new FormData($('#form-refer-SWDO')[0]);
 
-            $('#btn-submit-SWDO').text('Update').prop('disabled', true);
-
             if($('#btn-submit-SWDO').text() === 'Send') {
-                    $('#btn-submit-SWDO').text('Sending...').prop('disabled', true);
-                } else {
-                    $('#btn-submit-SWDO').text('Updating...').prop('disabled', true);
-                }
+                $('#btn-submit-SWDO').text('Sending...').prop('disabled', true);
+            } else {
+                $('#btn-submit-SWDO').text('Updating...').prop('disabled', true);
+            }
                 
             // Send AJAX request
             $.ajax({
@@ -3958,13 +3928,11 @@
             event.preventDefault();
             var formData = new FormData($('#form-refer-healthcare')[0]);
 
-            $('#btn-submit-healthcare').text('Update').prop('disabled', true);
-
             if($('#btn-submit-healthcare').text() === 'Send') {
-                    $('#btn-submit-healthcare').text('Sending...').prop('disabled', true);
-                } else {
-                    $('#btn-submit-healthcare').text('Updating...').prop('disabled', true);
-                }
+                $('#btn-submit-healthcare').text('Sending...').prop('disabled', true);
+            } else {
+                $('#btn-submit-healthcare').text('Updating...').prop('disabled', true);
+            }
                 
             // Send AJAX request
             $.ajax({

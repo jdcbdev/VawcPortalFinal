@@ -3348,7 +3348,9 @@ def view_enforcement_case_behalf(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -3465,7 +3467,9 @@ def view_enforcement_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5070,7 +5074,9 @@ def view_SWDO_case_behalf(request, case_id):
             ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5188,7 +5194,9 @@ def view_SWDO_case_impact(request, case_id):
             ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5313,7 +5321,9 @@ def view_healthcare_case_impact(request, case_id):
             ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
