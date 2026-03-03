@@ -1,4 +1,4 @@
-{% extends "../../base/base_SWDO.html" %}
+﻿{% extends "../../base/base_SWDO.html" %}
 {% block title %}Report | View Case {% endblock %}
 {% load static %}
 {% block styles %}
@@ -35,7 +35,7 @@
         {% endif %}
         <div class="d-grid gap-2 mx-auto d-grid gap-2  mx-auto col-lg-2">
             <button class="btn btn-danger btn-confirm-delete-case" data-case-id="{{ case.id }}" data-bs-toggle="modal"
-                data-bs-target="#confirmDeletCase" {% if global.security_status=="encrypted" %}disabled{% endif %}>
+                data-bs-target="#confirmDeletCase" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                 <i class='bx bx-trash me-2'></i>
                 Delete Case
             </button>
@@ -74,17 +74,14 @@
                         <div class="card-body card-status">
                             {% if latest_status_history %}
                             <p class="h3 fw-bold">Status Title: {{ latest_status_history.status_title }}</p>
-                            <p>Event Date: {{ latest_status_history.status_event_date |date:"F j, Y" }} at {{
-                                latest_status_history.status_event_date |time:"g:i A" }}</p>
+                            <p>Event Date: {{ latest_status_history.status_event_date |date:"F j, Y" }} at {{ latest_status_history.status_event_date |time:"g:i A" }}</p>
                             <span id="case-status-desc" class="fs-5">
                                 {{ latest_status_history.status_description }}
                             </span>
                             <br>
                             <br>
                             <div class="d-flex justify-content-end">
-                                <span id="case-status-date">Date Added: {{
-                                    latest_status_history.status_date_added|date:"F j, Y" }} at {{
-                                    latest_status_history.status_date_added|time:"g:i A" }}</span>
+                                <span id="case-status-date">Date Added: {{ latest_status_history.status_date_added|date:"F j, Y" }} at {{ latest_status_history.status_date_added|time:"g:i A" }}</span>
                             </div>
                             {% else %}
                             <span id="case-status-desc" class="fs-5">
@@ -143,12 +140,12 @@
                             <div class="d-flex align-items-center">
                                 <h4><strong>CASE STATUS:</strong></h4>
                                 <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active"
-                                    id="option1" autocomplete="off" {% if case.status=='Active' %}checked{% endif %}
+                                    id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %}
                                     data-status="Active" disabled>
                                 <label class="btn btn-outline-primary mx-2" for="option1">Active</label>
 
                                 <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close"
-                                    id="option2" autocomplete="off" {% if case.status=='Close' %}checked{% endif %}
+                                    id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %}
                                     data-status="Close" disabled>
                                 <label class="btn btn-outline-primary" for="option2">Closed</label>
                             </div>
@@ -209,8 +206,7 @@
                             <div class="row">
                                 <div class="d-flex align-items-center">
                                     <h5>Date Updated: </h5>
-                                    <h5 class="lead"> {% if case.refer_to_barangay_from_social_date %}{{
-                                        case.refer_to_barangay_from_social_date|date:"F j, Y" }}{%else%} N/A {% endif %}
+                                    <h5 class="lead"> {% if case.refer_to_barangay_from_social_date %}{{ case.refer_to_barangay_from_social_date|date:"F j, Y" }}{%else%} N/A {% endif %}
                                     </h5>
                                 </div><!--end of col-->
                             </div><!--end of row-->
@@ -242,9 +238,7 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox"
                                                     name="refers_to_barangay_from_SWDO"
-                                                    id="refers_to_barangay_from_SWDO" value="true" {% if
-                                                    case.refers_to_barangay_from_SWDO %} checked {% endif
-                                                    %}onclick="return false;">
+                                                    id="refers_to_barangay_from_SWDO" value="true" {% if case.refers_to_barangay_from_SWDO %} checked {% endif %}onclick="return false;">
                                                 <label class="form-check-label" for="refers_to_barangay_from_SWDO">
                                                     <h4 id="referral_actions">Update to Barangay</h4>
                                                 </label>
@@ -331,8 +325,7 @@
                                 <div class="col-12">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="refer_healthcare"
-                                            id="refer_healthcare" value="true" {% if case.refers_to_healthcare_provider
-                                            %} checked {% endif %}>
+                                            id="refer_healthcare" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %}>
                                         <label class="form-check-label" for="refer_healthcare"><strong>
                                                 {% if case.refers_to_healthcare_provider %}
                                                 <h4>Referred to healthcare Office</h4>
@@ -342,16 +335,13 @@
                                             </strong>
                                         </label>
                                     </div>
-                                    <div class="col mb-3">{% if case.refer_healthcare_date %}Date Referred : <strong>{{
-                                            case.refer_healthcare_date|date:'M j, Y' }}</strong>{% endif %}</div>
+                                    <div class="col mb-3">{% if case.refer_healthcare_date %}Date Referred : <strong>{{ case.refer_healthcare_date|date:'M j, Y' }}</strong>{% endif %}</div>
 
                                     <div class="form-floating mb-3">
                                         <select id="name_of_hospital" name="name_of_hospital" class="form-select">
-                                            <option value="" {% if not case.healthcare_provider_name %}selected{% endif
-                                                %}>--Select Option--</option>
+                                            <option value="" {% if not case.healthcare_provider_name %}selected{% endif %}>--Select Option--</option>
                                             {% for hospital in hospitals %}
-                                            <option value="{{ hospital }}" {% if case.healthcare_provider_name==hospital
-                                                %}selected{% endif %}>
+                                            <option value="{{ hospital }}" {% if case.healthcare_provider_name == hospital %}selected{% endif %}>
                                                 {{ hospital }}
                                             </option>
                                             {% empty %}
@@ -394,8 +384,7 @@
                                 <div class="col-lg-4 vol-md-4 col-sm-8">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="issuance_medical_cert"
-                                            id="issuance_medical_cert" value="true" {% if
-                                            case.issuance_of_medical_certificate %} checked {% endif %}>
+                                            id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}>
                                         <label class="form-check-label" for="issuance_medical_cert">
                                             Issuance of medical certificate
                                         </label>
@@ -404,8 +393,7 @@
                                 <div class="col-lg-4 vol-md-4 col-sm-8">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="medico_legal"
-                                            id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {%
-                                            endif %}>
+                                            id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}>
                                         <label class="form-check-label" for="medico_legal">
                                             Medico-legal Exam
                                         </label>
@@ -424,8 +412,7 @@
                             </div><!--end of col-->
 
                             <div class="d-flex justify-content-end">
-                                <button class="btn btn-primary" id="btn-submit-healthcare" type="submit">{% if
-                                    case.refers_to_healthcare_provider %}Update{% else %}Send{% endif %}</button>
+                                <button class="btn btn-primary" id="btn-submit-healthcare" type="submit">{% if case.refers_to_healthcare_provider %}Update{% else %}Send{% endif %}</button>
                             </div>
 
 
@@ -457,8 +444,7 @@
                                                     </strong>
                                                 </label>
                                             </div>
-                                            <div class="col">{% if case.refer_social_date %}Date Referred : <strong>{{
-                                                    case.refer_social_date|date:'M j, Y' }}</strong>{% endif %}</div>
+                                            <div class="col">{% if case.refer_social_date %}Date Referred : <strong>{{ case.refer_social_date|date:'M j, Y' }}</strong>{% endif %}</div>
                                         </div>
                                     </div>
                                 </div><!--end of col-->
@@ -475,8 +461,7 @@
 
 
                             <div class="d-flex justify-content-end just">
-                                <button class="btn btn-primary mb-3" id="btn-submit-SWDO" type="submit">{% if
-                                    case.refers_to_social_welfare %}Update{% else %}Send{% endif %}</button>
+                                <button class="btn btn-primary mb-3" id="btn-submit-SWDO" type="submit">{% if case.refers_to_social_welfare %}Update{% else %}Send{% endif %}</button>
                             </div>
                         </form>
                         <hr>
@@ -491,8 +476,7 @@
                                         <div class="col">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="refer_law_enforce"
-                                                    id="refer_law_enforce" value="true" {% if
-                                                    case.refers_to_law_enforcement %} checked {% endif %}>
+                                                    id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}>
                                                 <label class="form-check-label" for="refer_law_enforce"><strong>
                                                         {% if case.refers_to_law_enforcement %}
                                                         <h4>Referred to Law Enforcement</h4>
@@ -516,12 +500,9 @@
                                     <div class="row mb-3 flex">
                                         <div class="form-floating mb-3">
                                             <select id="name_of_province" name="name_of_province" class="form-select">
-                                                <option value="" {% if not case.law_enforcement_agency_name %}selected{%
-                                                    endif %}>--Select Option--</option>
+                                                <option value="" {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
                                                 {% for station in default_stations_provinces %}
-                                                <option value="{{ station }}" {% if case.city=="ZAMBOANGA" and
-                                                    station=="ZAMBOANGA CITY" %}selected{%else %}{% if
-                                                    case.province==station %}selected{% endif %}{% endif %}>
+                                                <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
                                                     {{ station }}
                                                 </option>
                                                 {% empty %}
@@ -558,8 +539,7 @@
                                             </p>
                                             <div class="d-flex justify-content-end">
                                                 <input type="radio" class="form-check-input" name="service" id="crisis"
-                                                    value="crisis" autocomplete="off" {% if
-                                                    case.service_information=='crisis' %}checked{% endif %}>
+                                                    value="crisis" autocomplete="off" {% if case.service_information == 'crisis' %}checked{% endif %}>
                                             </div>
                                         </div>
                                     </label>
@@ -573,8 +553,7 @@
                                                 ensure the safety of individuals facing domestic violence.</p>
                                             <div class="d-flex justify-content-end">
                                                 <input type="radio" class="form-check-input" name="service"
-                                                    id="issuance" value="issuance" autocomplete="off" {% if
-                                                    case.service_information=='issuance' %}checked{% endif %}>
+                                                    id="issuance" value="issuance" autocomplete="off" {% if case.service_information == 'issuance' %}checked{% endif %}>
                                             </div>
                                         </div>
                                     </label>
@@ -587,16 +566,13 @@
                                 <div class="form-floating mb-3">
                                     <textarea class="form-control" id="remarks_law_enforcement"
                                         name="remarks_law_enforcement" rows="3"
-                                        placeholder="Input any remarks for the Law Enforcement" {% if
-                                        global.security_status=="encrypted" %}disabled{% endif
-                                        %}>{{ case.remarks_to_law_enforcement|default_if_none:"" }}</textarea>
+                                        placeholder="Input any remarks for the Law Enforcement" {% if global.security_status == "encrypted" %}disabled{% endif %}>{{ case.remarks_to_law_enforcement|default_if_none:"" }}</textarea>
                                     <label for="remarks_law_enforcement">Remarks to Law Enforcement</label>
                                 </div>
                             </div><!--end of col-->
 
                             <div class="d-flex justify-content-end">
-                                <button class="btn btn-primary" id="btn-submit-law-enforcement" type="submit">{% if
-                                    case.refers_to_law_enforcement %}Update{% else %}Send{% endif %}</button>
+                                <button class="btn btn-primary" id="btn-submit-law-enforcement" type="submit">{% if case.refers_to_law_enforcement %}Update{% else %}Send{% endif %}</button>
                             </div>
                         </form> <!-- End of Law Enforcement Form -->
 
@@ -660,8 +636,7 @@
                                                 <input type="text" class="form-control"
                                                     id="victim_first_name_{{ victim.id }}"
                                                     name="victim_first_name_{{ victim.id }}"
-                                                    value="{{ victim.first_name }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.first_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_first_name_{{ victim.id }}">First Name</label>
                                             </div>
                                         </div>
@@ -670,8 +645,7 @@
                                                 <input type="text" class="form-control"
                                                     id="victim_middle_name_{{ victim.id }}"
                                                     name="victim_middle_name_{{ victim.id }}"
-                                                    value="{{ victim.middle_name }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.middle_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_middle_name_{{ victim.id }}">Middle Name</label>
                                             </div>
                                         </div><!--End of col-->
@@ -680,28 +654,24 @@
                                                 <input type="text" class="form-control"
                                                     id="victim_last_name_{{ victim.id }}"
                                                     name="victim_last_name_{{ victim.id }}"
-                                                    value="{{ victim.last_name }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.last_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_last_name_{{ victim.id }}">Last Name</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_suffix_name_{{ victim.id }}"
-                                                    name="victim_suffix_name_{{ victim.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="victim_suffix_name_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="none" {% if victim.suffix=='none' %}selected{% endif
-                                                        %}>N/A</option>
-                                                    <option value="sr" {% if victim.suffix=='sr' %}selected{% endif %}>
+                                                    <option value="none" {% if victim.suffix == 'none' %}selected{% endif %}>N/A</option>
+                                                    <option value="sr" {% if victim.suffix == 'sr' %}selected{% endif %}>
                                                         Sr</option>
-                                                    <option value="jr" {% if victim.suffix=='jr' %}selected{% endif %}>
+                                                    <option value="jr" {% if victim.suffix == 'jr' %}selected{% endif %}>
                                                         Jr</option>
-                                                    <option value="ii" {% if victim.suffix=='ii' %}selected{% endif %}>
+                                                    <option value="ii" {% if victim.suffix == 'ii' %}selected{% endif %}>
                                                         II</option>
-                                                    <option value="iii" {% if victim.suffix=='iii' %}selected{% endif
-                                                        %}>III</option>
-                                                    <option value="iv" {% if victim.suffix=='iv' %}selected{% endif %}>
+                                                    <option value="iii" {% if victim.suffix == 'iii' %}selected{% endif %}>III</option>
+                                                    <option value="iv" {% if victim.suffix == 'iv' %}selected{% endif %}>
                                                         IV</option>
                                                     {% else %}
                                                     <option value="ii" selected>{{ victim.suffix }}</option>
@@ -715,28 +685,24 @@
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_sex_{{ victim.id }}"
-                                                    name="victim_sex_{{ victim.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="victim_sex_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
 
                                                     <!-- Add a placeholder option -->
                                                     <option value="" {% if not victim.sex %}selected{% endif %}>
                                                         --Select--</option>
 
                                                     <!-- Male option -->
-                                                    <option value="Male" {% if victim.sex=='Male' %}selected{% endif %}>
+                                                    <option value="Male" {% if victim.sex == 'Male' %}selected{% endif %}>
                                                         Male</option>
 
                                                     <!-- Female option -->
-                                                    <option value="Female" {% if victim.sex=='Female' %}selected{% endif
-                                                        %}>Female</option>
+                                                    <option value="Female" {% if victim.sex == 'Female' %}selected{% endif %}>Female</option>
 
                                                     <!-- Rather Not Say option -->
-                                                    <option value="rather_not_say" {% if victim.sex=='rather_not_say'
-                                                        %}selected{% endif %}>Rather not say</option>
+                                                    <option value="rather_not_say" {% if victim.sex == 'rather_not_say' %}selected{% endif %}>Rather not say</option>
 
                                                     <!-- Others option -->
-                                                    <option value="Others" {% if victim.sex=='Others' %}selected{% endif
-                                                        %}>Others</option>
+                                                    <option value="Others" {% if victim.sex == 'Others' %}selected{% endif %}>Others</option>
                                                 </select>
                                                 <label for="victim_sex_{{ victim.id }}">Gender</label>
                                             </div>
@@ -745,22 +711,13 @@
                                             <div class="form-floating">
                                                 <select class="form-select"
                                                     id="victim_type_of_disability_{{ victim.id }}"
-                                                    name="victim_type_of_disability_{{ victim.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="victim_type_of_disability_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="" {% if not victim.type_of_disability %}selected{%
-                                                        endif %}>--Select--</option>
-                                                    <option value="none" {% if victim.type_of_disability=='none'
-                                                        %}selected{% endif %}>N/A</option>
-                                                    <option value="With Disability" {% if
-                                                        victim.type_of_disability=='With Disability' %}selected{% endif
-                                                        %}>With Disability</option>
-                                                    <option value="Permanent Disability" {% if
-                                                        victim.type_of_disability=='Permanent Disability' %}selected{%
-                                                        endif %}>Permanent Disability</option>
-                                                    <option value="Temporary Disability" {% if
-                                                        victim.type_of_disability=='Temporary Disability' %}selected{%
-                                                        endif %}>Temporary Disability</option>
+                                                    <option value="" {% if not victim.type_of_disability %}selected{% endif %}>--Select--</option>
+                                                    <option value="none" {% if victim.type_of_disability == 'none' %}selected{% endif %}>N/A</option>
+                                                    <option value="With Disability" {% if victim.type_of_disability == 'With Disability' %}selected{% endif %}>With Disability</option>
+                                                    <option value="Permanent Disability" {% if victim.type_of_disability == 'Permanent Disability' %}selected{% endif %}>Permanent Disability</option>
+                                                    <option value="Temporary Disability" {% if victim.type_of_disability == 'Temporary Disability' %}selected{% endif %}>Temporary Disability</option>
                                                     {% else %}
                                                     <option value="Temporary Disability" selected>
                                                         {{victim.type_of_disability}}</option>
@@ -792,21 +749,14 @@
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_civil_status_{{ victim.id }}"
-                                                    name="victim_civil_status_{{ victim.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="victim_civil_status_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="" {% if not victim.civil_status %}selected{% endif
-                                                        %}>--Select--</option>
-                                                    <option value="single" {% if victim.civil_status=='none'
-                                                        %}selected{% endif %}>Single</option>
-                                                    <option value="married" {% if victim.civil_status=='married'
-                                                        %}selected{% endif %}>Married</option>
-                                                    <option value="live-in" {% if victim.civil_status=='live-in'
-                                                        %}selected{% endif %}>Live-In</option>
-                                                    <option value="widowed" {% if victim.civil_status=='widowed'
-                                                        %}selected{% endif %}>Widowed</option>
-                                                    <option value="separated" {% if victim.civil_status=='separated'
-                                                        %}selected{% endif %}>Separated</option>
+                                                    <option value="" {% if not victim.civil_status %}selected{% endif %}>--Select--</option>
+                                                    <option value="single" {% if victim.civil_status == 'none' %}selected{% endif %}>Single</option>
+                                                    <option value="married" {% if victim.civil_status == 'married' %}selected{% endif %}>Married</option>
+                                                    <option value="live-in" {% if victim.civil_status == 'live-in' %}selected{% endif %}>Live-In</option>
+                                                    <option value="widowed" {% if victim.civil_status == 'widowed' %}selected{% endif %}>Widowed</option>
+                                                    <option value="separated" {% if victim.civil_status == 'separated' %}selected{% endif %}>Separated</option>
                                                     {% else %}
                                                     <option value="separated" selected>{{victim.civil_status}}</option>
                                                     {% endif %}
@@ -823,8 +773,7 @@
                                                     type="{% if global.security_status == 'encrypted' %}text{% else %}number{% endif %}"
                                                     class="form-control" id="victim_contact_number_{{ victim.id }}"
                                                     name="victim_contact_number_{{ victim.id }}"
-                                                    value="{{ victim.contact_number }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.contact_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_contact_number_{{ victim.id }}">Contact
                                                     Number</label>
                                             </div>
@@ -837,8 +786,7 @@
                                                     type="{% if global.security_status == 'encrypted' %}text{% else %}number{% endif %}"
                                                     class="form-control" id="victim_telephone_number_{{ victim.id }}"
                                                     name="victim_telephone_number_{{ victim.id }}"
-                                                    value="{{ victim.telephone_number }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.telephone_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_telephone_number_{{ victim.id }}">Telephone
                                                     Number</label>
                                             </div>
@@ -849,8 +797,7 @@
                                                     type="{% if global.security_status == 'encrypted' %}text{% else %}number{% endif %}"
                                                     class="form-control" id="victim_number_children_{{ victim.id }}"
                                                     name="victim_number_children_{{ victim.id }}"
-                                                    value="{{ victim.number_of_children  }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.number_of_children }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_number_children_{{ victim.id }}">Number of
                                                     Children</label>
                                             </div>
@@ -862,8 +809,7 @@
                                                     type="{% if global.security_status == 'encrypted' %}text{% else %}text{% endif %}"
                                                     class="form-control" id="victim_ages_children_{{ victim.id }}"
                                                     name="victim_ages_children_{{ victim.id }}"
-                                                    value="{{ victim.ages_of_children }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.ages_of_children }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_ages_children_{{ victim.id }}">Ages of
                                                     Children</label>
                                             </div>
@@ -875,31 +821,16 @@
                                             <div class="form-floating">
                                                 <select class="form-select"
                                                     id="victim_educational_attainment_{{ victim.id }}"
-                                                    name="victim_educational_attainment_{{ victim.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="victim_educational_attainment_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="" {% if not victim.educational_attainment
-                                                        %}selected{% endif %}>--Select--</option>
-                                                    <option value="none" {% if victim.educational_attainment=='none'
-                                                        %}selected{% endif %}>None</option>
-                                                    <option value="highschool" {% if
-                                                        victim.educational_attainment=='highschool' %}selected{% endif
-                                                        %}>High School Level</option>
-                                                    <option value="vocational" {% if
-                                                        victim.educational_attainment=='vocational' %}selected{% endif
-                                                        %}>Vocational</option>
-                                                    <option value="collegeLevel" {% if
-                                                        victim.educational_attainment=='collegeLevel' %}selected{% endif
-                                                        %}>College Level</option>
-                                                    <option value="post-grad" {% if
-                                                        victim.educational_attainment=='post-grad' %}selected{% endif
-                                                        %}>Post Graduated</option>
-                                                    <option value="no-response" {% if
-                                                        victim.educational_attainment=='no-response' %}selected{% endif
-                                                        %}>No Response</option>
-                                                    <option value="educt-others" {% if
-                                                        victim.educational_attainment=='educt-others' %}selected{% endif
-                                                        %}>Others</option>
+                                                    <option value="" {% if not victim.educational_attainment %}selected{% endif %}>--Select--</option>
+                                                    <option value="none" {% if victim.educational_attainment == 'none' %}selected{% endif %}>None</option>
+                                                    <option value="highschool" {% if victim.educational_attainment == 'highschool' %}selected{% endif %}>High School Level</option>
+                                                    <option value="vocational" {% if victim.educational_attainment == 'vocational' %}selected{% endif %}>Vocational</option>
+                                                    <option value="collegeLevel" {% if victim.educational_attainment == 'collegeLevel' %}selected{% endif %}>College Level</option>
+                                                    <option value="post-grad" {% if victim.educational_attainment == 'post-grad' %}selected{% endif %}>Post Graduated</option>
+                                                    <option value="no-response" {% if victim.educational_attainment == 'no-response' %}selected{% endif %}>No Response</option>
+                                                    <option value="educt-others" {% if victim.educational_attainment == 'educt-others' %}selected{% endif %}>Others</option>
                                                     {% else %}
                                                     <option value="educt-others" selected>
                                                         {{victim.educational_attainment}}</option>
@@ -915,54 +846,36 @@
                                                 <input type="text" class="form-control"
                                                     id="victim_occupation_{{ victim.id }}"
                                                     name="victim_occupation_{{ victim.id }}"
-                                                    value="{{ victim.occupation}}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.occupation}}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_occupation_{{ victim.id }}">Occupation</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_nationality_{{ victim.id }}"
-                                                    name="victim_nationality_{{ victim.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="victim_nationality_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
 
                                                     <!-- Placeholder Option -->
                                                     <option value="" {% if not victim.nationality %}selected{% endif %}>
                                                         --Select--</option>
 
-                                                    <option value="Aeta" {% if victim.nationality=="Aeta" %}selected{%
-                                                        endif %}>Aeta</option>
-                                                    <option value="Agta" {% if victim.nationality=="Agta" %}selected{%
-                                                        endif %}>Agta</option>
-                                                    <option value="Bicolano" {% if victim.nationality=="Bicolano"
-                                                        %}selected{% endif %}>Bicolano</option>
-                                                    <option value="Bisaya" {% if victim.nationality=="Bisaya"
-                                                        %}selected{% endif %}>Bisaya</option>
-                                                    <option value="Ilokano" {% if victim.nationality=="Ilokano"
-                                                        %}selected{% endif %}>Ilokano</option>
-                                                    <option value="Igorot" {% if victim.nationality=="Igorot"
-                                                        %}selected{% endif %}>Igorot</option>
-                                                    <option value="Ilonggo" {% if victim.nationality=="Ilonggo"
-                                                        %}selected{% endif %}>Ilonggo</option>
-                                                    <option value="Kapampangan" {% if victim.nationality=="Kapampangan"
-                                                        %}selected{% endif %}>Kapampangan</option>
-                                                    <option value="Mangyan" {% if victim.nationality=="Mangyan"
-                                                        %}selected{% endif %}>Mangyan</option>
-                                                    <option value="Moros" {% if victim.nationality=="Moros" %}selected{%
-                                                        endif %}>Moros</option>
-                                                    <option value="Pangasinense" {% if
-                                                        victim.nationality=="Pangasinense" %}selected{% endif %}>
+                                                    <option value="Aeta" {% if victim.nationality == "Aeta" %}selected{% endif %}>Aeta</option>
+                                                    <option value="Agta" {% if victim.nationality == "Agta" %}selected{% endif %}>Agta</option>
+                                                    <option value="Bicolano" {% if victim.nationality == "Bicolano" %}selected{% endif %}>Bicolano</option>
+                                                    <option value="Bisaya" {% if victim.nationality == "Bisaya" %}selected{% endif %}>Bisaya</option>
+                                                    <option value="Ilokano" {% if victim.nationality == "Ilokano" %}selected{% endif %}>Ilokano</option>
+                                                    <option value="Igorot" {% if victim.nationality == "Igorot" %}selected{% endif %}>Igorot</option>
+                                                    <option value="Ilonggo" {% if victim.nationality == "Ilonggo" %}selected{% endif %}>Ilonggo</option>
+                                                    <option value="Kapampangan" {% if victim.nationality == "Kapampangan" %}selected{% endif %}>Kapampangan</option>
+                                                    <option value="Mangyan" {% if victim.nationality == "Mangyan" %}selected{% endif %}>Mangyan</option>
+                                                    <option value="Moros" {% if victim.nationality == "Moros" %}selected{% endif %}>Moros</option>
+                                                    <option value="Pangasinense" {% if victim.nationality == "Pangasinense" %}selected{% endif %}>
                                                         Pangasinense</option>
-                                                    <option value="Tagalog" {% if victim.nationality=="Tagalog"
-                                                        %}selected{% endif %}>Tagalog</option>
-                                                    <option value="Tausug" {% if victim.nationality=="Tausug"
-                                                        %}selected{% endif %}>Tausug</option>
-                                                    <option value="Samal" {% if victim.nationality=="Samal" %}selected{%
-                                                        endif %}>Samal</option>
-                                                    <option value="Waray" {% if victim.nationality=="Waray" %}selected{%
-                                                        endif %}>Waray</option>
-                                                    <option value="Others" {% if victim.nationality=="Others"
-                                                        %}selected{% endif %}>Others</option>
+                                                    <option value="Tagalog" {% if victim.nationality == "Tagalog" %}selected{% endif %}>Tagalog</option>
+                                                    <option value="Tausug" {% if victim.nationality == "Tausug" %}selected{% endif %}>Tausug</option>
+                                                    <option value="Samal" {% if victim.nationality == "Samal" %}selected{% endif %}>Samal</option>
+                                                    <option value="Waray" {% if victim.nationality == "Waray" %}selected{% endif %}>Waray</option>
+                                                    <option value="Others" {% if victim.nationality == "Others" %}selected{% endif %}>Others</option>
                                                 </select>
                                                 <label for="victim_nationality_{{ victim.id }}">Ethnicity</label>
                                             </div>
@@ -970,25 +883,17 @@
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_religion_{{ victim.id }}"
-                                                    name="victim_religion_{{ victim.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="victim_religion_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="none" {% if victim.religion=='none' %}selected{%
-                                                        endif %}>None</option>
-                                                    <option value="roman-catholic" {% if
-                                                        victim.religion=='roman-catholic' %}selected{% endif %}>Roman
+                                                    <option value="none" {% if victim.religion == 'none' %}selected{% endif %}>None</option>
+                                                    <option value="roman-catholic" {% if victim.religion == 'roman-catholic' %}selected{% endif %}>Roman
                                                         Catholic</option>
-                                                    <option value="islam" {% if victim.religion=='islam' %}selected{%
-                                                        endif %}>Islam</option>
-                                                    <option value="protestant" {% if victim.religion=='protestant'
-                                                        %}selected{% endif %}>Protestant</option>
-                                                    <option value="iglesia-ni-kristo" {% if
-                                                        victim.religion=='iglesia-ni-kristo' %}selected{% endif %}>
+                                                    <option value="islam" {% if victim.religion == 'islam' %}selected{% endif %}>Islam</option>
+                                                    <option value="protestant" {% if victim.religion == 'protestant' %}selected{% endif %}>Protestant</option>
+                                                    <option value="iglesia-ni-kristo" {% if victim.religion == 'iglesia-ni-kristo' %}selected{% endif %}>
                                                         Iglesia ni Kristo</option>
-                                                    <option value="aglipayan" {% if victim.religion=='aglipayan'
-                                                        %}selected{% endif %}>Aglipayan</option>
-                                                    <option value="other-religion" {% if
-                                                        victim.religion=='other-religion' %}selected{% endif %}>Others
+                                                    <option value="aglipayan" {% if victim.religion == 'aglipayan' %}selected{% endif %}>Aglipayan</option>
+                                                    <option value="other-religion" {% if victim.religion == 'other-religion' %}selected{% endif %}>Others
                                                     </option>
                                                     {% else %}
                                                     <option value="other-religion" selected>{{victim.religion}}</option>
@@ -1003,12 +908,10 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select" id="victim_region_{{ victim.id }}"
                                                     name="victim_region_{{ victim.id }}"
-                                                    data-selected="{{ victim.region }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    data-selected="{{ victim.region }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">--Select Option--</option>
                                                     {% for region in default_regions %}
-                                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {%
-                                                        if region.name==victim.region %}selected{% endif %}>
+                                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == victim.region %}selected{% endif %}>
                                                         {{ region.name }}
                                                     </option>
                                                     {% empty %}
@@ -1023,12 +926,11 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select" id="victim_province_{{ victim.id }}"
                                                     name="victim_province_{{ victim.id }}"
-                                                    data-selected="{{ victim.province }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    data-selected="{{ victim.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
                                                     <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                        {% if province.name==victim.province %}selected{% endif %}>
+                                                        {% if province.name == victim.province %}selected{% endif %}>
                                                         {{ province.name }}
                                                     </option>
                                                     {% empty %}
@@ -1043,11 +945,10 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select" id="victim_city_{{ victim.id }}"
                                                     name="victim_city_{{ victim.id }}" data-selected="{{ victim.city }}"
-                                                    {% if global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if
-                                                        city.name==victim.city %}selected{% endif %}>
+                                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
                                                         {{ city.name }}
                                                     </option>
                                                     {% empty %}
@@ -1062,12 +963,11 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select" id="victim_barangay_{{ victim.id }}"
                                                     name="victim_barangay_{{ victim.id }}"
-                                                    data-selected="{{ victim.barangay }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    data-selected="{{ victim.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
                                                     <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                        {% if barangay.name==victim.barangay %}selected{% endif %}>
+                                                        {% if barangay.name == victim.barangay %}selected{% endif %}>
                                                         {{ barangay.name }}
                                                     </option>
                                                     {% empty %}
@@ -1084,8 +984,7 @@
                                                 <input type="text" class="form-control"
                                                     id="victim_house_information_{{ victim.id }}"
                                                     name="victim_house_information_{{ victim.id }}"
-                                                    value="{{ victim.house_information }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ victim.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_house_information_{{ victim.id }}">House
                                                     Information</label>
                                             </div>
@@ -1094,8 +993,7 @@
                                             <div class="form-floating mb-3">
                                                 <input type="text" class="form-control"
                                                     id="victim_street_{{ victim.id }}"
-                                                    name="victim_street_{{ victim.id }}" value="{{ victim.street }}" {%
-                                                    if global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="victim_street_{{ victim.id }}" value="{{ victim.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="victim_street_{{ victim.id }}">Street</label>
                                             </div>
                                         </div><!--End of col-->
@@ -1103,8 +1001,7 @@
                                 </div>
                                 <div class="d-flex justify-content-end mt-lg-2 mt-2">
                                     <button class="btn btn-primary save-btn-victim_{{ victim.id }}" id="save-btn-victim"
-                                        type="submit" {% if global.security_status=="encrypted" %}disabled{% endif
-                                        %}>Save</button>
+                                        type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
                                 </div>
                             </form>
                         </div>
@@ -1134,8 +1031,7 @@
                             <input type="text" class="form-control"
                                 id="contact_person_first_name_{{ contact_person.id }}"
                                 name="contact_person_first_name_{{ contact_person.id }}"
-                                value="{{ contact_person.first_name }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                value="{{ contact_person.first_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label for="contact_person_first_name_{{ contact_person.id }}">First Name</label>
                         </div>
                     </div>
@@ -1144,8 +1040,7 @@
                             <input type="text" class="form-control"
                                 id="contact_person_middle_name_{{ contact_person.id }}"
                                 name="contact_person_middle_name_{{ contact_person.id }}"
-                                value="{{ contact_person.middle_name }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                value="{{ contact_person.middle_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label for="contact_person_middle_name_{{ contact_person.id }}">Middle Name</label>
                         </div>
                     </div><!--End of col-->
@@ -1154,25 +1049,23 @@
                             <input type="text" class="form-control"
                                 id="contact_person_last_name_{{ contact_person.id }}"
                                 name="contact_person_last_name_{{ contact_person.id }}"
-                                value="{{ contact_person.last_name }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                value="{{ contact_person.last_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label for="contact_person_last_name_{{ contact_person.id }}">Last Name</label>
                         </div>
                     </div>
                     <div class="col-lg-3 mb-3">
                         <div class="form-floating">
                             <select class="form-select" id="contact_person_suffix_name_{{ contact_person.id }}"
-                                name="contact_person_suffix_name_{{ contact_person.id }}" {% if
-                                global.security_status=="encrypted" %}disabled{% endif %}>
+                                name="contact_person_suffix_name_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 {% if global.security_status == "decrypted" %}
-                                <option value="none" {% if contact_person.suffix=='none' %}selected{% endif %}>N/A
+                                <option value="none" {% if contact_person.suffix == 'none' %}selected{% endif %}>N/A
                                 </option>
-                                <option value="sr" {% if contact_person.suffix=='sr' %}selected{% endif %}>Sr</option>
-                                <option value="jr" {% if contact_person.suffix=='jr' %}selected{% endif %}>Jr</option>
-                                <option value="ii" {% if contact_person.suffix=='ii' %}selected{% endif %}>II</option>
-                                <option value="iii" {% if contact_person.suffix=='iii' %}selected{% endif %}>III
+                                <option value="sr" {% if contact_person.suffix == 'sr' %}selected{% endif %}>Sr</option>
+                                <option value="jr" {% if contact_person.suffix == 'jr' %}selected{% endif %}>Jr</option>
+                                <option value="ii" {% if contact_person.suffix == 'ii' %}selected{% endif %}>II</option>
+                                <option value="iii" {% if contact_person.suffix == 'iii' %}selected{% endif %}>III
                                 </option>
-                                <option value="iv" {% if contact_person.suffix=='iv' %}selected{% endif %}>IV</option>
+                                <option value="iv" {% if contact_person.suffix == 'iv' %}selected{% endif %}>IV</option>
                                 {% else %}
                                 <option value="ii" selected>{{ contact_person.suffix }}</option>
                                 {% endif %}
@@ -1188,8 +1081,7 @@
                             <input type="text" class="form-control"
                                 id="contact_person_relationship_{{ contact_person.id }}"
                                 name="contact_person_relationship_{{ contact_person.id }}"
-                                value="{{ contact_person.relationship }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                value="{{ contact_person.relationship }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label for="contact_person_relationship_{{ contact_person.id }}">Relationship to the
                                 Victim/s</label>
                         </div>
@@ -1199,8 +1091,7 @@
                             <input type="text" class="form-control"
                                 id="contact_person_contact-number_{{ contact_person.id }}"
                                 name="contact_person_contact-number_{{ contact_person.id }}"
-                                value="{{ contact_person.contact_number }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                value="{{ contact_person.contact_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label for="contact_person_contact-number_{{ contact_person.id }}">Contact No.</label>
                         </div>
                     </div><!--end of col-->
@@ -1209,8 +1100,7 @@
                             <input type="text" class="form-control"
                                 id="contact_person_contact-tel_{{ contact_person.id }}"
                                 name="contact_person_contact-tel_{{ contact_person.id }}"
-                                value="{{ contact_person.telephone_number }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                value="{{ contact_person.telephone_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label for="contact_person_contact-tel_{{ contact_person.id }}">Telephone No.</label>
                         </div>
                     </div><!--end of col-->
@@ -1221,12 +1111,10 @@
                         <div class="form-floating">
                             <select class="form-select" id="contact_person_region_{{ contact_person.id }}"
                                 name="contact_person_region_{{ contact_person.id }}"
-                                data-selected="{{ contact_person.region|default:'' }}" {% if
-                                global.security_status=="encrypted" %}disabled{% endif %}>
+                                data-selected="{{ contact_person.region|default:'' }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 <option value="">--Select Region--</option>
                                 {% for region in default_regions %}
-                                <option value="{{ region.name }}" data-code="{{ region.code }}" {% if
-                                    region.name==contact_person.region %}selected{% endif %}>
+                                <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == contact_person.region %}selected{% endif %}>
                                     {{ region.name }}
                                 </option>
                                 {% empty %}
@@ -1240,12 +1128,10 @@
                         <div class="form-floating">
                             <select class="form-select" id="contact_person_province_{{ contact_person.id }}"
                                 name="contact_person_province_{{ contact_person.id }}"
-                                data-selected="{{ contact_person.province }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                data-selected="{{ contact_person.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 <option value="">-- Select Province --</option>
                                 {% for province in default_provinces %}
-                                <option value="{{ province.name }}" data-code="{{ province.code }}" {% if
-                                    province.name==contact_person.province %}selected{% endif %}>
+                                <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == contact_person.province %}selected{% endif %}>
                                     {{ province.name }}
                                 </option>
                                 {% empty %}
@@ -1259,12 +1145,10 @@
                         <div class="form-floating">
                             <select class="form-select" id="contact_person_city_{{ contact_person.id }}"
                                 name="contact_person_city_{{ contact_person.id }}"
-                                data-selected="{{ contact_person.city }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                data-selected="{{ contact_person.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 <option value="">-- Select City --</option>
                                 {% for city in default_cities %}
-                                <option value="{{ city.name }}" data-code="{{ city.code }}" {% if
-                                    city.name==contact_person.city %}selected{% endif %}>
+                                <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == contact_person.city %}selected{% endif %}>
                                     {{ city.name }}
                                 </option>
                                 {% empty %}
@@ -1278,12 +1162,10 @@
                         <div class="form-floating">
                             <select class="form-select" id="contact_person_barangay_{{ contact_person.id }}"
                                 name="contact_person_barangay_{{ contact_person.id }}"
-                                data-selected="{{ contact_person.barangay }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                data-selected="{{ contact_person.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 <option value="">-- Select Barangay --</option>
                                 {% for barangay in default_barangays %}
-                                <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if
-                                    barangay.name==contact_person.barangay %}selected{% endif %}>
+                                <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == contact_person.barangay %}selected{% endif %}>
                                     {{ barangay.name }}
                                 </option>
                                 {% empty %}
@@ -1297,8 +1179,7 @@
                         <div class="form-floating">
                             <input type="text" class="form-control" id="contact_person_street_{{ contact_person.id }}"
                                 name="contact_person_contact-street_{{ contact_person.id }}"
-                                value="{{ contact_person.street }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                value="{{ contact_person.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label for="contact_person_street_{{ contact_person.id }}">Street</label>
                         </div>
                     </div><!--end of col-->
@@ -1306,15 +1187,13 @@
                         <div class="form-floating">
                             <input type="text" class="form-control" id="contact_person_bldg_no_{{ contact_person.id }}"
                                 name="contact_person_bldg_no_{{ contact_person.id }}"
-                                value="{{ contact_person.bldg_number }}" {% if global.security_status=="encrypted"
-                                %}disabled{% endif %}>
+                                value="{{ contact_person.bldg_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label for="contact_person_bldg_no_{{ contact_person.id }}">Bldg Number</label>
                         </div>
                     </div><!--end of col-->
                 </div><!--end of row-->
                 <div class="d-flex justify-content-end">
-                    <button class="btn btn-primary save-btn-contact_person_{{ contact_person.id }}" type="submit" {% if
-                        global.security_status=="encrypted" %}disabled{% endif %}>Save</button>
+                    <button class="btn btn-primary save-btn-contact_person_{{ contact_person.id }}" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
                 </div>
             </form>
             {% endfor %}
@@ -1385,8 +1264,7 @@
                                                 <input type="text" class="form-control"
                                                     id="perpetrator_first_name_{{ perpetrator.id }}"
                                                     name="perpetrator_first_name_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.first_name }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.first_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_first_name_{{ perpetrator.id }}">First
                                                     Name</label>
                                             </div>
@@ -1396,8 +1274,7 @@
                                                 <input type="text" class="form-control"
                                                     id="perpetrator_middle_name_{{ perpetrator.id }}"
                                                     name="perpetrator_middle_name_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.middle_name }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.middle_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_middle_name_{{ perpetrator.id }}">Middle
                                                     Name</label>
                                             </div>
@@ -1407,8 +1284,7 @@
                                                 <input type="text" class="form-control"
                                                     id="perpetrator_last_name_{{ perpetrator.id }}"
                                                     name="perpetrator_last_name_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.last_name }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.last_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_last_name_{{ perpetrator.id }}">Last
                                                     Name</label>
                                             </div>
@@ -1417,20 +1293,13 @@
                                             <div class="form-floating">
                                                 <select class="form-select"
                                                     id="perpetrator_suffix_name_{{ perpetrator.id }}"
-                                                    name="perpetrator_suffix_name_{{ perpetrator.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
-                                                    <option value="none" {% if perpetrator.suffix=='none' %}selected{%
-                                                        endif %}>N/A</option>
-                                                    <option value="sr" {% if perpetrator.suffix=='sr' %}selected{% endif
-                                                        %}>Sr</option>
-                                                    <option value="jr" {% if perpetrator.suffix=='jr' %}selected{% endif
-                                                        %}>Jr</option>
-                                                    <option value="ii" {% if perpetrator.suffix=='ii' %}selected{% endif
-                                                        %}>II</option>
-                                                    <option value="iii" {% if perpetrator.suffix=='iii' %}selected{%
-                                                        endif %}>III</option>
-                                                    <option value="iv" {% if perpetrator.suffix=='iv' %}selected{% endif
-                                                        %}>IV</option>
+                                                    name="perpetrator_suffix_name_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    <option value="none" {% if perpetrator.suffix == 'none' %}selected{% endif %}>N/A</option>
+                                                    <option value="sr" {% if perpetrator.suffix == 'sr' %}selected{% endif %}>Sr</option>
+                                                    <option value="jr" {% if perpetrator.suffix == 'jr' %}selected{% endif %}>Jr</option>
+                                                    <option value="ii" {% if perpetrator.suffix == 'ii' %}selected{% endif %}>II</option>
+                                                    <option value="iii" {% if perpetrator.suffix == 'iii' %}selected{% endif %}>III</option>
+                                                    <option value="iv" {% if perpetrator.suffix == 'iv' %}selected{% endif %}>IV</option>
                                                 </select>
                                                 <label for="perpetrator_suffix_name_{{ perpetrator.id }}">Suffix</label>
                                             </div>
@@ -1442,8 +1311,7 @@
                                                 <input type="text" class="form-control"
                                                     id="perpetrator_identifying_marks_{{ perpetrator.id }}"
                                                     name="perpetrator_identifying_marks_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.identifying_marks }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.identifying_marks }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label
                                                     for="perpetrator_identifying_marks_{{ perpetrator.id }}">Identifying
                                                     Marks</label>
@@ -1454,8 +1322,7 @@
                                                 <input type="text" class="form-control"
                                                     id="perpetrator_alias_{{ perpetrator.id }}"
                                                     name="perpetrator_alias_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.alias }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.alias }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_alias_{{ perpetrator.id }}">Alias</label>
                                             </div>
                                         </div>
@@ -1463,49 +1330,22 @@
                                             <div class="form-floating">
                                                 <select id="perp-relationship-victim_{{ perpetrator.id }}"
                                                     name="perp-relationship-victim_{{ perpetrator.id }}"
-                                                    class="form-select" {% if global.security_status=="encrypted"
-                                                    %}disabled{% endif %}>
+                                                    class="form-select" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="currentSpouse" {% if
-                                                        perpetrator.relationship_to_victim=='currentSpouse' %}selected{%
-                                                        endif %}>Current spouse / partner</option>
-                                                    <option value="formerSpouse" {% if
-                                                        perpetrator.relationship_to_victim=='formerSpouse' %}selected{%
-                                                        endif %}>Former spouse / partner</option>
-                                                    <option value="currentFiance" {% if
-                                                        perpetrator.relationship_to_victim=='currentFiance' %}selected{%
-                                                        endif %}>Current fiance / dating relationship</option>
-                                                    <option value="formerFiance" {% if
-                                                        perpetrator.relationship_to_victim=='formerFiance' %}selected{%
-                                                        endif %}>Former fiance / dating relationship</option>
-                                                    <option value="employer" {% if
-                                                        perpetrator.relationship_to_victim=='employer' %}selected{%
-                                                        endif %}>Employer / manager / supervisor</option>
-                                                    <option value="agentOfEmployer" {% if
-                                                        perpetrator.relationship_to_victim=='agentOfEmployer'
-                                                        %}selected{% endif %}>Agent of Employer</option>
-                                                    <option value="teacher" {% if
-                                                        perpetrator.relationship_to_victim=='teacher' %}selected{% endif
-                                                        %}>Teacher / instructor / professor</option>
-                                                    <option value="coach" {% if
-                                                        perpetrator.relationship_to_victim=='coach' %}selected{% endif
-                                                        %}>Coach / trainer</option>
-                                                    <option value="immediateFamily" {% if
-                                                        perpetrator.relationship_to_victim=='immediateFamily'
-                                                        %}selected{% endif %}>Immediate family</option>
-                                                    <option value="otherRelatives" {% if
-                                                        perpetrator.relationship_to_victim=='otherRelatives'
-                                                        %}selected{% endif %}>Other relatives</option>
-                                                    <option value="peopleOfAuthority" {% if
-                                                        perpetrator.relationship_to_victim=='peopleOfAuthority'
-                                                        %}selected{% endif %}>People of authority / service provider
+                                                    <option value="currentSpouse" {% if perpetrator.relationship_to_victim == 'currentSpouse' %}selected{% endif %}>Current spouse / partner</option>
+                                                    <option value="formerSpouse" {% if perpetrator.relationship_to_victim == 'formerSpouse' %}selected{% endif %}>Former spouse / partner</option>
+                                                    <option value="currentFiance" {% if perpetrator.relationship_to_victim == 'currentFiance' %}selected{% endif %}>Current fiance / dating relationship</option>
+                                                    <option value="formerFiance" {% if perpetrator.relationship_to_victim == 'formerFiance' %}selected{% endif %}>Former fiance / dating relationship</option>
+                                                    <option value="employer" {% if perpetrator.relationship_to_victim == 'employer' %}selected{% endif %}>Employer / manager / supervisor</option>
+                                                    <option value="agentOfEmployer" {% if perpetrator.relationship_to_victim == 'agentOfEmployer' %}selected{% endif %}>Agent of Employer</option>
+                                                    <option value="teacher" {% if perpetrator.relationship_to_victim == 'teacher' %}selected{% endif %}>Teacher / instructor / professor</option>
+                                                    <option value="coach" {% if perpetrator.relationship_to_victim == 'coach' %}selected{% endif %}>Coach / trainer</option>
+                                                    <option value="immediateFamily" {% if perpetrator.relationship_to_victim == 'immediateFamily' %}selected{% endif %}>Immediate family</option>
+                                                    <option value="otherRelatives" {% if perpetrator.relationship_to_victim == 'otherRelatives' %}selected{% endif %}>Other relatives</option>
+                                                    <option value="peopleOfAuthority" {% if perpetrator.relationship_to_victim == 'peopleOfAuthority' %}selected{% endif %}>People of authority / service provider
                                                     </option>
-                                                    <option value="neighbors" {% if
-                                                        perpetrator.relationship_to_victim=='neighbors' %}selected{%
-                                                        endif %}>Neighbors / peers / coworkers / classmates</option>
-                                                    <option value="stranger" {% if
-                                                        perpetrator.relationship_to_victim=='stranger' %}selected{%
-                                                        endif %}>Stranger</option>
+                                                    <option value="neighbors" {% if perpetrator.relationship_to_victim == 'neighbors' %}selected{% endif %}>Neighbors / peers / coworkers / classmates</option>
+                                                    <option value="stranger" {% if perpetrator.relationship_to_victim == 'stranger' %}selected{% endif %}>Stranger</option>
                                                     {% else %}
                                                     <option value="stranger" selected>
                                                         {{perpetrator.relationship_to_victim}}</option>
@@ -1522,13 +1362,10 @@
                                         <div class="col-lg-3 form-floating mb-3">
                                             <div class="form-floating">
                                                 <select class="form-select" id="perpetrator_sex_{{ perpetrator.id }}"
-                                                    name="perpetrator_sex_{{ perpetrator.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="perpetrator_sex_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="Male" {% if perpetrator.sex=='Male' %}selected{%
-                                                        endif %}>Male</option>
-                                                    <option value="Female" {% if perpetrator.sex=='Female' %}selected{%
-                                                        endif %}>Female</option>
+                                                    <option value="Male" {% if perpetrator.sex == 'Male' %}selected{% endif %}>Male</option>
+                                                    <option value="Female" {% if perpetrator.sex == 'Female' %}selected{% endif %}>Female</option>
                                                     {% else %}
                                                     <option value="Female" selected>{{ perpetrator.sex }}</option>
                                                     {% endif %}
@@ -1540,20 +1377,12 @@
                                             <div class="form-floating">
                                                 <select class="form-select"
                                                     id="perpetrator_type_of_disability_{{ perpetrator.id }}"
-                                                    name="perpetrator_type_of_disability_{{ perpetrator.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="perpetrator_type_of_disability_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="none" {% if perpetrator.type_of_disability=='none'
-                                                        %}selected{% endif %}>N/A</option>
-                                                    <option value="With Disability" {% if
-                                                        perpetrator.type_of_disability=='With Disability' %}selected{%
-                                                        endif %}>With Disability</option>
-                                                    <option value="Permanent Disability" {% if
-                                                        perpetrator.type_of_disability=='Permanent Disability'
-                                                        %}selected{% endif %}>Permanent Disability</option>
-                                                    <option value="Temporary Disability" {% if
-                                                        perpetrator.type_of_disability=='Temporary Disability'
-                                                        %}selected{% endif %}>Temporary Disability</option>
+                                                    <option value="none" {% if perpetrator.type_of_disability == 'none' %}selected{% endif %}>N/A</option>
+                                                    <option value="With Disability" {% if perpetrator.type_of_disability == 'With Disability' %}selected{% endif %}>With Disability</option>
+                                                    <option value="Permanent Disability" {% if perpetrator.type_of_disability == 'Permanent Disability' %}selected{% endif %}>Permanent Disability</option>
+                                                    <option value="Temporary Disability" {% if perpetrator.type_of_disability == 'Temporary Disability' %}selected{% endif %}>Temporary Disability</option>
                                                     {% else %}
                                                     <option value="Temporary Disability" selected>
                                                         {{perpetrator.type_of_disability}}</option>
@@ -1586,19 +1415,13 @@
                                             <div class="form-floating">
                                                 <select class="form-select"
                                                     id="perpetrator_civil_status_{{ perpetrator.id }}"
-                                                    name="perpetrator_civil_status_{{ perpetrator.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="perpetrator_civil_status_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="single" {% if perpetrator.civil_status=='single'
-                                                        %}selected{% endif %}>Single</option>
-                                                    <option value="married" {% if perpetrator.civil_status=='married'
-                                                        %}selected{% endif %}>Married</option>
-                                                    <option value="live-in" {% if perpetrator.civil_status=='live-in'
-                                                        %}selected{% endif %}>Live-In</option>
-                                                    <option value="widowed" {% if perpetrator.civil_status=='widowed'
-                                                        %}selected{% endif %}>Widowed</option>
-                                                    <option value="separated" {% if
-                                                        perpetrator.civil_status=='separated' %}selected{% endif %}>
+                                                    <option value="single" {% if perpetrator.civil_status == 'single' %}selected{% endif %}>Single</option>
+                                                    <option value="married" {% if perpetrator.civil_status == 'married' %}selected{% endif %}>Married</option>
+                                                    <option value="live-in" {% if perpetrator.civil_status == 'live-in' %}selected{% endif %}>Live-In</option>
+                                                    <option value="widowed" {% if perpetrator.civil_status == 'widowed' %}selected{% endif %}>Widowed</option>
+                                                    <option value="separated" {% if perpetrator.civil_status == 'separated' %}selected{% endif %}>
                                                         Separated</option>
                                                     {% else %}
                                                     <option value="separated" selected>{{perpetrator.civil_status}}
@@ -1619,8 +1442,7 @@
                                                     class="form-control"
                                                     id="perpetrator_contact_number_{{ perpetrator.id }}"
                                                     name="perpetrator_contact_number_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.contact_number }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.contact_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_contact_number_{{ perpetrator.id }}">Contact
                                                     Number</label>
                                             </div>
@@ -1633,8 +1455,7 @@
                                                     class="form-control"
                                                     id="perpetrator_telephone_number_{{ perpetrator.id }}"
                                                     name="perpetrator_telephone_number_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.telephone_number }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.telephone_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_telephone_number_{{ perpetrator.id }}">Telephone
                                                     Number</label>
                                             </div>
@@ -1645,31 +1466,16 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select"
                                                     id="perpetrator_educational_attainment_{{ perpetrator.id }}"
-                                                    name="perpetrator_educational_attainment_{{ perpetrator.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="perpetrator_educational_attainment_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
 
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="none" {% if
-                                                        perpetrator.educational_attainment=='none' %}selected{% endif
-                                                        %}>None</option>
-                                                    <option value="highschool" {% if
-                                                        perpetrator.educational_attainment=='highschool' %}selected{%
-                                                        endif %}>High School Level</option>
-                                                    <option value="vocational" {% if
-                                                        perpetrator.educational_attainment=='vocational' %}selected{%
-                                                        endif %}>Vocational</option>
-                                                    <option value="collegeLevel" {% if
-                                                        perpetrator.educational_attainment=='collegeLevel' %}selected{%
-                                                        endif %}>College Level</option>
-                                                    <option value="post-grad" {% if
-                                                        perpetrator.educational_attainment=='post-grad' %}selected{%
-                                                        endif %}>Post Graduated</option>
-                                                    <option value="no-response" {% if
-                                                        perpetrator.educational_attainment=='no-response' %}selected{%
-                                                        endif %}>No Response</option>
-                                                    <option value="educt-others" {% if
-                                                        perpetrator.educational_attainment=='educt-others' %}selected{%
-                                                        endif %}>Others</option>
+                                                    <option value="none" {% if perpetrator.educational_attainment == 'none' %}selected{% endif %}>None</option>
+                                                    <option value="highschool" {% if perpetrator.educational_attainment == 'highschool' %}selected{% endif %}>High School Level</option>
+                                                    <option value="vocational" {% if perpetrator.educational_attainment == 'vocational' %}selected{% endif %}>Vocational</option>
+                                                    <option value="collegeLevel" {% if perpetrator.educational_attainment == 'collegeLevel' %}selected{% endif %}>College Level</option>
+                                                    <option value="post-grad" {% if perpetrator.educational_attainment == 'post-grad' %}selected{% endif %}>Post Graduated</option>
+                                                    <option value="no-response" {% if perpetrator.educational_attainment == 'no-response' %}selected{% endif %}>No Response</option>
+                                                    <option value="educt-others" {% if perpetrator.educational_attainment == 'educt-others' %}selected{% endif %}>Others</option>
                                                     {% else %}
                                                     <option value="educt-others" selected>
                                                         {{perpetrator.educational_attainment}}</option>
@@ -1686,8 +1492,7 @@
                                                 <input type="text" class="form-control"
                                                     id="perpetrator_occupation_{{ perpetrator.id }}"
                                                     name="perpetrator_occupation_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.occupation}}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.occupation}}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label
                                                     for="perpetrator_occupation_{{ perpetrator.id }}">Occupation</label>
                                             </div>
@@ -1696,47 +1501,29 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select"
                                                     id="perpetrator_nationality_{{ perpetrator.id }}"
-                                                    name="perpetrator_nationality_{{ perpetrator.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="perpetrator_nationality_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
 
                                                     <!-- Placeholder Option -->
-                                                    <option value="" {% if not perpetrator.nationality %}selected{%
-                                                        endif %}>--Select--</option>
+                                                    <option value="" {% if not perpetrator.nationality %}selected{% endif %}>--Select--</option>
 
-                                                    <option value="Aeta" {% if perpetrator.nationality=="Aeta"
-                                                        %}selected{% endif %}>Aeta</option>
-                                                    <option value="Agta" {% if perpetrator.nationality=="Agta"
-                                                        %}selected{% endif %}>Agta</option>
-                                                    <option value="Bicolano" {% if perpetrator.nationality=="Bicolano"
-                                                        %}selected{% endif %}>Bicolano</option>
-                                                    <option value="Bisaya" {% if perpetrator.nationality=="Bisaya"
-                                                        %}selected{% endif %}>Bisaya</option>
-                                                    <option value="Ilokano" {% if perpetrator.nationality=="Ilokano"
-                                                        %}selected{% endif %}>Ilokano</option>
-                                                    <option value="Igorot" {% if perpetrator.nationality=="Igorot"
-                                                        %}selected{% endif %}>Igorot</option>
-                                                    <option value="Ilonggo" {% if perpetrator.nationality=="Ilonggo"
-                                                        %}selected{% endif %}>Ilonggo</option>
-                                                    <option value="Kapampangan" {% if
-                                                        perpetrator.nationality=="Kapampangan" %}selected{% endif %}>
+                                                    <option value="Aeta" {% if perpetrator.nationality == "Aeta" %}selected{% endif %}>Aeta</option>
+                                                    <option value="Agta" {% if perpetrator.nationality == "Agta" %}selected{% endif %}>Agta</option>
+                                                    <option value="Bicolano" {% if perpetrator.nationality == "Bicolano" %}selected{% endif %}>Bicolano</option>
+                                                    <option value="Bisaya" {% if perpetrator.nationality == "Bisaya" %}selected{% endif %}>Bisaya</option>
+                                                    <option value="Ilokano" {% if perpetrator.nationality == "Ilokano" %}selected{% endif %}>Ilokano</option>
+                                                    <option value="Igorot" {% if perpetrator.nationality == "Igorot" %}selected{% endif %}>Igorot</option>
+                                                    <option value="Ilonggo" {% if perpetrator.nationality == "Ilonggo" %}selected{% endif %}>Ilonggo</option>
+                                                    <option value="Kapampangan" {% if perpetrator.nationality == "Kapampangan" %}selected{% endif %}>
                                                         Kapampangan</option>
-                                                    <option value="Mangyan" {% if perpetrator.nationality=="Mangyan"
-                                                        %}selected{% endif %}>Mangyan</option>
-                                                    <option value="Moros" {% if perpetrator.nationality=="Moros"
-                                                        %}selected{% endif %}>Moros</option>
-                                                    <option value="Pangasinense" {% if
-                                                        perpetrator.nationality=="Pangasinense" %}selected{% endif %}>
+                                                    <option value="Mangyan" {% if perpetrator.nationality == "Mangyan" %}selected{% endif %}>Mangyan</option>
+                                                    <option value="Moros" {% if perpetrator.nationality == "Moros" %}selected{% endif %}>Moros</option>
+                                                    <option value="Pangasinense" {% if perpetrator.nationality == "Pangasinense" %}selected{% endif %}>
                                                         Pangasinense</option>
-                                                    <option value="Tagalog" {% if perpetrator.nationality=="Tagalog"
-                                                        %}selected{% endif %}>Tagalog</option>
-                                                    <option value="Tausug" {% if perpetrator.nationality=="Tausug"
-                                                        %}selected{% endif %}>Tausug</option>
-                                                    <option value="Samal" {% if perpetrator.nationality=="Samal"
-                                                        %}selected{% endif %}>Samal</option>
-                                                    <option value="Waray" {% if perpetrator.nationality=="Waray"
-                                                        %}selected{% endif %}>Waray</option>
-                                                    <option value="Others" {% if perpetrator.nationality=="Others"
-                                                        %}selected{% endif %}>Others</option>
+                                                    <option value="Tagalog" {% if perpetrator.nationality == "Tagalog" %}selected{% endif %}>Tagalog</option>
+                                                    <option value="Tausug" {% if perpetrator.nationality == "Tausug" %}selected{% endif %}>Tausug</option>
+                                                    <option value="Samal" {% if perpetrator.nationality == "Samal" %}selected{% endif %}>Samal</option>
+                                                    <option value="Waray" {% if perpetrator.nationality == "Waray" %}selected{% endif %}>Waray</option>
+                                                    <option value="Others" {% if perpetrator.nationality == "Others" %}selected{% endif %}>Others</option>
                                                 </select>
                                                 <label
                                                     for="perpetrator_nationality_{{ perpetrator.id }}">Ethnicity</label>
@@ -1746,26 +1533,18 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select"
                                                     id="perpetrator_religion_{{ perpetrator.id }}"
-                                                    name="perpetrator_religion_{{ perpetrator.id }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    name="perpetrator_religion_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
 
                                                     {% if global.security_status == "decrypted" %}
-                                                    <option value="none" {% if perpetrator.religion=='none' %}selected{%
-                                                        endif %}>None</option>
-                                                    <option value="roman-catholic" {% if
-                                                        perpetrator.religion=='roman-catholic' %}selected{% endif %}>
+                                                    <option value="none" {% if perpetrator.religion == 'none' %}selected{% endif %}>None</option>
+                                                    <option value="roman-catholic" {% if perpetrator.religion == 'roman-catholic' %}selected{% endif %}>
                                                         Roman Catholic</option>
-                                                    <option value="islam" {% if perpetrator.religion=='islam'
-                                                        %}selected{% endif %}>Islam</option>
-                                                    <option value="protestant" {% if perpetrator.religion=='protestant'
-                                                        %}selected{% endif %}>Protestant</option>
-                                                    <option value="iglesia-ni-kristo" {% if
-                                                        perpetrator.religion=='iglesia-ni-kristo' %}selected{% endif %}>
+                                                    <option value="islam" {% if perpetrator.religion == 'islam' %}selected{% endif %}>Islam</option>
+                                                    <option value="protestant" {% if perpetrator.religion == 'protestant' %}selected{% endif %}>Protestant</option>
+                                                    <option value="iglesia-ni-kristo" {% if perpetrator.religion == 'iglesia-ni-kristo' %}selected{% endif %}>
                                                         Iglesia ni Kristo</option>
-                                                    <option value="aglipayan" {% if perpetrator.religion=='aglipayan'
-                                                        %}selected{% endif %}>Aglipayan</option>
-                                                    <option value="other-religion" {% if
-                                                        perpetrator.religion=='other-religion' %}selected{% endif %}>
+                                                    <option value="aglipayan" {% if perpetrator.religion == 'aglipayan' %}selected{% endif %}>Aglipayan</option>
+                                                    <option value="other-religion" {% if perpetrator.religion == 'other-religion' %}selected{% endif %}>
                                                         Others</option>
                                                     {% else %}
                                                     <option value="aglipayan" selected>{{perpetrator.religion}}</option>
@@ -1781,12 +1560,10 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select" id="perpetrator_region_{{ perpetrator.id }}"
                                                     name="perpetrator_region_{{ perpetrator.id }}"
-                                                    data-selected="{{ perpetrator.region }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    data-selected="{{ perpetrator.region }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">--Select Region--</option>
                                                     {% for region in default_regions %}
-                                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {%
-                                                        if region.name==perpetrator.region %}selected{% endif %}>
+                                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == perpetrator.region %}selected{% endif %}>
                                                         {{ region.name }}
                                                     </option>
                                                     {% empty %}
@@ -1801,12 +1578,11 @@
                                                 <select class="form-select"
                                                     id="perpetrator_province_{{ perpetrator.id }}"
                                                     name="perpetrator_province_{{ perpetrator.id }}"
-                                                    data-selected="{{ perpetrator.province }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    data-selected="{{ perpetrator.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
                                                     <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                        {% if province.name==perpetrator.province %}selected{% endif %}>
+                                                        {% if province.name == perpetrator.province %}selected{% endif %}>
                                                         {{ province.name }}
                                                     </option>
                                                     {% empty %}
@@ -1820,12 +1596,10 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-select" id="perpetrator_city_{{ perpetrator.id }}"
                                                     name="perpetrator_city_{{ perpetrator.id }}"
-                                                    data-selected="{{ perpetrator.city }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    data-selected="{{ perpetrator.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if
-                                                        city.name==perpetrator.city %}selected{% endif %}>
+                                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == perpetrator.city %}selected{% endif %}>
                                                         {{ city.name }}
                                                     </option>
                                                     {% empty %}
@@ -1840,12 +1614,11 @@
                                                 <select class="form-select"
                                                     id="perpetrator_barangay_{{ perpetrator.id }}"
                                                     name="perpetrator_barangay_{{ perpetrator.id }}"
-                                                    data-selected="{{ perpetrator.barangay }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    data-selected="{{ perpetrator.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
                                                     <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                        {% if barangay.name==perpetrator.barangay %}selected{% endif %}>
+                                                        {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
                                                         {{ barangay.name }}
                                                     </option>
                                                     {% empty %}
@@ -1862,8 +1635,7 @@
                                                 <input type="text" class="form-control"
                                                     id="perpetrator_house_information_{{ perpetrator.id }}"
                                                     name="perpetrator_house_information_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.house_information }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_house_information_{{ perpetrator.id }}">House
                                                     Information</label>
                                             </div>
@@ -1873,8 +1645,7 @@
                                                 <input type="text" class="form-control"
                                                     id="perpetrator_street_{{ perpetrator.id }}"
                                                     name="perpetrator_street_{{ perpetrator.id }}"
-                                                    value="{{ perpetrator.street }}" {% if
-                                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                                    value="{{ perpetrator.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <label for="perpetrator_street_{{ perpetrator.id }}">Street</label>
                                             </div>
                                         </div><!--End of col-->
@@ -1924,20 +1695,17 @@
                         </div><!--End of col-->
                         <div class="col-lg-2 col-md-2 col-sm-8">
                             <input class="form-check-input" type="checkbox" value="true"
-                                id="checkbox_psychological_abuse" name="checkbox_psychological_abuse" {% if
-                                case.checkbox_psychological_abuse %} checked {% endif %}>
+                                id="checkbox_psychological_abuse" name="checkbox_psychological_abuse" {% if case.checkbox_psychological_abuse %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_psychological_abuse">Psychological</label>
                         </div><!--End of col-->
                         <div class="col-lg-2 col-md-2 col-sm-8">
                             <input class="form-check-input" type="checkbox" value="true" id="checkbox_physical_abuse"
-                                name="checkbox_physical_abuse" {% if case.checkbox_physical_abuse %} checked {% endif
-                                %}>
+                                name="checkbox_physical_abuse" {% if case.checkbox_physical_abuse %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_physical_abuse">Physical</label>
                         </div><!--End of col-->
                         <div class="col-lg-2 col-md-2 col-sm-8">
                             <input class="form-check-input" type="checkbox" value="true" id="checkbox_economic_abuse"
-                                name="checkbox_economic_abuse" {% if case.checkbox_economic_abuse %} checked {% endif
-                                %}>
+                                name="checkbox_economic_abuse" {% if case.checkbox_economic_abuse %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_economic_abuse">Economic</label>
                         </div><!--End of col-->
                         <div class="col-lg-2 col-md-2 col-sm-8">
@@ -1963,15 +1731,13 @@
                     <div class="row pt-3">
                         <div class="col-lg-6 col-md-6 col-sm-8">
                             <input class="form-check-input" type="checkbox" value="true"
-                                id="checkbox_rape_by_sexual_intercourse" name="checkbox_rape_by_sexual_intercourse" {%
-                                if case.checkbox_rape_by_sexual_intercourse %} checked {% endif %}>
+                                id="checkbox_rape_by_sexual_intercourse" name="checkbox_rape_by_sexual_intercourse" {% if case.checkbox_rape_by_sexual_intercourse %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_rape_by_sexual_intercourse">Rape by sexual
                                 intercourse</label>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-8">
                             <input class="form-check-input" type="checkbox" value="true"
-                                id="checkbox_rape_by_sexual_assault" name="checkbox_rape_by_sexual_assault" {% if
-                                case.checkbox_rape_by_sexual_assault %} checked {% endif %}>
+                                id="checkbox_rape_by_sexual_assault" name="checkbox_rape_by_sexual_assault" {% if case.checkbox_rape_by_sexual_assault %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_rape_by_sexual_assault">Rape by sexual
                                 assault</label>
                         </div>
@@ -1987,8 +1753,7 @@
                     <div class="row pt-3">
                         <div class="col-lg-12 col-md-12 col-sm-8">
                             <input class="form-check-input" type="checkbox" value="true"
-                                id="checkbox_acts_of_lasciviousness" name="checkbox_acts_of_lasciviousness" {% if
-                                case.checkbox_acts_of_lasciviousness %} checked {% endif %}>
+                                id="checkbox_acts_of_lasciviousness" name="checkbox_acts_of_lasciviousness" {% if case.checkbox_acts_of_lasciviousness %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_acts_of_lasciviousness">Acts of
                                 lasciviousness</label>
                         </div>
@@ -2014,8 +1779,7 @@
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-8">
                             <input class="form-check-input" type="checkbox" value="true" id="checkbox_use_of_objects"
-                                name="checkbox_use_of_objects" {% if case.checkbox_use_of_objects %} checked {% endif
-                                %}>
+                                name="checkbox_use_of_objects" {% if case.checkbox_use_of_objects %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_use_of_objects">Use of objects, pictures,
                                 letters or notes with sexual under-pinnings</label>
                         </div>
@@ -2032,15 +1796,13 @@
                     <div class="row pb-3">
                         <div class="col-lg-6 col-md-6 col-sm-8 pt-3">
                             <input class="form-check-input" type="checkbox" value="true"
-                                id="checkbox_engage_prostitution" name="checkbox_engage_prostitution" {% if
-                                case.checkbox_engage_prostitution %} checked {% endif %}>
+                                id="checkbox_engage_prostitution" name="checkbox_engage_prostitution" {% if case.checkbox_engage_prostitution %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_engage_prostitution">Engage, facilitate,
                                 promote or attempt to commit prostitution</label>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-8 pt-3">
                             <input class="form-check-input" type="checkbox" value="true"
-                                id="checkbox_sexual_lascivious_conduct" name="checkbox_sexual_lascivious_conduct" {% if
-                                case.checkbox_sexual_lascivious_conduct %} checked {% endif %}>
+                                id="checkbox_sexual_lascivious_conduct" name="checkbox_sexual_lascivious_conduct" {% if case.checkbox_sexual_lascivious_conduct %} checked {% endif %}>
                             <label class="form-check-label" for="checkbox_sexual_lascivious_conduct">Sexual intercourse
                                 or lascivious conduct</label>
                         </div>
@@ -2075,8 +1837,7 @@
                                 <label for="date_latest_incident">Date of Latest Incident</label>
                             </div>
                             <input class="form-check-input" type="checkbox" value="true" id="incomplete_date"
-                                name="incomplete_date" {% if case.incomplete_date %} checked {% endif %} {% if
-                                global.security_status=="encrypted" %}disabled{% endif %}>
+                                name="incomplete_date" {% if case.incomplete_date %} checked {% endif %} {% if global.security_status == "encrypted" %}disabled{% endif %}>
                             <label class="form-check-label" for="incomplete_date"> Incomplete Date</label>
                         </div><!--end of col-->
                     </div><!--End of row-->
@@ -2087,12 +1848,10 @@
                         <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
                             <div class="form-floating">
                                 <select class="form-select" id="region" name="region" data-selected="{{ case.region }}"
-                                    aria-label="Floating label select example" {% if global.security_status=="encrypted"
-                                    %}disabled{% endif %}>
+                                    aria-label="Floating label select example" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
-                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {% if
-                                        region.name==case.region %}selected{% endif %}>
+                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
                                         {{ region.name }}
                                     </option>
                                     {% empty %}
@@ -2106,12 +1865,10 @@
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="province" name="province"
-                                    data-selected="{{ case.province }}" {% if global.security_status=="encrypted"
-                                    %}disabled{% endif %}>
+                                    data-selected="{{ case.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
-                                    <option value="{{ province.name }}" data-code="{{ province.code }}" {% if
-                                        province.name==case.province %}selected{% endif %}>
+                                    <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
                                         {{ province.name }}
                                     </option>
                                     {% empty %}
@@ -2124,12 +1881,10 @@
 
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="city" name="city" data-selected="{{ case.city }}" {% if
-                                    global.security_status=="encrypted" %}disabled{% endif %}>
+                                <select class="form-select" id="city" name="city" data-selected="{{ case.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
-                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if
-                                        city.name==case.city %}selected{% endif %}>
+                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
                                         {{ city.name }}
                                     </option>
                                     {% empty %}
@@ -2144,12 +1899,10 @@
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="barangay" name="barangay"
-                                    data-selected="{{ case.barangay }}" {% if global.security_status=="encrypted"
-                                    %}disabled{% endif %}>
+                                    data-selected="{{ case.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select Barangay --</option>
                                     {% for barangay in default_barangays %}
-                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if
-                                        barangay.name==case.barangay %}selected{% endif %}>
+                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
                                         {{ barangay.name }}
                                     </option>
                                     {% empty %}
@@ -2162,32 +1915,24 @@
                         <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
                             <div class="form-floating">
                                 <select class="form-select" id="place_of_incident" name="place_of_incident"
-                                    aria-label="Floating label select example" {% if global.security_status=="encrypted"
-                                    %}disabled{% endif %}>
+                                    aria-label="Floating label select example" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     {% if global.security_status == "decrypted" %}
-                                    <option value="house" {% if case.place_of_incident=='house' %} selected {% endif %}>
+                                    <option value="house" {% if case.place_of_incident == 'house' %} selected {% endif %}>
                                         House</option>
-                                    <option value="work" {% if case.place_of_incident=='work' %} selected {% endif %}>
+                                    <option value="work" {% if case.place_of_incident == 'work' %} selected {% endif %}>
                                         Work</option>
-                                    <option value="school" {% if case.place_of_incident=='school' %} selected {% endif
-                                        %}>School</option>
-                                    <option value="commercialPlaces" {% if case.place_of_incident=='commercialPlaces' %}
+                                    <option value="school" {% if case.place_of_incident == 'school' %} selected {% endif %}>School</option>
+                                    <option value="commercialPlaces" {% if case.place_of_incident == 'commercialPlaces' %}
                                         selected {% endif %}>Commercial Places</option>
-                                    <option value="religion" {% if case.place_of_incident=='religion' %} selected {%
-                                        endif %}>Religious Institutions</option>
-                                    <option value="placeOfMedicalTreatment" {% if
-                                        case.place_of_incident=='placeOfMedicalTreatment' %} selected {% endif %}>Place
+                                    <option value="religion" {% if case.place_of_incident == 'religion' %} selected {% endif %}>Religious Institutions</option>
+                                    <option value="placeOfMedicalTreatment" {% if case.place_of_incident == 'placeOfMedicalTreatment' %} selected {% endif %}>Place
                                         of Medical Treatment</option>
-                                    <option value="transport" {% if case.place_of_incident=='transport' %} selected {%
-                                        endif %}>Transport & Connecting Sites</option>
-                                    <option value="brothels" {% if case.place_of_incident=='brothels' %} selected {%
-                                        endif %}>Brothels and Similar Establishments</option>
-                                    <option value="others" {% if case.place_of_incident=='others' %} selected {% endif
-                                        %}>Others</option>
-                                    <option value="noResponse" {% if case.place_of_incident=='noResponse' %} selected {%
-                                        endif %}>No Response</option>
+                                    <option value="transport" {% if case.place_of_incident == 'transport' %} selected {% endif %}>Transport & Connecting Sites</option>
+                                    <option value="brothels" {% if case.place_of_incident == 'brothels' %} selected {% endif %}>Brothels and Similar Establishments</option>
+                                    <option value="others" {% if case.place_of_incident == 'others' %} selected {% endif %}>Others</option>
+                                    <option value="noResponse" {% if case.place_of_incident == 'noResponse' %} selected {% endif %}>No Response</option>
                                     {% else %}
-                                    <option value="house" {% if case.place_of_incident=='house' %} selected {% endif %}>
+                                    <option value="house" {% if case.place_of_incident == 'house' %} selected {% endif %}>
                                         {{ case.place_of_incident }}</option>
                                     {% endif %}
                                 </select>
@@ -2198,8 +1943,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" id="street" name="street"
-                                    value="{{ case.street }}" {% if global.security_status=="encrypted" %}disabled{%
-                                    endif %}>
+                                    value="{{ case.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                 <label for="street">Street</label>
                             </div>
                         </div><!--End of col-->
@@ -2208,7 +1952,7 @@
                         <div class="mb-3">
                             <label for="description_of_incident" class="form-label">Description of Incident</label>
                             <textarea class="form-control" id="description_of_incident" name="description_of_incident"
-                                {% if global.security_status=="encrypted" %}disabled{% endif %}
+                                {% if global.security_status == "encrypted" %}disabled{% endif %}
                                 rows="3">{{ case.description_of_incident }}</textarea>
                         </div>
                     </div>
@@ -2854,8 +2598,7 @@
                                         data-selected="{{ victim.region }}">
                                         <option value="">--Select Region--</option>
                                         {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if
-                                            region.name==victim.region %}selected{% endif %}>
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == victim.region %}selected{% endif %}>
                                             {{ region.name }}
                                         </option>
                                         {% empty %}
@@ -2868,12 +2611,10 @@
                             <div class="col-lg-3 col-12">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="victim_province" name="victim_province"
-                                        data-selected="{{ victim.province }}" {% if global.security_status=="encrypted"
-                                        %}disabled{% endif %}>
+                                        data-selected="{{ victim.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                         <option value="">-- Select Province --</option>
                                         {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if
-                                            province.name==victim.province %}selected{% endif %}>
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>
                                             {{ province.name }}
                                         </option>
                                         {% empty %}
@@ -2886,12 +2627,10 @@
                             <div class="col-lg-3 col-12">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="victim_city" name="victim_city"
-                                        data-selected="{{ victim.city }}" {% if global.security_status=="encrypted"
-                                        %}disabled{% endif %}>
+                                        data-selected="{{ victim.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                         <option value="">-- Select City --</option>
                                         {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if
-                                            city.name==victim.city %}selected{% endif %}>
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
                                             {{ city.name }}
                                         </option>
                                         {% empty %}
@@ -2907,8 +2646,7 @@
                                         data-selected="{{ victim.barangay }}">
                                         <option value="">-- Select Barangay --</option>
                                         {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if
-                                            barangay.name==victim.barangay %}selected{% endif %}>
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == victim.barangay %}selected{% endif %}>
                                             {{ barangay.name }}
                                         </option>
                                         {% empty %}
@@ -3205,8 +2943,7 @@
                                         data-selected="{{ perpetrator.region }}">
                                         <option value="">--Select Region--</option>
                                         {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if
-                                            region.name==perpetrator.region %}selected{% endif %}>
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == perpetrator.region %}selected{% endif %}>
                                             {{ region.name }}
                                         </option>
                                         {% empty %}
@@ -3223,8 +2960,7 @@
                                         data-selected="{{ perpetrator.province }}">
                                         <option value="">--Select Province--</option>
                                         {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if
-                                            province.name==perpetrator.province %}selected{% endif %}>
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == perpetrator.province %}selected{% endif %}>
                                             {{ province.name }}
                                         </option>
                                         {% empty %}
@@ -3241,8 +2977,7 @@
                                         data-selected="{{ perpetrator.city }}">
                                         <option value="">--Select City--</option>
                                         {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if
-                                            city.name==perpetrator.city %}selected{% endif %}>
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == perpetrator.city %}selected{% endif %}>
                                             {{ city.name }}
                                         </option>
                                         {% empty %}
@@ -3259,8 +2994,7 @@
                                         data-selected="{{ perpetrator.barangay }}">
                                         <option value="">--Select Barangay--</option>
                                         {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if
-                                            barangay.name==perpetrator.barangay %}selected{% endif %}>
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
                                             {{ barangay.name }}
                                         </option>
                                         {% empty %}
