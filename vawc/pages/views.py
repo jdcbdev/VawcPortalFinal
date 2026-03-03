@@ -74,6 +74,8 @@ def login_view (request):
     if request.user.is_authenticated:
         if hasattr(request.user, 'account') and request.user.account.type == 'admin':
             return redirect('admin dashboard')
+        elif hasattr(request.user, 'account') and request.user.account.type == 'law_enforcement':
+            return redirect(request.user, 'admin dashboard')
         elif hasattr(request.user, 'account') and request.user.account.type == 'staff':
             return redirect('barangay dashboard')
         else:
@@ -359,6 +361,7 @@ def admin_case_view(request):
         'barangay': barangay,
     })
 
+@login_required(login_url='login')
 def admin_dashboard_data (request, get_year):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
@@ -548,6 +551,11 @@ def admin_manage_account_view(request):
     province_id = 50 # zamboanga del sur
     municipality_id = 1133 # zamboanga city
     
+    custom_provinces = Province.objects.filter(
+        Q(region_id=region_id) | Q(name__icontains='Sulu')
+    )
+    
+    print(custom_provinces)
     # Exclude the specified emails from the queryset
     users = CustomUser.objects.exclude(email__in=excluded_emails)
     accounts = Account.objects.filter(user__in=users)
@@ -556,7 +564,9 @@ def admin_manage_account_view(request):
         'users': users,
         'accounts': accounts,
         'default_regions': Region.objects.filter(id=region_id),
-        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_provinces': Province.objects.filter(
+            Q(region_id=region_id) | Q(name__icontains='Sulu')
+        ),
         'default_cities': Municipality.objects.filter(province_id=province_id),
         'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
 
@@ -588,7 +598,9 @@ def law_enforcement_manage_account_view(request):
         'users': users,
         'accounts': accounts,
         'default_regions': regions,
-        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_provinces':Province.objects.filter(
+            Q(region_id=region_id) | Q(name__icontains='Sulu')
+        ),
         'default_police_stations': PoliceStations.objects.filter(region="Region 9"),  # 👈 Include this
     })
 
@@ -618,7 +630,11 @@ def healthcare_manage_account_view(request):
         'users': users,
         'accounts': accounts,
         'default_regions': regions,
-        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_provinces': list(
+            Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu')
+            ).values()
+        ),
         'default_police_stations': PoliceStations.objects.filter(region="Region 9"),  # 👈 Include this
     })
     
@@ -694,8 +710,9 @@ def create_swdo_manage_account(request):
                     province=province,
                     city=city,
                 )
-            except:
-                pass
+            except Exception as e:
+                account.delete()
+                return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'SWDO Account created successfully'})
 
@@ -730,13 +747,18 @@ def create_swdo_manage_account(request):
 
 
 
+@login_required(login_url='login')
 def edit_account_view(request, account_id):
     if request.method == 'GET':
         try: 
             print(account_id)
             account = get_object_or_404(Account, user__id=account_id)
             regions = list(Region.objects.filter(name=account.region).values())
-            provinces = list(Province.objects.filter(region_id = Province.objects.filter(name=account.province).values('region_id').first()['region_id']).values())
+            provinces = list(
+                Province.objects.filter(
+                    Q(region_id=10) | Q(name__icontains='Sulu')
+                ).values()
+            )
             cities = list(Municipality.objects.filter(province_id = Municipality.objects.filter(name=account.city).values('province_id').first()['province_id']).values())
             barangays = list(Barangay.objects.filter(municipality_id = Barangay.objects.filter(name=account.barangay).values('municipality_id').first()['municipality_id']).values())
             
@@ -778,6 +800,7 @@ def edit_account_view(request, account_id):
             return JsonResponse({'success': False, 'message': str(e)})
 
 
+@login_required(login_url='login')
 def edit_law_enforcement_account_view(request, account_id):
     if request.method == 'GET':
         try: 
@@ -861,6 +884,7 @@ def edit_healthcare_account_view(request, account_id):
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
 
+@login_required(login_url='login')
 def edit_swdo_account_view(request, account_id):
     if request.method == 'GET':
         try: 
@@ -965,8 +989,9 @@ def create_account(request):
                     city=city,
                     barangay=barangay
                 )
-            except:
-                pass
+            except Exception as e:
+                account.delete()
+                return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
 
@@ -1027,8 +1052,9 @@ def create_law_enforcement_account(request):
                     province=province, 
                     station=station
                 )
-            except:
-                pass
+            except Exception as e:
+                account.delete()
+                return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
 
@@ -1089,8 +1115,9 @@ def create_healthcare_account(request):
                     province=province, 
                     hospital_name=hospital_name
                 )
-            except:
-                pass
+            except Exception as e:
+                account.delete()
+                return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
 
@@ -1411,6 +1438,13 @@ def get_all_notification_admin(request):
 
     # Return JSON response with list of dictionaries and flag indicating unread notifications
     return JsonResponse({'notifications': notifications_list, 'unread_notifications_exist': unread_notifications_exist})
+@login_required
+def law_enforcement_view_case_behalf(request):
+    pass
+
+@login_required
+def law_enforcement_view_case_impacted(request):
+    pass
 
 @login_required
 def barangay_dashboard_view (request):
@@ -1955,14 +1989,26 @@ def login_with_otp(request):
         user_authenticated = authenticate(request, username=email, password=passkey)
 
         if user_authenticated:
-            otp = generate_otp()
-            request.session['otp'] = otp
-            request.session['user_email'] = email
-            otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
-            request.session['otp_expiry'] = otp_expiry.isoformat()
-            print(otp)
-            send_otp_email(email, otp)
-            return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
+            if getattr(settings, 'ENABLE_OTP', True):
+                otp = generate_otp()
+                request.session['otp'] = otp
+                request.session['user_email'] = email
+                otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
+                request.session['otp_expiry'] = otp_expiry.isoformat()
+                send_otp_email(email, otp)
+                return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
+            else:
+                login(request, user_authenticated)
+                account_type = None
+                if hasattr(user_authenticated, 'account'):
+                    account_type = user_authenticated.account.type
+                elif hasattr(user_authenticated, 'lawenforcementaccount'):
+                    account_type = 'law_enforcement'
+                elif hasattr(user_authenticated, 'swdoaccount'):
+                    account_type = 'swdo'
+                elif hasattr(user_authenticated, 'healthcareaccount'):
+                    account_type = 'healthcare'
+                return JsonResponse({'success': True, 'message': 'Login successful. OTP disabled.', 'otp_bypassed': True, 'account_type': account_type})
         else:       
             return JsonResponse({'success': False, 'message': 'Invalid password. Please try again.'})
 
@@ -2064,6 +2110,7 @@ def email_confirm(request):
         result = r.json()
         # return JsonResponse({'result': result})
         if not result['success']:
+            print(result)
             return JsonResponse({'success': False, 'message': 'reCAPTCHA validation failed, please try again'})
         
         email = request.POST.get('contactConfirm')
@@ -2198,7 +2245,9 @@ def impact_victim_view (request):
         'site_key': recaptcha['site_key'],
         'twilio_type': twilio_type,
         'default_regions': Region.objects.filter(id=region_id),
-        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_provinces': Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu') # default provinces include region IX and sulu
+        ),
         'default_cities': Municipality.objects.filter(province_id=province_id),
         'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
         })
@@ -2219,7 +2268,9 @@ def behalf_victim_view (request):
         'site_key': recaptcha['site_key'],
         'twilio_type': twilio_type,
         'default_regions': Region.objects.filter(id=region_id),
-        'default_provinces': Province.objects.filter(region_id=region_id),
+        'default_provinces': Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu') # default provinces include region IX and sulu
+        ),
         'default_cities': Municipality.objects.filter(province_id=province_id),
         'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
         })
@@ -2460,6 +2511,7 @@ def get_contact_person_data(post_data):
     }
     return contact_person_data
 
+@login_required(login_url='login')
 def add_new_case(request):
     dummy_encrypted = "gAAAAABl-UOp4RWQLPLraFI_q80Ogmfk-Epd8K-CA9zHzYoc1FMwc7tnLv8hTBWTvjlmwjr866FtvBwRZjPXWKBEo3SPvHOU6g=="
 
@@ -2471,8 +2523,13 @@ def add_new_case(request):
         email = request.POST.get('email')
         type_of_case = request.POST.get('case_type')
         service_information = request.POST.get('service_type')
-        barangay = request.POST.get('barangay')
-
+        
+        # case providers
+        barangay = request.POST.get('barangay') or None
+        hospital_name = request.POST.get('hospital_name') or None
+        station = request.POST.get('station') or None
+        swdo = request.POST.get('swdo') or None
+        
         print('barangay encrypted:', encrypt_data(barangay))
         print('barangay decrypted:', barangay)
         case_data = {
@@ -2481,15 +2538,47 @@ def add_new_case(request):
             'date_latest_incident': dummy_text,
             'place_of_incident': dummy_text,
             'street': dummy_text,
-            'barangay': barangay,
+            'barangay': dummy_text,
             'province': dummy_text,
             'city': dummy_text,
             'region': dummy_text,
             'description_of_incident': dummy_text,
             'service_information': service_information,
             'type_of_case': type_of_case,  # Collecting type of case from the form
-            'date_added': timezone.now()
+            'date_added': timezone.now(),
+            # SWDO fields
+            'refers_to_social_welfare': False,
+            'refer_social_date': None,
+            # healthcare fields ( will be blank if no hospital name is provided )
+            'refers_to_healthcare_provider': False,
+            'refer_healthcare_date': None,
+            'healthcare_provider_name': "",
+            # law-enfrocement fields
+            'refers_to_law_enforcement': False,
+            'refer_law_enforcement_date': None,
+            'law_enforcement_agency_name': "",
         }
+        
+        if(barangay):
+            case_data['barangay'] = barangay
+        
+        # fill out healthcare fields if hospital_name is provided ( assumes case came from healthcare provider )
+        if(hospital_name):
+            case_data['refers_to_healthcare_provider'] = True
+            case_data['refer_healthcare_date'] = timezone.now()
+            case_data['healthcare_provider_name'] = hospital_name
+        
+        # fill out station fields if station is provided ( assumes case came from law_enforcement provider)
+        if(station):
+            case_data['refers_to_law_enforcement'] = True
+            case_data['refer_law_enforcement_date'] = timezone.now()
+            case_data['law_enforcement_agency_name'] = station
+        
+        # fill out swdo fields if swdo name is provided ( assumes case came from swdo provider )
+        if(swdo):
+            case_data['refers_to_social_welfare'] = True
+            case_data['refer_social_date'] = timezone.now()
+            
         case_instance = Case.objects.create(**case_data)
         
         victim_data = {
@@ -2576,7 +2665,7 @@ def add_new_case(request):
     #         return JsonResponse({'success': False, 'error': str(e)})
     # else:
     #     return HttpResponse("Method not allowed", status=405)
-
+    
 @login_required
 def view_admin_case_behalf(request, case_id):
     if request.user.account.type != 'admin':
@@ -2719,7 +2808,9 @@ def view_admin_case_behalf(request, case_id):
             'latest_status_history': latest_status_history,
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
-            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_provinces': Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu') # default provinces include region IX and sulu
+            ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
             'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
@@ -2835,7 +2926,9 @@ def view_admin_case_impact(request, case_id):
             'latest_status_history': latest_status_history,
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
-            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_provinces':  Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu') # add filter to include sulu as a region
+            ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
             'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
@@ -2990,7 +3083,9 @@ def view_case_behalf(request, case_id):
             'latest_status_history': latest_status_history,
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
-            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_provinces':  Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu') # add filter to include sulu as a region
+            ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
             'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
@@ -3111,7 +3206,9 @@ def view_case_impact(request, case_id):
             'latest_status_history': latest_status_history,
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
-            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_provinces': Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu') # add filter to include sulu as a region
+            ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
             'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
@@ -3272,7 +3369,9 @@ def view_enforcement_case_behalf(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -3389,7 +3488,9 @@ def view_enforcement_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -3555,6 +3656,7 @@ def save_victim_data(request, victim_id):
         return JsonResponse({'success': False, 'message': str(e)})
 
 @require_POST
+@login_required(login_url='login')
 def add_new_victim(request):
     try:
         case_id = request.POST.get('case_id')
@@ -3621,6 +3723,7 @@ def add_new_victim(request):
         return JsonResponse({'success': False, 'message': str(e)})
 
 @require_POST
+@login_required(login_url='login')
 def add_new_perpetrator(request):
     try:
         case_id = request.POST.get('case_id')
@@ -3728,6 +3831,7 @@ def save_perpetrator_data(request, perpetrator_id):
         return JsonResponse({'success': False, 'message': str(e)})
 
 @require_POST
+@login_required(login_url='login')
 def delete_perpetrator(request):
     perpetrator_id = request.POST.get('perpetrator_id')
     perpetrator = get_object_or_404(Perpetrator, id=perpetrator_id)
@@ -3735,6 +3839,7 @@ def delete_perpetrator(request):
     return JsonResponse({'success': True, 'message': 'Perpetrator and related Parents deleted successfully'})
 
 @require_POST
+@login_required(login_url='login')
 def delete_case(request):
     case_id = request.POST.get('case_id')
     print('Case ID:', case_id)
@@ -4230,6 +4335,7 @@ def delete_parent_perp(request):
 
 
 @require_POST
+@login_required(login_url='login')
 def delete_victim(request):
     if request.method == 'POST':
         victim_id = request.POST.get('victim_id')
@@ -4502,6 +4608,7 @@ def process_service_info(request):
         # Return a JSON response indicating failure
         return JsonResponse({'error': 'Invalid request method.'})
 
+@login_required(login_url='login')
 def refer_law_enforcement(request):
     if request.method == 'POST':
         case_id = request.POST.get('case_id')
@@ -4542,6 +4649,7 @@ def refer_law_enforcement(request):
         return JsonResponse({'error': 'Invalid request method.'})
 
 
+@login_required(login_url='login')
 def refer_SWDO(request):
     if request.method == 'POST':
         case_id = request.POST.get('case_id')
@@ -4576,6 +4684,7 @@ def refer_SWDO(request):
         return JsonResponse({'error': 'Invalid request method.'})
 
 
+@login_required(login_url='login')
 def refer_healthcare(request):
     if request.method == 'POST':
         case_id = request.POST.get('case_id')
@@ -4610,6 +4719,7 @@ def refer_healthcare(request):
         # Return a JSON response indicating failure
         return JsonResponse({'error': 'Invalid request method.'})        
     
+@login_required(login_url='login')
 def add_status(request, case_id):
     if request.method == 'POST':
         try:
@@ -4654,6 +4764,7 @@ def add_status(request, case_id):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
+@login_required(login_url='login')
 def edit_status(request, status_id):
     if request.method == 'GET':
         try:
@@ -4679,6 +4790,7 @@ def edit_status(request, status_id):
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
 
+@login_required(login_url='login')
 def delete_status(request, status_id):
     if request.method == 'POST':
         try:
@@ -4692,6 +4804,7 @@ def delete_status(request, status_id):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
+@login_required(login_url='login')
 def update_case_status(request, case_id):
     if request.method == 'POST':
         new_status = request.POST.get('status_case')  # Get the new status from the form data
@@ -4792,7 +4905,9 @@ def ph_address(request):
         if data.get('action') == 'province':
             filter_value = data.get('filter')
             region = Region.objects.get(code=filter_value)
-            provinces = Province.objects.filter(region=region).order_by('name').values('code', 'name')
+            
+            provinces = Province.objects.filter(Q(region=region) | Q(name__icontains='Sulu')).order_by('name').values('code', 'name')
+            # provinces = Province.objects.filter(region=region).order_by('name').values('code', 'name')
             return JsonResponse(list(provinces), safe=False)
         elif data.get('action') == 'city':
             filter_value = data.get('filter')
@@ -4817,9 +4932,17 @@ def get_police_station(request):
 
         if action == "province":
             region_name = request.POST.get("region")
-            provinces = PoliceStations.objects.filter(
-                region=region_name
-            ).values_list("province", flat=True).distinct().order_by("province")
+            
+            # Check if the requested region is Region IX 
+            # (Note: Adjust 'Region IX' or '10' to match the exact string or ID your frontend sends)
+            if region_name in ['Region IX', 'Region 9', '10']: 
+                provinces = PoliceStations.objects.filter(
+                    Q(region=region_name) | Q(province__icontains='Sulu')
+                ).values_list("province", flat=True).distinct().order_by("province")
+            else:
+                provinces = PoliceStations.objects.filter(
+                    Q(region=region_name) | Q(province__icontains='Sulu')
+                ).values_list("province", flat=True).distinct().order_by("province")
             
             data = [{"name": province} for province in provinces]
             return JsonResponse(data, safe=False)
@@ -4834,7 +4957,6 @@ def get_police_station(request):
             return JsonResponse(data, safe=False)
 
     return JsonResponse([], safe=False)
-
 
 
 @login_required
@@ -4980,10 +5102,14 @@ def view_SWDO_case_behalf(request, case_id):
             'latest_status_history': latest_status_history,
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
-            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_provinces': Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu')
+            ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5096,10 +5222,14 @@ def view_SWDO_case_impact(request, case_id):
             'latest_status_history': latest_status_history,
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
-            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_provinces': Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu')
+            ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5200,7 +5330,8 @@ def view_healthcare_case_impact(request, case_id):
                 perpetrator.educational_attainment = encrypt_data(perpetrator.educational_attainment)
                 perpetrator.occupation = encrypt_data(perpetrator.occupation)
                 perpetrator.city = encrypt_data(perpetrator.city)
-                
+        
+                    
 
         # Render the view-case.html template with the case and related objects as context
         
@@ -5218,10 +5349,14 @@ def view_healthcare_case_impact(request, case_id):
             'latest_status_history': latest_status_history,
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
-            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_provinces': Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu')
+            ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5247,7 +5382,7 @@ def view_healthcare_case_behalf(request, case_id):
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
         status_history = Status_History.objects.filter(case_status_history=case)
         witnesses = Witness.objects.filter(case_witness=case)
-    
+        hospitals = HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct().order_by('hospital_name')
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
@@ -5365,8 +5500,7 @@ def view_healthcare_case_behalf(request, case_id):
         
         region_id = 10 # region 9
         province_id = 50 # zamboanga del sur
-        municipality_id = 1133 # zamboanga city
-
+        municipality_id = 1133 # zamboanga city        
         return render(request, 'healthcare-admin/case/view-case-behalf.html', {
             'case': case,
             'contact_persons': contact_persons,
@@ -5378,9 +5512,14 @@ def view_healthcare_case_behalf(request, case_id):
             'latest_status_history': latest_status_history,
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
-            'default_provinces': Province.objects.filter(region_id=region_id),
+            'default_provinces': Province.objects.filter(
+                Q(region_id=region_id) | Q(name__icontains='Sulu')
+            ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': hospitals,
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5408,6 +5547,7 @@ def lawEnforcement_dashboard_view(request):
     })
         
 
+@login_required(login_url='login')
 def LawEnforcement_dashboard_data(request, get_year):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
@@ -5677,6 +5817,7 @@ def SWDO_dashboard_view(request):
     })
         
 
+@login_required(login_url='login')
 def SWDO_dashboard_data(request, get_year):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})

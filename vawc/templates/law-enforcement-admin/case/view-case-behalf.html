@@ -23,7 +23,7 @@
         <div class="col-lg-8 col-12">
             <h2>Case Number: {{ case.case_number }} <span class="h5">(Date Added:{{ case.date_added }})</span>  </h2>
         </div>
-        {% if global.security_status == "decrypted" %}
+        {% if True %}
             <div class="d-grid gap-2 col-lg-2 col-12 mx-auto mb-lg-0 mb-2">
                 <a href="{% url 'pdf case' case_id=case.id %}" class="btn btn-info d-flex align-items-center justify-content-center" target="_blank">
                     <i class='bx bxs-file-pdf me-3'></i>
@@ -32,7 +32,7 @@
             </div>
         {% endif %}
         <div class="d-grid gap-2 mx-auto d-grid gap-2  mx-auto col-lg-2">
-            <button class="btn btn-danger btn-confirm-delete-case" data-case-id="{{ case.id }}" data-bs-toggle="modal" data-bs-target="#confirmDeletCase" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+            <button class="btn btn-danger btn-confirm-delete-case" data-case-id="{{ case.id }}" data-bs-toggle="modal" data-bs-target="#confirmDeletCase" {% if False %}disabled{% endif %}>
                 <i class='bx bx-trash me-2'></i>
                 Delete Case
             </button>
@@ -122,16 +122,16 @@
                         <div class="col-6">
                             <div class="d-flex align-items-center">
                                 <h4><strong>CASE STATUS:</strong></h4>
-                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active" id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %} data-status="Active" disabled>
+                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active" id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %} data-status="Active">
                                 <label class="btn btn-outline-primary mx-2" for="option1">Active</label>
 
-                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close" id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %} data-status="Close" disabled>
+                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close" id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %} data-status="Close">
                                 <label class="btn btn-outline-primary" for="option2">Closed</label>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-floating mb-3">
-                                <input type="date" class="form-control" id="date_closed" name="date_closed" placeholder="name@example.com"  value="{{ case.date_closed|date:'Y-m-d' }}" disabled>
+                                <input type="date" class="form-control" id="date_closed" name="date_closed" placeholder="name@example.com"  value="{{ case.date_closed|date:'Y-m-d' }}" >
                                 <label for="date_closed">Date Closed</label>
                             </div>
                         </div>
@@ -190,8 +190,36 @@
 
                             <div class="row">
                                 <div class="d-flex flex-column align-items-start">
+
+                                    <div class="row w-100 mb-3 flex">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-floating mb-3">
+                                                <select id="name_of_province" name="name_of_province" class="form-select" disabled>
+                                                    <option value="" {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                                    {% for station in default_stations_provinces %}
+                                                    <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
+                                                        {{ station }}
+                                                    </option>
+                                                    {% empty %}
+                                                    <option>No Province found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <label id="name_of_province_label" for="name_of_province">Province</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-floating mb-3">
+                                                <select id="name_of_agency" name="name_of_agency" class="form-select" disabled>
+                                                    {% if case.law_enforcement_agency_name %}
+                                                        <option value="{{ case.law_enforcement_agency_name }}" selected>{{ case.law_enforcement_agency_name }}</option>
+                                                    {% endif %}
+                                                </select>
+                                                <label id="name_of_agency_label" for="name_of_agency">Station</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <h5>Barangay Remark:</h5>
-                                    <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" {% if global.security_status == "encrypted" %}disabled{% endif %}>{% if case.remarks_to_law_enforcement %}{{ case.remarks_to_law_enforcement }}{% else %} No Remark.{% endif %}</textarea>
+                                    <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" {% if False %}disabled{% endif %}>{% if case.remarks_to_law_enforcement %}{{ case.remarks_to_law_enforcement }}{% else %} No Remark.{% endif %}</textarea>
                                 </div><!--end of col-->
                             </div><!--end of row-->
 
@@ -268,7 +296,200 @@
                                 <button class="btn btn-primary" id="btn-save-service" type="submit">Update</button>
                             </div>
                         </form>
-                    </div><!--end of container-->
+                                            <form id="form-refer-healthcare" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="case_id" value="{{ case.id }}">
+                            <input type = "hidden" class="form-control" type="date" name="refer_healthcare_date" id="refer_healthcare_date"  value="{% if case.refer_healthcare_date %}{{ case.refer_healthcare_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
+
+                            <div class="row pt-4">
+                                <div class="col-12">
+                                    <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="refer_healthcare" id="refer_healthcare" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %}>
+                                            <label class="form-check-label" for="refer_healthcare"><strong>
+                                                {% if case.refers_to_healthcare_provider %}
+                                                    <h4>Referred to healthcare Office</h4>
+                                                {% else %}
+                                                    <h4>Refer to healthcare Office</h4>
+                                                {% endif %}
+                                            </strong>
+                                            </label>
+                                    </div>
+                                    <div class="col mb-3">{% if case.refer_healthcare_date %}Date Referred : <strong>{{ case.refer_healthcare_date|date:'M j, Y' }}</strong>{% endif %}</div>
+
+                                    <div class="form-floating mb-3">
+                                        <select id="name_of_hospital" name="name_of_hospital" class="form-select">
+                                            <option value="" {% if not case.healthcare_provider_name %}selected{% endif %}>--Select Option--</option>
+                                            {% for hospital in hospitals %}
+                                                <option value="{{ hospital }}" {% if case.healthcare_provider_name == hospital %}selected{% endif %}>
+                                                    {{ hospital }}
+                                                </option>
+                                            {% empty %}
+                                                <option>No Hospital found</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label style="font-size: small;" id="name_of_hospital_label" for="name_of_hospital">Hospital</label>
+                                    </div>
+
+                                </div>
+
+                            </div><!--end of row-->
+
+                            {% comment %} <div class="row  pt-1">
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}>
+                                        <label class="form-check-label" for="provision">
+                                            Provision of appropriate medical treatment
+                                        </label>
+                                    </div>
+                                    
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+
+                            {% comment %} <div class="row  pt-1">
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}>
+                                        <label class="form-check-label" for="provision">
+                                            Provision of appropriate medical treatment
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}>
+                                        <label class="form-check-label" for="issuance_medical_cert">
+                                        Issuance of medical certificate
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                                <div class="col-lg-4 vol-md-4 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}>
+                                        <label class="form-check-label" for="medico_legal">
+                                            Medico-legal Exam
+                                        </label>
+                                    </div>
+                                </div><!--end of col--> 
+                            </div><!--end of row-->{% endcomment %}
+
+                            <h5 class="mt-3"> Additional Remarks</h5>
+                            <div class="col-lg-12 vol-md-12 col-sm-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control"
+                                            id="remarks_healthcare"
+                                            name="remarks_healthcare"
+                                            rows="3"
+                                            placeholder="Input any remarks for the Healthcare"
+                                            >{{ case.remarks_to_healthcare|default_if_none:"" }}</textarea>
+                                    <label for="remarks_healthcare">Remarks to Healthcare</label>
+                                </div>
+                            </div><!--end of col-->
+                            
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary" id="btn-submit-healthcare" type="submit">{% if case.refers_to_healthcare_provider %}Update{% else %}Send{% endif %}</button>
+                            </div>
+
+
+                        </form>
+                        <hr>
+
+
+                        <div id="SWDO-update" class="row pt-4" >
+                            <h4 class="text-left">Social Welfare and Development Office Update</h4>
+                            <p> Date Updated : {{ case.refer_to_barangay_from_social_date }}</p>
+
+                            <div class="row pt-1 pb-3 ps-3">
+                                <div class="col-lg-6 vol-md-6 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}>
+                                        <label class="form-check-label" for="psych_service">
+                                            Psychosocial services
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                                <div class="col-lg-6 vol-md-6 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}>
+                                        <label class="form-check-label" for="emergency_shelter">
+                                            Emergency Shelter
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                                <div class="col-lg-6 vol-md-6 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %}>
+                                        <label class="form-check-label" for="economic_assist">
+                                            Economic Assistance
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                                <div class="col-lg-6 vol-md-6 col-sm-8">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="SWDO_other" id="SWDO_other" value="true" {% if case.SWDO_other %} checked {% endif %}>
+                                        <label class="form-check-label" for="SWDO_other">
+                                            Other
+                                        </label>
+                                    </div>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+                            
+                            <div class="row">
+                                <div class="d-flex flex-column align-items-start">
+                                    <h5>SWDO Remark:</h5>
+                                    <textarea class="form-control" id="remark_to_barangay_from_SWDO" name="remark_to_barangay_from_SWDO" rows="3">{% if case.remark_to_barangay_from_SWDO %}{{ case.remark_to_barangay_from_SWDO }}{% else %}No Remark.{% endif %}</textarea>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+                        </div>
+
+                        <form id="form-refer-SWDO" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="case_id" value="{{ case.id }}">
+                            <input type = "hidden" class="form-control" type="date" name="refer_social_date" id="refer_social_date"  value="{% if case.refer_social_date %}{{ case.refer_social_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
+                            <input type="hidden" name="brgy_to_SWDO_form" value="true">
+
+                            
+                            <div class="row pt-4">
+                                <div class="col-lg-12 col-md-12 col-sm-8">
+                                    <div class="row d-flex align-items-center">
+                                        <div class="col">
+                                            <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="refer_SWDO" id="refer_SWDO" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}>
+                                                    <label class="form-check-label" for="refer_SWDO"><strong>
+                                                        {% if case.refers_to_social_welfare %}
+                                                            <h4>Referred to Social Welfare and Development Office</h4>
+                                                        {% else %}
+                                                            <h4>Refer to Social Welfare and Development Office</h4>
+                                                        {% endif %}
+                                                    </strong>
+                                                    </label>
+                                            </div>
+                                            <div class="col">{% if case.refer_social_date %}Date Referred : <strong>{{ case.refer_social_date|date:'M j, Y' }}</strong>{% endif %}</div>
+                                        </div>
+                                    </div>
+                                </div><!--end of col-->
+                            </div><!--end of row-->
+                            
+                        <h5 class="pt-3"> Additional Remarks</h5>
+                            <div class="col-lg-12 vol-md-12 col-sm-12">
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control"
+                                            id="remarks_SWDO"
+                                            name="remarks_SWDO"
+                                            rows="3"
+                                            placeholder="Input any remarks for the Social Welfare and Development Office"
+                                            >{{ case.remarks_to_social_welfare|default_if_none:"" }}</textarea>
+                                    <label for="remarks_SWDO">Remarks to Social Welfare and Development Office</label>
+                                </div>
+                            </div><!--end of col-->
+                        
+                        
+                            <div class="d-flex justify-content-end just">
+                                    <button class="btn btn-primary mb-3" id="btn-submit-SWDO" type="submit">{% if case.refers_to_social_welfare %}Update{% else %}Send{% endif %}</button>
+                            </div>
+                        </form>
+
+</div><!--end of container-->
 
                 </div><!--end of case info-->
             </div><!--end of container-->
@@ -287,7 +508,7 @@
                         {% endif %}
                     {% endfor %}
                     <hr class="my-lg-0  mt-0">
-                    {% if global.security_status == "decrypted" %}
+                    {% if True %}
                         <button class="btn btn-primary mt-lg-4" data-bs-toggle="modal" data-bs-target="#addVictimModal">
                             <i class="bx bx-plus-circle" style="vertical-align: middle;"></i>
                             <span>Add Victim</span>
@@ -300,7 +521,7 @@
                     {% for victim in victims %}
                     <div class="tab-pane fade {% if forloop.first %}show active{% endif %} h-100" id="v-pills-victim-{{ forloop.counter }}" role="tabpanel" aria-labelledby="v-pills-victim-{{ forloop.counter }}-tab" tabindex="0">
                         <div class="container-fluid h-100">
-                            {% if global.security_status == "decrypted" %}
+                            {% if True %}
                             <div class="row d-flex justify-content-between mb-3 mt-lg-0 mt-2">
                                 <button class="btn btn-danger me-2 btn-confirm-delete-victim col-lg-4 col-12" data-victim-id="{{ victim.id }}" data-bs-toggle="modal" data-bs-target="#confirmVictimDelete">
                                     <i class='bx bx-trash'></i>
@@ -314,26 +535,26 @@
                                     <div class="row">
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="victim_first_name_{{ victim.id }}" name="victim_first_name_{{ victim.id }}" value="{{ victim.first_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="victim_first_name_{{ victim.id }}" name="victim_first_name_{{ victim.id }}" value="{{ victim.first_name }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_first_name_{{ victim.id }}">First Name</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="victim_middle_name_{{ victim.id }}" name="victim_middle_name_{{ victim.id }}" value="{{ victim.middle_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="victim_middle_name_{{ victim.id }}" name="victim_middle_name_{{ victim.id }}" value="{{ victim.middle_name }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_middle_name_{{ victim.id }}">Middle Name</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="victim_last_name_{{ victim.id }}" name="victim_last_name_{{ victim.id }}" value="{{ victim.last_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="victim_last_name_{{ victim.id }}" name="victim_last_name_{{ victim.id }}" value="{{ victim.last_name }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_last_name_{{ victim.id }}">Last Name</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="victim_suffix_name_{{ victim.id }}" name="victim_suffix_name_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select class="form-select" id="victim_suffix_name_{{ victim.id }}" name="victim_suffix_name_{{ victim.id }}" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="none" {% if victim.suffix == 'none' %}selected{% endif %}>N/A</option>
                                                         <option value="sr" {% if victim.suffix == 'sr' %}selected{% endif %}>Sr</option>
                                                         <option value="jr" {% if victim.suffix == 'jr' %}selected{% endif %}>Jr</option>
@@ -355,7 +576,7 @@
                                                     class="form-select" 
                                                     id="victim_sex_{{ victim.id }}" 
                                                     name="victim_sex_{{ victim.id }}" 
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    {% if False %}disabled{% endif %}>
                                                     
                                                     <!-- Add a placeholder option -->
                                                     <option value="" {% if not victim.sex %}selected{% endif %}>--Select--</option>
@@ -377,8 +598,8 @@
                                         </div><!--End of col-->
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="victim_type_of_disability_{{ victim.id }}" name="victim_type_of_disability_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select class="form-select" id="victim_type_of_disability_{{ victim.id }}" name="victim_type_of_disability_{{ victim.id }}" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="" {% if not victim.type_of_disability %}selected{% endif %}>--Select--</option>
                                                         <option value="none" {% if victim.type_of_disability == 'none' %}selected{% endif %}>N/A</option>
                                                         <option value="With Disability" {% if victim.type_of_disability == 'With Disability' %}selected{% endif %}>With Disability</option>
@@ -394,7 +615,7 @@
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
 
-                                                {% if global.security_status == "decrypted" %}
+                                                {% if True %}
                                                     <input type="date" class="form-control" id="victim_date_of_birth_{{ victim.id }}" name="victim_date_of_birth_{{ victim.id }}" value="{{ victim.date_of_birth }}">
                                                 {% else %}
                                                     <input type="date" class="form-control" id="victim_date_of_birth_{{ victim.id }}" name="victim_date_of_birth_{{ victim.id }}" value="2000-01-01" disabled>
@@ -405,8 +626,8 @@
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="victim_civil_status_{{ victim.id }}" name="victim_civil_status_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select class="form-select" id="victim_civil_status_{{ victim.id }}" name="victim_civil_status_{{ victim.id }}" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="" {% if not victim.civil_status %}selected{% endif %}>--Select--</option>
                                                         <option value="single" {% if victim.civil_status == 'none' %}selected{% endif %}>Single</option>
                                                         <option value="married" {% if victim.civil_status == 'married' %}selected{% endif %}>Married</option>
@@ -425,7 +646,7 @@
                                         <!--contact num-->
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="{% if global.security_status == 'encrypted' %}text{% else %}number{% endif %}" class="form-control" id="victim_contact_number_{{ victim.id }}" name="victim_contact_number_{{ victim.id }}" value="{{ victim.contact_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="{% if False %}text{% else %}number{% endif %}" class="form-control" id="victim_contact_number_{{ victim.id }}" name="victim_contact_number_{{ victim.id }}" value="{{ victim.contact_number }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_contact_number_{{ victim.id }}">Contact Number</label>
                                             </div>
                                         </div>
@@ -433,20 +654,20 @@
                                         <!--telephone num-->
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="{% if global.security_status == 'encrypted' %}text{% else %}number{% endif %}" class="form-control" id="victim_telephone_number_{{ victim.id }}" name="victim_telephone_number_{{ victim.id }}" value="{{ victim.telephone_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="{% if False %}text{% else %}number{% endif %}" class="form-control" id="victim_telephone_number_{{ victim.id }}" name="victim_telephone_number_{{ victim.id }}" value="{{ victim.telephone_number }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_telephone_number_{{ victim.id }}">Telephone Number</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="{% if global.security_status == 'encrypted' %}text{% else %}number{% endif %}" class="form-control" id="victim_number_children_{{ victim.id }}" name="victim_number_children_{{ victim.id }}" value="{{ victim.number_of_children  }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="{% if False %}text{% else %}number{% endif %}" class="form-control" id="victim_number_children_{{ victim.id }}" name="victim_number_children_{{ victim.id }}" value="{{ victim.number_of_children  }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_number_children_{{ victim.id }}">Number of Children</label>
                                             </div>
                                         </div>
 
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="{% if global.security_status == 'encrypted' %}text{% else %}text{% endif %}" class="form-control" id="victim_ages_children_{{ victim.id }}" name="victim_ages_children_{{ victim.id }}" value="{{ victim.ages_of_children }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="{% if False %}text{% else %}text{% endif %}" class="form-control" id="victim_ages_children_{{ victim.id }}" name="victim_ages_children_{{ victim.id }}" value="{{ victim.ages_of_children }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_ages_children_{{ victim.id }}">Ages of Children</label>
                                             </div>
                                         </div>
@@ -455,8 +676,8 @@
                                     <div class="row">
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="victim_educational_attainment_{{ victim.id }}" name="victim_educational_attainment_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select class="form-select" id="victim_educational_attainment_{{ victim.id }}" name="victim_educational_attainment_{{ victim.id }}" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="" {% if not victim.educational_attainment %}selected{% endif %}>--Select--</option>
                                                         <option value="none"{% if victim.educational_attainment == 'none' %}selected{% endif %}>None</option>
                                                         <option value="highschool"{% if victim.educational_attainment == 'highschool' %}selected{% endif %}>High School Level</option>
@@ -475,7 +696,7 @@
                                         <div class="col-lg-3 mb-3">
                                             
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="victim_occupation_{{ victim.id }}" name="victim_occupation_{{ victim.id }}" value="{{ victim.occupation}}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="victim_occupation_{{ victim.id }}" name="victim_occupation_{{ victim.id }}" value="{{ victim.occupation}}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_occupation_{{ victim.id }}">Occupation</label>
                                             </div>
                                         </div>
@@ -485,7 +706,7 @@
                                                     class="form-select" 
                                                     id="victim_nationality_{{ victim.id }}" 
                                                     name="victim_nationality_{{ victim.id }}" 
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    {% if False %}disabled{% endif %}>
                                                     
                                                     <!-- Placeholder Option -->
                                                     <option value="" {% if not victim.nationality %}selected{% endif %}>--Select--</option>
@@ -512,8 +733,8 @@
                                         </div>                                        
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="victim_religion_{{ victim.id }}" name="victim_religion_{{ victim.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select class="form-select" id="victim_religion_{{ victim.id }}" name="victim_religion_{{ victim.id }}" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="none" {% if victim.religion == 'none' %}selected{% endif %}>None</option>
                                                         <option value="roman-catholic" {% if victim.religion == 'roman-catholic' %}selected{% endif %}>Roman Catholic</option>
                                                         <option value="islam" {% if victim.religion == 'islam' %}selected{% endif %}>Islam</option>
@@ -536,7 +757,7 @@
                                                     id="victim_region_{{ victim.id }}"
                                                     name="victim_region_{{ victim.id }}"
                                                     data-selected="{{ victim.region }}"
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    {% if False %}disabled{% endif %}>
                                                     <option value="">--Select Option--</option>
                                                     {% for region in default_regions %}
                                                         <option value="{{ region.name }}" data-code="{{ region.code }}"
@@ -557,7 +778,7 @@
                                                     id="victim_province_{{ victim.id }}"
                                                     name="victim_province_{{ victim.id }}"
                                                     data-selected="{{ victim.province }}"
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
                                                         <option value="{{ province.name }}" data-code="{{ province.code }}"
@@ -578,7 +799,7 @@
                                                     id="victim_city_{{ victim.id }}"
                                                     name="victim_city_{{ victim.id }}"
                                                     data-selected="{{ victim.city }}"
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
                                                         <option value="{{ city.name }}" data-code="{{ city.code }}"
@@ -599,7 +820,7 @@
                                                     id="victim_barangay_{{ victim.id }}"
                                                     name="victim_barangay_{{ victim.id }}"
                                                     data-selected="{{ victim.barangay }}"
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
                                                         <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
@@ -617,20 +838,20 @@
                                     <div class="row">
                                         <div class="col-lg-6 col-md-12 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="victim_house_information_{{ victim.id }}" name="victim_house_information_{{ victim.id }}" value="{{ victim.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="victim_house_information_{{ victim.id }}" name="victim_house_information_{{ victim.id }}" value="{{ victim.house_information }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_house_information_{{ victim.id }}">House Information</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-6 col-md-12 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="victim_street_{{ victim.id }}" name="victim_street_{{ victim.id }}" value="{{ victim.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="victim_street_{{ victim.id }}" name="victim_street_{{ victim.id }}" value="{{ victim.street }}" {% if False %}disabled{% endif %}>
                                                 <label for="victim_street_{{ victim.id }}">Street</label>
                                             </div>
                                         </div><!--End of col-->
                                     </div><!--End of row-->
                                 </div>
                                 <div class="d-flex justify-content-end mt-lg-2 mt-2">
-                                    <button class="btn btn-primary save-btn-victim_{{ victim.id }}" id="save-btn-victim" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
+                                    <button class="btn btn-primary save-btn-victim_{{ victim.id }}" id="save-btn-victim" type="submit" {% if False %}disabled{% endif %}>Save</button>
                                 </div>
                             </form>
                         </div>
@@ -656,26 +877,26 @@
                     <div class="row pt-5">
                         <div class="col-lg-3 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_first_name_{{ contact_person.id }}" name="contact_person_first_name_{{ contact_person.id }}" value="{{ contact_person.first_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="contact_person_first_name_{{ contact_person.id }}" name="contact_person_first_name_{{ contact_person.id }}" value="{{ contact_person.first_name }}" {% if False %}disabled{% endif %}>
                                 <label for="contact_person_first_name_{{ contact_person.id }}">First Name</label>
                             </div>
                         </div>
                         <div class="col-lg-3 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_middle_name_{{ contact_person.id }}" name="contact_person_middle_name_{{ contact_person.id }}" value="{{ contact_person.middle_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="contact_person_middle_name_{{ contact_person.id }}" name="contact_person_middle_name_{{ contact_person.id }}" value="{{ contact_person.middle_name }}" {% if False %}disabled{% endif %}>
                                 <label for="contact_person_middle_name_{{ contact_person.id }}">Middle Name</label>
                             </div>
                         </div><!--End of col-->
                         <div class="col-lg-3 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_last_name_{{ contact_person.id }}" name="contact_person_last_name_{{ contact_person.id }}" value="{{ contact_person.last_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="contact_person_last_name_{{ contact_person.id }}" name="contact_person_last_name_{{ contact_person.id }}" value="{{ contact_person.last_name }}" {% if False %}disabled{% endif %}>
                                 <label for="contact_person_last_name_{{ contact_person.id }}">Last Name</label>
                             </div>
                         </div>
                         <div class="col-lg-3 mb-3">
                             <div class="form-floating">
-                                <select class="form-select" id="contact_person_suffix_name_{{ contact_person.id }}" name="contact_person_suffix_name_{{ contact_person.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    {% if global.security_status == "decrypted" %}
+                                <select class="form-select" id="contact_person_suffix_name_{{ contact_person.id }}" name="contact_person_suffix_name_{{ contact_person.id }}" {% if False %}disabled{% endif %}>
+                                    {% if True %}
                                         <option value="none" {% if contact_person.suffix == 'none' %}selected{% endif %}>N/A</option>
                                         <option value="sr" {% if contact_person.suffix == 'sr' %}selected{% endif %}>Sr</option>
                                         <option value="jr" {% if contact_person.suffix == 'jr' %}selected{% endif %}>Jr</option>
@@ -694,19 +915,19 @@
                     <div class="row pt-2">
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_relationship_{{ contact_person.id }}" name="contact_person_relationship_{{ contact_person.id }}" value="{{ contact_person.relationship }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="contact_person_relationship_{{ contact_person.id }}" name="contact_person_relationship_{{ contact_person.id }}" value="{{ contact_person.relationship }}" {% if False %}disabled{% endif %}>
                                 <label for="contact_person_relationship_{{ contact_person.id }}">Relationship to the Victim/s</label>
                             </div>
                         </div><!--end of col-->
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_contact-number_{{ contact_person.id }}" name="contact_person_contact-number_{{ contact_person.id }}" value="{{ contact_person.contact_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="contact_person_contact-number_{{ contact_person.id }}" name="contact_person_contact-number_{{ contact_person.id }}" value="{{ contact_person.contact_number }}" {% if False %}disabled{% endif %}>
                                 <label for="contact_person_contact-number_{{ contact_person.id }}">Contact No.</label>
                             </div>
                         </div><!--end of col-->
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_contact-tel_{{ contact_person.id }}" name="contact_person_contact-tel_{{ contact_person.id }}" value="{{ contact_person.telephone_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="contact_person_contact-tel_{{ contact_person.id }}" name="contact_person_contact-tel_{{ contact_person.id }}" value="{{ contact_person.telephone_number }}" {% if False %}disabled{% endif %}>
                                 <label for="contact_person_contact-tel_{{ contact_person.id }}">Telephone No.</label>
                             </div>
                         </div><!--end of col-->
@@ -717,7 +938,7 @@
                             <div class="form-floating">
                                 <select class="form-select" id="contact_person_region_{{ contact_person.id }}" name="contact_person_region_{{ contact_person.id }}"
                                 data-selected="{{ contact_person.region|default:'' }}"
-                                {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                {% if False %}disabled{% endif %}>
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
                                         <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == contact_person.region %}selected{% endif %}>
@@ -733,7 +954,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
                                 <select class="form-select" id="contact_person_province_{{ contact_person.id }}" name="contact_person_province_{{ contact_person.id }}"
-                                    data-selected="{{ contact_person.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    data-selected="{{ contact_person.province }}" {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
                                         <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == contact_person.province %}selected{% endif %}>
@@ -749,7 +970,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
                                 <select class="form-select" id="contact_person_city_{{ contact_person.id }}" name="contact_person_city_{{ contact_person.id }}"
-                                    data-selected="{{ contact_person.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    data-selected="{{ contact_person.city }}" {% if False %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
                                         <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == contact_person.city %}selected{% endif %}>
@@ -765,7 +986,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
                                 <select class="form-select" id="contact_person_barangay_{{ contact_person.id }}" name="contact_person_barangay_{{ contact_person.id }}"
-                                    data-selected="{{ contact_person.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    data-selected="{{ contact_person.barangay }}" {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Barangay --</option>
                                     {% for barangay in default_barangays %}
                                         <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == contact_person.barangay %}selected{% endif %}>
@@ -780,19 +1001,19 @@
                         </div><!--end of col-->
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_street_{{ contact_person.id }}" name="contact_person_contact-street_{{ contact_person.id }}" value="{{ contact_person.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="contact_person_street_{{ contact_person.id }}" name="contact_person_contact-street_{{ contact_person.id }}" value="{{ contact_person.street }}" {% if False %}disabled{% endif %}>
                                 <label for="contact_person_street_{{ contact_person.id }}">Street</label>
                             </div>
                         </div><!--end of col-->
                         <div class="col-lg-4 col-md-4 col-sm-12 pb-2">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="contact_person_bldg_no_{{ contact_person.id }}" name="contact_person_bldg_no_{{ contact_person.id }}" value="{{ contact_person.bldg_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="contact_person_bldg_no_{{ contact_person.id }}" name="contact_person_bldg_no_{{ contact_person.id }}" value="{{ contact_person.bldg_number }}" {% if False %}disabled{% endif %}>
                                 <label for="contact_person_bldg_no_{{ contact_person.id }}">Bldg Number</label>
                             </div>
                         </div><!--end of col-->
                     </div><!--end of row-->
                     <div class="d-flex justify-content-end">
-                        <button class="btn btn-primary save-btn-contact_person_{{ contact_person.id }}" type="submit" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button>
+                        <button class="btn btn-primary save-btn-contact_person_{{ contact_person.id }}" type="submit" {% if False %}disabled{% endif %}>Save</button>
                     </div>
                 </form>
                 {% endfor %}
@@ -821,7 +1042,7 @@
                     {% endif %}
                     {% endfor %}
                     <hr>
-                    {% if global.security_status == "decrypted" %}
+                    {% if True %}
                         <button class="btn btn-primary mt-lg-4" data-bs-toggle="modal" data-bs-target="#addPerpModal">
                             <i class="bx bx-plus-circle" style="vertical-align: middle;"></i>
                             <span>Add Perpetrator</span>
@@ -834,7 +1055,7 @@
                     {% for perpetrator in perpetrators %}
                     <div class="tab-pane fade {% if forloop.first %}show active{% endif %} h-100" id="v-pills-perpetrator-{{ forloop.counter }}" role="tabpanel" aria-labelledby="v-pills-perpetrator-{{ forloop.counter }}-tab" tabindex="0">
                         <div class="container-fluid h-100">
-                            {% if global.security_status == "decrypted" %}
+                            {% if True %}
                                 <div class="row d-flex justify-content-between mb-3 mt-lg-0 mt-2">
                                     <button class="btn btn-danger btn-delete-perpetrator col-lg-4 col-12" data-perpetrator-id="{{ perpetrator.id }}" data-bs-toggle="modal" data-bs-target="#confirmPerpetratorDelete">
                                         <i class='bx bx-trash'></i>
@@ -848,25 +1069,25 @@
                                     <div class="row">
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="perpetrator_first_name_{{ perpetrator.id }}" name="perpetrator_first_name_{{ perpetrator.id }}" value="{{ perpetrator.first_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_first_name_{{ perpetrator.id }}" name="perpetrator_first_name_{{ perpetrator.id }}" value="{{ perpetrator.first_name }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_first_name_{{ perpetrator.id }}">First Name</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="perpetrator_middle_name_{{ perpetrator.id }}" name="perpetrator_middle_name_{{ perpetrator.id }}" value="{{ perpetrator.middle_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_middle_name_{{ perpetrator.id }}" name="perpetrator_middle_name_{{ perpetrator.id }}" value="{{ perpetrator.middle_name }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_middle_name_{{ perpetrator.id }}">Middle Name</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="perpetrator_last_name_{{ perpetrator.id }}" name="perpetrator_last_name_{{ perpetrator.id }}" value="{{ perpetrator.last_name }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_last_name_{{ perpetrator.id }}" name="perpetrator_last_name_{{ perpetrator.id }}" value="{{ perpetrator.last_name }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_last_name_{{ perpetrator.id }}">Last Name</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="perpetrator_suffix_name_{{ perpetrator.id }}" name="perpetrator_suffix_name_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_suffix_name_{{ perpetrator.id }}" name="perpetrator_suffix_name_{{ perpetrator.id }}" {% if False %}disabled{% endif %}>
                                                     <option value="none" {% if perpetrator.suffix == 'none' %}selected{% endif %}>N/A</option>
                                                     <option value="sr" {% if perpetrator.suffix == 'sr' %}selected{% endif %}>Sr</option>
                                                     <option value="jr" {% if perpetrator.suffix == 'jr' %}selected{% endif %}>Jr</option>
@@ -881,20 +1102,20 @@
                                     <div class="row">
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="perpetrator_identifying_marks_{{ perpetrator.id }}" name="perpetrator_identifying_marks_{{ perpetrator.id }}" value="{{ perpetrator.identifying_marks }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_identifying_marks_{{ perpetrator.id }}" name="perpetrator_identifying_marks_{{ perpetrator.id }}" value="{{ perpetrator.identifying_marks }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_identifying_marks_{{ perpetrator.id }}">Identifying Marks</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <input type="text" class="form-control" id="perpetrator_alias_{{ perpetrator.id }}" name="perpetrator_alias_{{ perpetrator.id }}" value="{{ perpetrator.alias }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_alias_{{ perpetrator.id }}" name="perpetrator_alias_{{ perpetrator.id }}" value="{{ perpetrator.alias }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_alias_{{ perpetrator.id }}">Alias</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-12 mb-3">
                                             <div class="form-floating">
-                                                <select id="perp-relationship-victim_{{ perpetrator.id }}" name="perp-relationship-victim_{{ perpetrator.id }}" class="form-select" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select id="perp-relationship-victim_{{ perpetrator.id }}" name="perp-relationship-victim_{{ perpetrator.id }}" class="form-select" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="currentSpouse" {% if perpetrator.relationship_to_victim == 'currentSpouse' %}selected{% endif %}>Current spouse / partner</option>
                                                         <option value="formerSpouse" {% if perpetrator.relationship_to_victim == 'formerSpouse' %}selected{% endif %}>Former spouse / partner</option>
                                                         <option value="currentFiance" {% if perpetrator.relationship_to_victim == 'currentFiance' %}selected{% endif %}>Current fiance / dating relationship</option>
@@ -920,8 +1141,8 @@
                                     <div class="row">
                                         <div class="col-lg-3 form-floating mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="perpetrator_sex_{{ perpetrator.id }}" name="perpetrator_sex_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select class="form-select" id="perpetrator_sex_{{ perpetrator.id }}" name="perpetrator_sex_{{ perpetrator.id }}" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="Male" {% if perpetrator.sex == 'Male' %}selected{% endif %}>Male</option>
                                                         <option value="Female" {% if perpetrator.sex == 'Female' %}selected{% endif %}>Female</option>
                                                     {% else %}
@@ -933,8 +1154,8 @@
                                         </div><!--End of col-->
                                         <div class="col-lg-3 form-floating mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="perpetrator_type_of_disability_{{ perpetrator.id }}" name="perpetrator_type_of_disability_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select class="form-select" id="perpetrator_type_of_disability_{{ perpetrator.id }}" name="perpetrator_type_of_disability_{{ perpetrator.id }}" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="none" {% if perpetrator.type_of_disability == 'none' %}selected{% endif %}>N/A</option>
                                                         <option value="With Disability" {% if perpetrator.type_of_disability == 'With Disability' %}selected{% endif %}>With Disability</option>
                                                         <option value="Permanent Disability" {% if perpetrator.type_of_disability == 'Permanent Disability' %}selected{% endif %}>Permanent Disability</option>
@@ -949,7 +1170,7 @@
                                         <div class="col-lg-3 form-floating mb-3">
                                             <div class="form-floating">
                                                 
-                                                {% if global.security_status == "decrypted" %}
+                                                {% if True %}
                                                     <input type="date" class="form-control" id="perpetrator_date_of_birth_{{ perpetrator.id }}" name="perpetrator_date_of_birth_{{ perpetrator.id }}" value="{{ perpetrator.date_of_birth }}">
                                                 {% else %}
                                                     <input type="date" class="form-control" id="perpetrator_date_of_birth_{{ perpetrator.id }}" name="perpetrator_date_of_birth_{{ perpetrator.id }}" value="2000-01-01" disabled>
@@ -960,8 +1181,8 @@
                                         </div>
                                         <div class="col-lg-3 mb-3">
                                             <div class="form-floating">
-                                                <select class="form-select" id="perpetrator_civil_status_{{ perpetrator.id }}" name="perpetrator_civil_status_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                                    {% if global.security_status == "decrypted" %}
+                                                <select class="form-select" id="perpetrator_civil_status_{{ perpetrator.id }}" name="perpetrator_civil_status_{{ perpetrator.id }}" {% if False %}disabled{% endif %}>
+                                                    {% if True %}
                                                         <option value="single" {% if perpetrator.civil_status == 'single' %}selected{% endif %}>Single</option>
                                                         <option value="married" {% if perpetrator.civil_status == 'married' %}selected{% endif %}>Married</option>
                                                         <option value="live-in" {% if perpetrator.civil_status == 'live-in' %}selected{% endif %}>Live-In</option>
@@ -979,14 +1200,14 @@
                                     <div class="row mb-1">
                                         <div class="col-lg-6 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="{% if global.security_status == 'encrypted' %}text{% else %}number{% endif %}" class="form-control" id="perpetrator_contact_number_{{ perpetrator.id }}" name="perpetrator_contact_number_{{ perpetrator.id }}" value="{{ perpetrator.contact_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="{% if False %}text{% else %}number{% endif %}" class="form-control" id="perpetrator_contact_number_{{ perpetrator.id }}" name="perpetrator_contact_number_{{ perpetrator.id }}" value="{{ perpetrator.contact_number }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_contact_number_{{ perpetrator.id }}">Contact Number</label>
                                             </div>
                                         </div><!--End of col-->
 
                                         <div class="col-lg-6 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="{% if global.security_status == 'encrypted' %}text{% else %}number{% endif %}" class="form-control" id="perpetrator_telephone_number_{{ perpetrator.id }}" name="perpetrator_telephone_number_{{ perpetrator.id }}" value="{{ perpetrator.telephone_number }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="{% if False %}text{% else %}number{% endif %}" class="form-control" id="perpetrator_telephone_number_{{ perpetrator.id }}" name="perpetrator_telephone_number_{{ perpetrator.id }}" value="{{ perpetrator.telephone_number }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_telephone_number_{{ perpetrator.id }}">Telephone Number</label>
                                             </div>
                                         </div><!--End of col-->
@@ -994,9 +1215,9 @@
                                     <div class="row">
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select" id="perpetrator_educational_attainment_{{ perpetrator.id }}" name="perpetrator_educational_attainment_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_educational_attainment_{{ perpetrator.id }}" name="perpetrator_educational_attainment_{{ perpetrator.id }}" {% if False %}disabled{% endif %}>
                                                     
-                                                    {% if global.security_status == "decrypted" %}
+                                                    {% if True %}
                                                         <option value="none"{% if perpetrator.educational_attainment == 'none' %}selected{% endif %}>None</option>
                                                         <option value="highschool"{% if perpetrator.educational_attainment == 'highschool' %}selected{% endif %}>High School Level</option>
                                                         <option value="vocational"{% if perpetrator.educational_attainment == 'vocational' %}selected{% endif %}>Vocational</option>
@@ -1014,7 +1235,7 @@
                                         </div>
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_occupation_{{ perpetrator.id }}" name="perpetrator_occupation_{{ perpetrator.id }}" value="{{ perpetrator.occupation}}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_occupation_{{ perpetrator.id }}" name="perpetrator_occupation_{{ perpetrator.id }}" value="{{ perpetrator.occupation}}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_occupation_{{ perpetrator.id }}">Occupation</label>
                                             </div>
                                         </div>
@@ -1024,7 +1245,7 @@
                                                     class="form-select" 
                                                     id="perpetrator_nationality_{{ perpetrator.id }}" 
                                                     name="perpetrator_nationality_{{ perpetrator.id }}" 
-                                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                    {% if False %}disabled{% endif %}>
                                                     
                                                     <!-- Placeholder Option -->
                                                     <option value="" {% if not perpetrator.nationality %}selected{% endif %}>--Select--</option>
@@ -1051,9 +1272,9 @@
                                         </div>
                                         <div class="col-lg-3 col-12">
                                             <div class="form-floating mb-3">
-                                                <select class="form-select" id="perpetrator_religion_{{ perpetrator.id }}" name="perpetrator_religion_{{ perpetrator.id }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <select class="form-select" id="perpetrator_religion_{{ perpetrator.id }}" name="perpetrator_religion_{{ perpetrator.id }}" {% if False %}disabled{% endif %}>
                                                     
-                                                    {% if global.security_status == "decrypted" %}
+                                                    {% if True %}
                                                         <option value="none" {% if perpetrator.religion == 'none' %}selected{% endif %}>None</option>
                                                         <option value="roman-catholic" {% if perpetrator.religion == 'roman-catholic' %}selected{% endif %}>Roman Catholic</option>
                                                         <option value="islam" {% if perpetrator.religion == 'islam' %}selected{% endif %}>Islam</option>
@@ -1077,7 +1298,7 @@
                                                         id="perpetrator_region_{{ perpetrator.id }}"
                                                         name="perpetrator_region_{{ perpetrator.id }}"
                                                         data-selected="{{ perpetrator.region }}"
-                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                        {% if False %}disabled{% endif %}>
                                                     <option value="">--Select Region--</option>
                                                     {% for region in default_regions %}
                                                         <option value="{{ region.name }}" data-code="{{ region.code }}"
@@ -1097,7 +1318,7 @@
                                                         id="perpetrator_province_{{ perpetrator.id }}"
                                                         name="perpetrator_province_{{ perpetrator.id }}"
                                                         data-selected="{{ perpetrator.province }}"
-                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                        {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
                                                         <option value="{{ province.name }}" data-code="{{ province.code }}"
@@ -1117,7 +1338,7 @@
                                                         id="perpetrator_city_{{ perpetrator.id }}"
                                                         name="perpetrator_city_{{ perpetrator.id }}"
                                                         data-selected="{{ perpetrator.city }}"
-                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                        {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
                                                         <option value="{{ city.name }}" data-code="{{ city.code }}"
@@ -1137,7 +1358,7 @@
                                                         id="perpetrator_barangay_{{ perpetrator.id }}"
                                                         name="perpetrator_barangay_{{ perpetrator.id }}"
                                                         data-selected="{{ perpetrator.barangay }}"
-                                                        {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                        {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
                                                         <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
@@ -1155,19 +1376,19 @@
                                     <div class="row">                            
                                         <div class="col-lg-6 col-md-12 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_house_information_{{ perpetrator.id }}" name="perpetrator_house_information_{{ perpetrator.id }}" value="{{ perpetrator.house_information }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_house_information_{{ perpetrator.id }}" name="perpetrator_house_information_{{ perpetrator.id }}" value="{{ perpetrator.house_information }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_house_information_{{ perpetrator.id }}">House Information</label>
                                             </div>
                                         </div><!--End of col-->
                                         <div class="col-lg-6 col-md-12 col-sm-8">
                                             <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="perpetrator_street_{{ perpetrator.id }}" name="perpetrator_street_{{ perpetrator.id }}" value="{{ perpetrator.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                                <input type="text" class="form-control" id="perpetrator_street_{{ perpetrator.id }}" name="perpetrator_street_{{ perpetrator.id }}" value="{{ perpetrator.street }}" {% if False %}disabled{% endif %}>
                                                 <label for="perpetrator_street_{{ perpetrator.id }}">Street</label>
                                             </div>
                                         </div><!--End of col-->
                                     </div><!--End of row-->
                                 </div>
-                                {% if global.security_status == "decrypted" %}
+                                {% if True %}
                                 <div class="d-flex justify-content-end">
                                     <button class="btn btn-primary save-btn-perpetrator_{{ perpetrator.id }}" type="submit" >Save</button>
                                 </div>
@@ -1312,7 +1533,7 @@
                         <div class="col-lg-4 col-md-4 col-sm-8 pt-3">
                             <div class="form-floating mb-3">
                                 
-                                {% if global.security_status == "decrypted" %}
+                                {% if True %}
                                     <input type="date" class="form-control" id="date_latest_incident" name="date_latest_incident" value="{{ case.date_latest_incident }}">
                                 {% else %}
                                     <input type="date" class="form-control" id="date_latest_incident" name="date_latest_incident" value="2000-01-01" disabled>
@@ -1320,7 +1541,7 @@
                                 
                                 <label for="date_latest_incident">Date of Latest Incident</label>
                             </div>
-                            <input class="form-check-input" type="checkbox" value="true" id="incomplete_date" name="incomplete_date" {% if case.incomplete_date %} checked {% endif %} {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                            <input class="form-check-input" type="checkbox" value="true" id="incomplete_date" name="incomplete_date" {% if case.incomplete_date %} checked {% endif %} {% if False %}disabled{% endif %}>
                             <label class="form-check-label" for="incomplete_date"> Incomplete Date</label>
                         </div><!--end of col-->
                     </div><!--End of row-->
@@ -1333,7 +1554,7 @@
                                 <select class="form-select" id="region" name="region"
                                     data-selected="{{ case.region }}"
                                     aria-label="Floating label select example"
-                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    {% if False %}disabled{% endif %}>
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
                                         <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
@@ -1351,7 +1572,7 @@
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="province" name="province"
                                     data-selected="{{ case.province }}"
-                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
                                         <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
@@ -1369,7 +1590,7 @@
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="city" name="city"
                                     data-selected="{{ case.city }}"
-                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    {% if False %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
                                         <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
@@ -1388,7 +1609,7 @@
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="barangay" name="barangay"
                                     data-selected="{{ case.barangay }}"
-                                    {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Barangay --</option>
                                     {% for barangay in default_barangays %}
                                         <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
@@ -1403,8 +1624,8 @@
                         </div><!--End of col-->                        
                         <div class="col-lg-4 col-md-4 col-sm-8 pb-3">
                             <div class="form-floating">
-                                <select class="form-select" id="place_of_incident" name="place_of_incident" aria-label="Floating label select example" {% if global.security_status == "encrypted" %}disabled{% endif %}>
-                                    {% if global.security_status == "decrypted" %}
+                                <select class="form-select" id="place_of_incident" name="place_of_incident" aria-label="Floating label select example" {% if False %}disabled{% endif %}>
+                                    {% if True %}
                                     <option value="house" {% if case.place_of_incident == 'house' %} selected {% endif %}>House</option>
                                     <option value="work" {% if case.place_of_incident == 'work' %} selected {% endif %}>Work</option>
                                     <option value="school" {% if case.place_of_incident == 'school' %} selected {% endif %}>School</option>
@@ -1425,7 +1646,7 @@
                         </div><!--End of col-->
                         <div class="col-lg-4 col-md-4 col-sm-8">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="street" name="street" value="{{ case.street }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                <input type="text" class="form-control" id="street" name="street" value="{{ case.street }}" {% if False %}disabled{% endif %}>
                                 <label for="street">Street</label>
                             </div>
                         </div><!--End of col-->
@@ -1433,12 +1654,12 @@
                     <div class="pt-3">
                         <div class="mb-3">
                             <label for="description_of_incident" class="form-label">Description of Incident</label>
-                            <textarea class="form-control" id="description_of_incident" name="description_of_incident" {% if global.security_status == "encrypted" %}disabled{% endif %} rows="3">{{ case.description_of_incident }}</textarea> 
+                            <textarea class="form-control" id="description_of_incident" name="description_of_incident" {% if False %}disabled{% endif %} rows="3">{{ case.description_of_incident }}</textarea> 
                         </div>
                     </div>
 
                     <h3>Evidences:</h3>
-                    {% if global.security_status == "decrypted" %}
+                    {% if True %}
                         {% if case.evidence.all %}
                             <div class="row">
                                 {% for evidence in case.evidence.all %}
@@ -1509,11 +1730,11 @@
                                 <br>
                             {% endfor %}
                         </div>
-                            {% if global.security_status == "decrypted" %}
+                            {% if True %}
                                 <div class="d-flex justify-content-end"><button type="button" class="btn btn-primary" id="addWitnessBtn">Add Witness</button></div>
                             {% endif %}
                         {% else %}
-                            {% if global.security_status == "decrypted" %}
+                            {% if True %}
                                 <div id="witnessContainer">
                                     <div class="row border border-opacity-25 rounded border-dark shadow" id="witness">
                                         <div class="pt-2"></div>
@@ -1552,7 +1773,7 @@
                     <br>
                     <hr class="pt-3">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end pb-3">
-                        <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if global.security_status == "encrypted" %}disabled{% endif %}>Save</button> -->
+                        <!-- <button class="btn btn-primary" id="btnsubmitincident" type="button" {% if False %}disabled{% endif %}>Save</button> -->
                         <button class="btn btn-primary" id="btnsubmitincident" type="button">Save</button>
                     </div>
                 </form>
@@ -2035,7 +2256,7 @@
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="victim_province" name="victim_province"
-                                    data-selected="{{ victim.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    data-selected="{{ victim.province }}" {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
                                         <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>
@@ -2051,7 +2272,7 @@
                         <div class="col-lg-3 col-12">
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="victim_city" name="victim_city"
-                                    data-selected="{{ victim.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
+                                    data-selected="{{ victim.city }}" {% if False %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
                                         <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>
@@ -3231,6 +3452,43 @@
             
             
             
+        });
+
+        
+        // ===== Healthcare Referral AJAX =====
+        $('#btn-submit-healthcare').click(function(event) {
+            event.preventDefault();
+            var btn = $('#btn-submit-healthcare');
+            btn.text(btn.text() === 'Send' ? 'Sending...' : 'Updating...').prop('disabled', true);
+            var formData = new FormData($('#form-refer-healthcare')[0]);
+            $.ajax({ type: 'POST', url: '/refer-healthcare/', data: formData, contentType: false, processData: false, dataType: 'json',
+                success: function(response) {
+                    var isUpdate = btn.text() === 'Updating...';
+                    addingStatusPerAction('{{case.id}}', isUpdate ? 'Updates Healthcare Referral' : 'Referred to Healthcare', isUpdate ? 'Healthcare information has been updated.' : 'Healthcare Referral is Successful.', getDateNow(), response.message);
+                    btn.text('Update').prop('disabled', false);
+                    $('#successToast .toast-body').text(response.message); $('#successToast').toast('show');
+                    setTimeout(function() { location.reload(); }, 3000);
+                },
+                error: function() { btn.text('Send').prop('disabled', false); $('#errorToast .toast-body').text('Error occurred.'); $('#errorToast').toast('show'); }
+            });
+        });
+
+        // ===== SWDO Referral AJAX =====
+        $('#btn-submit-SWDO').click(function(event) {
+            event.preventDefault();
+            var btn = $('#btn-submit-SWDO');
+            btn.text(btn.text() === 'Send' ? 'Sending...' : 'Updating...').prop('disabled', true);
+            var formData = new FormData($('#form-refer-SWDO')[0]);
+            $.ajax({ type: 'POST', url: '/refer-SWDO/', data: formData, contentType: false, processData: false, dataType: 'json',
+                success: function(response) {
+                    var isUpdate = btn.text() === 'Updating...';
+                    addingStatusPerAction('{{case.id}}', isUpdate ? 'Updates SWDO Referral' : 'Referred to SWDO', isUpdate ? 'SWDO information has been updated.' : 'SWDO Referral is Successful.', getDateNow(), response.message);
+                    btn.text('Update').prop('disabled', false);
+                    $('#successToast .toast-body').text(response.message); $('#successToast').toast('show');
+                    setTimeout(function() { location.reload(); }, 3000);
+                },
+                error: function() { btn.text('Send').prop('disabled', false); $('#errorToast .toast-body').text('Error occurred.'); $('#errorToast').toast('show'); }
+            });
         });
 
         function addingStatusPerAction( caseId, statusTitle, statusText, statusEventDate, successMessage) {

@@ -103,6 +103,14 @@ class PoliceStations(models.Model):
     def __str__(self):
         return self.name
 
+class PoliceStation(models.Model):
+    name = models.CharField(max_length=255)
+    region = models.CharField(max_length=255)
+    province = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+        
 class Passkey_Reset(models.Model):
     email = models.CharField(max_length=250, null=True, blank=True)
     status = models.CharField(max_length=250, null=True, blank=True)

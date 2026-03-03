@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'vawc.wsgi.application'
 DATABASES = {
     'default':  {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vawcdb',
+        'NAME': 'vawcdb2',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
@@ -190,3 +190,5 @@ SESSION_SAVE_EVERY_REQUEST = True
 # for development only
 if DEBUG:
     DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+# Disable OTP by default as requested
+ENABLE_OTP = False
