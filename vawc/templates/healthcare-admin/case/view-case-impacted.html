@@ -294,7 +294,7 @@
                                             <select id="name_of_province" name="name_of_province" class="form-select">
                                                 <option value="" {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
                                                 {% for station in default_stations_provinces %}
-                                                    <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
+                                                    <option value="{{ station }}" >
                                                         {{ station }}
                                                     </option>
                                                 {% empty %}

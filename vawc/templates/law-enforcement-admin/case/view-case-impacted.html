@@ -188,6 +188,34 @@
 
                             <div class="row">
                                 <div class="d-flex flex-column align-items-start">
+
+                                    <div class="row w-100 mb-3 flex">
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-floating mb-3">
+                                                <select id="name_of_province" name="name_of_province" class="form-select" disabled>
+                                                    <option value="" {% if not case.law_enforcement_agency_name %}selected{% endif %}>--Select Option--</option>
+                                                    {% for station in default_stations_provinces %}
+                                                    <option value="{{ station }}" {% if case.city == "ZAMBOANGA" and station == "ZAMBOANGA CITY" %}selected{%else %}{% if case.province == station %}selected{% endif %}{% endif %}>
+                                                        {{ station }}
+                                                    </option>
+                                                    {% empty %}
+                                                    <option>No Province found</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <label id="name_of_province_label" for="name_of_province">Province</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-12">
+                                            <div class="form-floating mb-3">
+                                                <select id="name_of_agency" name="name_of_agency" class="form-select" disabled>
+                                                    {% if case.law_enforcement_agency_name %}
+                                                        <option value="{{ case.law_enforcement_agency_name }}" selected>{{ case.law_enforcement_agency_name }}</option>
+                                                    {% endif %}
+                                                </select>
+                                                <label id="name_of_agency_label" for="name_of_agency">Station</label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <h5>Barangay Remark:</h5>
                                     <textarea class="form-control" id="remarks_to_barangay" name="remarks_to_barangay" rows="3" {% if False %}disabled{% endif %}>{% if case.remarks_to_law_enforcement %}{{ case.remarks_to_law_enforcement }}{% else %} No Remark.{% endif %}</textarea>
                                 </div><!--end of col-->
