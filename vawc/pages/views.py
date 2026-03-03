@@ -361,6 +361,7 @@ def admin_case_view(request):
         'barangay': barangay,
     })
 
+@login_required(login_url='login')
 def admin_dashboard_data (request, get_year):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
@@ -709,8 +710,9 @@ def create_swdo_manage_account(request):
                     province=province,
                     city=city,
                 )
-            except:
-                pass
+            except Exception as e:
+                account.delete()
+                return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'SWDO Account created successfully'})
 
@@ -745,6 +747,7 @@ def create_swdo_manage_account(request):
 
 
 
+@login_required(login_url='login')
 def edit_account_view(request, account_id):
     if request.method == 'GET':
         try: 
@@ -797,6 +800,7 @@ def edit_account_view(request, account_id):
             return JsonResponse({'success': False, 'message': str(e)})
 
 
+@login_required(login_url='login')
 def edit_law_enforcement_account_view(request, account_id):
     if request.method == 'GET':
         try: 
@@ -880,6 +884,7 @@ def edit_healthcare_account_view(request, account_id):
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
 
+@login_required(login_url='login')
 def edit_swdo_account_view(request, account_id):
     if request.method == 'GET':
         try: 
@@ -984,8 +989,9 @@ def create_account(request):
                     city=city,
                     barangay=barangay
                 )
-            except:
-                pass
+            except Exception as e:
+                account.delete()
+                return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
 
@@ -1046,8 +1052,9 @@ def create_law_enforcement_account(request):
                     province=province, 
                     station=station
                 )
-            except:
-                pass
+            except Exception as e:
+                account.delete()
+                return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
 
@@ -1108,8 +1115,9 @@ def create_healthcare_account(request):
                     province=province, 
                     hospital_name=hospital_name
                 )
-            except:
-                pass
+            except Exception as e:
+                account.delete()
+                return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
 
@@ -2491,6 +2499,7 @@ def get_contact_person_data(post_data):
     }
     return contact_person_data
 
+@login_required(login_url='login')
 def add_new_case(request):
     dummy_encrypted = "gAAAAABl-UOp4RWQLPLraFI_q80Ogmfk-Epd8K-CA9zHzYoc1FMwc7tnLv8hTBWTvjlmwjr866FtvBwRZjPXWKBEo3SPvHOU6g=="
 
@@ -3635,6 +3644,7 @@ def save_victim_data(request, victim_id):
         return JsonResponse({'success': False, 'message': str(e)})
 
 @require_POST
+@login_required(login_url='login')
 def add_new_victim(request):
     try:
         case_id = request.POST.get('case_id')
@@ -3701,6 +3711,7 @@ def add_new_victim(request):
         return JsonResponse({'success': False, 'message': str(e)})
 
 @require_POST
+@login_required(login_url='login')
 def add_new_perpetrator(request):
     try:
         case_id = request.POST.get('case_id')
@@ -3808,6 +3819,7 @@ def save_perpetrator_data(request, perpetrator_id):
         return JsonResponse({'success': False, 'message': str(e)})
 
 @require_POST
+@login_required(login_url='login')
 def delete_perpetrator(request):
     perpetrator_id = request.POST.get('perpetrator_id')
     perpetrator = get_object_or_404(Perpetrator, id=perpetrator_id)
@@ -3815,6 +3827,7 @@ def delete_perpetrator(request):
     return JsonResponse({'success': True, 'message': 'Perpetrator and related Parents deleted successfully'})
 
 @require_POST
+@login_required(login_url='login')
 def delete_case(request):
     case_id = request.POST.get('case_id')
     print('Case ID:', case_id)
@@ -4310,6 +4323,7 @@ def delete_parent_perp(request):
 
 
 @require_POST
+@login_required(login_url='login')
 def delete_victim(request):
     if request.method == 'POST':
         victim_id = request.POST.get('victim_id')
@@ -4582,6 +4596,7 @@ def process_service_info(request):
         # Return a JSON response indicating failure
         return JsonResponse({'error': 'Invalid request method.'})
 
+@login_required(login_url='login')
 def refer_law_enforcement(request):
     if request.method == 'POST':
         case_id = request.POST.get('case_id')
@@ -4622,6 +4637,7 @@ def refer_law_enforcement(request):
         return JsonResponse({'error': 'Invalid request method.'})
 
 
+@login_required(login_url='login')
 def refer_SWDO(request):
     if request.method == 'POST':
         case_id = request.POST.get('case_id')
@@ -4656,6 +4672,7 @@ def refer_SWDO(request):
         return JsonResponse({'error': 'Invalid request method.'})
 
 
+@login_required(login_url='login')
 def refer_healthcare(request):
     if request.method == 'POST':
         case_id = request.POST.get('case_id')
@@ -4690,6 +4707,7 @@ def refer_healthcare(request):
         # Return a JSON response indicating failure
         return JsonResponse({'error': 'Invalid request method.'})        
     
+@login_required(login_url='login')
 def add_status(request, case_id):
     if request.method == 'POST':
         try:
@@ -4734,6 +4752,7 @@ def add_status(request, case_id):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
+@login_required(login_url='login')
 def edit_status(request, status_id):
     if request.method == 'GET':
         try:
@@ -4759,6 +4778,7 @@ def edit_status(request, status_id):
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
 
+@login_required(login_url='login')
 def delete_status(request, status_id):
     if request.method == 'POST':
         try:
@@ -4772,6 +4792,7 @@ def delete_status(request, status_id):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
+@login_required(login_url='login')
 def update_case_status(request, case_id):
     if request.method == 'POST':
         new_status = request.POST.get('status_case')  # Get the new status from the form data
@@ -5514,6 +5535,7 @@ def lawEnforcement_dashboard_view(request):
     })
         
 
+@login_required(login_url='login')
 def LawEnforcement_dashboard_data(request, get_year):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
@@ -5783,6 +5805,7 @@ def SWDO_dashboard_view(request):
     })
         
 
+@login_required(login_url='login')
 def SWDO_dashboard_data(request, get_year):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
