@@ -190,3 +190,5 @@ SESSION_SAVE_EVERY_REQUEST = True
 # for development only
 if DEBUG:
     DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+# Disable OTP by default as requested
+ENABLE_OTP = False

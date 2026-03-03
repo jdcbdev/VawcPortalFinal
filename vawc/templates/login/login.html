@@ -174,7 +174,23 @@
                             }
 
                         // Redirect or perform other actions after successful login
+                        
+                        if (response.otp_bypassed) {
+                            if (response.account_type === 'admin') {
+                                window.location.href = '{% url "admin dashboard" %}';
+                            } else if (response.account_type === 'staff') {
+                                window.location.href = '{% url "barangay dashboard" %}';
+                            } else if (response.account_type === 'law_enforcement') {
+                                window.location.href = '{% url "law enforcement dashboard" %}';
+                            } else if (response.account_type === 'healthcare') {
+                                window.location.href = '{% url "healthcare dashboard" %}';
+                            } else if (response.account_type === 'swdo') {
+                                window.location.href = '{% url "SWDO dashboard" %}';
+                            }
+                            return;
+                        }
                         $('#otpModal').modal('show'); // Show the OTP modal after successful login
+
                     } else {
                         console.log(response.message);
                         if (response.message === 'Account is Not Active Anymore') {

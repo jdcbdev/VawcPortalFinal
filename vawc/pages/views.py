@@ -1989,14 +1989,26 @@ def login_with_otp(request):
         user_authenticated = authenticate(request, username=email, password=passkey)
 
         if user_authenticated:
-            otp = generate_otp()
-            request.session['otp'] = otp
-            request.session['user_email'] = email
-            otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
-            request.session['otp_expiry'] = otp_expiry.isoformat()
-            print(otp)
-            send_otp_email(email, otp)
-            return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
+            if getattr(settings, 'ENABLE_OTP', True):
+                otp = generate_otp()
+                request.session['otp'] = otp
+                request.session['user_email'] = email
+                otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
+                request.session['otp_expiry'] = otp_expiry.isoformat()
+                send_otp_email(email, otp)
+                return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
+            else:
+                login(request, user_authenticated)
+                account_type = None
+                if hasattr(user_authenticated, 'account'):
+                    account_type = user_authenticated.account.type
+                elif hasattr(user_authenticated, 'lawenforcementaccount'):
+                    account_type = 'law_enforcement'
+                elif hasattr(user_authenticated, 'swdoaccount'):
+                    account_type = 'swdo'
+                elif hasattr(user_authenticated, 'healthcareaccount'):
+                    account_type = 'healthcare'
+                return JsonResponse({'success': True, 'message': 'Login successful. OTP disabled.', 'otp_bypassed': True, 'account_type': account_type})
         else:       
             return JsonResponse({'success': False, 'message': 'Invalid password. Please try again.'})
 
