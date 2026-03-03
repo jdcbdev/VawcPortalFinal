@@ -2502,8 +2502,13 @@ def add_new_case(request):
         email = request.POST.get('email')
         type_of_case = request.POST.get('case_type')
         service_information = request.POST.get('service_type')
-        barangay = request.POST.get('barangay')
-
+        
+        # case providers
+        barangay = request.POST.get('barangay') or None
+        hospital_name = request.POST.get('hospital_name') or None
+        station = request.POST.get('station') or None
+        swdo = request.POST.get('swdo') or None
+        
         print('barangay encrypted:', encrypt_data(barangay))
         print('barangay decrypted:', barangay)
         case_data = {
@@ -2512,15 +2517,47 @@ def add_new_case(request):
             'date_latest_incident': dummy_text,
             'place_of_incident': dummy_text,
             'street': dummy_text,
-            'barangay': barangay,
+            'barangay': dummy_text,
             'province': dummy_text,
             'city': dummy_text,
             'region': dummy_text,
             'description_of_incident': dummy_text,
             'service_information': service_information,
             'type_of_case': type_of_case,  # Collecting type of case from the form
-            'date_added': timezone.now()
+            'date_added': timezone.now(),
+            # SWDO fields
+            'refers_to_social_welfare': False,
+            'refer_social_date': None,
+            # healthcare fields ( will be blank if no hospital name is provided )
+            'refers_to_healthcare_provider': False,
+            'refer_healthcare_date': None,
+            'healthcare_provider_name': "",
+            # law-enfrocement fields
+            'refers_to_law_enforcement': False,
+            'refer_law_enforcement_date': None,
+            'law_enforcement_agency_name': "",
         }
+        
+        if(barangay):
+            case_data['barangay'] = barangay
+        
+        # fill out healthcare fields if hospital_name is provided ( assumes case came from healthcare provider )
+        if(hospital_name):
+            case_data['refers_to_healthcare_provider'] = True
+            case_data['refer_healthcare_date'] = timezone.now()
+            case_data['healthcare_provider_name'] = hospital_name
+        
+        # fill out station fields if station is provided ( assumes case came from law_enforcement provider)
+        if(station):
+            case_data['refers_to_law_enforcement'] = True
+            case_data['refer_law_enforcement_date'] = timezone.now()
+            case_data['law_enforcement_agency_name'] = station
+        
+        # fill out swdo fields if swdo name is provided ( assumes case came from swdo provider )
+        if(swdo):
+            case_data['refers_to_social_welfare'] = True
+            case_data['refer_social_date'] = timezone.now()
+            
         case_instance = Case.objects.create(**case_data)
         
         victim_data = {
@@ -2607,7 +2644,7 @@ def add_new_case(request):
     #         return JsonResponse({'success': False, 'error': str(e)})
     # else:
     #     return HttpResponse("Method not allowed", status=405)
-
+    
 @login_required
 def view_admin_case_behalf(request, case_id):
     if request.user.account.type != 'admin':
@@ -3311,7 +3348,9 @@ def view_enforcement_case_behalf(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -3428,7 +3467,9 @@ def view_enforcement_case_impact(request, case_id):
             'default_provinces': Province.objects.filter(region_id=region_id),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5033,7 +5074,9 @@ def view_SWDO_case_behalf(request, case_id):
             ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5151,7 +5194,9 @@ def view_SWDO_case_impact(request, case_id):
             ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-            'default_stations': PoliceStations.objects.all(),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5252,7 +5297,8 @@ def view_healthcare_case_impact(request, case_id):
                 perpetrator.educational_attainment = encrypt_data(perpetrator.educational_attainment)
                 perpetrator.occupation = encrypt_data(perpetrator.occupation)
                 perpetrator.city = encrypt_data(perpetrator.city)
-                
+        
+                    
 
         # Render the view-case.html template with the case and related objects as context
         
@@ -5275,7 +5321,9 @@ def view_healthcare_case_impact(request, case_id):
             ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
-
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct(),
             'service_information': case.service_information,
             'today': datetime.today(),
         })
@@ -5301,7 +5349,7 @@ def view_healthcare_case_behalf(request, case_id):
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
         status_history = Status_History.objects.filter(case_status_history=case)
         witnesses = Witness.objects.filter(case_witness=case)
-    
+        hospitals = HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct().order_by('hospital_name')
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
@@ -5419,8 +5467,7 @@ def view_healthcare_case_behalf(request, case_id):
         
         region_id = 10 # region 9
         province_id = 50 # zamboanga del sur
-        municipality_id = 1133 # zamboanga city
-
+        municipality_id = 1133 # zamboanga city        
         return render(request, 'healthcare-admin/case/view-case-behalf.html', {
             'case': case,
             'contact_persons': contact_persons,
@@ -5437,6 +5484,9 @@ def view_healthcare_case_behalf(request, case_id):
             ),
             'default_cities': Municipality.objects.filter(province_id=province_id),
             'default_barangays': Barangay.objects.filter(municipality_id=municipality_id),
+            'default_stations': json.dumps(list(PoliceStations.objects.values('name', 'province'))),
+            'default_stations_provinces': PoliceStations.objects.values_list('province', flat=True).distinct(),
+            'hospitals': hospitals,
             'service_information': case.service_information,
             'today': datetime.today(),
         })

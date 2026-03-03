@@ -146,7 +146,7 @@
 
         $('#loginForm').submit(function(event) {
             event.preventDefault();
-            $('.spinner-border').show();
+            $('.spinner-border').show(); $('#submitButton span').css('visibility', 'hidden');
             $('#submitButton').prop('disabled', true);
             $('#login-text-form').addClass('text-color-primary')
             var formData = $(this).serialize();
@@ -198,6 +198,7 @@
                     }
 
                     $('.spinner-border').hide();
+                    $('#submitButton span').css('visibility', 'visible');
                     $('#login-text-form').removeClass('text-color-primary')
                     $('#submitButton').prop('disabled', false);
 
