@@ -350,11 +350,16 @@ $(document).ready(function() {
             case_item.victims.forEach((victim, index) => {
     
                 victims.names.push(`${victim.first_name} ${victim.middle_name} ${victim.last_name}`)
-                const birthDate = new Date(victim.date_of_birth);
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDifference = today.getMonth() - birthDate.getMonth();
-                if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
+                
+                let age = "-"
+
+                if(victim.date_of_birth) {
+                    const birthDate = new Date(victim.date_of_birth);
+                    age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDifference = today.getMonth() - birthDate.getMonth();
+                    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
                 }
                 if(!gender_types.includes(victim.sex)) {
                     gender_types.push(victim.sex)

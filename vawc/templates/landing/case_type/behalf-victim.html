@@ -469,7 +469,7 @@
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--region-->
                                                 <label for="perp-region_0" class="form-label">Region <span class="required"></span></label>
-                                                <select id="perp-region_0" name="perp-region_0" class="form-select req-inp" disabled>
+                                                <select id="perp-region_0" name="perp-region_0" class="form-select req-inp" >
                                                     {% for region in default_regions %}
                                                         <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                                                     {% empty %}
@@ -583,7 +583,7 @@
                                     </div>
                                     <div class="col-sm-6 mb-3"> <!--region-->
                                         <label for="incident-region" class="form-label">Region <span class="required"></span></label>
-                                        <select id="incident-region" name="incident-region" class="form-select req-inp" disabled>
+                                        <select id="incident-region" name="incident-region" class="form-select req-inp" >
                                             {% for region in default_regions %}
                                                 <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                                             {% empty %}
@@ -717,7 +717,7 @@
                                     <h3 class="fs-5 my-3">Local Address</h3>
                                     <div class="col-sm-6 mb-3"> <!--region-->
                                         <label for="contact-region" class="form-label">Region <span class="required"></span></label>
-                                        <select id="contact-region" name="contact-region" class="form-select req-inp" disabled>
+                                        <select id="contact-region" name="contact-region" class="form-select req-inp">
                                             {% for region in default_regions %}
                                                 <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
                                             {% empty %}
@@ -1378,7 +1378,11 @@
                 document.querySelector('#victim_count').value = victimCount
                 document.querySelector('#perpetrator_count').value = perpetratorCount
 
+                // Remove disabled attribute in forms
+                $('#incident-region, #incident-province, #incident-city, #incident-barangay, perp-region_0, perp-brangay_0, perp-city_0').removeAttr('disabled');
+
                 var formData = new FormData(this); // Create FormData object from the form
+                console.log(formData)
                 $.ajax({
                     type: 'POST',
                     url: $(this).attr('action'), // Get the form's action attribute
@@ -1399,7 +1403,7 @@
                         // Show error toast if response indicates failure
                         showToast('error', 'An error occurred. Please try again.');
                     }
-                });
+                }); 
             }
 
         });
@@ -1414,9 +1418,9 @@
             let contactValue = ''
 
             // For example, you can log it to the console
-            console.log("Email entered: " + emailValue);
+            console.log('{{ csrf_token }}')
             console.log("Phone entered: " + phoneValue);
-
+            console.log("Email entered: " + emailValue);
             // Determine what url endpoint to use, either for email or phone
             requestURL = ''
             if(document.querySelector('#email-tab').classList.contains('active')) {

@@ -142,9 +142,9 @@
 
         $('#loginForm').submit(function(event) {
             event.preventDefault();
-            $('.spinner-border').show();
+            $('.spinner-border').show(); $('#submitButton span').css('visibility', 'hidden');
             $('#submitButton').prop('disabled', true);
-
+            $('#login-text-form').addClass('text-color-primary')
             var formData = $(this).serialize();
             $.ajax({
                 type: 'POST',
@@ -154,6 +154,7 @@
                     if (response.success) {
                         $('#barangay-email').removeClass('is-invalid');
                         $('#barangay-passkey').removeClass('is-invalid');
+                        $('#login-text-form').removeClass('text-color-primary')
                         $('#successMessage').text(response.message);
                         $('#barangay-passkeyFeedback').hide()
                         console.log(response.message);
@@ -169,7 +170,23 @@
                             }
 
                         // Redirect or perform other actions after successful login
+                        
+                        if (response.otp_bypassed) {
+                            if (response.account_type === 'admin') {
+                                window.location.href = '{% url "admin dashboard" %}';
+                            } else if (response.account_type === 'staff') {
+                                window.location.href = '{% url "barangay dashboard" %}';
+                            } else if (response.account_type === 'law_enforcement') {
+                                window.location.href = '{% url "law enforcement dashboard" %}';
+                            } else if (response.account_type === 'healthcare') {
+                                window.location.href = '{% url "healthcare dashboard" %}';
+                            } else if (response.account_type === 'swdo') {
+                                window.location.href = '{% url "SWDO dashboard" %}';
+                            }
+                            return;
+                        }
                         $('#otpModal').modal('show'); // Show the OTP modal after successful login
+
                     } else {
                         console.log(response.message);
                         if (response.message === 'Account is Not Active Anymore') {
@@ -193,6 +210,8 @@
                     }
 
                     $('.spinner-border').hide();
+                    $('#submitButton span').css('visibility', 'visible');
+                    $('#login-text-form').removeClass('text-color-primary')
                     $('#submitButton').prop('disabled', false);
 
                 },
