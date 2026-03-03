@@ -1989,7 +1989,7 @@ def login_with_otp(request):
         user_authenticated = authenticate(request, username=email, password=passkey)
 
         if user_authenticated:
-            if getattr(settings, 'ENABLE_OTP', True):
+            if getattr(settings, 'ENABLE_OTP', False):
                 otp = generate_otp()
                 request.session['otp'] = otp
                 request.session['user_email'] = email
@@ -2016,31 +2016,38 @@ def login_with_otp(request):
 
 def verify_otp(request):
     if request.method == 'POST':
-        otp_entered = ''
-        for i in range(1, 7):  # Iterate through OTP fields from 1 to 6
-            otp_entered += request.POST.get(f'otp_{i}', '')
+        # Fallback for heavily cached browsers: 
+        # If OTP is disabled and the user was already authenticated in login_with_otp,
+        # we can just bypass verification and grab their account type to redirect them.
+        if not getattr(settings, 'ENABLE_OTP', False) and request.user.is_authenticated:
+            user = request.user
+            otp_expiry_str = ''
+        else:
+            otp_entered = ''
+            for i in range(1, 7):  # Iterate through OTP fields from 1 to 6
+                otp_entered += request.POST.get(f'otp_{i}', '')
 
-        otp_saved = request.session.get('otp')
-        otp_expiry_str = request.session.get('otp_expiry')
-        user_email = request.session.get('user_email')
+            otp_saved = request.session.get('otp')
+            otp_expiry_str = request.session.get('otp_expiry')
+            user_email = request.session.get('user_email')
 
-        if not (otp_saved and otp_expiry_str and user_email):
-            return JsonResponse({'success': False, 'message': 'Session expired or incomplete.'})
+            if not (otp_saved and otp_expiry_str and user_email):
+                return JsonResponse({'success': False, 'message': 'Session expired or incomplete.'})
 
-        otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
+            otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
 
-        if timezone.now() >= otp_expiry:
-            return JsonResponse({'success': False, 'message': 'Code is already expired.', 'otp_expiry': otp_expiry_str})
+            if timezone.now() >= otp_expiry:
+                return JsonResponse({'success': False, 'message': 'Code is already expired.', 'otp_expiry': otp_expiry_str})
 
-        if otp_entered != otp_saved:
-            return JsonResponse({'success': False, 'message': 'OTP inputted is not correct.', 'otp_expiry': otp_expiry_str})
+            if otp_entered != otp_saved:
+                return JsonResponse({'success': False, 'message': 'OTP inputted is not correct.', 'otp_expiry': otp_expiry_str})
 
-        user = CustomUser.objects.filter(email=user_email).first()
+            user = CustomUser.objects.filter(email=user_email).first()
 
-        if not user:
-            return JsonResponse({'success': False, 'message': 'User not found.'})
+            if not user:
+                return JsonResponse({'success': False, 'message': 'User not found.'})
 
-        login(request, user)
+            login(request, user)
 
         # Clean session
         request.session.pop('otp', None)
