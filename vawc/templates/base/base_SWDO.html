@@ -6,50 +6,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}{% endblock %}</title>
     <link rel="icon" href="{% static 'img/ecs-no-bg-2.png' %}" type="image/icon type">
-    <link rel="icon" href="{% static 'img/ecs-no-bg-2.png' %}" type="image/icon type">
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
     <link rel="stylesheet" href="{% static '/css/sidenav.css' %}" />
     <link rel="stylesheet" href="{% static '/css/styles.min.css' %}" />
     <link rel="stylesheet" href="{% static '/css/multi-form.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    {% comment %} <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" /> {% endcomment %}
-    {% comment %} <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css"> {% endcomment %}
 
-    {% comment %} <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.0.8/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/fh-4.0.1/r-3.0.2/sc-2.4.3/sb-1.7.1/sp-2.3.1/datatables.min.css" rel="stylesheet"> {% endcomment %}
     {% block styles %}{% endblock %}
   </head>
   <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
-    {% include 'include/admin/admin-sidenav.html' %}
+    {% include 'include/SWDO/SWDO-sidenav.html' %}
       <div class="body-wrapper">
-        {% include 'include/admin/admin-header.html' %}
+        {% include 'include/SWDO/SWDO-header.html' %}
         {% block content %}{% endblock %}
       </div>
     </div>
-
-  
-
     <script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    
+
     <!-- Core theme JS-->
     <script src="{% static 'js/sidebarmenu.js' %}"></script>
     <script src="{% static 'js/app.min.js' %}"></script>
     <script src="{% static '/libs/simplebar/dist/simplebar.js' %}"></script>
+
+
     <script>
       let notification_icon_parent = document.querySelector(".list-notification")
 
       $.ajax({
-        url: "{% url 'get_all_notification_admin'  %}",
+        url: "{% url 'get_all_notification_barangay'  %}",
         method: 'GET',
         headers: {
             'X-CSRFToken': '{{ csrf_token }}'
@@ -57,7 +53,6 @@
         success: function(response) {
             if (response.unread_notifications_exist) {
                 notification_icon_parent.classList.add("notification");
-                console.log(response)
             } else {
                 notification_icon_parent.classList.remove("notification");
             }
@@ -68,6 +63,9 @@
       });
 
     </script>
+
+
+
     {% block scripts %}{% endblock %}
   </body>
   {{ redirect_to_login_immediately }}

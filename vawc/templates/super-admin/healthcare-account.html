@@ -9,7 +9,7 @@
 <div class="container-fluid pb-4">
     <div class="row d-flex justify-content-between">
         <div class="col-auto">
-            <h1>Account</h1>
+            <h1>Healthcare Account</h1>
         </div>
         <div class="col-auto">
             <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account"><i class="bx bx-plus"></i> Add Account</button>
@@ -39,7 +39,7 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Barangay</th>
+                    <th scope="col">Hospital Name</th>
                     <th scope="col">Date Added</th>
                     <th class="text-center" scope="col">Manage</th>
                 </tr>
@@ -50,7 +50,7 @@
                         <td>{{ account.last_name }},{{ account.first_name }}&nbsp;{{ account.middle_name }}</td>
                         <td>{{ account.user.email }}</td>
                         <td>{{ account.status }}</td>
-                        <td>{{ account.barangay }}</td>
+                        <td>{{ account.hospital_name }}</td>
                         <td>{{ account.user.date_joined }}</td>
                         <td class="text-center">
                             <button class="btn btn-outline-success edit-account-btn" role="button" data-account-id="{{ account.user.id }}">View</button>
@@ -139,47 +139,26 @@
                     <select class="form-select" id="account_region" name="account_region">
                         <option>--Select Option--</option>
                         {% for region in default_regions %}
-                            <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
+                            <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                         {% empty %}
                             <option>No data found</option>
                         {% endfor %}
                     </select>
                     <label for="victim_region">Region</label>
                 </div>
+
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="account_province" name="account_province" aria-label="Province">
-                        <option>--Select Option--</option>
-                        {% for province in default_provinces %}
-                            <option value="{{ province.name }}" data-code="{{  province.code }}">{{ province.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
+                    <select class="form-select" id="account_province" name="account_province" disabled>
+                        <option value="">--Select Option--</option>
                     </select>
                     <label for="account_province">Province</label>
-                </div>
+                </div>  
+                
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="account_city" name="account_city" aria-label="City/Municipality">
-                        <option>--Select Option--</option>
-                        {% for city in default_cities %}
-                            <option value="{{ city.name }}" data-code="{{  city.code }}">{{ city.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
-                    </select>
-                    <label for="account_city">City/Municipality</label>
+                    <input type="text" class="form-control" id="account_hospital_name" name="account_hospital_name" placeholder="name@example.com" >
+                    <label for="account_hospital_name">Hospital Name</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <select id="account_barangay" name="account_barangay" class="form-select">
-                        <option>--Select Option--</option>
-                        {% for barangay in default_barangays %}
-                            <option value="{{ barangay.name }}" data-code="{{  barangay.code }}">{{ barangay.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
-                    </select>
-                    <label for="account_barangay">Barangay</label>
-                </div><!--End of col-->
-               
+
             </form>
         </div>
         <div class="modal-footer">
@@ -191,7 +170,7 @@
 </div>
 
 <!-- Modal edit -->
-<div class="modal fade" id="edit_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="edit_healthcare_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -230,49 +209,21 @@
                 <div class="form-floating mb-3">
                     <select class="form-select" id="edit_account_region" name="edit_account_region">
                         <option>--Select Option--</option>
-                        {% for region in default_regions %}
-                            <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
                     </select>
-                    <label for="edit_victim_region">Region</label>
+                    <label for="edit_account_region">Region</label>
                 </div>
                 
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_province" name="edit_account_province" aria-label="Province">
+                    <select class="form-select" id="edit_account_province" name="edit_account_province">
                         <option>--Select Option--</option>
-                        {% for province in default_provinces %}
-                            <option value="{{ province.name }}" data-code="{{  province.code }}">{{ province.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
                     </select>
                     <label for="edit_account_province">Province</label>
-                </div>
+                </div>  
+                
                 <div class="form-floating mb-3">
-                    <select class="form-select" id="edit_account_city" name="edit_account_city" aria-label="City/Municipality">
-                        <option>--Select Option--</option>
-                        {% for city in default_cities %}
-                            <option value="{{ city.name }}" data-code="{{  city.code }}">{{ city.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
-                    </select>
-                    <label for="edit_account_city">City/Municipality</label>
+                    <input type="text" class="form-control" id="edit_account_hospital_name" name="edit_account_hospital_name" placeholder="name@example.com" >
+                    <label for="edit_account_hospital_name">Hospital Name</label>
                 </div>
-                <div class="form-floating mb-3">
-                    <select id="edit_account_barangay" name="edit_account_barangay" class="form-select">
-                        <option>--Select Option--</option>
-                        {% for barangay in default_barangays %}
-                            <option value="{{ barangay.name }}" data-code="{{  barangay.code }}">{{ barangay.name }}</option>
-                        {% empty %}
-                            <option>No data found</option>
-                        {% endfor %}
-                    </select>
-                    <label for="edit_account_barangay">Barangay</label>
-                </div><!--End of col-->
-               
             </form>
         </div>
         <div class="modal-footer">
@@ -303,6 +254,7 @@
 </div>
 {% endblock content %}
 {% block scripts %}
+<!-- <script src="{% static 'js/police-station-address.js' %}"></script> -->
 <script>
     const csrf_token = '{{ csrf_token }}'
     $(document).ready(function() {
@@ -329,9 +281,10 @@
         // Function to handle form submission
         $('#addAccountForm').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
-
+            $('#addAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#addAccountBtn').text('Adding...'); // Change button text to indicate loading
             $.ajax({
-                url: '{% url "create account" %}',
+                url: '{% url "create healthcare account" %}',
                 method: 'POST',
                 data: $(this).serialize(), // Serialize form data
                 success: function(response) {
@@ -339,16 +292,21 @@
                         // Display success message and reload page after 2 seconds
                         $('#successToast .toast-body').text(response.message);
                         $('#successToast').toast('show');
+                        $('#add_new_account').modal('hide');
                         setTimeout(function() {
                             location.reload();
-                        }, 2000);
+                        }, 1000);
                     } else {
                         // Display error message
                         $('#errorToast .toast-body').text(response.message);
                         $('#errorToast').toast('show');
                     }
+                    $('#addAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#addAccountBtn').text('Add New Account'); // Change button text to indicate loading
                 },
                 error: function(xhr, errmsg, err) {
+                    $('#addAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#addAccountBtn').text('Add New Account'); // Change button text to indicate loading
                     console.log(xhr.status + ": " + xhr.responseText);
                 }
             });
@@ -356,42 +314,33 @@
 
         $(document).on('click', '.edit-account-btn', function() {
             var accountId = $(this).data('account-id');
-            //console.log(accountId);
+            console.log(accountId);
             $.ajax({
-                url: '{% url "edit_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_healthcare_account" 0 %}'.replace('0', accountId),
                 method: 'GET',
                 success: function(response) {
-                    console.log(response);
+                    // console.log("Full response object:", response);
+                
+                    setGeoSelect($('#edit_account_region'), 'region', 'default_regions');
+                    setGeoSelect($('#edit_account_province'), 'province', 'default_provinces');
 
-                    setGeoSelect($('#edit_account_region'), 'region', 'default_regions')
-                    setGeoSelect($('#edit_account_province'), 'province', 'default_provinces')
-                    setGeoSelect($('#edit_account_city'), 'city', 'default_cities')
-                    setGeoSelect($('#edit_account_barangay'), 'barangay', 'default_barangays')
+                    function setGeoSelect(geoTypeInput, itemKey, dataKey) {
+                        const blankOption = document.createElement('option');
+                        blankOption.textContent = '--Select Option--';
+                        geoTypeInput.empty().append(blankOption);
 
-                    function setGeoSelect(geoTypeInput, geoType, key) {
+                         console.log("response data key: ",response[dataKey]);
 
-                        const blankOption = document.createElement('option')
-                        blankOption.textContent = '--Select Option--'
-                        // clear all options in select element
-    
-                        // apend blank option as the first selected options
-                        geoTypeInput.empty().append(blankOption)
-                        // apped data to respective inputs
-                        console.log(response[key])
-                        response[key].forEach(item => {
-                            const option = document.createElement('option')
-                            option.dataset.code = item.code
-                            option.value = item.name
-                            option.textContent = item.name
-    
-                            if(option.value == response.geoType) {
-                                console.log(okeeeee)
-                            }
+                        response[dataKey].forEach(item => {
+                            const value = item[itemKey];
+                            if (!value) return;
+
+                            const option = document.createElement('option');
+                            option.value = value;
+                            option.textContent = value;
                             geoTypeInput.append(option)
-                        })
+                        });
                     }
-
-
 
                     // Populate the modal with the data from the response
                     $('#account_id').val(response.account_id);
@@ -401,11 +350,11 @@
                     $('#edit_status').val(response.status);
                     $('#edit_account_region').val(response.region);
                     $('#edit_account_province').val(response.province);
-                    $('#edit_account_city').val(response.city);
-                    $('#edit_account_barangay').val(response.barangay);
-        
+                    $('#edit_account_hospital_name').val(response.hospital_name);
                     // Show the modal
-                    $('#edit_account').modal('show');
+                    $('#edit_healthcare_account').modal('show');
+                    
+                    
                 },
                 error: function(xhr, status, error) {
                     // Handle error
@@ -416,29 +365,35 @@
 
         $('#saveAccountBtn').on('click', function() {
             var formData = $('#editAccountForm').serialize();
-
+            $('#saveAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#saveAccountBtn').text('Saving...'); // Change button text to indicate loading
             // Get the accountId from the hidden input field
             var accountId = $('#account_id').val();
             console.log('Account Id:', accountId);
             console.log(accountId);
             $.ajax({
-                url: '{% url "edit_account" 0 %}'.replace('0', accountId),
+                url: '{% url "edit_healthcare_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
                     // Handle success response
                     console.log(response);
                     // Optionally, close the modal or show a success message
-                    $('#edit_account').modal('hide');
+                    $('#edit_law_enforcement_account').modal('hide');
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
+                    $('#edit_healthcare_account').modal('hide');
+                    $('#saveAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#saveAccountBtn').text('Saving Account'); // Change button text to indicate loading
                     setTimeout(function() {
                         location.reload();
-                    }, 2000);
+                    }, 1000);
                     // Refresh the page or update any UI as needed
                 },
                 error: function(xhr, status, error) {
+                    $('#saveAccountBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#saveAccountBtn').text('Saving Account'); // Change button text to indicate loading
                     // Handle error
                     console.error('Error:', error);
                     // Display error message
@@ -453,6 +408,7 @@
         $(document).on('click', '.delete-account-btn', function () {
             // Retrieve the account ID from the data-account-id attribute
             var accountId = $(this).data('account-id');
+           
 
             // Set the account ID value in the modal confirmation button
             $('#confirmAccountDeleteBtn').data('account-id', accountId);
@@ -461,12 +417,12 @@
             $('#confirmAccountDelete').modal('show');
         });
 
-
         // Attach click event listener to the confirmation modal Delete button
         $('#confirmAccountDeleteBtn').on('click', function() {
             // Retrieve the account ID from the data-account-id attribute of the Delete button in the modal
             var accountId = $(this).data('account-id');
-            
+            $('#confirmAccountDeleteBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
+            $('#confirmAccountDeleteBtn').text('Deleting...'); // Change button text to indicate loading
             // Send an AJAX request to delete the account
             $.ajax({
                 url: '{% url "delete_account" %}',
@@ -483,9 +439,13 @@
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
+                    $('#confirmAccountDelete').modal('hide');
+                    $('#confirmAccountDeleteBtn').text('Delete'); // Change button text to indicate loading
+                    $('#confirmAccountDeleteBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
                     setTimeout(function() {
                         location.reload();
-                    }, 2000);
+                    }, 1000);
+
                 },
                 error: function(xhr, status, error) {
                     // Handle error
@@ -494,6 +454,8 @@
                     $('#errorToast .toast-body').text(response.message);
                     $('#errorToast').toast('show');
                     // Optionally, show an error message to the user
+                    $('#confirmAccountDeleteBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
+                    $('#confirmAccountDeleteBtn').text('Delete'); // Change button text to indicate loading
                 }
             });
         });
@@ -552,81 +514,111 @@
 
     });
 
-    function addressListener(formElement, formType, count = 0) {
+    function addAddressListener(formElement, formType, count = 0) {
         let region = null
         let province = null
-        let city = null
-        let barangay = null
-    
+        let police_station = null
+
         if(formType === 'perp' || formType === 'victim') {
-            region = formElement.querySelector(`#${formType}-region_${count}`)
-            province = formElement.querySelector(`#${formType}-province_${count}`)
-            city = formElement.querySelector(`#${formType}-city_${count}`)
-            barangay = formElement.querySelector(`#${formType}-barangay_${count}`)
+            region = formElement.querySelector(`#${formType}_region_${count}`)
+            province = formElement.querySelector(`#${formType}_province_${count}`)
+            
         } else {
-            region = formElement.querySelector(`#${formType}_region`)
-            province = formElement.querySelector(`#${formType}_province`)
-            city = formElement.querySelector(`#${formType}_city`)
-            barangay = formElement.querySelector(`#${formType}_barangay`)
+            region = formElement.querySelector(`#${formType}_region`)   
+            province = formElement.querySelector(`#${formType}_province`)   
+            
         }
-        if (formType === 'account'){
-            province.disabled = true
-            city.disabled = true
-            barangay.disabled = true
-        }
+        province.disabled = true
+        
 
         region.addEventListener('change', (e) => {
 
-            const regionId = e.target.options[e.target.selectedIndex].dataset.code
-
-            if(regionId) {
-                setGeoSelect(province, {
-                    filter: regionId,
+            const regionSelect = document.querySelector(`#${formType}_region`);
+            const regionNameRaw = regionSelect.value;
+            const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if(regionName) {
+                setGeoSelectPoliceStation(province, {
+                    region: regionName,
                     action: 'province',
                     csrfmiddlewaretoken: csrf_token,
-                }, {passive: true})
+                });
                 province.disabled=false
+                console.log("enabled police station")
+            } else {
+                console.log('Please select a region.');
             }
 
         })
 
         province.addEventListener('change', (e) => {
-
-            const provinceId = e.target.options[e.target.selectedIndex].dataset.code
-
-            if(provinceId) {
-                setGeoSelect(city, {
-                    filter: provinceId,
-                    action: 'city',
+            const provinceName = e.target.value;
+            if (provinceName) {
+                setGeoSelectPoliceStation(police_station, {
+                    province: provinceName,
+                    action: 'province',
                     csrfmiddlewaretoken: csrf_token,
-                }, {passive: true})
-                city.disabled=false
+                });
+                police_station.disabled = false;
+                
+            } else {
+                console.log('Please select a province.');
+            }
+        });
+    }
+    function editAddressListener(formElement, formType, count = 0) {
+        let region = null
+        let province = null
+        let police_station = null
+
+        if(formType === 'perp' || formType === 'victim') {
+            region = formElement.querySelector(`#${formType}_region_${count}`)
+            province = formElement.querySelector(`#${formType}_province_${count}`)
+            police_station = formElement.querySelector(`#${formType}_police_${count}`) 
+        } else {
+            region = formElement.querySelector(`#${formType}_region`)   
+            province = formElement.querySelector(`#${formType}_province`)   
+            police_station = formElement.querySelector(`#${formType}_police`)   
+        }
+
+        region.addEventListener('change', (e) => {
+
+            const regionSelect = document.querySelector(`#${formType}_region`);
+            const regionNameRaw = regionSelect.value;
+            const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
+            if(regionName) {
+                setGeoSelectPoliceStation(province, {
+                    region: regionName,
+                    action: 'province',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+            } else {
+                console.log('Please select a region.');
             }
 
         })
-    
-        city.addEventListener('change', (e) => {
 
-            const cityId = e.target.options[e.target.selectedIndex].dataset.code
-            if(cityId) {
-                setGeoSelect(barangay, {
-                    filter: cityId,
-                    action: 'barangay',
+        province.addEventListener('change', (e) => {
+            const provinceName = e.target.value;
+            if (provinceName) {
+                setGeoSelectPoliceStation(police_station, {
+                    province: provinceName,
+                    action: 'province',
                     csrfmiddlewaretoken: csrf_token,
-                }, {passive: true})
-                barangay.disabled=false
+                });
+            } else {
+                console.log('Please select a province.');
             }
-        })
+        });
     }
     
     document.addEventListener('DOMContentLoaded', () => {
-        addressListener(document.querySelector('#addAccountForm'), 'account')
-        addressListener(document.querySelector('#editAccountForm'), 'edit_account')
+        addAddressListener(document.querySelector('#addAccountForm'), 'account')
+        editAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
     })
     
     
     async function setGeoSelect(geoTypeInput, formData) {
-    
+
         const res = await fetch('/pages/select-address/', {
             method: 'POST',
             headers: {
@@ -635,14 +627,15 @@
             },
             body: JSON.stringify(formData),
         })
-    
+
         const data = await res.json()
-    
+
         const blankOption = document.createElement('option')
         blankOption.textContent = '--Select Option--'
+        blankOption.value = ''
         // clear all options in select element
         geoTypeInput.replaceChildren()
-    
+
         // apend blank option as the first selected options
         geoTypeInput.appendChild(blankOption)
         // apped data to respective inputs
@@ -654,5 +647,38 @@
             geoTypeInput.appendChild(option)
         })
     }
+
+    async function setGeoSelectPoliceStation(selectElement, formData) {
+        try {
+            const res = await fetch('/pages/get-police-station/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrf_token
+                },
+                body: new URLSearchParams(formData)
+            });
+
+            if (!res.ok) throw new Error(`Server error: ${res.status}`);
+            const data = await res.json();
+
+            selectElement.innerHTML = '';
+            const blankOption = document.createElement('option');
+            blankOption.textContent = '--Select Option--';
+            blankOption.value = '';
+            selectElement.appendChild(blankOption);
+
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.name;
+                option.textContent = item.name;
+                selectElement.appendChild(option);
+                console.log(item.name);
+            });
+        } catch (error) {
+            console.error("Failed to fetch police stations:", error);
+        }
+    }
+
 </script>
 {% endblock scripts %}
