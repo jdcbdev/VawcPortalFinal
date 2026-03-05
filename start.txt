@@ -139,3 +139,9 @@ B. DJANGO MIGRATION & DATABASE ISSUES:
    CAUSE: If an old database schema conflicts with tracking native migrations.
    SOLUTION: You may need to drop your local database, recreate it, and rerun 
              python manage.py migrate.
+
+   ERROR: `ph_geography.Barangay.is_urban: (fields.E903) NullBooleanField is removed`
+   CAUSE: The `django-ph-geography` package uses a legacy Django field (`NullBooleanField`) that was removed in Django 4.0+.
+   SOLUTION: Navigate to your virtual environment folder, e.g., `env/Lib/site-packages/ph_geography/models.py`.
+             Find the `Barangay` model and change `is_urban = models.NullBooleanField(...)` 
+             to `is_urban = models.BooleanField(null=True, ...)`.
