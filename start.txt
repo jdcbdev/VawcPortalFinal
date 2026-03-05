@@ -71,18 +71,20 @@ Step 2: Install virtualenv (if you don't have it globally):
 
 Step 3: Create a virtual environment in your project root:
         virtualenv env
+        NOTE: 
+          # If in case of multiple python versions run: py -3.9 -m venv env
 
 Step 4: Activate the Virtual Environment:
         .\env\Scripts\activate
 
 Step 5: Navigate to the core project directory:
-        cd vawc
+        cd .\VawcPortalFinal\vawc
 
 Step 6: Install Python Dependencies:
         pip install -r requirements.txt
 
 Step 7: Apply Database Migrations:
-        Ensure settings.py matches your MySQL setup, then run:
+        Ensure settings.py matches your MySQL setup, then  run:
         python manage.py migrate
 
 Step 8: Create a Superuser Account:
