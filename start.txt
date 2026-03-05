@@ -1,16 +1,139 @@
-#Running Locally
+================================================================================
+VAWC PROJECT SETUP & EXECUTION
+================================================================================
 
-1. Run: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
-2. Install virtualenv (if you haven't already): pip install virtualenv
-3. Create a virtual environment: virtualenv env
-4. Activate the virtual environment: .\env\Scripts\activate
-5. Navigate to the project directory: cd vawc
-6. Install dependencies: pip install -r requirements.txt
-7. On windows, you have to install GTK3. Follow instructions here: https://github.com/GtkSharp/GtkSharp/wiki/Installing-Gtk-on-Windows
-8. python manage.py migrate
-9. python manage.py runserver
-10. create a superuser: python manage.py createsuperuser
-11. login to django/admin and fill in the account details
-12. Setup Email service
-13. Setup Google Captcha
-14. Setup Twilio Account
+To run the project locally, follow these steps in your Windows environment.
+
+
+--------------------------------------------------------------------------------
+1. PREREQUISITES
+--------------------------------------------------------------------------------
+- Python 3.9 installed on your system.
+
+- GTK3 installed (Required by weasyprint for PDF generation). 
+  Follow: https://github.com/GtkSharp/GtkSharp/wiki/Installing-Gtk-on-Windows
+
+- MySQL instance running locally. 
+  You must create a database named 'vawcdb' with user 'root' and an empty 
+  password (or update vawc/settings.py to match your local credentials).
+
+
+--------------------------------------------------------------------------------
+2. PYTHON DEPENDENCIES (requirements.txt)
+--------------------------------------------------------------------------------
+The following packages are required to run the project:
+
+asgiref==3.7.2
+attrs==23.2.0
+Brotli==1.1.0
+certifi==2024.6.2
+cffi==1.16.0
+charset-normalizer==3.3.2
+cryptography==42.0.3
+cssselect2==0.7.0
+Django==4.2.10
+django-auto-logout==0.5.1
+django-cleanup==8.1.0
+django-ph-geography==1.0.0
+fonttools==4.50.0
+html5lib==1.1
+idna==3.7
+mysqlclient==2.2.4
+pillow==10.2.0
+pycparser==2.21
+pydyf==0.10.0
+PyJWT==2.8.0
+pyphen==0.14.0
+pytz==2024.1
+requests==2.32.3
+six==1.16.0
+sqlparse==0.4.4
+tinycss2==1.3.0
+twilio==9.1.1
+typing_extensions==4.9.0
+tzdata==2023.4
+urllib3==2.2.1
+weasyprint==62.1
+webencodings==0.5.1
+whitenoise==6.6.0
+zopfli==0.2.3
+
+
+--------------------------------------------------------------------------------
+3. STEP-BY-STEP SETUP
+--------------------------------------------------------------------------------
+
+Step 1: Open PowerShell and adjust Execution Policy (if needed):
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
+Step 2: Install virtualenv (if you don't have it globally):
+        pip install virtualenv
+
+Step 3: Create a virtual environment in your project root:
+        virtualenv env
+
+Step 4: Activate the Virtual Environment:
+        .\env\Scripts\activate
+
+Step 5: Navigate to the core project directory:
+        cd vawc
+
+Step 6: Install Python Dependencies:
+        pip install -r requirements.txt
+
+Step 7: Apply Database Migrations:
+        Ensure settings.py matches your MySQL setup, then run:
+        python manage.py migrate
+
+Step 8: Create a Superuser Account:
+        python manage.py createsuperuser
+
+Step 9: Run the Development Server:
+        python manage.py runserver
+        (The portal will now be accessible at http://127.0.0.1:8000)
+
+Step 10: Post-Setup Configurations:
+         Log into the admin portal and provide API keys for:
+         - Email Service (Host, Port, User, Password)
+         - Google Recaptcha (Site & Secret keys)
+         - Twilio Account (SID & Auth Token for SMS notifications)
+
+
+================================================================================
+TROUBLESHOOTING & COMMON SETUP ERRORS
+================================================================================
+If you encounter issues during setup, reference the solutions below.
+
+
+A. LOCAL ENVIRONMENT ISSUES:
+
+   ERROR: `Exception: GTK3 is not installed`
+   CAUSE: Weasyprint (used for PDF generation) requires the GTK3 runtime 
+          environment in Windows.
+   SOLUTION: https://github.com/GtkSharp/GtkSharp/wiki/Installing-Gtk-on-Windows
+
+   ERROR: `pip install mysqlclient` fails
+   CAUSE: The MySQL C client requires Microsoft Visual C++ Build Tools to 
+          compile from source.
+   SOLUTION: Use a precompiled binary wheel from:
+             https://www.lfd.uci.edu/~gohlke/pythonlibs/#mysqlclient
+
+   ERROR: `ExecutionPolicy` restricted error
+   CAUSE: Windows PowerShell prevents running the `activate` script by default.
+   SOLUTION: Run: Set-ExecutionPolicy Unrestricted -Scope CurrentUser
+
+
+B. DJANGO MIGRATION & DATABASE ISSUES:
+
+   ERROR: `django.db.utils.OperationalError: (1045, "Access denied for user")`
+   CAUSE: The database credentials specified in vawc/settings.py (DATABASES dict)
+          are incorrect or the MySQL user does not exist. Verify root password.
+
+   ERROR: `django.db.utils.OperationalError: (1049, "Unknown database")`
+   CAUSE: The database hasn't been created yet.
+   SOLUTION: Open your MySQL shell and run: CREATE DATABASE vawcdb;
+
+   ERROR: Migration conflicts / Inconsistent state
+   CAUSE: If an old database schema conflicts with tracking native migrations.
+   SOLUTION: You may need to drop your local database, recreate it, and rerun 
+             python manage.py migrate.
