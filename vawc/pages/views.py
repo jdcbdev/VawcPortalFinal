@@ -1363,17 +1363,30 @@ def update_graph_report(request):
 # NOTIF
 @login_required
 def admin_notification_view (request):
-    user_account = request.user.account
     notifications = Notification.objects.filter(receiver_account = request.user.email).order_by('-date')
 
     return render(request, 'barangay-admin/notification.html', {'notifications': notifications})
 
 @login_required
 def super_admin_notification_view (request):
-    user_account = request.user.account
     notifications = Notification.objects.filter(receiver_account = request.user.email).order_by('-date')
 
     return render(request, 'super-admin/notification.html', {'notifications': notifications})
+
+@login_required
+def swdo_notification_view (request):
+    notifications = Notification.objects.filter(receiver_account = request.user.email).order_by('-date')
+    return render(request, 'SWDO/notification.html', {'notifications': notifications})
+
+@login_required
+def healthcare_notification_view (request):
+    notifications = Notification.objects.filter(receiver_account = request.user.email).order_by('-date')
+    return render(request, 'healthcare-admin/notification.html', {'notifications': notifications})
+
+@login_required
+def law_enforcement_notification_view (request):
+    notifications = Notification.objects.filter(receiver_account = request.user.email).order_by('-date')
+    return render(request, 'law-enforcement-admin/notification.html', {'notifications': notifications})
 
 
 # message ="message"

@@ -128,6 +128,9 @@ urlpatterns = [
     
     # NOTIF
     path('admin-barangay-vawc/notification', views.admin_notification_view, name="Notification"),
+    path('admin-law-enforcement-vawc/notification', views.law_enforcement_notification_view, name="Notification Law Enforcement"),
+    path('admin-healthcare-vawc/notification', views.healthcare_notification_view, name="Notification Healthcare"),
+    path('admin-SWDO-vawc/notification', views.swdo_notification_view, name="Notification SWDO"),
     path('read_notification/', views.read_notification, name='read_notification'),
     path('get_all_notification_barangay/', views.get_all_notification_barangay, name='get_all_notification_barangay'),
     path('get_all_notification_admin/', views.get_all_notification_admin, name='get_all_notification_admin'),
