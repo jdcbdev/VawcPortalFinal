@@ -2693,9 +2693,9 @@ def view_admin_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -2848,9 +2848,9 @@ def view_admin_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -2967,9 +2967,9 @@ def view_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -3124,9 +3124,9 @@ def view_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -3249,9 +3249,9 @@ def view_enforcement_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -3405,9 +3405,9 @@ def view_enforcement_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -3939,7 +3939,7 @@ def add_parent_view(request, case_id, victim_id):
     # Query Parent objects related to the Victim
     parents = Parent.objects.filter(victim_parent=victim)
     
-    if request.session['security_status'] == "encrypted":
+    if request.session.get('security_status') == "encrypted":
         for parent in parents:
             parent.first_name = encrypt_data(parent.first_name)
             parent.middle_name = encrypt_data(parent.middle_name)
@@ -3986,7 +3986,7 @@ def add_parent_admin_view(request, case_id, victim_id):
     # Query Parent objects related to the Victim
     parents = Parent.objects.filter(victim_parent=victim)
     
-    if request.session['security_status'] == "encrypted":
+    if request.session.get('security_status') == "encrypted":
         for parent in parents:
             parent.first_name = encrypt_data(parent.first_name)
             parent.middle_name = encrypt_data(parent.middle_name)
@@ -4148,7 +4148,7 @@ def add_parent_perp_view(request, case_id, perp_id):
     print("test")
     
    
-    if request.session['security_status'] == "encrypted":
+    if request.session.get('security_status') == "encrypted":
         for parent in parents:
             parent.first_name = encrypt_data(parent.first_name)
             parent.middle_name = encrypt_data(parent.middle_name)
@@ -4198,7 +4198,7 @@ def add_parent_perp_admin_view(request, case_id, perp_id):
     print("test")
     
    
-    if request.session['security_status'] == "encrypted":
+    if request.session.get('security_status') == "encrypted":
         for parent in parents:
             parent.first_name = encrypt_data(parent.first_name)
             parent.middle_name = encrypt_data(parent.middle_name)
@@ -4985,9 +4985,9 @@ def view_SWDO_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -5142,9 +5142,9 @@ def view_SWDO_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -5264,9 +5264,9 @@ def view_healthcare_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
@@ -5393,9 +5393,9 @@ def view_healthcare_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session['security_status'])
+        print(request.session.get('security_status'))
 
-        if request.session['security_status'] == "encrypted":
+        if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
             case.barangay = encrypt_data(case.barangay)
             case.date_latest_incident = encrypt_data(case.date_latest_incident)
