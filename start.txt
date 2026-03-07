@@ -87,19 +87,22 @@ Step 7: Apply Database Migrations:
         Ensure settings.py matches your MySQL setup, then  run:
         python manage.py migrate
 
-Step 8: Create a Superuser Account:
+Step 8: Load Initial Data
+        import vawc_clean
+
+Step 9: Create a Superuser Account:
         python manage.py createsuperuser
 
-Step 9: Run the Development Server:
+Step 10: Run the Development Server:
         python manage.py runserver
         (The portal will now be accessible at http://127.0.0.1:8000)
 
-Step 10: Post-Setup Configurations:
+Step 11: Post-Setup Configurations:
          Log into the admin portal and provide API keys for:
          - Email Service (Host, Port, User, Password)
          - Google Recaptcha (Site & Secret keys)
          - Twilio Account (SID & Auth Token for SMS notifications)
-
+         - And complete the Superuser profile
 
 ================================================================================
 TROUBLESHOOTING & COMMON SETUP ERRORS

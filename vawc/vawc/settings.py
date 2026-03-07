@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'vawc.wsgi.application'
 DATABASES = {
     'default':  {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vawcdb',
+        'NAME': 'vawcdb_new',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
