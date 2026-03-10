@@ -3,21 +3,41 @@
 {% load static %}
 {% block styles %}
 <style>
-    input[type="checkbox"] { 
-        transform: scale(1.5); 
-    } 
+    input[type="checkbox"] {
+        transform: scale(1.5);
+    }
 </style>
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
     <h1 class="pt-2">Settings</h1>
     <hr>
+
+    <h3 class="mt-4">System Settings</h3>
+    <hr>
+    <div class="d-flex flex-row bd-highlight mb-3 align-items-center">
+        <div class="pe-3">
+            <h4>Two-Factor Authentication (OTP)</h4>
+        </div>
+        <div class="form-check form-switch ms-3">
+            <input class="form-check-input" type="checkbox" id="otpToggleSwitch" {% if otp_enabled %}checked{% endif %}>
+            <label class="form-check-label" id="otpToggleLabel" for="otpToggleSwitch">
+                {% if otp_enabled %} Enabled{% else %} Disabled{% endif %}
+            </label>
+        </div>
+    </div>
+
     <h3 class="mt-5">Change Password</h3>
     <hr>
     <div class="d-flex flex-row bd-highlight mb-3">
-        <div class="pe-3"><h4>Password</h4></div>
-        <div class="bg-danger text-danger bg-opacity-10 rounded border border-danger" style="display:none;"><i class='bx bx-info-circle align-middle ms-2'></i><span class="px-2 align-middle me-1"></span></div>
-        <div class="bg-success text-success bg-opacity-10 rounded border border-success" style="display:none;"><i class='bx bx-check-circle align-middle ms-2'></i><span class="px-2 align-middle me-1">Correct</span></div>
+        <div class="pe-3">
+            <h4>Password</h4>
+        </div>
+        <div class="bg-danger text-danger bg-opacity-10 rounded border border-danger" style="display:none;"><i
+                class='bx bx-info-circle align-middle ms-2'></i><span class="px-2 align-middle me-1"></span></div>
+        <div class="bg-success text-success bg-opacity-10 rounded border border-success" style="display:none;"><i
+                class='bx bx-check-circle align-middle ms-2'></i><span class="px-2 align-middle me-1">Correct</span>
+        </div>
     </div>
     <form class="row" id="passwordChangeForm" method="post" data-url="{% url 'custom_password_change' %}">
         {% csrf_token %}
@@ -42,11 +62,12 @@
         <div class="form-check ms-3 mt-3">
             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
             <label class="form-check-label" for="flexCheckDefault">
-              Show Password
+                Show Password
             </label>
         </div>
         <div class="d-flex flex-row-reverse">
-            <div class="mt-2"><button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button></div>
+            <div class="mt-2"><button type="button" class="btn btn-primary" onclick="changePassword()">Change
+                    Password</button></div>
         </div>
     </form>
 </div>
@@ -79,9 +100,22 @@
 {% endblock content %}
 {% block scripts %}
 <script>
-    function showToast(type) {
+    function showToast(type, message) {
         var toastId = type === 'success' ? '#successToast' : '#errorToast';
-        var toast = new bootstrap.Toast(document.querySelector(toastId));
+        var toastEl = document.querySelector(toastId);
+
+        if (message) {
+            toastEl.querySelector('.toast-body').textContent = message;
+        } else {
+            // Restore default text if no custom message is provided
+            if (type === 'success') {
+                toastEl.querySelector('.toast-body').textContent = 'Password changed successfully!';
+            } else {
+                toastEl.querySelector('.toast-body').textContent = 'Error changing password. Please check your input.';
+            }
+        }
+
+        var toast = new bootstrap.Toast(toastEl);
         toast.show();
     }
     function togglePasswordVisibility() {
@@ -89,7 +123,7 @@
         var passwordInput = document.getElementById('newPassword1');
         var confirmPasswordInput = document.getElementById('newPassword2');
         var showPasswordCheckbox = document.getElementById('flexCheckDefault');
-    
+
         if (showPasswordCheckbox.checked) {
             currentPasswordInput.type = 'text';
             passwordInput.type = 'text';
@@ -100,79 +134,79 @@
             confirmPasswordInput.type = 'password';
         }
     }
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const newPasswordInput = document.getElementById('newPassword1');
         const confirmNewPasswordInput = document.getElementById('newPassword2');
         const validationMessageContainer = document.querySelector('.bg-danger');
         const correctMessageContainer = document.querySelector('.bg-success');
         const validationMessage = document.querySelector('.bg-danger span');
         const confirmPasswordBtn = document.querySelector('#confirmPasswordBtn');
-    
+
         const updateValidationMessage = (message) => {
             validationMessage.textContent = message;
             validationMessageContainer.style.display = 'block';
             correctMessageContainer.style.display = 'none';
             disableConfirmButton();
         };
-    
+
         const updateCorrectMessage = () => {
             validationMessageContainer.style.display = 'none';
             correctMessageContainer.style.display = 'block';
             enableConfirmButton();
         };
-    
+
         const clearMessages = () => {
             validationMessage.textContent = '';
             validationMessageContainer.style.display = 'none';
             correctMessageContainer.style.display = 'none';
             enableConfirmButton();  // Ensure the button is initially enabled
         };
-    
+
         const enableConfirmButton = () => {
             confirmPasswordBtn.disabled = false;
         };
-    
+
         const disableConfirmButton = () => {
             confirmPasswordBtn.disabled = true;
         };
-    
+
         const validatePassword = () => {
             const newPassword = newPasswordInput.value;
             const confirmPassword = confirmNewPasswordInput.value;
-    
+
             // Password length validation
             if (newPassword.length < 8) {
                 updateValidationMessage('Password should be at least 8 characters.');
                 return;
             }
-    
+
             // Password match validation
             if (newPassword !== confirmPassword) {
                 updateValidationMessage('Passwords do not match.');
                 return;
             }
-    
+
             // Special character validation
             const specialCharacterRegex = /[!@#$%^&*(),.?":{}|<>_]/;
             if (!specialCharacterRegex.test(newPassword)) {
                 updateValidationMessage('Password should have at least one special character.');
                 return;
             }
-    
+
             // Uppercase letter validation
             const uppercaseLetterRegex = /[A-Z]/;
             if (!uppercaseLetterRegex.test(newPassword)) {
                 updateValidationMessage('Password should have at least one uppercase letter.');
                 return;
             }
-    
+
             // All validations passed
             updateCorrectMessage();
         };
-    
+
         newPasswordInput.addEventListener('input', validatePassword);
         confirmNewPasswordInput.addEventListener('input', validatePassword);
-    
+
         // Reset messages on input focus
         newPasswordInput.addEventListener('focus', clearMessages);
         confirmNewPasswordInput.addEventListener('focus', clearMessages);
@@ -207,7 +241,45 @@
     }
     // Attach the togglePasswordVisibility function to the checkbox change event
     document.getElementById('flexCheckDefault').addEventListener('change', togglePasswordVisibility);
+
+    // OTP Toggle handler
+    document.getElementById('otpToggleSwitch').addEventListener('change', function () {
+        var isChecked = this.checked;
+        var label = document.getElementById('otpToggleLabel');
+        label.textContent = isChecked ? 'Enabled' : 'Disabled';
+
+        var switchEl = this;
+        switchEl.disabled = true;
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "toggle_otp" %}',
+            data: JSON.stringify({ 'enable_otp': isChecked }),
+            contentType: 'application/json',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            success: function (data) {
+                switchEl.disabled = false;
+                if (data.success) {
+                    showToast('success', data.message);
+                } else {
+                    showToast('error', data.message);
+                    // Revert the switch if failed
+                    switchEl.checked = !isChecked;
+                    label.textContent = !isChecked ? ' Enabled' : ' Disabled';
+                    console.log(data.message);
+                }
+            },
+            error: function () {
+                switchEl.disabled = false;
+                showToast('error', 'An error occurred while communicating with the server.');
+                // Revert the switch
+                switchEl.checked = !isChecked;
+                label.textContent = !isChecked ? ' Enabled' : ' Disabled';
+            }
+        });
+    });
 </script>
 
 {% endblock scripts %}
-

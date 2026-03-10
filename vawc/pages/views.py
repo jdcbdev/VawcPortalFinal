@@ -1618,7 +1618,29 @@ def admin_settings_view (request):
     
     logged_in_user = request.user
     
-    return render(request, 'super-admin/settings.html', {'global': request.session, 'logged_in_user': logged_in_user})
+    vawc_settings = VawcSettings.objects.first()
+    otp_enabled = vawc_settings.enable_otp if vawc_settings else False
+    
+    return render(request, 'super-admin/settings.html', {'global': request.session, 'logged_in_user': logged_in_user, 'otp_enabled': otp_enabled})
+
+@login_required
+@require_POST
+def toggle_otp_setting(request):
+    if not hasattr(request.user, 'account') or request.user.account.type != 'admin':
+        return JsonResponse({'success': False, 'message': 'Unauthorized'}, status=403)
+    
+    try:
+        data = json.loads(request.body)
+        enable_otp = data.get('enable_otp', False)
+        
+        settings_obj, created = VawcSettings.objects.get_or_create(id=1)
+        settings_obj.enable_otp = enable_otp
+        settings_obj.save()
+        
+        status_msg = 'enabled' if enable_otp else 'disabled'
+        return JsonResponse({'success': True, 'message': f'OTP successfully {status_msg}.'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 @login_required
 def custom_password_change_view(request):

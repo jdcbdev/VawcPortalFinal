@@ -59,6 +59,7 @@ urlpatterns = [
     path('delete_account/', views.delete_account, name='delete_account'),
     path('check_username_email/', views.check_username_email, name='check_username_email'),
     path('admin-vawc/settings/', views.admin_settings_view, name='admin settings'),
+    path('admin-vawc/toggle-otp/', views.toggle_otp_setting, name='toggle_otp'),
     path('admin-vawc/notification', views.super_admin_notification_view, name="notif admin"),
 
     path('admin-vawc/case/', views.admin_case_view, name='admin case'),
