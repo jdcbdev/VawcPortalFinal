@@ -104,6 +104,27 @@
     </div>
 </div>
 
+<!-- OTP Confirmation Modal -->
+<div class="modal fade" id="otpConfirmModal" tabindex="-1" aria-labelledby="otpConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="otpConfirmModalLabel">Confirm Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-muted">
+                Are you sure you want to <span id="otpActionText" class="fw-bold"></span> Two-Factor Authentication
+                (OTP)?
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal"
+                    id="cancelOtpToggle">Cancel</button>
+                <button type="button" class="btn btn-primary rounded-3 px-4" id="confirmOtpToggle">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -275,12 +296,40 @@
     document.getElementById('flexCheckDefault').addEventListener('change', togglePasswordVisibility);
 
     // OTP Toggle handler
-    document.getElementById('otpToggleSwitch').addEventListener('change', function () {
-        var isChecked = this.checked;
-        var label = document.getElementById('otpToggleLabel');
-        label.textContent = isChecked ? 'Enabled' : 'Disabled';
+    let pendingOtpState = null;
+    let otpModalEl = document.getElementById('otpConfirmModal');
+    let otpModal = new bootstrap.Modal(otpModalEl);
 
-        var switchEl = this;
+    document.getElementById('otpToggleSwitch').addEventListener('change', function (e) {
+        pendingOtpState = this.checked;
+
+        // Show modal and update text based on state
+        let actionText = pendingOtpState ? 'enable' : 'disable';
+        document.getElementById('otpActionText').textContent = actionText;
+        otpModal.show();
+    });
+
+    // Handle cancel or modal dismissal (revert toggle state)
+    otpModalEl.addEventListener('hidden.bs.modal', function () {
+        if (pendingOtpState !== null) {
+            // Revert switch visually
+            document.getElementById('otpToggleSwitch').checked = !pendingOtpState;
+            pendingOtpState = null;
+        }
+    });
+
+    // Confirm button click logic
+    document.getElementById('confirmOtpToggle').addEventListener('click', function () {
+        if (pendingOtpState === null) return;
+
+        var isChecked = pendingOtpState;
+        pendingOtpState = null; // Clear state so hidden event doesn't revert
+        otpModal.hide();
+
+        var label = document.getElementById('otpToggleLabel');
+        label.textContent = isChecked ? ' Enabled' : ' Disabled';
+
+        var switchEl = document.getElementById('otpToggleSwitch');
         switchEl.disabled = true;
 
         $.ajax({
