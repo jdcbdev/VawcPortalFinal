@@ -151,3 +151,10 @@ class Twilio(models.Model):
 
     def __str__(self):
         return f"Account SID: {self.account_sid} - From contact: {self.phone_number}"
+
+class VawcSettings(models.Model):
+
+    enable_otp = models.BooleanField(null=True, blank=True, default=False) 
+    
+    def __str__(self):
+        return "VAWC Settings"

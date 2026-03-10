@@ -2002,16 +2002,21 @@ def login_with_otp(request):
         user_authenticated = authenticate(request, username=email, password=passkey)
 
         if user_authenticated:
-            if getattr(settings, 'ENABLE_OTP', False):
+            vawc_settings = VawcSettings.objects.first()
+            otp_enabled = vawc_settings.enable_otp if vawc_settings else False
+
+            if otp_enabled:
                 otp = generate_otp()
                 request.session['otp'] = otp
                 request.session['user_email'] = email
                 otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
                 request.session['otp_expiry'] = otp_expiry.isoformat()
+                request.session['security_status'] = "decrypted"
                 send_otp_email(email, otp)
                 return JsonResponse({'success': True, 'message': 'OTP has been sent to your email.'})
             else:
                 login(request, user_authenticated)
+                request.session['security_status'] = "decrypted"
                 account_type = None
                 if hasattr(user_authenticated, 'account'):
                     account_type = user_authenticated.account.type
@@ -2032,7 +2037,10 @@ def verify_otp(request):
         # Fallback for heavily cached browsers: 
         # If OTP is disabled and the user was already authenticated in login_with_otp,
         # we can just bypass verification and grab their account type to redirect them.
-        if not getattr(settings, 'ENABLE_OTP', False) and request.user.is_authenticated:
+        vawc_settings = VawcSettings.objects.first()
+        otp_enabled = vawc_settings.enable_otp if vawc_settings else False
+        
+        if not otp_enabled and request.user.is_authenticated:
             user = request.user
             otp_expiry_str = ''
         else:
@@ -2083,10 +2091,7 @@ def verify_otp(request):
             return JsonResponse({'success': False, 'message': 'No associated account type found.'})
 
         # Store other metadata if needed
-        if account_type == 'law_enforcement':
-            request.session['security_status'] = "encrypted"
-        else:
-            request.session['security_status'] = "decrypted"
+        request.session['security_status'] = "decrypted"
 
         return JsonResponse({
             'success': True,
@@ -2861,7 +2866,7 @@ def view_admin_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        print("Security_status: ",request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)

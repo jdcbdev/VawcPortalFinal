@@ -190,6 +190,7 @@ class Victim(models.Model):
         ('separated', 'Separated'),
     ]
     civil_status = models.CharField(
+        default="Single",
         max_length=100,
         null=True,
         blank=True)
@@ -284,6 +285,7 @@ class Parent(models.Model):
         ('separated', 'Separated'),
     ]
     civil_status = models.CharField(
+        default="Single",
         max_length=100,
         null=True,
         blank=True)
@@ -323,6 +325,7 @@ class Parent_Perpetrator(models.Model):
         ('separated', 'Separated'),
     ]
     civil_status = models.CharField(
+        default="Single",
         max_length=100,
         null=True,
         blank=True)

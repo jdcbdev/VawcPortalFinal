@@ -609,7 +609,7 @@
                                             <div class="form-floating">
                                                 <select class="form-select" id="victim_civil_status_{{ victim.id }}" name="victim_civil_status_{{ victim.id }}" {% if False %}disabled{% endif %}>
                                                     {% if True %}
-                                                        <option value="single" {% if victim.civil_status == 'none' %}selected{% endif %}>Single</option>
+                                                        <option value="single" {% if victim.civil_status == 'single' %}selected{% endif %}>Single</option>
                                                         <option value="married" {% if victim.civil_status == 'married' %}selected{% endif %}>Married</option>
                                                         <option value="live-in" {% if victim.civil_status == 'live-in' %}selected{% endif %}>Live-In</option>
                                                         <option value="widowed" {% if victim.civil_status == 'widowed' %}selected{% endif %}>Widowed</option>
