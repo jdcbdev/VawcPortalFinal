@@ -1,4 +1,4 @@
-﻿{% extends "../../base/base_healthcare.html" %}
+{% extends "../../base/base_healthcare.html" %}
 {% block title %}Report | View Case {% endblock %}
 {% load static %}
 {% block styles %}
@@ -3792,6 +3792,21 @@
         })
          //dynamic values of police stations
         var stationsData = {{ default_stations|safe }};
+        // --- AUTO-SELECT PROVINCE BASED ON SAVED STATION ---
+        var savedStationName = '{{case.law_enforcement_agency_name}}';
+        if (savedStationName) {
+            var savedProvince = "";
+            $.each(stationsData, function (i, station) {
+                if (station.name === savedStationName) {
+                    savedProvince = station.province;
+                    return false;
+                }
+            });
+            if (savedProvince) {
+                $('#name_of_province').val(savedProvince);
+            }
+        }
+        // --------------------------------------------------
         $('#name_of_province').on('change', function(){
             var selectedProvince = $(this).val();
             var stations = stationsData;
