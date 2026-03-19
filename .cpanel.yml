@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/n773108/vawc/
+    - /bin/cp -R * $DEPLOYPATH
