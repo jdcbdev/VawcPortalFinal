@@ -3560,7 +3560,30 @@ def view_enforcement_case_impact(request, case_id):
 @login_required
 def pdf_template_view (request, case_id):
     logged_in_user = request.user
-    account = logged_in_user.account
+    # Try getting the specific account, gracefully fallback if it doesn't exist
+    account = None
+    try:
+        account = logged_in_user.account
+    except Exception:
+        pass
+    
+    if not account:
+        try:
+            account = logged_in_user.lawenforcementaccount
+        except Exception:
+            pass
+
+    if not account:
+        try:
+            account = logged_in_user.swdoaccount
+        except Exception:
+            pass
+
+    if not account:
+        try:
+            account = logged_in_user.healthcareaccount
+        except Exception:
+            pass
     # Retrieve the case object from the database based on the case_id
     case = Case.objects.get(id=case_id)
     # Retrieve related objects such as evidence, victims, perpetrators, and parents

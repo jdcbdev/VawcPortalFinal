@@ -68,7 +68,7 @@ urlpatterns = [
     path('admin-barangay-vawc/admin_parent_perpetrator/<int:case_id>/<int:perp_id>/', views.add_parent_perp_admin_view, name='add_parent_perp_admin'),
     path('admin-vawc/view-case/behalf/<int:case_id>/', views.view_admin_case_behalf, name='admin case behalf view'),
     path('admin-vawc/view-case/impacted/<int:case_id>/', views.view_admin_case_impact, name='admin case impacted view'),
-    path('admin-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
+    path('admin-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='super admin pdf case'),
     # path('process_service_info/', views.process_service_info, name='process_service_info'),
     
     #barangay admin side
@@ -84,7 +84,7 @@ urlpatterns = [
     path('add-new-case/', views.add_new_case, name='add_new_case'),
     path('admin-barangay-vawc/view-case/behalf/<int:case_id>/', views.view_case_behalf, name='barangay case behalf view'),
     path('admin-barangay-vawc/view-case/impacted/<int:case_id>/', views.view_case_impact, name='barangay case impacted view'),
-    path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
+    path('admin-barangay-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='barangay pdf case'),
     # path('process_service_info/', views.process_service_info, name='process_service_info'),
     path('refer-law-enforcement/', views.refer_law_enforcement, name='refer_law_enforcement'),
     #law enforcement admin side
@@ -101,7 +101,7 @@ urlpatterns = [
     path('admin-law-enforcement-vawc/case/', views.law_enforcement_case_view, name='law enforcement case'),
     path('admin-law-enforcement-vawc/view-law-enforcement-case/behalf/<int:case_id>/', views.view_enforcement_case_behalf, name='law enforcement case behalf view'),
     path('admin-law-enforcement-vawc/view-law-enforcement-case/impacted/<int:case_id>/', views.view_enforcement_case_impact, name='law enforcement case impacted view'),
-    path('admin-law-enforcement-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='pdf case'),
+    path('admin-law-enforcement-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='law enforcement pdf case'),
     path('process_service_info/', views.process_service_info, name='process_service_info'),
     # path('pages/select-police-station/', views.select_police_station, name='select-police-station'),
 
@@ -113,6 +113,7 @@ urlpatterns = [
     path('refer-healthcare/', views.refer_healthcare, name='refer_healthcare'),
     path('admin-healthcare-vawc/view-healthcare-case/impacted/<int:case_id>/', views.view_healthcare_case_impact, name='healthcare case impacted view'),
     path('admin-healthcare-vawc/view-healthcare-case/behalf/<int:case_id>/', views.view_healthcare_case_behalf, name='healthcare case behalf view'),
+    path('admin-healthcare-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='healthcare pdf case'),
     
     # SWDO admin side============================================================================================
 
@@ -122,6 +123,7 @@ urlpatterns = [
     path('admin-SWDO-vawc/settings/', views.SWDO_settings_view, name='SWDO settings'),
     path('admin-SWDO-vawc/view-SWDO-case/behalf/<int:case_id>/', views.view_SWDO_case_behalf, name='SWDO case behalf view'),
     path('admin-SWDO-vawc/view-SWDO-case/impacted/<int:case_id>/', views.view_SWDO_case_impact, name='SWDO case impacted view'),
+    path('admin-SWDO-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='SWDO pdf case'),
     path('refer-SWDO/', views.refer_SWDO, name='refer_SWDO'),
     path('admin-SWDO-vawc/acc_city', views.acc_city, name='acc city'),
     path('admin-SWDO-vawc/get_city_by_province/<int:province_id>/', views.get_city_by_province, name='get city by province'),
