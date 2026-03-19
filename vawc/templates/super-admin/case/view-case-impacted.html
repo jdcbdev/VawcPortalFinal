@@ -226,7 +226,7 @@
                     <div class="row pt-1 pb-3 ps-3">
                         <div class="col-lg-6 vol-md-6 col-sm-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}onclick="return false;">
+                                <input class="form-check-input" type="checkbox" name="provision" id="provision" value="true" {% if case.provision_of_appropriate_medical_treatment %} checked {% endif %}>
                                 <label class="form-check-label" for="provision">
                                     Provision of appropriate medical treatment
                                 </label>
@@ -234,7 +234,7 @@
                         </div><!--end of col-->
                         <div class="col-lg-6 vol-md-6 col-sm-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}onclick="return false;">
+                                <input class="form-check-input" type="checkbox" name="issuance_medical_cert" id="issuance_medical_cert" value="true" {% if case.issuance_of_medical_certificate %} checked {% endif %}>
                                 <label class="form-check-label" for="issuance_medical_cert">
                                 Issuance of medical certificate
                                 </label>
@@ -242,7 +242,7 @@
                         </div><!--end of col-->
                         <div class="col-lg-6 vol-md-6 col-sm-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}onclick="return false;">
+                                <input class="form-check-input" type="checkbox" name="medico_legal" id="medico_legal" value="true" {% if case.medico_legal_exam %} checked {% endif %}>
                                 <label class="form-check-label" for="medico_legal">
                                     Medico-legal Exam
                                 </label>
@@ -250,7 +250,7 @@
                         </div><!--end of col-->           
                         <div class="col-lg-6 vol-md-6 col-sm-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="healthcare_other" id="healthcare_other" value="true" {% if case.healthcare_other %} checked {% endif %}onclick="return false;">
+                                <input class="form-check-input" type="checkbox" name="healthcare_other" id="healthcare_other" value="true" {% if case.healthcare_other %} checked {% endif %}>
                                 <label class="form-check-label" for="healthcare_other">
                                     Other
                                 </label>
@@ -274,7 +274,7 @@
                     <div class="row pt-4">
                         <div class="col-12">
                             <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="refer_healthcare" id="refer_healthcare" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %}onclick="return false;">
+                                    <input class="form-check-input" type="checkbox" name="refer_healthcare" id="refer_healthcare" value="true" {% if case.refers_to_healthcare_provider %} checked {% endif %}>
                                     <label class="form-check-label" for="refer_healthcare"><strong>
                                         {% if case.refers_to_healthcare_provider %}
                                             <h4>Referred to healthcare Office</h4>
@@ -332,7 +332,7 @@
                     <div class="row pt-1 pb-3 ps-3">
                         <div class="col-lg-6 vol-md-6 col-sm-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}onclick="return false;">
+                                <input class="form-check-input" type="checkbox" name="psych_service" id="psych_service" value="true" {% if case.psychosocial_services %} checked {% endif %}>
                                 <label class="form-check-label" for="psych_service">
                                     Psychosocial services
                                 </label>
@@ -340,7 +340,7 @@
                         </div><!--end of col-->
                         <div class="col-lg-6 vol-md-6 col-sm-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}onclick="return false;">
+                                <input class="form-check-input" type="checkbox" name="emergency_shelter" id="emergency_shelter" value="true" {% if case.emergency_shelter %} checked {% endif %}>
                                 <label class="form-check-label" for="emergency_shelter">
                                     Emergency Shelter
                                 </label>
@@ -348,7 +348,7 @@
                         </div><!--end of col-->
                         <div class="col-lg-6 vol-md-6 col-sm-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %} onclick="return false;">
+                                <input class="form-check-input" type="checkbox" name="economic_assist" id="economic_assist" value="true" {% if case.economic_assistance %} checked {% endif %} >
                                 <label class="form-check-label" for="economic_assist">
                                     Economic Assistance
                                 </label>
@@ -356,7 +356,7 @@
                         </div><!--end of col-->
                         <div class="col-lg-6 vol-md-6 col-sm-8">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="SWDO_other" id="SWDO_other" value="true" {% if case.SWDO_other %} checked {% endif %} onclick="return false;">
+                                <input class="form-check-input" type="checkbox" name="SWDO_other" id="SWDO_other" value="true" {% if case.SWDO_other %} checked {% endif %} >
                                 <label class="form-check-label" for="SWDO_other">
                                     Other
                                 </label>
@@ -384,7 +384,7 @@
                             <div class="row d-flex align-items-center">
                                 <div class="col">
                                     <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="refer_SWDO" id="refer_SWDO" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}onclick="return false;">
+                                            <input class="form-check-input" type="checkbox" name="refer_SWDO" id="refer_SWDO" value="true" {% if case.refers_to_social_welfare %} checked {% endif %}>
                                             <label class="form-check-label" for="refer_SWDO"><strong>
                                                 {% if case.refers_to_social_welfare %}
                                                     <h4>Refered to Social Welfare and Development Office</h4>
@@ -478,7 +478,7 @@
                             <div class="row d-flex align-items-center mb-3">
                                 <div class="col">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="refer_law_enforce" id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}onclick="return false;">
+                                        <input class="form-check-input" type="checkbox" name="refer_law_enforce" id="refer_law_enforce" value="true" {% if case.refers_to_law_enforcement %} checked {% endif %}>
                                         <label class="form-check-label" for="refer_law_enforce"><strong>
                                             {% if case.refers_to_law_enforcement %}
                                                 <h4>Refered to Law Enforcement</h4>
