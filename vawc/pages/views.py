@@ -711,7 +711,10 @@ def create_swdo_manage_account(request):
                     city=city,
                 )
             except Exception as e:
-                account.delete()
+                if 'account' in locals():
+                    account.delete()
+                if 'user' in locals():
+                    user.delete()
                 return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'SWDO Account created successfully'})
@@ -990,7 +993,10 @@ def create_account(request):
                     barangay=barangay
                 )
             except Exception as e:
-                account.delete()
+                if 'account' in locals():
+                    account.delete()
+                if 'user' in locals():
+                    user.delete()
                 return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
@@ -1053,7 +1059,10 @@ def create_law_enforcement_account(request):
                     station=station
                 )
             except Exception as e:
-                account.delete()
+                if 'account' in locals():
+                    account.delete()
+                if 'user' in locals():
+                    user.delete()
                 return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
@@ -1116,7 +1125,10 @@ def create_healthcare_account(request):
                     hospital_name=hospital_name
                 )
             except Exception as e:
-                account.delete()
+                if 'account' in locals():
+                    account.delete()
+                if 'user' in locals():
+                    user.delete()
                 return JsonResponse({'success': False, 'message': f'Profile creation failed: {str(e)}'})
             # Return success response
             return JsonResponse({'success': True, 'message': 'Account created successfully'})
