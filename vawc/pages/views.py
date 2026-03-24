@@ -2742,6 +2742,7 @@ def add_new_case(request):
             pass
 
             # Return the case_id upon successful creation
+        CaseEditHistory.objects.create(case=case_instance, user=request.user, section_edited='Case Created')
         return JsonResponse({'success': True, 'case_id': case_instance.id, 'type_of_case': type_of_case})
     #         #return redirect('barangay case') 
     #     except Exception as e:
@@ -3768,6 +3769,7 @@ def save_victim_data(request, victim_id):
         # Save victim data
         victim.save()
 
+        CaseEditHistory.objects.create(case=victim.case_victim, user=request.user, section_edited='Victim Information Updated')
         return JsonResponse({'success': True, 'message': 'Victim data saved successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
@@ -3838,6 +3840,7 @@ def add_new_victim(request):
         )
 
         # Return success response
+        CaseEditHistory.objects.create(case=victim.case_victim, user=request.user, section_edited='Victim Information Added')
         return JsonResponse({'success': True, 'message': 'Victim added successfully'})
     except Exception as e:
         # Return error response
@@ -3911,6 +3914,7 @@ def add_new_perpetrator(request):
         )
 
         # Return success response
+        CaseEditHistory.objects.create(case=perpetrator.case_perpetrator, user=request.user, section_edited='Perpetrator Information Added')
         return JsonResponse({'success': True, 'message': 'Perpetrator added successfully'})
     except Exception as e:
         # Return error response
@@ -3955,6 +3959,7 @@ def save_perpetrator_data(request, perpetrator_id):
         # Save perpetrator data
         perpetrator.save()
 
+        CaseEditHistory.objects.create(case=perpetrator.case_perpetrator, user=request.user, section_edited='Perpetrator Information Updated')
         return JsonResponse({'success': True, 'message': 'Perpetrator data saved successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
@@ -3967,6 +3972,7 @@ def delete_perpetrator(request):
 
     # Check edit permission
     if perpetrator.case_perpetrator and not can_edit_case(request.user, perpetrator.case_perpetrator):
+        CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Perpetrator Information Deleted')
         return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
 
     perpetrator.delete()
@@ -4029,6 +4035,7 @@ def add_new_contact_person(request):
         )
 
 
+        CaseEditHistory.objects.create(case=contact_person.case_contact, user=request.user, section_edited='Contact Person Added')
         return JsonResponse({'success': True, 'message': 'Contact Person added successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
@@ -4059,6 +4066,7 @@ def save_contact_person_data(request, contact_person_id):
         # Save contact_person data
         contact_person.save()
 
+        CaseEditHistory.objects.create(case=contact_person.case_contact, user=request.user, section_edited='Contact Person Updated')
         return JsonResponse({'success': True, 'message': 'Contact Person data saved successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
@@ -4503,6 +4511,7 @@ def delete_victim(request):
                 Parent.objects.filter(victim_parent=victim).delete()
                 # Delete the victim instance
                 victim.delete()
+                CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Victim Information Deleted')
                 return JsonResponse({'success': True, 'message': 'Victim and related Parents deleted successfully'})
             except Victim.DoesNotExist:
                 return JsonResponse({'success': False, 'message': 'Victim does not exist'})
@@ -4657,6 +4666,7 @@ def process_incident_form(request):
 
         # Save the case instance with updated fields
         case.save()
+        CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Incident Details Updated')
 
         # Return JSON response
         response_data = {
@@ -4680,10 +4690,6 @@ def process_service_info(request):
             case = Case.objects.get(id=case_id)
         except Case.DoesNotExist:
             return JsonResponse({'error': 'Case not found.'}, status=404)
-
-        # Check edit permission
-        if not can_edit_case(request.user, case):
-            return JsonResponse({'error': 'You do not have permission to edit this case.'}, status=403)
 
         # Helper function to parse and validate date
         def parse_date(date_string):
@@ -4773,6 +4779,7 @@ def process_service_info(request):
         #     )
 
 
+        CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Service Information Updated')
         return JsonResponse({'message': 'Service information saved successfully.'})
     else:
         # Return a JSON response indicating failure
@@ -4925,6 +4932,7 @@ def add_status(request, case_id):
             send_email(receiver, subject, message)
 
             # Return success response
+            CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Status Added')
             return JsonResponse({'success': True, 'message': 'Status added successfully'})
 
         except Case.DoesNotExist:
@@ -4981,6 +4989,7 @@ def update_case_status(request, case_id):
         case = get_object_or_404(Case, pk=case_id)  # Get the case object
         case.status = new_status  # Update the status
         case.save()  # Save the changes
+        CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Case Status Updated')
         return JsonResponse({'success': True})  # Return a JSON response indicating success
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method'})  # Return an error response if the request method is not POST
