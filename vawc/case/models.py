@@ -73,6 +73,7 @@ class Case(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_ACTIVE)
 
     date_added = models.DateField(null=True, blank=True)
+    created_by = models.ForeignKey('account.CustomUser', on_delete=models.SET_NULL, null=True, blank=True, related_name='created_cases')
 
     checkbox_ra_9262 = models.BooleanField(default=False)
     checkbox_sexual_abuse = models.BooleanField(default=False)

@@ -4056,4 +4056,66 @@
     }
 
 </script>
+
+{% if not is_owner %}
+<script>
+// Read-only mode: disable all form editing for non-owners
+document.addEventListener('DOMContentLoaded', function() {
+    // Disable all form inputs, selects, textareas
+    document.querySelectorAll('input, select, textarea').forEach(function(el) {
+        // Don't disable search/filter inputs or navigation elements
+        if (!el.closest('.navbar') && !el.closest('.sidebar') && !el.closest('#searchForm')) {
+            el.setAttribute('disabled', 'disabled');
+        }
+    });
+
+    // Hide all save, add, delete, submit, and update buttons
+    var btnSelectors = [
+        '[id*="save"], [id*="Save"]',
+        '[id*="submit"], [id*="Submit"]',
+        '[id*="add-new"], [id*="Add"]',
+        '[id*="delete"], [id*="Delete"]',
+        '[id*="confirm"]',
+        '.btn-confirm-delete-case',
+        '.btn-confirm-delete-victim',
+        '.btn-delete-perpetrator',
+        '[data-bs-target="#addVictimModal"]',
+        '[data-bs-target="#addPerpModal"]',
+        '[data-bs-target="#addContactPersonModal"]',
+        '#addWitnessBtn',
+        '#btnsubmitincident',
+        '#btn-save-service',
+        '#btn-submit-law-enforcement',
+        '#btn-submit-healthcare',
+        '#btn-submit-SWDO',
+        '.save-btn-victim',
+        '[id^="save-btn-victim"]',
+        '[class*="save-btn-victim"]',
+        '[class*="save-btn-perpetrator"]',
+        '[class*="save-btn-contact_person"]',
+        '#submit_status',
+        '#submit_edit_status',
+        '#btn-edit-status-hist',
+        '#btn-delete-status-hist',
+        '[data-bs-target="#statusAdd"]',
+        '.btn-check-update',
+        '.deleteWitnessBtn'
+    ];
+
+    btnSelectors.forEach(function(selector) {
+        document.querySelectorAll(selector).forEach(function(btn) {
+            btn.style.display = 'none';
+        });
+    });
+
+    // Show a read-only notice banner
+    var banner = document.createElement('div');
+    banner.className = 'alert alert-info text-center mb-0';
+    banner.style.cssText = 'border-radius:0;margin-bottom:15px;';
+    banner.innerHTML = '<i class="bx bx-lock-alt"></i> <strong>View Only</strong> - You do not have permission to edit this case.';
+    var mainContent = document.querySelector('.container-fluid') || document.querySelector('main') || document.body;
+    mainContent.insertBefore(banner, mainContent.firstChild);
+});
+</script>
+{% endif %}
 {% endblock scripts %}
