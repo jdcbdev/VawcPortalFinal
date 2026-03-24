@@ -1630,13 +1630,15 @@ def barangay_dashboard_data(request, get_year):
     })
 
 def calculate_age(date_of_birth_str):
+    if not date_of_birth_str:
+        return "N/A"
     try:
-        date_of_birth = datetime.strptime(date_of_birth_str, '%Y-%m-%d')
+        date_of_birth = datetime.strptime(str(date_of_birth_str).strip(), '%Y-%m-%d')
         today = datetime.now()
         age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
         return age
-    except ValueError:
-        return None
+    except (ValueError, TypeError):
+        return "N/A"
 
 @login_required
 def barangay_settings_view (request):
