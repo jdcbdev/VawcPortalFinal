@@ -44,6 +44,7 @@
           <button class="nav-link custom-tab text-dark fs-4" id="nav-victim-tab" data-bs-toggle="tab" data-bs-target="#nav-victim" type="button" role="tab" aria-controls="nav-victim" aria-selected="false">Victim</button>
           <button class="nav-link custom-tab text-dark fs-4" id="nav-perpetrator-tab" data-bs-toggle="tab" data-bs-target="#nav-perpetrator" type="button" role="tab" aria-controls="nav-perpetrator" aria-selected="false">Perpetrator</button>
           <button class="nav-link custom-tab text-dark fs-4" id="nav-incident-tab" data-bs-toggle="tab" data-bs-target="#nav-incident" type="button" role="tab" aria-controls="nav-incident" aria-selected="false">Incident</button>
+          <button class="nav-link custom-tab text-dark fs-4" id="nav-history-tab" data-bs-toggle="tab" data-bs-target="#nav-history" type="button" role="tab" aria-controls="nav-history" aria-selected="false">History</button>
         </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
@@ -176,7 +177,7 @@
 
                    
                 <div class=" pt-2">
-                    <form id="service_info_form">
+                    <form id="service_info_form" class="provider-exception">
                         {% csrf_token %}
                         <input type="hidden" name="case_id" value="{{ case.id }}">
                         <h2>Services Information</h2>
@@ -269,7 +270,7 @@
                         </div><!--end of row-->
                     </div><!--end of SWDO update-->
 
-                    <form id="form-refer-healthcare" method="POST">
+                    <form id="form-refer-healthcare" method="POST" class="provider-exception">
                         {% csrf_token %}
                         <input type="hidden" name="case_id" value="{{ case.id }}">
                         <input type = "hidden" class="form-control" type="date" name="refer_healthcare_date" id="refer_healthcare_date"  value="{% if case.refer_healthcare_date %}{{ case.refer_healthcare_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
@@ -376,7 +377,7 @@
                         </div><!--end of row-->
                     </div><!--end of SWDO update-->
 
-                    <form id="form-refer-SWDO" method="POST">
+                    <form id="form-refer-SWDO" method="POST" class="provider-exception">
                         {% csrf_token %}
                         <input type="hidden" name="case_id" value="{{ case.id }}">
                         <input type = "hidden" class="form-control" type="date" name="refer_social_date" id="refer_social_date"  value="{% if case.refer_social_date %}{{ case.refer_social_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"></input>
@@ -1764,7 +1765,29 @@
             </div><!--end of container-->
 
         </div> <!--end of incident tab pane-->
-    </div>
+    
+        <div class="tab-pane fade" id="nav-history" role="tabpanel" aria-labelledby="nav-history-tab">
+            <h2 class="pt-3 pb-2 text-center">EDIT HISTORY</h2>
+            <div class="container-fluid pb-5 pt-3">
+                <div class="card p-4 shadow-sm border border-dark border-opacity-10">
+                    <ul class="list-group list-group-flush">
+                        {% for edit in case.edit_history.all|dictsortreversed:"timestamp" %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class='bx bx-edit text-primary me-2'></i>
+                                <strong>{{ edit.user.first_name }} {{ edit.user.last_name }}</strong> 
+                                <span class="ms-4 text-muted">Edited {{ edit.section_edited }}</span>
+                            </div>
+                            <small class="text-muted">{{ edit.timestamp|date:"M j, Y g:i A" }}</small>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted">No edit history available for this case.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+</div>
 </div>
 <!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
@@ -3747,7 +3770,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Disable all form inputs, selects, textareas
     document.querySelectorAll('input, select, textarea').forEach(function(el) {
         // Don't disable search/filter inputs or navigation elements
-        if (!el.closest('.navbar') && !el.closest('.sidebar') && !el.closest('#searchForm')) {
+        if (!el.closest('.navbar') && !el.closest('.sidebar') && !el.closest('#searchForm') && !el.closest('.provider-exception')) {
             el.setAttribute('disabled', 'disabled');
         }
     });
@@ -3787,7 +3810,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     btnSelectors.forEach(function(selector) {
         document.querySelectorAll(selector).forEach(function(btn) {
-            btn.style.display = 'none';
+            if (!btn.closest('.provider-exception')) { btn.style.display = 'none'; }
         });
     });
 

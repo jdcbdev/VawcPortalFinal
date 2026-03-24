@@ -12,7 +12,7 @@ for model in app_config.get_models():
         (admin.ModelAdmin,),
         {
             'list_display': [field.name for field in model._meta.fields],
-            'list_editable': [field.name for field in model._meta.fields if field.name != 'id'],  # Exclude 'id' field
+            'list_editable': [field.name for field in model._meta.fields if field.name != 'id' and field.editable],
             'list_display_links': ['id'],  # Make the 'id' field clickable
         }
     )

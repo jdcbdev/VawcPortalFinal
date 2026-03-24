@@ -361,3 +361,11 @@ class Notification(models.Model):
     
     
     
+class CaseEditHistory(models.Model):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name='edit_history')
+    user = models.ForeignKey('account.CustomUser', on_delete=models.SET_NULL, null=True, related_name='case_edits')
+    section_edited = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} edited {self.section_edited} on {self.case.case_number}"
