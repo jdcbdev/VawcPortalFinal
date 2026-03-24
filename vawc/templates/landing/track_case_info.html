@@ -31,7 +31,7 @@
             <div class="d-lg-flex align-items-start px-xl-2 px-lg-2 px-0">
                 <div style="min-width: 150px;" class="nav flex-column nav-pills me-3 " id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     {% for case in cases %}
-                    <button class="nav-link text-start custom-nav-link  {% if forloop.first %}active{% endif %} mb-2" id="case-tab-{{ case.pk }}" data-bs-toggle="pill" data-bs-target="#case-{{ case.pk }}" type="button" role="tab" aria-controls="case-{{ case.pk }}" aria-selected="{{ forloop.first }}">Case No. {{ case.case_number }}</button>
+                    <button class="nav-link text-start custom-nav-link  {% if forloop.first %}active{% endif %} mb-2" id="case-tab-{{ case.pk }}" data-bs-toggle="pill" data-bs-target="#case-{{ case.pk }}" type="button" role="tab" aria-controls="case-{{ case.pk }}" aria-selected="{{ forloop.first }}">Case No. {{ case.date_added|date:"Y-m" }}-{{ case.case_number }}</button>
                     {% endfor %}
                 </div>
                 <div class="tab-content flex-grow-1 bg-light p-4 rounded" id="v-pills-tabContent">
