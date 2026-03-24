@@ -141,6 +141,23 @@ class Case(models.Model):
 
     def __str__(self):
         return f"Case ID: {self.id}, Case Number: {self.case_number}"
+    def get_user_name(self):
+        if not self.user:
+            return "System/Automated"
+        user = self.user
+        try:
+            if hasattr(user, 'account'):
+                return f"{user.account.first_name} {user.account.last_name} ({user.account.type.title()} / Barangay)"
+            elif hasattr(user, 'lawenforcementaccount'):
+                return f"{user.lawenforcementaccount.first_name} {user.lawenforcementaccount.last_name} (Law Enforcement)"
+            elif hasattr(user, 'healthcareaccount'):
+                return f"{user.healthcareaccount.first_name} {user.healthcareaccount.last_name} (Healthcare)"
+            elif hasattr(user, 'swdoaccount'):
+                return f"{user.swdoaccount.first_name} {user.swdoaccount.last_name} (SWDO)"
+        except Exception:
+            pass
+        return user.username
+
 
 class Status_History(models.Model):
     case_status_history = models.ForeignKey(Case, on_delete=models.CASCADE, related_name='status_history',null=True, blank=True)
@@ -213,6 +230,23 @@ class Victim(models.Model):
     
     def __str__(self):
         return f"Victim ID: {self.id}"
+    def get_user_name(self):
+        if not self.user:
+            return "System/Automated"
+        user = self.user
+        try:
+            if hasattr(user, 'account'):
+                return f"{user.account.first_name} {user.account.last_name} ({user.account.type.title()} / Barangay)"
+            elif hasattr(user, 'lawenforcementaccount'):
+                return f"{user.lawenforcementaccount.first_name} {user.lawenforcementaccount.last_name} (Law Enforcement)"
+            elif hasattr(user, 'healthcareaccount'):
+                return f"{user.healthcareaccount.first_name} {user.healthcareaccount.last_name} (Healthcare)"
+            elif hasattr(user, 'swdoaccount'):
+                return f"{user.swdoaccount.first_name} {user.swdoaccount.last_name} (SWDO)"
+        except Exception:
+            pass
+        return user.username
+
 
 
 class Perpetrator(models.Model):
@@ -369,3 +403,20 @@ class CaseEditHistory(models.Model):
 
     def __str__(self):
         return f"{self.user} edited {self.section_edited} on {self.case.case_number}"
+    def get_user_name(self):
+        if not self.user:
+            return "System/Automated"
+        user = self.user
+        try:
+            if hasattr(user, 'account'):
+                return f"{user.account.first_name} {user.account.last_name} ({user.account.type.title()} / Barangay)"
+            elif hasattr(user, 'lawenforcementaccount'):
+                return f"{user.lawenforcementaccount.first_name} {user.lawenforcementaccount.last_name} (Law Enforcement)"
+            elif hasattr(user, 'healthcareaccount'):
+                return f"{user.healthcareaccount.first_name} {user.healthcareaccount.last_name} (Healthcare)"
+            elif hasattr(user, 'swdoaccount'):
+                return f"{user.swdoaccount.first_name} {user.swdoaccount.last_name} (SWDO)"
+        except Exception:
+            pass
+        return user.username
+
