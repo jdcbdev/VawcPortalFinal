@@ -73,7 +73,7 @@
             <tbody class="table-group-divider">
                 {% for case in cases %}
                 <tr class="border-bottom border-2">
-                    <td class="text-center">{{ case.case_number }}</td>
+                    <td class="text-center">{{ case.date_added|date:'Y-m' }}-{{ case.case_number }}</td>
                     <td>
                         {% if case.type_of_case == 'Impacted' %}
                             Impacted

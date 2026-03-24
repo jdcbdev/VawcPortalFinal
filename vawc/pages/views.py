@@ -53,6 +53,30 @@ from .forms import *
 from django.forms.models import model_to_dict
 from ph_geography.models import Region, Province, Municipality, Barangay
 
+def can_edit_case(user, case):
+    """Check if a user can edit a case.
+    Rules:
+      - Super admin (account.type == 'admin') can always edit
+      - Barangay staff whose barangay matches the case's barangay can edit
+      - The user who created the case (case.created_by) can edit
+      - Everyone else is view-only
+    """
+    # Super admin always can edit
+    try:
+        if user.account.type == 'admin':
+            return True
+        # Barangay staff in the matching barangay can edit
+        if user.account.type == 'staff' and user.account.barangay and user.account.barangay == case.barangay:
+            return True
+    except Exception:
+        pass
+
+    # The creator can always edit their own case
+    if case.created_by and case.created_by == user:
+        return True
+
+    return False
+
 def home_view (request):
     if request.user.is_authenticated:
         if hasattr(request.user, 'account') and request.user.account.type == 'admin':
@@ -1606,13 +1630,15 @@ def barangay_dashboard_data(request, get_year):
     })
 
 def calculate_age(date_of_birth_str):
+    if not date_of_birth_str:
+        return "N/A"
     try:
-        date_of_birth = datetime.strptime(date_of_birth_str, '%Y-%m-%d')
+        date_of_birth = datetime.strptime(str(date_of_birth_str).strip(), '%Y-%m-%d')
         today = datetime.now()
         age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
         return age
-    except ValueError:
-        return None
+    except (ValueError, TypeError):
+        return "N/A"
 
 @login_required
 def barangay_settings_view (request):
@@ -2605,6 +2631,7 @@ def add_new_case(request):
             'service_information': service_information,
             'type_of_case': type_of_case,  # Collecting type of case from the form
             'date_added': timezone.now(),
+            'created_by': request.user,
             # SWDO fields
             'refers_to_social_welfare': False,
             'refer_social_date': None,
@@ -2717,6 +2744,7 @@ def add_new_case(request):
             pass
 
             # Return the case_id upon successful creation
+        CaseEditHistory.objects.create(case=case_instance, user=request.user, section_edited='Case Created')
         return JsonResponse({'success': True, 'case_id': case_instance.id, 'type_of_case': type_of_case})
     #         #return redirect('barangay case') 
     #     except Exception as e:
@@ -2865,6 +2893,7 @@ def view_admin_case_behalf(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces': Province.objects.filter(
@@ -2983,6 +3012,7 @@ def view_admin_case_impact(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces':  Province.objects.filter(
@@ -3140,6 +3170,7 @@ def view_case_behalf(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces':  Province.objects.filter(
@@ -3263,6 +3294,7 @@ def view_case_impact(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces': Province.objects.filter(
@@ -3423,6 +3455,7 @@ def view_enforcement_case_behalf(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces': Province.objects.filter(region_id=region_id),
@@ -3542,6 +3575,7 @@ def view_enforcement_case_impact(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces': Province.objects.filter(region_id=region_id),
@@ -3706,6 +3740,10 @@ def save_victim_data(request, victim_id):
     try:
         victim = get_object_or_404(Victim, id=victim_id)
 
+        # Check edit permission
+        if victim.case_victim and not can_edit_case(request.user, victim.case_victim):
+            return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
+
         # Update victim data
         victim.first_name = request.POST.get('victim_first_name_' + str(victim_id))
         victim.middle_name = request.POST.get('victim_middle_name_' + str(victim_id))
@@ -3733,6 +3771,7 @@ def save_victim_data(request, victim_id):
         # Save victim data
         victim.save()
 
+        CaseEditHistory.objects.create(case=victim.case_victim, user=request.user, section_edited='Victim Information Updated')
         return JsonResponse({'success': True, 'message': 'Victim data saved successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
@@ -3744,6 +3783,10 @@ def add_new_victim(request):
         case_id = request.POST.get('case_id')
         
         case_instance = get_object_or_404(Case, id=case_id)
+
+        # Check edit permission
+        if not can_edit_case(request.user, case_instance):
+            return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
         # Extract form data
         first_name = request.POST.get('victim_first_name')
         middle_name = request.POST.get('victim_middle_name')
@@ -3799,6 +3842,7 @@ def add_new_victim(request):
         )
 
         # Return success response
+        CaseEditHistory.objects.create(case=victim.case_victim, user=request.user, section_edited='Victim Information Added')
         return JsonResponse({'success': True, 'message': 'Victim added successfully'})
     except Exception as e:
         # Return error response
@@ -3811,6 +3855,10 @@ def add_new_perpetrator(request):
         case_id = request.POST.get('case_id')
         
         case_instance = get_object_or_404(Case, id=case_id)
+
+        # Check edit permission
+        if not can_edit_case(request.user, case_instance):
+            return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
         # Extract form data
         first_name = request.POST.get('perpetrator_first_name')
         middle_name = request.POST.get('perpetrator_middle_name')
@@ -3868,6 +3916,7 @@ def add_new_perpetrator(request):
         )
 
         # Return success response
+        CaseEditHistory.objects.create(case=perpetrator.case_perpetrator, user=request.user, section_edited='Perpetrator Information Added')
         return JsonResponse({'success': True, 'message': 'Perpetrator added successfully'})
     except Exception as e:
         # Return error response
@@ -3879,6 +3928,10 @@ def save_perpetrator_data(request, perpetrator_id):
         print("HERE")
         print(request.POST.get('perpetrator_contact_number_' + str(perpetrator_id)))
         perpetrator = get_object_or_404(Perpetrator, id=perpetrator_id)
+
+        # Check edit permission
+        if perpetrator.case_perpetrator and not can_edit_case(request.user, perpetrator.case_perpetrator):
+            return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
 
         # Update perpetrator data
         perpetrator.first_name = request.POST.get('perpetrator_first_name_' + str(perpetrator_id))
@@ -3908,6 +3961,7 @@ def save_perpetrator_data(request, perpetrator_id):
         # Save perpetrator data
         perpetrator.save()
 
+        CaseEditHistory.objects.create(case=perpetrator.case_perpetrator, user=request.user, section_edited='Perpetrator Information Updated')
         return JsonResponse({'success': True, 'message': 'Perpetrator data saved successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
@@ -3917,6 +3971,12 @@ def save_perpetrator_data(request, perpetrator_id):
 def delete_perpetrator(request):
     perpetrator_id = request.POST.get('perpetrator_id')
     perpetrator = get_object_or_404(Perpetrator, id=perpetrator_id)
+
+    # Check edit permission
+    if perpetrator.case_perpetrator and not can_edit_case(request.user, perpetrator.case_perpetrator):
+        CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Perpetrator Information Deleted')
+        return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
+
     perpetrator.delete()
     return JsonResponse({'success': True, 'message': 'Perpetrator and related Parents deleted successfully'})
 
@@ -3926,6 +3986,11 @@ def delete_case(request):
     case_id = request.POST.get('case_id')
     print('Case ID:', case_id)
     case = get_object_or_404(Case, id=case_id)
+
+    # Check edit permission
+    if not can_edit_case(request.user, case):
+        return JsonResponse({'success': False, 'message': 'You do not have permission to delete this case.'}, status=403)
+
     case.delete()
     return JsonResponse({'success': True, 'message': 'Case Deleted successfully'})
 
@@ -3933,6 +3998,10 @@ def add_new_contact_person(request):
     try:
         case_id = request.POST.get('case_id')
         case_instance = get_object_or_404(Case, id=case_id)
+
+        # Check edit permission
+        if not can_edit_case(request.user, case_instance):
+            return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
 
         # Update contact_person data
         first_name = request.POST.get('contact_person_first_name')
@@ -3968,6 +4037,7 @@ def add_new_contact_person(request):
         )
 
 
+        CaseEditHistory.objects.create(case=contact_person.case_contact, user=request.user, section_edited='Contact Person Added')
         return JsonResponse({'success': True, 'message': 'Contact Person added successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
@@ -3976,6 +4046,10 @@ def add_new_contact_person(request):
 def save_contact_person_data(request, contact_person_id):
     try:
         contact_person = get_object_or_404(Contact_Person, id=contact_person_id)
+
+        # Check edit permission
+        if contact_person.case_contact and not can_edit_case(request.user, contact_person.case_contact):
+            return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
 
         # Update contact_person data
         contact_person.first_name = request.POST.get('contact_person_first_name_' + str(contact_person_id))
@@ -3994,6 +4068,7 @@ def save_contact_person_data(request, contact_person_id):
         # Save contact_person data
         contact_person.save()
 
+        CaseEditHistory.objects.create(case=contact_person.case_contact, user=request.user, section_edited='Contact Person Updated')
         return JsonResponse({'success': True, 'message': 'Contact Person data saved successfully'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
@@ -4422,6 +4497,15 @@ def delete_victim(request):
     if request.method == 'POST':
         victim_id = request.POST.get('victim_id')
         print(victim_id)
+
+        # Check edit permission
+        if victim_id:
+            try:
+                victim_check = Victim.objects.get(id=victim_id)
+                if victim_check.case_victim and not can_edit_case(request.user, victim_check.case_victim):
+                    return JsonResponse({'success': False, 'message': 'You do not have permission to edit this case.'}, status=403)
+            except Victim.DoesNotExist:
+                pass
         if victim_id:
             try:
                 victim = Victim.objects.get(id=victim_id)
@@ -4429,6 +4513,7 @@ def delete_victim(request):
                 Parent.objects.filter(victim_parent=victim).delete()
                 # Delete the victim instance
                 victim.delete()
+                CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Victim Information Deleted')
                 return JsonResponse({'success': True, 'message': 'Victim and related Parents deleted successfully'})
             except Victim.DoesNotExist:
                 return JsonResponse({'success': False, 'message': 'Victim does not exist'})
@@ -4462,6 +4547,16 @@ def delete_parent(request):
 
 def process_incident_form(request):
     if request.method == 'POST':
+        # Check edit permission
+        case_id_check = request.POST.get('case_id')
+        if case_id_check:
+            try:
+                case_check = Case.objects.get(id=case_id_check)
+                if not can_edit_case(request.user, case_check):
+                    return JsonResponse({'status': 'error', 'message': 'You do not have permission to edit this case.'}, status=403)
+            except Case.DoesNotExist:
+                pass
+
         # Process removal of evidence
         evidence_to_delete = request.POST.getlist('evidenceToDelete')
         for evidence_id in evidence_to_delete:
@@ -4573,6 +4668,7 @@ def process_incident_form(request):
 
         # Save the case instance with updated fields
         case.save()
+        CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Incident Details Updated')
 
         # Return JSON response
         response_data = {
@@ -4685,6 +4781,7 @@ def process_service_info(request):
         #     )
 
 
+        CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Service Information Updated')
         return JsonResponse({'message': 'Service information saved successfully.'})
     else:
         # Return a JSON response indicating failure
@@ -4837,6 +4934,7 @@ def add_status(request, case_id):
             send_email(receiver, subject, message)
 
             # Return success response
+            CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Status Added')
             return JsonResponse({'success': True, 'message': 'Status added successfully'})
 
         except Case.DoesNotExist:
@@ -4893,6 +4991,7 @@ def update_case_status(request, case_id):
         case = get_object_or_404(Case, pk=case_id)  # Get the case object
         case.status = new_status  # Update the status
         case.save()  # Save the changes
+        CaseEditHistory.objects.create(case=case, user=request.user, section_edited='Case Status Updated')
         return JsonResponse({'success': True})  # Return a JSON response indicating success
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method'})  # Return an error response if the request method is not POST
@@ -5182,6 +5281,7 @@ def view_SWDO_case_behalf(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces': Province.objects.filter(
@@ -5302,6 +5402,7 @@ def view_SWDO_case_impact(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces': Province.objects.filter(
@@ -5429,6 +5530,7 @@ def view_healthcare_case_impact(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces': Province.objects.filter(
@@ -5592,6 +5694,7 @@ def view_healthcare_case_behalf(request, case_id):
             'status_histories': status_history,
             'witnesses': witnesses,
             'latest_status_history': latest_status_history,
+            'is_owner': can_edit_case(request.user, case),
             'global': request.session,
             'default_regions': Region.objects.filter(id=region_id),
             'default_provinces': Province.objects.filter(

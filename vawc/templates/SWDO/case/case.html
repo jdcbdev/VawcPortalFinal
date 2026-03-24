@@ -1,4 +1,4 @@
-﻿{% extends "../../base/base_SWDO.html" %}
+{% extends "../../base/base_SWDO.html" %}
 {% block title %}Report | Case {% endblock %}
 {% load static %}
 {% block styles %}
@@ -55,6 +55,13 @@
                 <option value="Close">Close</option>
             </select>
         </div>
+        <div class="form-group col-lg-3 mb-lg-0 mt-3">
+            <select name="ownership" id="ownership" class="form-select me-md-2">
+                <option value="">All Ownership</option>
+                <option value="My Cases">My Cases</option>
+                <option value="Referred Cases">Referred Cases</option>
+            </select>
+        </div>
     </div>
 
     <div class="pt-4">
@@ -66,13 +73,14 @@
                     <th scope="col">Service</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date Added</th>
+                    <th scope="col" style="display:none;">Ownership</th>
                     <th class="text-center" scope="col">View</th>
                 </tr>
             </thead>
             <tbody class="table-group-divider">
                 {% for case in cases %}
                 <tr class="border-bottom border-2">
-                    <td class="text-center">{{ case.case_number }}</td>
+                    <td class="text-center">{{ case.date_added|date:'Y-m' }}-{{ case.case_number }}</td>
                     <td>
                         {% if case.type_of_case == 'Impacted' %}
                             Impacted
@@ -89,6 +97,7 @@
                     </td>
                     <td>{{ case.status }}</td>
                     <td>{{ case.date_added|date:"m/d/Y" }}</td>
+                    <td style="display:none;">{% if case.created_by == logged_in_user %}My Cases{% else %}Referred Cases{% endif %}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
                             <a class="btn btn-outline-success" href="{% url 'SWDO case impacted view' case_id=case.id %}" role="button">View</a>
@@ -105,6 +114,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td style="display:none;"></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -224,6 +234,10 @@
         $('select#status').on('change', function(e){
             var status = $(this).val();
             $('#table-case').DataTable().columns([3]).search(status).draw();
+        });
+        $('select#ownership').on('change', function(e){
+            var status = $(this).val();
+            $('#table-case').DataTable().columns([5]).search(status).draw();
         });
 
         $('#addCaseBtn').click(function(e) {

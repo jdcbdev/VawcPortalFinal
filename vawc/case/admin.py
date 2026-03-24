@@ -6,13 +6,25 @@ app_config = apps.get_app_config('case')
 
 # Iterate through models in the app
 for model in app_config.get_models():
+    if model.__name__ == 'CaseEditHistory':
+        class CaseEditHistoryAdmin(admin.ModelAdmin):
+            list_display = ['id', 'case', 'get_editor_name', 'section_edited', 'timestamp']
+            list_display_links = ['id', 'case']
+            
+            def get_editor_name(self, obj):
+                return obj.get_user_name()
+            get_editor_name.short_description = 'User (Editor)'
+            
+        admin.site.register(model, CaseEditHistoryAdmin)
+        continue
+
     # Create a custom admin class dynamically
     admin_class = type(
         f'{model.__name__}Admin',
         (admin.ModelAdmin,),
         {
             'list_display': [field.name for field in model._meta.fields],
-            'list_editable': [field.name for field in model._meta.fields if field.name != 'id'],  # Exclude 'id' field
+            'list_editable': [field.name for field in model._meta.fields if field.name != 'id' and field.editable],
             'list_display_links': ['id'],  # Make the 'id' field clickable
         }
     )
