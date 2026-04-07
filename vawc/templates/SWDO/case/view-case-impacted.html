@@ -4849,22 +4849,28 @@
 
             // Function to set the active tab
             function setActiveTab() {
-                // Get the ID of the last active tab from localStorage
-                const activeTab = localStorage.getItem('activeTab');
+            // Get the ID of the last active tab from localStorage
+            const activeTab = localStorage.getItem('activeTab');
 
-                // If there's an active tab stored in localStorage, show it
-                if (activeTab) {
-                    const activeTabButton = document.querySelector(`#${activeTab}`);
-                    if (activeTabButton) {
-                        activeTabButton.classList.add('active');
-                        const tabContentId = activeTabButton.getAttribute('aria-controls');
-                        const activeTabContent = document.getElementById(tabContentId);
-                        if (activeTabContent) {
-                            activeTabContent.classList.add('active', 'show');
-                        }
+            // If there's an active tab stored in localStorage, show it
+            if (activeTab) {
+                const activeTabButton = document.querySelector(`#${activeTab}`);
+                if (activeTabButton) {
+                    // Remove active and show classes from ALL tabs and panes first to prevent duplicates
+                    document.querySelectorAll('.nav-link[data-bs-toggle="tab"]').forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active', 'show'));
+                    
+                    // Activate the target tab safely
+                    activeTabButton.classList.add('active');
+                    const tabContentId = activeTabButton.getAttribute('data-bs-target') || '#' + activeTabButton.getAttribute('aria-controls');
+                    const activeTabContent = document.querySelector(tabContentId) || document.getElementById(activeTabButton.getAttribute('aria-controls'));
+                    
+                    if (activeTabContent) {
+                        activeTabContent.classList.add('active', 'show');
                     }
                 }
-            }
+            } 
+        }
 
             // Get all forms
             //const forms = document.querySelectorAll("form");
