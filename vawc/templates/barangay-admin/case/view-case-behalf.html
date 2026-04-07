@@ -40,7 +40,7 @@
     </div>
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-          <button class="nav-link custom-tab text-dark fs-4" id="nav-status-tab" data-bs-toggle="tab" data-bs-target="#nav-status" type="button" role="tab" aria-controls="nav-status" aria-selected="true">Status</button>
+          <button class="nav-link custom-tab text-dark fs-4 active" id="nav-status-tab" data-bs-toggle="tab" data-bs-target="#nav-status" type="button" role="tab" aria-controls="nav-status" aria-selected="true">Status</button>
           <button class="nav-link custom-tab text-dark fs-4" id="nav-victim-tab" data-bs-toggle="tab" data-bs-target="#nav-victim" type="button" role="tab" aria-controls="nav-victim" aria-selected="false">Victim</button>
           <button class="nav-link custom-tab text-dark fs-4" id="nav-contact_pers-tab" data-bs-toggle="tab" data-bs-target="#nav-contact_pers" type="button" role="tab" aria-controls="nav-contact_pers" aria-selected="false">Contact Person</button>
           <button class="nav-link custom-tab text-dark fs-4" id="nav-perpetrator-tab" data-bs-toggle="tab" data-bs-target="#nav-perpetrator" type="button" role="tab" aria-controls="nav-perpetrator" aria-selected="false">Perpetrator</button>
@@ -49,7 +49,7 @@
         </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade" id="nav-status" role="tabpanel" aria-labelledby="nav-status">
+        <div class="tab-pane fade active show" id="nav-status" role="tabpanel" aria-labelledby="nav-status">
             <div class="container-fluid">
                 <div class="d-flex justify-content-between py-3">
                     <h2>Status</h2>
@@ -2867,6 +2867,7 @@
 <script>
    
     $(document).ready(function() {
+        localStorage.setItem('activeTab', 'nav-status-tab')
         $("#addWitnessBtn").click(function() {
             var witnessDiv = `
                 <div class="row border border-opacity-25 rounded border-dark shadow mt-1 mb-2" id="witness">
@@ -3264,7 +3265,6 @@
     });
 
     document.addEventListener("DOMContentLoaded", function() {
-                
         // Get today's date in the format YYYY-MM-DD
         var today = new Date().toISOString().split('T')[0];
 
@@ -3505,7 +3505,7 @@
                         activeTabContent.classList.add('active', 'show');
                     }
                 }
-            }
+            } 
         }
 
         const victimForms = document.querySelectorAll("form[id^='victim_form_']");
