@@ -42,6 +42,7 @@ urlpatterns = [
     #super admin side
     path('admin-vawc/dashboard/', views.admin_dashboard_view, name='admin dashboard'),
     path('admin-vawc/admin-dashboard-data/<int:get_year>/', views.admin_dashboard_data, name='admin dashboard data'),
+    path('admin-vawc/admin-consolidated-report-data/<int:get_year>/', views.admin_consolidated_report_data, name='admin consolidated report data'),
     path('admin-vawc/graph-report/', views.admin_graph_view, name='admin graph'),
     path('admin-vawc/manage/account/', views.admin_manage_account_view, name='admin account'),
     path('admin-vawc/manage/law-enforcement-account/', views.law_enforcement_manage_account_view, name='law enforcement account'),

@@ -6117,3 +6117,106 @@ def SWDO_dashboard_data(request, get_year):
         'barangay': SWDO,
         # 'global': request.session,
     })
+
+@login_required
+def admin_consolidated_report_view(request):
+    if request.user.account.type != 'admin':
+        return redirect('login')
+    
+    logged_in_user = request.user
+    
+    # We can pre-fetch year lists if necessary just like dashboard
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    
+    return render(request, 'super-admin/consolidated-report.html', {"year_list": year_list, 'logged_in_user': logged_in_user})
+
+def admin_consolidated_report_data(request, get_year):
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    
+    if get_year == 0:
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
+    else:
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(date_added__year=get_year)
+
+    total_cases = cases.count() or 0
+    ongoing_cases = cases.filter(status='Active').count() or 0
+    resolved_cases = cases.filter(status='Close').count() or 0
+    services_provided = 0
+    bpo_count = 0
+    tpo_count = 0
+    ppo_count = 0
+    cases_w_criminal_cases = 0
+    cases_list = []
+    
+    for case in cases:
+        if (case.status == 'Close'):
+            services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
+
+        if case.service_information == 'issuance':
+            bpo_count += 1
+            if case.enforcement_of_protection_order:
+                ppo_count += 1
+            else:
+                tpo_count += 1
+
+        if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
+            cases_w_criminal_cases += 1
+        
+        case_dict_data = {
+            'case_number': case.case_number,
+            'date_added': case.date_added,
+            'barangay': case.barangay,
+            'city': case.city,
+            'province': case.province,
+            'checkbox_ra_8353': case.checkbox_ra_8353,
+            'checkbox_ra_9262': case.checkbox_ra_9262,
+            'checkbox_ra_7877': case.checkbox_ra_7877,
+            'checkbox_ra_9775': case.checkbox_ra_9775,
+            'checkbox_a_7610': case.checkbox_a_7610,
+        }
+
+        # Decrypt victims focusing on gender and DOB (and names)
+        victims_decrypted = []
+        for v in case.victim_set.all():
+            vd = vars(v).copy()
+            for attr, val in vd.items():
+                if isinstance(val, str) and val.startswith("b'gAAAAA"):
+                    try:
+                        vd[attr] = decrypt_data(val)
+                    except Exception:
+                        vd[attr] = val
+            vd.pop('_state', None) # Remove non-serializable Django state
+            victims_decrypted.append(vd)
+
+        # Decrypt perpetrators
+        perps_decrypted = []
+        for p in case.perpetrator.all():
+            pd = vars(p).copy()
+            for attr, val in pd.items():
+                if isinstance(val, str) and val.startswith("b'gAAAAA"):
+                    try:
+                        pd[attr] = decrypt_data(val)
+                    except Exception:
+                        pd[attr] = val
+            pd.pop('_state', None)
+            perps_decrypted.append(pd)
+
+        case_dict = {
+            'data': case_dict_data,
+            'victims': victims_decrypted,
+            'perpetrators': perps_decrypted
+        }
+        cases_list.append(case_dict)
+
+    return JsonResponse({
+        'total_cases': total_cases,
+        'ongoing_cases': ongoing_cases,
+        'resolved_cases': resolved_cases,
+        'services_provided': services_provided,
+        'ppo_count': ppo_count,
+        'tpo_count': tpo_count,
+        'bpo_count': bpo_count,
+        'cases_w_criminal_cases': cases_w_criminal_cases,
+        'cases_list': cases_list,
+    })

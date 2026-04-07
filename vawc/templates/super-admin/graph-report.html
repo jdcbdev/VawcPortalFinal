@@ -4,14 +4,19 @@
 {% block styles %}
 <link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
 <link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
 <link href='https://cdn.datatables.net/datetime/1.5.2/css/dataTables.dateTime.min.css' rel='stylesheet'>
 
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-10 col-12"><h1 class="mt-2">Report</h1></div>
-        <!-- <div class="col-lg-2 col-12"><button class="btn btn-primary" id="sendreportbtn"> Send Report </button></div> -->
+        <div class="col-lg-9 col-12"><h1 class="mt-2">Report</h1></div>
+        <div class="col-lg-3 col-12 text-end">
+            <button class="btn btn-success mt-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#consolidatedModal">
+                Generate Consolidated Report
+            </button>
+        </div>
     </div>
     
     <div class="pt-3">
@@ -157,6 +162,9 @@
         </div>
     </div>
 </div>
+
+{% include "super-admin/consolidated-report-modal.html" %}
+
 {% endblock content %}
 {% block scripts %}
 <script>
@@ -381,5 +389,258 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
 <script src="https://cdn.datatables.net/datetime/1.5.2/js/dataTables.dateTime.min.js" ></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    let consolidatedDataLoaded = false;
+    let consolidatedTable = null;
+
+    $('#consolidatedModal').on('shown.bs.modal', function () {
+        if (!consolidatedDataLoaded) {
+            loadConsolidatedData();
+        } else {
+            if(consolidatedTable) {
+                consolidatedTable.columns.adjust().responsive.recalc();
+            }
+        }
+    });
+
+    async function loadConsolidatedData() {
+        $('#consolidated-loading').removeClass('d-none');
+        $('#consolidated-status-text').removeClass('badge bg-success text-white p-2 fs-6 shadow-sm').addClass('text-muted medium');
+        $('#consolidated-status-text').text("Fetching and decrypting case demographics...");
+        
+        try {
+            const res = await fetch(`/admin-vawc/admin-consolidated-report-data/0/`);
+            if(!res.ok) throw new Error("Failed to load");
+            const data = await res.json();
+            
+            $('#consolidated-total-cases').text(data.total_cases);
+            $('#consolidated-ongoing-cases').text(data.ongoing_cases);
+            $('#consolidated-resolved-cases').text(data.resolved_cases);
+            $('#consolidated-services-provided').text(data.services_provided);
+            $('#consolidated-bpo').text(data.bpo_count);
+            $('#consolidated-tpo').text(data.tpo_count);
+            $('#consolidated-ppo').text(data.ppo_count);
+            $('#consolidated-cases-w-criminal-cases').text(data.cases_w_criminal_cases);
+
+            renderConsolidatedTable(data.cases_list);
+            consolidatedDataLoaded = true;
+            $('#consolidated-status-text').removeClass('text-muted medium text-danger').addClass('badge bg-success text-white p-2 fs-6 shadow-sm');
+            $('#consolidated-status-text').html("<i class='bx bx-check-circle me-1'></i> Ready to Export");
+            $('#consolidated-loading').addClass('d-none');
+        } catch(e) {
+            $('#consolidated-status-text').removeClass('text-muted medium').addClass('text-danger fw-bold');
+            $('#consolidated-status-text').text("Error loading data.");
+            $('#consolidated-loading').addClass('d-none');
+        }
+    }
+
+    function renderConsolidatedTable(data) {
+        if (consolidatedTable) {
+            consolidatedTable.destroy();
+        }
+        
+        const caseTable = document.getElementById('consolidated-cases-table-content');
+        caseTable.innerHTML = '';
+        let gender_types = [];
+        let default_barangay_options = [];
+        const today = new Date();
+
+        data.forEach(case_item => {
+            let victims = { names: [], addresses: [], genders: [], ages: [] };
+            let perpetrators = { names: [], addresses: [] };
+            let ra_violations = [];
+            
+            if(case_item.data.checkbox_ra_8353) ra_violations.push('RA 8353');
+            if(case_item.data.checkbox_ra_9262) ra_violations.push('RA 9262');
+            if(case_item.data.checkbox_ra_7877) ra_violations.push('RA 7877');
+            if(case_item.data.checkbox_ra_9775) ra_violations.push('RA 9775');
+            if(case_item.data.checkbox_a_7610) ra_violations.push('RA 7610');
+            
+            case_item.victims.forEach(victim => {
+                victims.names.push(`${victim.first_name || ''} ${victim.last_name || ''}`.trim() || 'Undisclosed');
+                let age = "-";
+                if(victim.date_of_birth && victim.date_of_birth !== 'None') {
+                    const birthDate = new Date(victim.date_of_birth);
+                    if(!isNaN(birthDate)) {
+                        age = today.getFullYear() - birthDate.getFullYear();
+                        const m = today.getMonth() - birthDate.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+                    }
+                }
+                
+                if(victim.sex && !gender_types.includes(victim.sex)) gender_types.push(victim.sex);
+                victims.ages.push(age);
+                victims.addresses.push(`${victim.barangay || ''} ${victim.city || ''}`);
+                victims.genders.push(victim.sex || 'Unknown');
+            });
+            
+            case_item.perpetrators.forEach(perpetrator => {
+                perpetrators.names.push(`${perpetrator.first_name || ''} ${perpetrator.last_name || ''}`.trim() || 'Undisclosed');
+                perpetrators.addresses.push(`${perpetrator.barangay || ''} ${perpetrator.city || ''}`);
+            });
+            
+            if(case_item.data.barangay && !default_barangay_options.includes(case_item.data.barangay)) {
+                default_barangay_options.push(case_item.data.barangay);
+            }
+
+            caseTable.innerHTML += `
+            <tr class="border-bottom border-2">
+                <td class="text-center">${case_item.data.case_number || "--"}</td>
+                <td>${victims.names.join(", ")}</td>
+                <td>${victims.addresses.join(" | ")}</td>
+                <td>${perpetrators.names.join(", ")}</td>
+                <td>${perpetrators.addresses.join(" | ")}</td>
+                <td>${ra_violations.join(", ")}</td>
+                <td>${victims.ages.join(", ")}</td>
+                <td>${victims.genders.join(", ")}</td> 
+                <td>${case_item.data.barangay || ''} ${case_item.data.city || ''} ${case_item.data.province || ''}</td> 
+                <td>${case_item.data.date_added || "--"}</td> 
+            </tr>`;
+        });
+        
+        const barangayFilter = document.querySelector('#consolidated-barangay-filter');
+        barangayFilter.innerHTML = '<option value="">All Barangay</option>';
+        default_barangay_options.forEach(b => {
+            barangayFilter.innerHTML += `<option value="${b}">${b}</option>`;
+        });
+
+        if(gender_types.length) {
+            const genderFilter = document.querySelector('#consolidated-gender-filter');
+            genderFilter.innerHTML = '<option value="">All Genders</option>';
+            gender_types.forEach(g => {
+                genderFilter.innerHTML += `<option value="${g}">${g}</option>`;
+            });
+        }
+
+        consolidatedTable = $('#consolidated-cases-table').DataTable({
+            dom: '<"d-flex justify-content-between flex-column flex-md-row gap-3 mb-3"<f><B>>rt<"d-flex justify-content-between pt-3 flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
+            scrollX: true,
+            responsive: true,
+            lengthMenu: [10, 25, 50, 100],
+            pageLength: 20,
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    title: 'System Wide Consolidated Case Demographics',
+                    text: 'Download Excel',
+                    className: 'btn btn-success text-white',
+                    titleAttr: 'Export to Excel',
+                    messageTop: function() {
+                        return `SUMMARY: Total Cases: ${$('#consolidated-total-cases').text()}   |   Active Cases: ${$('#consolidated-ongoing-cases').text()}   |   Resolved Cases: ${$('#consolidated-resolved-cases').text()}\nPROTECTION ORDERS: BPO: ${$('#consolidated-bpo').text()}   |   TPO: ${$('#consolidated-tpo').text()}   |   PPO: ${$('#consolidated-ppo').text()}`;
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                        // Set custom column widths for readability
+                        var col = $('col', sheet);
+                        if(col.length) {
+                             $(col[0]).attr('width', 15);
+                             $(col[1]).attr('width', 25);
+                             $(col[2]).attr('width', 40);
+                             $(col[3]).attr('width', 25);
+                             $(col[4]).attr('width', 40);
+                             $(col[5]).attr('width', 20);
+                             $(col[6]).attr('width', 15);
+                             $(col[7]).attr('width', 15);
+                             $(col[8]).attr('width', 35);
+                             $(col[9]).attr('width', 20);
+                        }
+
+                        // Style Title and Message Headers (Bold)
+                        $('row c[r^="A1"]', sheet).attr('s', '2'); 
+                        $('row c[r^="A2"]', sheet).attr('s', '50'); // Text wrap
+                        $('row c[r^="A3"]', sheet).attr('s', '2'); 
+                        
+                        // Style Table Header Row (Grey Fill + Bold)
+                        $('row', sheet).each(function() {
+                            var row = $(this);
+                            if (row.attr('r') == '4' || row.attr('r') == '3') { 
+                                // Since title and messageTop inject rows, table data often begins on Row 3 or 4 depending on newline parsing
+                                if(row.find('c t').text().includes('Case #') || row.find('is t').text().includes('Case #')) {
+                                    row.find('c').attr('s', '32');
+                                }
+                            }
+                        });
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    title: 'System Wide Consolidated Case Demographics',
+                    text: 'Download PDF',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    className: 'btn btn-danger text-white',
+                    titleAttr: 'Export to PDF',
+                    messageTop: function() {
+                        return `SUMMARY: Total Cases: ${$('#consolidated-total-cases').text()} | Active Cases: ${$('#consolidated-ongoing-cases').text()} | Resolved Cases: ${$('#consolidated-resolved-cases').text()}\nPROTECTION ORDERS: BPO: ${$('#consolidated-bpo').text()} | TPO: ${$('#consolidated-tpo').text()} | PPO: ${$('#consolidated-ppo').text()}`;
+                    },
+                    customize: function (doc) {
+                        // Title styling
+                        doc.content[0].fontSize = 20;
+                        doc.content[0].alignment = 'center';
+                        doc.content[0].margin = [0, 0, 0, 10]; 
+                        
+                        // messageTop styling
+                        if(doc.content[1]) {
+                            doc.content[1].fontSize = 12;
+                            doc.content[1].bold = true;
+                            doc.content[1].margin = [0, 0, 0, 15];
+                            doc.content[1].color = '#333333';
+                        }
+                        
+                        // Table styling overrides
+                        var objLayout = {};
+                        objLayout['hLineWidth'] = function(i) { return .5; };
+                        objLayout['vLineWidth'] = function(i) { return .5; };
+                        objLayout['hLineColor'] = function(i) { return '#aaaaaa'; };
+                        objLayout['vLineColor'] = function(i) { return '#aaaaaa'; };
+                        objLayout['paddingLeft'] = function(i) { return 4; };
+                        objLayout['paddingRight'] = function(i) { return 4; };
+                        doc.content[2].layout = objLayout;
+                        
+                        // Table header styling (Dark grey fill, white text)
+                        for (var i = 0; i < doc.content[2].table.body[0].length; i++) {
+                            doc.content[2].table.body[0][i].fillColor = '#343a40'; 
+                            doc.content[2].table.body[0][i].color = '#ffffff';
+                            doc.content[2].table.body[0][i].bold = true;
+                        }
+                    }
+                }
+            ]
+        });
+
+        consolidatedTable.on('draw.dt', () => {
+            function countTotal(arr) {
+                return arr.map(d => d.length ? d.split(',').length : 0).reduce((a, c) => a + c, 0);
+            }
+            $('#table-total-cases').text(countTotal(consolidatedTable.column(0, { filter: 'applied' }).data().toArray()));
+            $('#table-total-victim').text(countTotal(consolidatedTable.column(1, { filter: 'applied' }).data().toArray()));
+            $('#table-total-perpetrator').text(countTotal(consolidatedTable.column(3, { filter: 'applied' }).data().toArray()));
+            $('#table-total-ra').text(countTotal(consolidatedTable.column(5, { filter: 'applied' }).data().toArray()));
+        });
+        consolidatedTable.draw();
+        
+        $('select#consolidated-filter-ra-select').off('change').on('change', function(){
+            consolidatedTable.columns([5]).search($(this).val()).draw();
+        });
+        $('select#consolidated-gender-filter').off('change').on('change', function(){
+            let term = $(this).val();
+            let regex = term ? `(?=.*${term})` : '';
+            consolidatedTable.columns([7]).search(regex, true, false).draw();
+        });
+        $('select#consolidated-barangay-filter').off('change').on('change', function(){
+            consolidatedTable.columns([8]).search($(this).val()).draw();
+        });
+    }
+});
+</script>
 
 {% endblock scripts %}
