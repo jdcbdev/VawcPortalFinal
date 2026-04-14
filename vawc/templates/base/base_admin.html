@@ -83,6 +83,9 @@
                         <input type="email" class="form-control" id="reset_target_email_input" placeholder="name@example.com">
                         <label for="reset_target_email_input">Target Email Address</label>
                     </div>
+                    <div id="reset_email_error" class="alert alert-danger d-none py-2 mb-2" role="alert">
+                        <i class='bx bx-error-circle'></i> Please enter a valid email address.
+                    </div>
                     <input type="hidden" id="reset_account_id_hidden">
                     <input type="hidden" id="reset_current_email_hidden">
                 </div>
@@ -120,12 +123,18 @@
             $('#resetPasswordEmailNextBtn').on('click', function() {
                 var targetEmail = $('#reset_target_email_input').val();
                 if (!targetEmail || !targetEmail.includes('@')) {
-                    alert("Please enter a valid email address.");
+                    $('#reset_email_error').removeClass('d-none');
                     return;
                 }
+                $('#reset_email_error').addClass('d-none');
                 $('#confirm_target_email_text').text(targetEmail);
                 $('#ResetPasswordEmailModal').modal('hide');
                 $('#ResetPasswordConfirmModal').modal('show');
+            });
+
+            // Clear alert on input change
+            $('#reset_target_email_input').on('input', function() {
+                $('#reset_email_error').addClass('d-none');
             });
 
             // "Confirm & Reset" button on Confirm Modal
@@ -179,6 +188,7 @@
             $('#reset_account_id_hidden').val(accountId);
             $('#reset_current_email_hidden').val(currentEmail);
             $('#reset_target_email_input').val(currentEmail);
+            $('#reset_email_error').addClass('d-none');
             $('#ResetPasswordEmailModal').modal('show');
         }
     </script>
