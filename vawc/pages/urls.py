@@ -126,7 +126,7 @@ urlpatterns = [
     path('admin-SWDO-vawc/view-SWDO-case/impacted/<int:case_id>/', views.view_SWDO_case_impact, name='SWDO case impacted view'),
     path('admin-SWDO-vawc/case/pdf/<int:case_id>/', views.pdf_template_view, name='SWDO pdf case'),
     path('refer-SWDO/', views.refer_SWDO, name='refer_SWDO'),
-    path('admin-SWDO-vawc/acc_city', views.acc_city, name='acc city'),
+    # path('admin-SWDO-vawc/acc_city', views.acc_city, name='acc city'),
     path('admin-SWDO-vawc/get_city_by_province/<int:province_id>/', views.get_city_by_province, name='get city by province'),
     path('admin-SWDO-vawc/get_province_id', views.get_province_id, name='get province id'),
     

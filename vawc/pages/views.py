@@ -1182,21 +1182,21 @@ def check_username_email(request):
 
         return JsonResponse(response_data)
 
-@login_required
-def acc_city(request):
-    if request.method == 'GET':
-        # Get the city from the request
-        city = request.GET.get('city')
-        city = city.strip()  # Remove leading/trailing whitespace if any
-        city = city.upper()  # Convert to uppercase for case-insensitive comparison
-        if city:
-            # check if there is the same city in the database
-            city_taken = SWDOaccount.objects.filter(city=city).exists()
-        else:
-            city_taken = False
+# @login_required
+# def acc_city(request):
+#     if request.method == 'GET':
+#         # Get the city from the request
+#         city = request.GET.get('city')
+#         city = city.strip()  # Remove leading/trailing whitespace if any
+#         city = city.upper()  # Convert to uppercase for case-insensitive comparison
+#         if city:
+#             # check if there is the same city in the database
+#             city_taken = SWDOaccount.objects.filter(city=city).exists()
+#         else:
+#             city_taken = False
 
-        # Return the filtered accounts as JSON
-        return JsonResponse({'city_taken': city_taken})
+#         # Return the filtered accounts as JSON
+#         return JsonResponse({'city_taken': city_taken})
 
 
 @login_required

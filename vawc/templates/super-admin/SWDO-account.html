@@ -549,8 +549,8 @@
             }
         });
         
-        // Update city validation to work with select dropdown
-        $(city).on('change', function() {
+        /* Update city validation to work with select dropdown
+        {% comment %} $(city).on('change', function() {
             const cityName = $(this).val();
             console.log("city changed: ", cityName);
             if(cityName){
@@ -579,7 +579,8 @@
                 $('#account_cityFeedback').hide();
                 $('#account_cityFeedback.valid-feedback').hide();
             }
-        });
+        }); {% endcomment %}
+        */
     }
     
     function editAddressListener(formElement, formType, count = 0) {
@@ -622,43 +623,27 @@
             });
         }
 
-        $(city).on('change', function() {
+        /* {% comment %} $(city).on('change', function() {
             const cityName = $(this).val();
             console.log("city changed: ", cityName);
             if(cityName){
-                city_have_an_acc = is_city_have_an_account(cityName)
-                console.log(city_have_an_acc)
-                if(city_have_an_acc){
-                    console.log("city has an account")
-                    $(city).addClass('is-invalid');
-                    $(city).removeClass('is-valid');
-                    $('#edit_account_cityFeedback').show();
-                    $('#edit_account_cityFeedback.valid-feedback').hide();
-                    $('#saveAccountBtn').attr('disabled', 'disabled');
-                }else{
-                    console.log("city do not have an account")
-                    $(city).removeClass('is-invalid');
-                    $(city).addClass('is-valid');
-                    $('#edit_account_cityFeedback').hide();
-                    $('#edit_account_cityFeedback.valid-feedback').show();
-                    $('#saveAccountBtn').removeAttr('disabled');
-                }
+                
             } else {
                 // Clear validation when no city selected
                 $(city).removeClass('is-invalid is-valid');
                 $('#edit_account_cityFeedback').hide();
                 $('#edit_account_cityFeedback.valid-feedback').hide();
             }
-        });
+        }); {% endcomment %} */
     }
 
-    //==
+    
     document.addEventListener('DOMContentLoaded', () => {
         addAddressListener(document.querySelector('#addAccountForm'), 'account')
         editAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
     })
     
-    function is_city_have_an_account(city){
+    {% comment %} /* function is_city_have_an_account(city){
         let has_account = false;
         $.ajax({
             url: '{% url "acc city" %}',
@@ -675,7 +660,7 @@
             }
         });
         return has_account;
-    }
+    } */ {% endcomment %}
     async function setGeoSelectPoliceStation(selectElement, formData) {
         try {
             const res = await fetch('/pages/get-police-station/', {
