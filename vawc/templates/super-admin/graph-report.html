@@ -450,8 +450,22 @@ $(document).ready(function() {
         const caseTable = document.getElementById('consolidated-cases-table-content');
         caseTable.innerHTML = '';
         let gender_types = [];
+        let age_groups = [];
+        let service_types = [];
         let default_barangay_options = [];
         const today = new Date();
+
+        function getAgeGroup(age) {
+            if (age === "-" || age === "" || isNaN(age)) return "Unknown";
+            const a = parseInt(age);
+            if (a < 18) return "Below 18";
+            if (a >= 18 && a <= 24) return "18-24";
+            if (a >= 25 && a <= 34) return "25-34";
+            if (a >= 35 && a <= 44) return "35-44";
+            if (a >= 45 && a <= 54) return "45-54";
+            if (a >= 55 && a <= 64) return "55-64";
+            return "65 and above";
+        }
 
         data.forEach(case_item => {
             let victims = { names: [], addresses: [], genders: [], ages: [] };
@@ -476,8 +490,11 @@ $(document).ready(function() {
                     }
                 }
                 
+                let group = getAgeGroup(age);
                 if(victim.sex && !gender_types.includes(victim.sex)) gender_types.push(victim.sex);
-                victims.ages.push(age);
+                if(group !== "Unknown" && !age_groups.includes(group)) age_groups.push(group);
+                
+                victims.ages.push(`${age} <span class="d-none">${group}</span>`);
                 victims.addresses.push(`${victim.barangay || ''} ${victim.city || ''}`);
                 victims.genders.push(victim.sex || 'Unknown');
             });
@@ -490,6 +507,13 @@ $(document).ready(function() {
             if(case_item.data.barangay && !default_barangay_options.includes(case_item.data.barangay)) {
                 default_barangay_options.push(case_item.data.barangay);
             }
+            
+            let service_text = case_item.data.service_information || "No Service Type";
+            if (service_text === 'crisis') service_text = 'Crisis Intervention Including Rescue';
+            else if (service_text === 'issuance') service_text = 'Issuance / Enforcement of Barangay Protection Order';
+            else if (service_text === 'None' || service_text === '') service_text = "No Service Type";
+
+            if (!service_types.includes(service_text)) service_types.push(service_text);
 
             caseTable.innerHTML += `
             <tr class="border-bottom border-2">
@@ -498,6 +522,7 @@ $(document).ready(function() {
                 <td>${victims.addresses.join(" | ")}</td>
                 <td>${perpetrators.names.join(", ")}</td>
                 <td>${perpetrators.addresses.join(" | ")}</td>
+                <td>${service_text}</td>
                 <td>${ra_violations.join(", ")}</td>
                 <td>${victims.ages.join(", ")}</td>
                 <td>${victims.genders.join(", ")}</td> 
@@ -517,6 +542,28 @@ $(document).ready(function() {
             genderFilter.innerHTML = '<option value="">All Genders</option>';
             gender_types.forEach(g => {
                 genderFilter.innerHTML += `<option value="${g}">${g}</option>`;
+            });
+        }
+        
+        // Sort age groups logically based on standard brackets
+        const orderMap = { "Below 18": 1, "18-24": 2, "25-34": 3, "35-44": 4, "45-54": 5, "55-64": 6, "65 and above": 7 };
+        age_groups.sort((a,b) => orderMap[a] - orderMap[b]);
+        if(age_groups.length) {
+            const ageFilter = document.querySelector('#consolidated-age-filter');
+            ageFilter.innerHTML = '<option value="">All Ages (Victim)</option>';
+            age_groups.forEach(a => {
+                ageFilter.innerHTML += `<option value="${a}">${a}</option>`;
+            });
+        }
+        
+        if(service_types.length) {
+            const serviceFilter = document.querySelector('#consolidated-service-filter');
+            serviceFilter.innerHTML = '<option value="">All Service Types</option>';
+            serviceFilter.innerHTML += `<option value="No Service Type">No Service Type</option>`;
+            service_types.forEach(s => {
+                if (s !== "No Service Type") {
+                    serviceFilter.innerHTML += `<option value="${s}">${s}</option>`;
+                }
             });
         }
 
@@ -547,11 +594,12 @@ $(document).ready(function() {
                              $(col[2]).attr('width', 40);
                              $(col[3]).attr('width', 25);
                              $(col[4]).attr('width', 40);
-                             $(col[5]).attr('width', 20);
-                             $(col[6]).attr('width', 15);
+                             $(col[5]).attr('width', 35);
+                             $(col[6]).attr('width', 20);
                              $(col[7]).attr('width', 15);
-                             $(col[8]).attr('width', 35);
-                             $(col[9]).attr('width', 20);
+                             $(col[8]).attr('width', 15);
+                             $(col[9]).attr('width', 35);
+                             $(col[10]).attr('width', 20);
                         }
 
                         // Style Title and Message Headers (Bold)
@@ -624,20 +672,26 @@ $(document).ready(function() {
             $('#table-total-cases').text(countTotal(consolidatedTable.column(0, { filter: 'applied' }).data().toArray()));
             $('#table-total-victim').text(countTotal(consolidatedTable.column(1, { filter: 'applied' }).data().toArray()));
             $('#table-total-perpetrator').text(countTotal(consolidatedTable.column(3, { filter: 'applied' }).data().toArray()));
-            $('#table-total-ra').text(countTotal(consolidatedTable.column(5, { filter: 'applied' }).data().toArray()));
+            $('#table-total-ra').text(countTotal(consolidatedTable.column(6, { filter: 'applied' }).data().toArray()));
         });
         consolidatedTable.draw();
         
-        $('select#consolidated-filter-ra-select').off('change').on('change', function(){
+        $('select#consolidated-service-filter').off('change').on('change', function(){
             consolidatedTable.columns([5]).search($(this).val()).draw();
+        });
+        $('select#consolidated-filter-ra-select').off('change').on('change', function(){
+            consolidatedTable.columns([6]).search($(this).val()).draw();
+        });
+        $('select#consolidated-age-filter').off('change').on('change', function(){
+            let term = $(this).val();
+            consolidatedTable.columns([7]).search(term ? term : '', false, true).draw();
         });
         $('select#consolidated-gender-filter').off('change').on('change', function(){
             let term = $(this).val();
-            let regex = term ? `(?=.*${term})` : '';
-            consolidatedTable.columns([7]).search(regex, true, false).draw();
+            consolidatedTable.columns([8]).search(term ? term : '', false, true).draw();
         });
         $('select#consolidated-barangay-filter').off('change').on('change', function(){
-            consolidatedTable.columns([8]).search($(this).val()).draw();
+            consolidatedTable.columns([9]).search($(this).val()).draw();
         });
     }
 });

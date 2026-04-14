@@ -6226,6 +6226,7 @@ def admin_consolidated_report_data(request, get_year):
             'checkbox_ra_7877': case.checkbox_ra_7877,
             'checkbox_ra_9775': case.checkbox_ra_9775,
             'checkbox_a_7610': case.checkbox_a_7610,
+            'service_information': case.service_information,
         }
 
         # Decrypt victims focusing on gender and DOB (and names)

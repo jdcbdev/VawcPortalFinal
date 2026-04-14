@@ -62,6 +62,12 @@
                                   </select>
                               </div>
                               <div class="col-6 col-md-3 mb-2">
+                                  <select id="consolidated-service-filter" class="form-select">
+                                      <option value="">All Service Types</option>
+                                      <!-- Options to be populated via JS or manually -->
+                                  </select>
+                              </div>
+                              <div class="col-6 col-md-3 mb-2">
                                   <select id="consolidated-filter-ra-select" class="form-select">
                                       <option value="">All RA Validations</option>
                                       <option value="RA 9262">RA 9262</option>
@@ -74,6 +80,11 @@
                               <div class="col-6 col-md-3 mb-2">
                                   <select id="consolidated-gender-filter" class="form-select">
                                       <option value="">All Genders</option>
+                                  </select>
+                              </div>
+                              <div class="col-6 col-md-3 mb-2">
+                                  <select id="consolidated-age-filter" class="form-select">
+                                      <option value="">All Ages (Victim)</option>
                                   </select>
                               </div>
                               <div class="col-6 col-md-3 mb-2">
@@ -100,6 +111,7 @@
                                   <th scope="col" class="all">Victim Address</th>
                                   <th scope="col" class="all">Perpetrator</th>
                                   <th scope="col" class="all">Perpetrator Address</th>
+                                  <th scope="col" class="all">Service Type</th>
                                   <th scope="col" class="all">RA Violation</th>
                                   <th scope="col" class="all">Victim Age</th>
                                   <th scope="col" class="all">Victim Gender</th>
@@ -115,6 +127,7 @@
                                   <td><strong>Total Victims: </strong><span id="table-total-victim"></span></td>
                                   <td></td>
                                   <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator"></span></td>
+                                  <td></td>
                                   <td></td>
                                   <td><strong>Total RA Violations: </strong><span id="table-total-ra"></span></td>
                                   <td></td>
