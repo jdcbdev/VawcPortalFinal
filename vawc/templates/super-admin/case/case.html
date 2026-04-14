@@ -26,7 +26,18 @@
             <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_case"><i class="bx bx-plus"></i> Add Case</button>
         </div>
     </div>
-    <p>Barangay: {{ barangay }}</p>
+    <div class="d-flex align-items-center mb-3">
+        <p class="mb-0 me-2 text-muted">Barangay: <span id="currentBarangayFilterText">{{ barangay|default:"All" }}</span></p>
+        <div class="dropdown">
+            <i class='bx bx-filter dropdown-toggle text-primary' type="button" id="barangayFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer; font-size: 1.3rem;" title="Filter by Barangay"></i>
+            <div class="dropdown-menu p-2 shadow" aria-labelledby="barangayFilterDropdown" style="min-width: 220px;">
+                <label for="barangay" class="form-label small fw-bold text-muted mb-1">Filter by Barangay</label>
+                <select name="barangay" id="barangay" class="form-select form-select-sm border-secondary">
+                    <option value="">All Barangays</option>
+                </select>
+            </div>
+        </div>
+    </div>
 
     <div class="row mt-4">
         <div class="col-lg-3 mb-lg-0 mb-3 ">
@@ -67,6 +78,7 @@
                     <th scope="col">Service</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date Added</th>
+                    <th scope="col" style="display:none;">Barangay</th>
                     <th class="text-center" scope="col">View</th>
                 </tr>
             </thead>
@@ -90,6 +102,7 @@
                     </td>
                     <td>{{ case.status }}</td>
                     <td>{{ case.date_added|date:"m/d/Y" }}</td>
+                    <td style="display:none;">{{ case.barangay }}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
                             <a class="btn btn-outline-success" href="{% url 'admin case impacted view' case_id=case.id %}" role="button">View</a>
@@ -105,6 +118,7 @@
                     <td>No cases found</td>
                     <td></td>
                     <td></td>
+                    <td style="display:none;"></td>
                     <td></td>
                 </tr>
                 {% endfor %}
@@ -226,6 +240,31 @@
         $('select#status').on('change', function(e){
             var status = $(this).val();
             $('#table-case').DataTable().columns([3]).search(status).draw();
+        });
+
+        // Extract unique barangays from the table column and populate the dropdown
+        var table = $('#table-case').DataTable();
+        var barangayColIndex = 5;
+        table.column(barangayColIndex).data().unique().sort().each(function(d, j) {
+            if(d) {
+                var val = $('<div/>').html(d).text().trim();
+                if(val && val !== 'None') {
+                    $('select#barangay').append('<option value="' + val + '">' + val + '</option>');
+                }
+            }
+        });
+
+        $('select#barangay').on('change', function(e){
+            var rawVal = $(this).val();
+            var val = $.fn.dataTable.util.escapeRegex(rawVal);
+            $('#table-case').DataTable().columns([barangayColIndex]).search(val ? '^'+val+'$' : '', true, false).draw();
+            
+            // Update the display text to indicate the active filter
+            if(rawVal) {
+                $('#currentBarangayFilterText').text(rawVal);
+            } else {
+                $('#currentBarangayFilterText').text('All');
+            }
         });
 
         $('#addCaseBtn').click(function(e) {
