@@ -68,6 +68,130 @@
       });
 
     </script>
+    
+    <!-- Shared Password Reset Modals -->
+    <div class="modal fade" id="ResetPasswordEmailModal" tabindex="-1" aria-labelledby="ResetPasswordEmailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ResetPasswordEmailModalLabel">Reset Account Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Enter the email address where the new credentials should be sent.</p>
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="reset_target_email_input" placeholder="name@example.com">
+                        <label for="reset_target_email_input">Target Email Address</label>
+                    </div>
+                    <div id="reset_email_error" class="alert alert-danger d-none py-2 mb-2" role="alert">
+                        <i class='bx bx-error-circle'></i> Please enter a valid email address.
+                    </div>
+                    <input type="hidden" id="reset_account_id_hidden">
+                    <input type="hidden" id="reset_current_email_hidden">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="resetPasswordEmailNextBtn">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ResetPasswordConfirmModal" tabindex="-1" aria-labelledby="ResetPasswordConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-top border-4 border-warning">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ResetPasswordConfirmModalLabel">Confirm Password Reset</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to reset the password for this account?</p>
+                    <p>The new credentials will be sent to: <strong id="confirm_target_email_text"></strong></p>
+                    <p class="text-danger small"><i class='bx bx-info-circle'></i> This action will immediately change the user's password and send the new one via email.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-target="#ResetPasswordEmailModal" data-bs-toggle="modal">Back</button>
+                    <button type="button" class="btn btn-warning" id="resetPasswordFinalConfirmBtn">Confirm & Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // "Next" button on Email Modal
+            $('#resetPasswordEmailNextBtn').on('click', function() {
+                var targetEmail = $('#reset_target_email_input').val();
+                if (!targetEmail || !targetEmail.includes('@')) {
+                    $('#reset_email_error').removeClass('d-none');
+                    return;
+                }
+                $('#reset_email_error').addClass('d-none');
+                $('#confirm_target_email_text').text(targetEmail);
+                $('#ResetPasswordEmailModal').modal('hide');
+                $('#ResetPasswordConfirmModal').modal('show');
+            });
+
+            // Clear alert on input change
+            $('#reset_target_email_input').on('input', function() {
+                $('#reset_email_error').addClass('d-none');
+            });
+
+            // "Confirm & Reset" button on Confirm Modal
+            $('#resetPasswordFinalConfirmBtn').on('click', function() {
+                var accountId = $('#reset_account_id_hidden').val();
+                var currentEmail = $('#reset_current_email_hidden').val();
+                var targetEmail = $('#reset_target_email_input').val();
+                var btn = $(this);
+
+                btn.prop('disabled', true).text('Processing...');
+
+                $.ajax({
+                    url: '/admin-vawc/manage/reset-account-password/' + accountId + '/',
+                    method: 'POST',
+                    data: {
+                        'email': currentEmail,
+                        'target_email': targetEmail,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        $('#ResetPasswordConfirmModal').modal('hide');
+                        btn.prop('disabled', false).text('Confirm & Reset');
+                        
+                        if (response.success) {
+                            if (typeof $('#successToast').toast === 'function') {
+                                $('#successToast .toast-body').text(response.message);
+                                $('#successToast').toast('show');
+                            } else {
+                                alert(response.message);
+                            }
+                        } else {
+                            if (typeof $('#errorToast').toast === 'function') {
+                                $('#errorToast .toast-body').text(response.message);
+                                $('#errorToast').toast('show');
+                            } else {
+                                alert("Error: " + response.message);
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#ResetPasswordConfirmModal').modal('hide');
+                        btn.prop('disabled', false).text('Confirm & Reset');
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+
+        // Global function to trigger reset flow from templates
+        function triggerResetPasswordFlow(accountId, currentEmail) {
+            $('#reset_account_id_hidden').val(accountId);
+            $('#reset_current_email_hidden').val(currentEmail);
+            $('#reset_target_email_input').val(currentEmail);
+            $('#reset_email_error').addClass('d-none');
+            $('#ResetPasswordEmailModal').modal('show');
+        }
+    </script>
     {% block scripts %}{% endblock %}
   </body>
   {{ redirect_to_login_immediately }}

@@ -1,0 +1,189 @@
+{% extends "../base/base_admin.html" %}
+{% block title %}Manage | Account Reset Requests {% endblock %}
+{% load static %}
+{% block styles %}
+<link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
+<link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
+{% endblock %}
+{% block content %}
+<div class="container-fluid pb-4">
+    <div class="row d-flex justify-content-between">
+        <div class="col-auto">
+            <h1>Account Reset Requests</h1>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-6 mb-lg-0 mb-3 ">
+            <div class="input-group search-keyword">
+                <input type="text" name="keyword" id="keyword" placeholder="Search Agency" class="form-control">
+                <button class="btn btn-outline-secondary background-color-green" type="button"><i class='bx bx-search-alt'></i></button>
+            </div>
+        </div>
+        <div class="form-group col-lg-6 mb-lg-0 mb-3 ">
+            <select name="status" id="status" class="form-select me-md-2">
+                <option value="">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Resolved">Resolved</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="pt-4">
+        <table class="table table-striped nowrap" id="table-requests" style="width:100%">
+            <thead class="border-bottom border-dark border-2 border-opacity-50">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Agency Name</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Account Type</th>
+                    <th scope="col">Pref / New Email / Alt. Contact</th>
+                    <th scope="col">Status</th>
+                    <th class="text-center" scope="col">Manage</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for request in requests %}
+                    <tr class="{% if request.status == 'Pending' %}table-warning{% endif %}">
+                        <td data-sort="{{ request.created_at|date:'YmdHis' }}">{{ request.created_at }}</td>
+                        <td>{{ request.agency_name }}</td>
+                        <td>{{ request.first_name }}</td>
+                        <td>{{ request.last_name }}</td>
+                        <td>{{ request.account_type }}</td>
+                        <td>
+                            {% if request.email_preference == 'change_new' %}
+                                Change to: <b>{{ request.new_email }}</b>
+                            {% else %}
+                                Keep old. Contact: <b>{{ request.alternative_contact }}</b>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if request.status == 'Pending' %}
+                                <span class="badge bg-warning">{{ request.status }}</span>
+                            {% else %}
+                                <span class="badge bg-success">{{ request.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if request.status == 'Pending' %}
+                                <button class="btn btn-outline-success mark-resolved-btn" role="button" data-request-id="{{ request.id }}">Mark Resolved</button>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Success</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+        </div>
+    </div>
+    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#899499;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto text-dark">Error</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-dark">
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Modal confirm resolve -->
+<div class="modal fade" id="confirmResolveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmResolveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-top border-4 border-success">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmResolveModalLabel">Confirm Resolve</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to mark this request as <strong>Resolved</strong>?</p>
+                <p class="text-muted small">Please ensure you have already manually handled the password reset or email update in the provider account management section.</p>
+                <input type="hidden" id="pending_resolve_id">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="finalResolveConfirmBtn">Yes, Mark Resolved</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#table-requests').DataTable({
+            dom: 'Brt <"bottom"lp>',
+            responsive: true,
+            fixedHeader: true,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            order: [[0, 'desc']],
+            pageLength: 20,
+        });
+
+        $('input#keyword').on('input', function(e){
+            var search = $(this).val();
+            $('#table-requests').DataTable().columns([1]).search(search).draw();
+        });
+        $('select#status').on('change', function(e){
+            var status = $(this).val();
+            $('#table-requests').DataTable().columns([4]).search(status).draw();
+        });
+
+        $(document).on('click', '.mark-resolved-btn', function() {
+            var requestId = $(this).data('request-id');
+            $('#pending_resolve_id').val(requestId);
+            $('#confirmResolveModal').modal('show');
+        });
+
+        $('#finalResolveConfirmBtn').on('click', function() {
+            var requestId = $('#pending_resolve_id').val();
+            var btn = $(this);
+            btn.prop('disabled', true).text('Processing...');
+            
+            $.ajax({
+                url: '{% url "resolve_reset_request" 0 %}'.replace('0', requestId),
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    $('#confirmResolveModal').modal('hide');
+                    btn.prop('disabled', false).text('Yes, Mark Resolved');
+                    if(response.success) {
+                        $('#successToast .toast-body').text("Request marked as resolved.");
+                        $('#successToast').toast('show');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        $('#errorToast .toast-body').text(response.error);
+                        $('#errorToast').toast('show');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#confirmResolveModal').modal('hide');
+                    btn.prop('disabled', false).text('Yes, Mark Resolved');
+                    $('#errorToast .toast-body').text("Network error.");
+                    $('#errorToast').toast('show');
+                }
+            });
+        });
+    });
+</script>
+{% endblock scripts %}

@@ -171,6 +171,11 @@
     </div>
 </div>
 
+<!-- JSON Data for JavaScript -->
+<script id="regions-data" type="application/json">
+    [{% for region in default_regions %}"{{ region.name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]
+</script>
+
 <!-- Modal edit -->
 <div class="modal fade" id="edit_law_enforcement_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
@@ -188,6 +193,15 @@
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="edit_account_fname" name="edit_account_fname" placeholder="name@example.com" >
                     <label for="edit_account_fname">Name</label>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="edit_account_email" name="edit_account_email" placeholder="name@example.com" >
+                    <label for="edit_account_email">Email Address</label>
+                </div>
+                
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-warning w-100" id="resetPasswordBtn">Reset Password & Send Credentials to Email</button>
                 </div>
                     
                 
@@ -319,6 +333,7 @@
                 success: async function(response) {
                     $('#account_id').val(response.account_id);
                     $('#edit_account_fname').val(response.name);
+                    $('#edit_account_email').val(response.email);
                     $('#edit_status').val(response.status);
 
                     // Populate regions
@@ -378,6 +393,15 @@
                     // Optionally, show an error message to the user
                 }
             });
+        });
+
+        // Reset Password Flow
+        $('#resetPasswordBtn').on('click', function() {
+            var accountId = $('#account_id').val();
+            var email = $('#edit_account_email').val();
+            
+            // Trigger the shared flow in base_admin.html
+            triggerResetPasswordFlow(accountId, email);
         });
 
         // Attach click event listener to the Delete button
@@ -643,7 +667,7 @@
         editAddressListener(document.querySelector('#editAccountForm'), 'edit_account')
     })
     
-    {% comment %} /* function is_city_have_an_account(city){
+    /* {% comment %}  function is_city_have_an_account(city){
         let has_account = false;
         $.ajax({
             url: '{% url "acc city" %}',
@@ -660,7 +684,7 @@
             }
         });
         return has_account;
-    } */ {% endcomment %}
+    } {% endcomment %} */
     async function setGeoSelectPoliceStation(selectElement, formData) {
         try {
             const res = await fetch('/pages/get-police-station/', {
@@ -764,11 +788,15 @@
         $(selectId).empty();
         $(selectId).append('<option value="">--Select Option--</option>');
         
-        // Add your regions here (you might want to fetch this from the backend)
-        {% for region in default_regions %}
-            var selected = '{{ region.name }}' === selectedValue ? 'selected' : '';
-            $(selectId).append(`<option value="{{ region.name }}" ${selected}>{{ region.name }}</option>`);
-        {% endfor %}
+        // Retrieve data from the JSON script tag to avoid IDE syntax errors
+        const regionsData = document.getElementById('regions-data');
+        if (regionsData) {
+            const regions = JSON.parse(regionsData.textContent);
+            regions.forEach(name => {
+                var selected = name === selectedValue ? 'selected' : '';
+                $(selectId).append(`<option value="${name}" ${selected}>${name}</option>`);
+            });
+        }
     }
 
     function populateProvinces(selectId, regionName, selectedValue = '') {

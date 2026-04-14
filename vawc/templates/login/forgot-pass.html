@@ -30,6 +30,7 @@
                         <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2 pb-3">
                             <button id="submitButton" class="btn btn-primary w-100" style="z-index: 1000; position: relative;" type="submit">Recover Password</button>
                             <a href="{% url 'login' %}" style="text-decoration: none; z-index: 1000;"><button type="button" class="btn btn-outline-primary my-2 w-100" style="z-index: 1000; position: relative;">Login instead</button></a>
+                            <p class="text-center fw-regular" style="color: purple; opacity: 75%; z-index: 1000; position: relative;">Can't get into your email? Let's <a href="#" data-bs-toggle="modal" data-bs-target="#resetmodal" style="text-decoration: none; z-index: 1000;">reset</a> your account </p>
                         </div>
                     </form>
                 </div>
@@ -59,6 +60,74 @@
     </div>
 </div>
 
+<!-- Modal reset -->
+<div class="modal fade" id="resetmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Account Reset Request</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="resetRequestForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label for="first_name" class="form-label">First Name *</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="last_name" class="form-label">Last Name *</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="agency_name" class="form-label">Agency Name</label>
+                        <input type="text" class="form-control" id="agency_name" name="agency_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="account_type" class="form-label">Provider Type</label>
+                        <select class="form-select" id="account_type" name="account_type" required>
+                            <option value="">-- Select Type --</option>
+                            <option value="Barangay">Barangay</option>
+                            <option value="Law Enforcement">Law Enforcement</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="SWDO">Social Welfare and Development Office</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Preference</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="email_preference" id="pref_change_new" value="change_new" checked>
+                            <label class="form-check-label" for="pref_change_new">Change to a new email</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="email_preference" id="pref_keep_old" value="keep_old">
+                            <label class="form-check-label" for="pref_keep_old">Keep current email (send reset link to another contact)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3" id="new_email_div">
+                        <label for="new_email" class="form-label">New Email Address</label>
+                        <input type="email" class="form-control" id="new_email" name="new_email">
+                    </div>
+                    
+                    <div class="mb-3 d-none" id="alternative_contact_div">
+                        <label for="alternative_contact" class="form-label">Alternative Contact (Phone/Email)</label>
+                        <input type="text" class="form-control" id="alternative_contact" name="alternative_contact">
+                    </div>
+
+                    <div id="resetFeedback" class="alert alert-danger d-none"></div>
+                    <div id="resetSuccess" class="alert alert-success d-none">Request submitted successfully! The Super Admin will review your details.</div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitResetRequestBtn">Submit Request</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
 {% block scripts %}
 <script>
@@ -89,6 +158,47 @@
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
                     // Handle other errors if needed
+                }
+            });
+        });
+
+        const radios = document.querySelectorAll('input[name="email_preference"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'change_new') {
+                    document.getElementById('new_email_div').classList.remove('d-none');
+                    document.getElementById('alternative_contact_div').classList.add('d-none');
+                } else {
+                    document.getElementById('new_email_div').classList.add('d-none');
+                    document.getElementById('alternative_contact_div').classList.remove('d-none');
+                }
+            });
+        });
+
+        $('#submitResetRequestBtn').on('click', function(e) {
+            e.preventDefault();
+            $('#resetFeedback').addClass('d-none');
+            $('#resetSuccess').addClass('d-none');
+            
+            let fd = new FormData(document.getElementById('resetRequestForm'));
+            $.ajax({
+                type: 'POST',
+                url: '{% url "request_account_reset" %}',
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    if(res.success) {
+                        $('#resetSuccess').removeClass('d-none');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        $('#resetFeedback').text(res.error || 'An error occurred.').removeClass('d-none');
+                    }
+                },
+                error: function() {
+                    $('#resetFeedback').text('A network error occurred.').removeClass('d-none');
                 }
             });
         });

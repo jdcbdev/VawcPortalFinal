@@ -200,6 +200,13 @@
                     <label for="edit_account_lname">Last Name</label>
                 </div>
                 <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="edit_account_email" name="edit_account_email" placeholder="name@example.com" >
+                    <label for="edit_account_email">Email Address</label>
+                </div>
+                <div class="mb-3">
+                    <button type="button" class="btn btn-outline-warning w-100" id="resetPasswordBtn">Reset Password & Send Credentials to Email</button>
+                </div>
+                <div class="form-floating mb-3">
                     <select class="form-select" name="edit_status" id="edit_status">
                         <option value="Active">Active</option>
                         <option value="Not Active">Not Active</option>
@@ -347,6 +354,7 @@
                     $('#edit_account_fname').val(response.first_name);
                     $('#edit_account_mname').val(response.middle_name);
                     $('#edit_account_lname').val(response.last_name);
+                    $('#edit_account_email').val(response.email);
                     $('#edit_status').val(response.status);
                     $('#edit_account_region').val(response.region);
                     $('#edit_account_province').val(response.province);
@@ -378,8 +386,6 @@
                 success: function(response) {
                     // Handle success response
                     console.log(response);
-                    // Optionally, close the modal or show a success message
-                    $('#edit_law_enforcement_account').modal('hide');
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
@@ -402,6 +408,15 @@
                     // Optionally, show an error message to the user
                 }
             });
+        });
+
+        // Reset Password Flow
+        $('#resetPasswordBtn').on('click', function() {
+            var accountId = $('#account_id').val();
+            var email = $('#edit_account_email').val();
+            
+            // Trigger the shared flow in base_admin.html
+            triggerResetPasswordFlow(accountId, email);
         });
 
         // Attach click event listener to the Delete button
