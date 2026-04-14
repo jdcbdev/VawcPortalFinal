@@ -5803,7 +5803,7 @@ def LawEnforcement_dashboard_data(request, get_year):
         case_dict_data = {
             'case_number': case.case_number,
             'date_added': case.date_added,
-            'barangay': case.law_enforcement_agency_name,
+            'barangay': case.barangay,
             'city': case.city,
             'province': case.province,
             'checkbox_ra_8353': case.checkbox_ra_8353,
@@ -5938,7 +5938,7 @@ def healthcare_dashboard_data(request, get_year):
         case_dict_data = {
             'case_number': case.case_number,
             'date_added': case.date_added,
-            'barangay': case.law_enforcement_agency_name,
+            'barangay': case.barangay,
             'city': case.city,
             'province': case.province,
             'checkbox_ra_8353': case.checkbox_ra_8353,
@@ -6073,7 +6073,7 @@ def SWDO_dashboard_data(request, get_year):
         case_dict_data = {
             'case_number': case.case_number,
             'date_added': case.date_added,
-            'barangay': case.law_enforcement_agency_name,
+            'barangay': case.barangay,
             'city': case.city,
             'province': case.province,
             'checkbox_ra_8353': case.checkbox_ra_8353,

@@ -93,6 +93,11 @@
       <div class="row">
           <div class="col-12 col-lg-auto d-flex align-items-center mb-2">Filter by</div>
           <div class="col-6 col-md-2 mb-2">
+              <select id="barangay-filter" class="form-select">
+                  <option value="">All Barangay</option>
+              </select>
+          </div>
+          <div class="col-6 col-md-2 mb-2">
               <select id="filter-ra-select" class="form-select">
                   <option value="">All RA</option>
                   <option value="RA 9262">RA 9262</option>
@@ -173,7 +178,19 @@ $(document).ready(function() {
     get_dashboard_data()
 
     let gender_types = []
+    let default_barangay_options = []
 
+    function changeBarangayFilter() {
+        if(!default_barangay_options) return;
+        const barangayFilter = document.querySelector('#barangay-filter')
+
+        barangayFilter.innerHTML = ''
+        barangayFilter.innerHTML += `<option value="">All Barangay</option>`
+        
+        default_barangay_options.forEach(barangay => {
+            barangayFilter.innerHTML += `<option value="${barangay}">${barangay}</option>`
+        })
+    }
 
     // RA bar chart
     var ctx = document.getElementById('bar-cases-per-ra').getContext('2d');
@@ -315,6 +332,7 @@ $(document).ready(function() {
 
         $('#cases-table').DataTable().destroy()
         caseTable.innerHTML = ''
+        default_barangay_options = []
         const today = new Date()
 
         data.forEach(case_item => {
@@ -374,6 +392,10 @@ $(document).ready(function() {
                     gender_types.push(perpetrator.sex)
                 }
             })
+            
+            if(!default_barangay_options.includes(case_item.data.barangay)) {
+                default_barangay_options.push(case_item.data.barangay)
+            }
     
             caseTable.innerHTML += `
             <tr class="border-bottom border-2">
@@ -391,6 +413,11 @@ $(document).ready(function() {
             `
         })
     
+        // sets initial data of barangay filter dropdown
+        if(default_barangay_options) {
+            changeBarangayFilter()
+        }
+
         // sets initial data of gender filter dropdown
         if(gender_types.length) {
             const genderFilter = document.querySelector('#gender-filter')
@@ -469,6 +496,11 @@ $(document).ready(function() {
             var search_term = $(this).val();
             const regex = search_term ? `(?=.*${search_term})(?=.*\\b${search_term}\\b)` : ''
             $('#cases-table').DataTable().columns([7]).search(regex, true, false).draw();
+        });
+        $('select#barangay-filter').off('change').on('change', function(e){
+            var search_term = $(this).val();
+            // Since the address string is "Barangay-City-Province", search by "Barangay-"
+            $('#cases-table').DataTable().columns([8]).search(search_term ? `${search_term}-` : '').draw();
         });
         $('select#age-filter').off('change').on('change', function(e){
             var search_term = $(this).val();
