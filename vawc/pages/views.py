@@ -801,6 +801,7 @@ def edit_account_view(request, account_id):
                 'province': account.province,
                 'city': account.city,
                 'barangay': account.barangay,
+                'email': account.user.email,
                 'default_regions': regions,
                 'default_provinces': provinces,
                 'default_cities': cities,
@@ -822,6 +823,18 @@ def edit_account_view(request, account_id):
             account.city = request.POST.get('edit_account_city')
             account.barangay = request.POST.get('edit_account_barangay')
             account.save()
+
+            new_email = request.POST.get('edit_account_email')
+            if new_email and new_email != account.user.email:
+                account.user.email = new_email
+                account.user.username = new_email
+            
+            new_password = request.POST.get('edit_account_password')
+            if new_password:
+                account.user.set_password(new_password)
+            
+            account.user.save()
+
             return JsonResponse({'success': True, 'message': 'Account updated successfully'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
@@ -847,6 +860,7 @@ def edit_law_enforcement_account_view(request, account_id):
                 'region': police_account.region,
                 'province': police_account.province,
                 'station': police_account.station,
+                'email': police_account.user.email,
                 'default_regions': regions,
                 'default_provinces': provinces,
                 'default_police_stations': police_stations,
@@ -866,6 +880,18 @@ def edit_law_enforcement_account_view(request, account_id):
             police_account.province = request.POST.get('edit_account_province')
             police_account.city = request.POST.get('edit_account_police_station')
             police_account.save()
+
+            new_email = request.POST.get('edit_account_email')
+            if new_email and new_email != police_account.user.email:
+                police_account.user.email = new_email
+                police_account.user.username = new_email
+            
+            new_password = request.POST.get('edit_account_password')
+            if new_password:
+                police_account.user.set_password(new_password)
+            
+            police_account.user.save()
+
             return JsonResponse({'success': True, 'message': 'Account updated successfully'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
@@ -888,6 +914,7 @@ def edit_healthcare_account_view(request, account_id):
                 'status': healthcare_account.status,
                 'region': healthcare_account.region,
                 'province': healthcare_account.province,
+                'email': healthcare_account.user.email,
                 'default_regions': regions,
                 'default_provinces': provinces,
                 'hospital_name': healthcare_account.hospital_name,
@@ -907,6 +934,18 @@ def edit_healthcare_account_view(request, account_id):
             healthcare_account.province = request.POST.get('edit_account_province')
             healthcare_account.hospital_name = request.POST.get('edit_account_hospital_name')
             healthcare_account.save()
+
+            new_email = request.POST.get('edit_account_email')
+            if new_email and new_email != healthcare_account.user.email:
+                healthcare_account.user.email = new_email
+                healthcare_account.user.username = new_email
+            
+            new_password = request.POST.get('edit_account_password')
+            if new_password:
+                healthcare_account.user.set_password(new_password)
+            
+            healthcare_account.user.save()
+
             return JsonResponse({'success': True, 'message': 'Account updated successfully'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
@@ -926,6 +965,7 @@ def edit_swdo_account_view(request, account_id):
                 'region': SWDO_account.region,
                 'province': SWDO_account.province,
                 'city': SWDO_account.city,
+                'email': SWDO_account.user.email,
             })
         except SWDOaccount.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'Account not found'})
@@ -940,6 +980,18 @@ def edit_swdo_account_view(request, account_id):
             SWDO_account.province = request.POST.get('edit_province')
             SWDO_account.city = request.POST.get('edit_city')
             SWDO_account.save()
+
+            new_email = request.POST.get('edit_account_email')
+            if new_email and new_email != SWDO_account.user.email:
+                SWDO_account.user.email = new_email
+                SWDO_account.user.username = new_email
+            
+            new_password = request.POST.get('edit_account_password')
+            if new_password:
+                SWDO_account.user.set_password(new_password)
+            
+            SWDO_account.user.save()
+
             return JsonResponse({'success': True, 'message': 'SWDO Account updated successfully'})
         except Exception as e:
             return JsonResponse({'success': False, 'message': str(e)})
@@ -6220,3 +6272,96 @@ def admin_consolidated_report_data(request, get_year):
         'cases_w_criminal_cases': cases_w_criminal_cases,
         'cases_list': cases_list,
     })
+
+def request_account_reset(request):
+    if request.method == 'POST':
+        agency_name = request.POST.get('agency_name')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        account_type = request.POST.get('account_type')
+        email_preference = request.POST.get('email_preference')
+        new_email = request.POST.get('new_email')
+        alternative_contact = request.POST.get('alternative_contact')
+
+        if not agency_name or not account_type or not email_preference or not first_name or not last_name:
+            return JsonResponse({'success': False, 'error': 'Missing required fields.'})
+
+        try:
+            AccountResetRequest.objects.create(
+                agency_name=agency_name,
+                first_name=first_name,
+                last_name=last_name,
+                account_type=account_type,
+                email_preference=email_preference,
+                new_email=new_email,
+                alternative_contact=alternative_contact
+            )
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'})
+
+@login_required
+def manage_account_resets_view(request):
+    if request.user.account.type != 'admin':
+        return redirect('login')
+    
+    requests = AccountResetRequest.objects.all().order_by('-created_at')
+    return render(request, 'super-admin/account-reset-requests.html', {'requests': requests})
+
+@require_POST
+@login_required
+def resolve_reset_request(request, request_id):
+    if request.user.account.type != 'admin':
+        return JsonResponse({'success': False, 'error': 'Unauthorized'})
+    
+    try:
+        reset_req = AccountResetRequest.objects.get(id=request_id)
+        reset_req.status = 'Resolved'
+        reset_req.save()
+        return JsonResponse({'success': True})
+    except AccountResetRequest.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Request not found.'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@require_POST
+@login_required
+def reset_account_password(request, account_id):
+    if request.user.account.type != 'admin':
+        return JsonResponse({'success': False, 'message': 'Unauthorized'})
+    
+    try:
+        user = get_object_or_404(CustomUser, id=account_id)
+        provided_email = request.POST.get('email')
+        target_email = request.POST.get('target_email')
+        if not provided_email:
+            return JsonResponse({'success': False, 'message': 'Account Email is required.'})
+        if not target_email:
+            # Default to the provided account email if they don't specify an alternative target
+            target_email = provided_email
+
+        # Auto-generate password
+        from django.utils.crypto import get_random_string
+        new_password = get_random_string(length=12)
+        
+        # Update user
+        user.set_password(new_password)
+        if user.email != provided_email:
+            user.email = provided_email
+            user.username = provided_email
+        user.save()
+
+        # Send Email
+        from account.utils import load_settings
+        load_settings()
+        subject = "Your VAWC Portal Account Password has been Reset"
+        message = f"Hello {user.first_name},\n\nYour account password has been reset by DILG IX.\n\nYour new credentials are:\nEmail (Username): {provided_email}\nPassword: {new_password}\n\nPlease login and change this password immediately.\n\nThank you,\nVAWC System Administration"
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [target_email])
+        
+        return JsonResponse({'success': True, 'message': 'Password generated and sent to target email successfully.'})
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'User not found.'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})

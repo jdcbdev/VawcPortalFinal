@@ -158,3 +158,17 @@ class VawcSettings(models.Model):
     
     def __str__(self):
         return "VAWC Settings"
+
+class AccountResetRequest(models.Model):
+    agency_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=150, null=True, blank=True)
+    last_name = models.CharField(max_length=150, null=True, blank=True)
+    account_type = models.CharField(max_length=50) # Barangay, Law Enforcement, Healthcare, SWDO
+    email_preference = models.CharField(max_length=50) # 'keep_old' or 'change_new'
+    new_email = models.EmailField(null=True, blank=True)
+    alternative_contact = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=50, default='Pending') # Pending, Resolved
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.agency_name} - {self.account_type}"
