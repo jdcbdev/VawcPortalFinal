@@ -204,7 +204,7 @@ def check_email_case(request):
             if Case.objects.filter(email=email).exists():
                 return JsonResponse({'success': True, 'message': 'There is an Email associated with at least one case.'})
             else:
-                return JsonResponse({'success': False, 'message': 'There is no Email associated with any case.'})
+                return JsonResponse({'success': False, 'message': 'There is no case found with the provided email.'})
         else:
             return JsonResponse({'success': False, 'message': 'No email provided.'})
     else:
