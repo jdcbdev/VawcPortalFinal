@@ -412,9 +412,6 @@ $(document).ready(function() {
     });
 
     async function loadConsolidatedData() {
-        $('#consolidated-loading').removeClass('d-none');
-        $('#consolidated-status-text').removeClass('badge bg-success text-white p-2 fs-6 shadow-sm').addClass('text-muted medium');
-        $('#consolidated-status-text').text("Fetching and decrypting case demographics...");
         
         try {
             const res = await fetch(`/admin-vawc/admin-consolidated-report-data/0/`);
@@ -432,13 +429,12 @@ $(document).ready(function() {
 
             renderConsolidatedTable(data.cases_list);
             consolidatedDataLoaded = true;
-            $('#consolidated-status-text').removeClass('text-muted medium text-danger').addClass('badge bg-success text-white p-2 fs-6 shadow-sm');
-            $('#consolidated-status-text').html("<i class='bx bx-check-circle me-1'></i> Ready to Export");
-            $('#consolidated-loading').addClass('d-none');
+            
+            $('#successToast .toast-body').text('Case Demographics Loaded. Ready to Export.');
+            $('#successToast').toast('show');
         } catch(e) {
-            $('#consolidated-status-text').removeClass('text-muted medium').addClass('text-danger fw-bold');
-            $('#consolidated-status-text').text("Error loading data.");
-            $('#consolidated-loading').addClass('d-none');
+            $('#errorToast .toast-body').text('Error loading case demographics.');
+            $('#errorToast').toast('show');
         }
     }
 
@@ -577,9 +573,12 @@ $(document).ready(function() {
                 {
                     extend: 'excelHtml5',
                     title: 'System Wide Consolidated Case Demographics',
-                    text: 'Download Excel',
-                    className: 'btn btn-success text-white',
+                    text: "<div class='d-flex align-items-center justify-content-center'><i class='bx bx-file me-2' style='font-size: 1.5rem;'></i> <span class='fw-bold' style='font-size: 0.9rem;'>Download Excel</span></div>",
+                    className: 'btn btn-success text-white shadow-sm rounded-pill px-3 py-1 mx-1',
                     titleAttr: 'Export to Excel',
+                    init: function(api, node, config) {
+                        $(node).removeClass('btn-secondary');
+                    },
                     messageTop: function() {
                         return `SUMMARY: Total Cases: ${$('#consolidated-total-cases').text()}   |   Active Cases: ${$('#consolidated-ongoing-cases').text()}   |   Resolved Cases: ${$('#consolidated-resolved-cases').text()}\nPROTECTION ORDERS: BPO: ${$('#consolidated-bpo').text()}   |   TPO: ${$('#consolidated-tpo').text()}   |   PPO: ${$('#consolidated-ppo').text()}`;
                     },
@@ -622,11 +621,14 @@ $(document).ready(function() {
                 {
                     extend: 'pdfHtml5',
                     title: 'System Wide Consolidated Case Demographics',
-                    text: 'Download PDF',
+                    text: "<div class='d-flex align-items-center justify-content-center'><i class='bx bxs-file-pdf me-2' style='font-size: 1.5rem;'></i> <span class='fw-bold' style='font-size: 0.9rem;'>Download PDF</span></div>",
                     orientation: 'landscape',
                     pageSize: 'LEGAL',
-                    className: 'btn btn-danger text-white',
+                    className: 'btn btn-danger text-white shadow-sm rounded-pill px-3 py-1 mx-1',
                     titleAttr: 'Export to PDF',
+                    init: function(api, node, config) {
+                        $(node).removeClass('btn-secondary');
+                    },
                     messageTop: function() {
                         return `SUMMARY: Total Cases: ${$('#consolidated-total-cases').text()} | Active Cases: ${$('#consolidated-ongoing-cases').text()} | Resolved Cases: ${$('#consolidated-resolved-cases').text()}\nPROTECTION ORDERS: BPO: ${$('#consolidated-bpo').text()} | TPO: ${$('#consolidated-tpo').text()} | PPO: ${$('#consolidated-ppo').text()}`;
                     },
