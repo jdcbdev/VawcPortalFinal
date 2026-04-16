@@ -244,6 +244,146 @@
         </div>
     </div>
 </div>
+
+<!-- Case Detail Modal -->
+<style>
+    /* Only kept for things Bootstrap utilities cannot replicate */
+    .case-modal-gold-header {
+        background: linear-gradient(135deg, #E8A020 0%, #f0b030 50%, #d18d1a 100%);
+    }
+    .ra-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: linear-gradient(135deg, #E8A020, #d18d1a);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.75rem;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        box-shadow: 0 2px 8px rgba(232,160,32,0.35);
+        letter-spacing: 0.04em;
+    }
+    #cases-table tbody tr.case-detail-row:hover td {
+        background-color: #fffbf0;
+    }
+</style>
+
+<div class="modal fade" id="caseDetailModal" tabindex="-1" aria-labelledby="caseDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+            <!-- Gold Banner Header -->
+            <div class="case-modal-gold-header px-4 pt-4 pb-5 position-relative">
+                <i class='bx bx-file-blank position-absolute top-0 end-0 opacity-10 pe-none' style="font-size:9rem; margin-top:-1rem;"></i>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="mb-2">
+                            <span id="modal-status-badge" class="badge rounded-pill small fw-bold" style="display:none;"></span>
+                        </div>
+                        <h4 class="fw-bold mb-0 text-dark" id="caseDetailModalLabel">
+                            Case <span id="modal-case-number" class="fw-bold" style="color:#5a3400;"></span>
+                        </h4>
+                        <div class="small mt-1 text-dark text-opacity-50">
+                            <i class='bx bx-calendar me-1'></i><span id="modal-incident-date"></span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close mt-1" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+
+            <!-- Incident Address Strip -->
+            <div class="bg-gold-light border-top border-bottom py-2 px-4 d-flex align-items-center gap-2" style="border-color:#E8A020 !important;">
+                <i class='bx bx-map-pin text-color-gold fs-5'></i>
+                <span class="small fw-semibold text-secondary" id="modal-incident-address-strip"></span>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body p-0 bg-white">
+
+                <!-- Victim Section -->
+                <div class="px-4 pt-4 pb-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                            <i class='bx bx-user me-1'></i>Victim Information
+                        </span>
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Full Name(s)</div>
+                                <div class="fw-semibold text-dark" id="modal-victim-names">—</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Address</div>
+                                <div class="fw-semibold text-dark" id="modal-victim-addresses">—</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Age</div>
+                                <div class="fw-semibold text-dark" id="modal-victim-ages">—</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Gender</div>
+                                <div class="fw-semibold text-dark" id="modal-victim-genders">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Perpetrator Section -->
+                <div class="px-4 pt-4 pb-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                            <i class='bx bx-user-x me-1'></i>Perpetrator Information
+                        </span>
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Full Name(s)</div>
+                                <div class="fw-semibold text-dark" id="modal-perp-names">—</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Address</div>
+                                <div class="fw-semibold text-dark" id="modal-perp-addresses">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RA Violations Section -->
+                <div class="px-4 pt-4 pb-5">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                            <i class='bx bx-shield-x me-1'></i>RA Violations
+                        </span>
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                    </div>
+                    <div id="modal-ra-badges" class="d-flex flex-wrap gap-2"></div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 {% endblock content %}
 {% block scripts %}
 
@@ -772,8 +912,22 @@
                     default_barangay_options.push(case_item.data.barangay)
                 }
 
+                const rowData = JSON.stringify({
+                    caseNumber: `${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}`,
+                    status: case_item.data.status || '',
+                    victimNames: victims.names.join(', '),
+                    victimAddresses: victims.addresses.join(', '),
+                    victimAges: victims.ages.join(', '),
+                    victimGenders: victims.genders.join(', '),
+                    perpNames: perpetrators.names.join(', '),
+                    perpAddresses: perpetrators.addresses.join(', '),
+                    raViolations: ra_violations,
+                    incidentAddress: `${case_item.data.barangay}-${case_item.data.city}-${case_item.data.province}`,
+                    incidentDate: case_item.data.date_added,
+                });
+
                 caseTable.innerHTML += `
-            <tr class="border-bottom border-2">
+            <tr class="border-bottom border-2 case-detail-row" style="cursor:pointer;" data-case='${rowData.replace(/'/g, "&apos;")}'>
                 <td class="text-center">${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}</td>
                 <td>${victims.names.join(", ")}</td>
                 <td>${victims.addresses.join(", ")}</td>
@@ -870,6 +1024,54 @@
 
             })
             casesTable.draw()
+
+            // Row-click → open case detail modal
+            $('#cases-table tbody').off('click', 'tr').on('click', 'tr', function () {
+                const raw = $(this).attr('data-case');
+                if (!raw) return;
+                const d = JSON.parse(raw.replace(/&apos;/g, "'"));
+
+                // Case Number & Date
+                $('#modal-case-number').text(d.caseNumber);
+                $('#modal-incident-date').text(d.incidentDate || '-');
+                $('#modal-incident-address-strip').text(d.incidentAddress || '-');
+
+                // Status badge (in the dark banner)
+                const statusBadge = $('#modal-status-badge');
+                const statusLower = (d.status || '').toLowerCase();
+                if (statusLower.includes('active') || statusLower.includes('ongoing')) {
+                    statusBadge.text('Active').attr('style', 'display:inline-block;background:rgba(0,0,0,0.18);color:#1a1a1a;border:1.5px solid rgba(0,0,0,0.3);font-size:0.72rem;font-weight:700;padding:0.35rem 0.9rem;border-radius:50px;');
+                } else if (statusLower.includes('close') || statusLower.includes('resolved')) {
+                    statusBadge.text('Resolved').attr('style', 'display:inline-block;background:rgba(0,0,0,0.18);color:#1a4a1a;border:1.5px solid rgba(0,80,0,0.4);font-size:0.72rem;font-weight:700;padding:0.35rem 0.9rem;border-radius:50px;');
+                } else if (d.status) {
+                    statusBadge.text(d.status).attr('style', 'display:inline-block;background:rgba(0,0,0,0.15);color:#1a1a1a;border:1.5px solid rgba(0,0,0,0.25);font-size:0.72rem;font-weight:700;padding:0.35rem 0.9rem;border-radius:50px;');
+                } else {
+                    statusBadge.attr('style', 'display:none;');
+                }
+
+                // Victim
+                $('#modal-victim-names').text(d.victimNames || '—');
+                $('#modal-victim-addresses').text(d.victimAddresses || '—');
+                $('#modal-victim-ages').text(d.victimAges || '—');
+                $('#modal-victim-genders').text(d.victimGenders || '—');
+
+                // Perpetrator
+                $('#modal-perp-names').text(d.perpNames || '—');
+                $('#modal-perp-addresses').text(d.perpAddresses || '—');
+
+                // RA Violations — premium badges
+                const raBadgesContainer = $('#modal-ra-badges');
+                raBadgesContainer.empty();
+                if (d.raViolations && d.raViolations.length > 0) {
+                    d.raViolations.forEach(ra => {
+                        raBadgesContainer.append(`<span class="ra-badge"><i class='bx bx-shield-x'></i>${ra}</span>`);
+                    });
+                } else {
+                    raBadgesContainer.html('<span class="text-muted small fst-italic">No RA violations recorded for this case.</span>');
+                }
+
+                $('#caseDetailModal').modal('show');
+            });
 
             $('select#filter-ra-select').off('change').on('change', function (e) {
                 var search_term = $(this).val();
