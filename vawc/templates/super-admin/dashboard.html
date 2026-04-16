@@ -149,8 +149,8 @@
                             <th scope="col" class="all">RA Violation</th>
                             <th scope="col" class="all">Victim Age</th>
                             <th scope="col" class="all">Victim Gender</th>
-                            <th scope="col" class="none">Incident Address</th>
-                            <th scope="col" class="none">Incident Date</th>
+                            <th scope="col" class="all">Incident Address</th>
+                            <th scope="col" class="all">Incident Date</th>
                         </tr>
                     </thead>
                     <tbody class="table-group-divider" id="cases-table-content">
@@ -696,7 +696,7 @@
 
                 caseTable.innerHTML += `
             <tr class="border-bottom border-2">
-                <td class="text-center">${case_item.data.date_added.split('-')[0]}-${case_item.data.case_number}</td>
+                <td class="text-center">${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}</td>
                 <td>${victims.names.join(", ")}</td>
                 <td>${victims.addresses.join(", ")}</td>
                 <td>${perpetrators.names.join(", ")}</td>
