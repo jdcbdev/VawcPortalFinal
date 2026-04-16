@@ -1,396 +1,315 @@
 {% extends "../base/base_admin.html" %}
-{% block title %}Report | Graph Report{% endblock %}
+{% block title %}Report | Graph & Analytics{% endblock %}
 {% load static %}
 {% block styles %}
 <link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
 <link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
 <link href='https://cdn.datatables.net/datetime/1.5.2/css/dataTables.dateTime.min.css' rel='stylesheet'>
-
 {% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <div class="row align-items-center">
-        <div class="col-lg-7 col-12"><h1 class="mt-2 text-color-primary fw-bold">Report Analytics</h1></div>
-        <div class="col-lg-5 col-12 text-end">
-            <button class="btn btn-gold mt-2 shadow-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#consolidatedModal">
-                <i class='bx bxs-file-plus me-1'></i> Generate Consolidated Report
-            </button>
+<div class="container-fluid pb-5">
+
+    <!-- ───────── Page Header ───────── -->
+    <div class="row align-items-center mb-4 pt-2">
+        <div class="col">
+            <h1 class="fw-bold text-color-primary mb-0">
+                <i class='bx bxs-bar-chart-alt-2 text-color-gold me-2'></i>Report Analytics
+            </h1>
+            <p class="text-muted small mb-0">Data-driven insights on VAWC cases — understanding the patterns behind the numbers.</p>
         </div>
     </div>
-    
-    <div class="pt-3">
-        <h2 class="fw-bold d-flex align-items-center">
-            <i class='bx bxs-bar-chart-alt-2 text-color-gold me-2'></i>SUMMARY
-        </h2>
-    </div>
+
     <input type="hidden" class="email" name="email" value="{{ account.user.email }}">
-    <div class="col-12">
-        <canvas id="myBarChart"></canvas>
-    </div>
-    <!--table-->
-    <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-12">
-            <div class="pt-4 table-responsive">
-                <table class="table table-hover border">
-                    <tbody>
-                        <tr class="border-bottom border-2">
-                            <th class="ps-3 py-3">Total cases filed</th>
-                            <th class="text-end pe-3 py-3"><span id="total_cases" class="fs-5 text-color-gold fw-bold">{{ total_cases }}</span></th>
-                        </tr>
-                        <tr class="border-bottom border-2">
-                            <th class="ps-3 py-3">Active Cases</th>
-                            <th class="text-end pe-3 py-3"><span id="total_active" class="fs-5 text-color-gold fw-bold">{{ total_active }}</span></th>
-                        </tr>
-                        <tr class="border-bottom border-2">
-                            <th class="ps-3 py-3">Resolved Cases</th>
-                            <th class="text-end pe-3 py-3"><span id="total_closed" class="fs-5 text-color-gold fw-bold">{{ total_closed }}</span></th>
-                        </tr>
-                    </tbody>
-                </table>
+
+    <!-- ───────── Summary Stats Strip ───────── -->
+    <div class="row g-3 mb-5" id="stats-strip">
+        <div class="col-6 col-md-4 col-lg-3 col-xl">
+            <div class="bg-white rounded-4 p-3 shadow-sm border-0 h-100">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Total Cases</div>
+                <div class="fw-bold fs-3 text-color-gold" id="stat-total-cases">—</div>
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-12">
-            <div class="pt-4 table-responsive">
-                <table class="table table-hover border">
-                <tbody>
-                    <tr class="border-bottom border-2">
-                        <th class="ps-3 py-3">Total Victims</th>
-                        <th class="text-end pe-3 py-3"><span id="total_victim" class="fs-5 text-color-gold fw-bold">{{ total_victim }}</span></th>
-                    </tr>
-                    <tr class="border-bottom border-2">
-                        <th class="ps-3 py-3">Total Perpetrators</th>
-                        <th class="text-end pe-3 py-3"><span id="total_perpetrator" class="fs-5 text-color-gold fw-bold">{{ total_perpetrator }}</span></th>
-                    </tr>
-                </tbody>
-                </table>
+        <div class="col-6 col-md-4 col-lg-3 col-xl">
+            <div class="bg-white rounded-4 p-3 shadow-sm border-0 h-100">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Active Cases</div>
+                <div class="fw-bold fs-3 text-color-gold" id="stat-active-cases">—</div>
             </div>
         </div>
-    </div><!--end of row-->
-    <div class="d-none row pt-3">
-        <div class="col-lg-6 col-md-6 col-sm-12">
-            <div class="form-floating mb-3">
-                <input type="date" class="form-control" id="start_date" name="start_date" placeholder="name@example.com">
-                <label for="start_date">Start Date</label>
-            </div>
-        </div><!--end of col-->
-        <div class="col-lg-6 col-md-6 col-sm-12">
-            <div class="form-floating mb-3">
-                <input type="date" class="form-control" id="end_date" name="end_date" placeholder="name@example.com">
-                <label for="end_date">End Date</label>
-            </div>
-        </div><!--end of col-->
-    </div><!--starting of row-->
-    <div class="row">
-        <div class="col-lg-6 col-12">
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="min" name="min" placeholder="name@example.com">
-                <label for="floatingInput">Start Date</label>
+        <div class="col-6 col-md-4 col-lg-3 col-xl">
+            <div class="bg-white rounded-4 p-3 shadow-sm border-0 h-100">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Resolved Cases</div>
+                <div class="fw-bold fs-3 text-color-gold" id="stat-resolved-cases">—</div>
             </div>
         </div>
-        <div class="col-lg-6 col-12">
-            <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="max" name="max" placeholder="name@example.com">
-                <label for="floatingInput">End Date</label>
+        <div class="col-6 col-md-4 col-lg-3 col-xl">
+            <div class="bg-white rounded-4 p-3 shadow-sm border-0 h-100">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Total Victims</div>
+                <div class="fw-bold fs-3 text-color-gold" id="stat-total-victims">—</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3 col-xl">
+            <div class="bg-white rounded-4 p-3 shadow-sm border-0 h-100">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Total Perpetrators</div>
+                <div class="fw-bold fs-3 text-color-gold" id="stat-total-perps">—</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3 col-xl">
+            <div class="bg-white rounded-4 p-3 shadow-sm border-0 h-100">
+                <div class="text-muted small fw-bold text-uppercase mb-1" style="font-size:0.68rem!important;">Protection Orders</div>
+                <div class="d-flex gap-3 mt-1">
+                    <div class="text-center">
+                        <div class="fw-bold fs-5 text-color-gold" id="stat-bpo">—</div>
+                        <div class="small text-muted fw-bold" style="font-size:0.65rem;">BPO</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold fs-5 text-color-gold" id="stat-tpo">—</div>
+                        <div class="small text-muted fw-bold" style="font-size:0.65rem;">TPO</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold fs-5 text-color-gold" id="stat-ppo">—</div>
+                        <div class="small text-muted fw-bold" style="font-size:0.65rem;">PPO</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3 col-xl">
+            <div class="bg-white rounded-4 p-3 shadow-sm border-0 h-100">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Criminal Cases</div>
+                <div class="fw-bold fs-3 text-color-gold" id="stat-criminal">—</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3 col-xl">
+            <div class="bg-white rounded-4 p-3 shadow-sm border-0 h-100">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Services Given</div>
+                <div class="fw-bold fs-3 text-color-gold" id="stat-services">—</div>
             </div>
         </div>
     </div>
-    <!--table-->
-    <div class="pt-4">
-        <table class="table table-striped nowrap" id="table-case" style="width:100%">
-            <thead class="border-bottom border-dark border-2 border-opacity-50">
-                <tr>
-                    <th scope="col" class="text-center">Case Number</th>
-                    <th scope="col">Type of Case</th>
-                    <th scope="col">Service</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Date Added</th>
-                </tr>
-            </thead>
-            <tbody class="table-group-divider">
-                {% for case in cases %}
-                <tr class="border-bottom border-2">
-                    <td class="text-center">{{ case.date_added|date:'Y-m' }}-{{ case.case_number }}</td>
-                    <td>
-                        {% if case.type_of_case == 'Impacted' %}
-                            Impacted
-                        {% elif case.type_of_case == 'Behalf' %}
-                            Behalf of Impacted Victim
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if case.service_information == 'crisis' %}
-                            Crisis Intervention Including Rescue
-                        {% elif case.service_information == 'issuance' %}
-                            Issuance / Enforcement of Barangay Protection Order
-                        {% endif %}
-                    </td>
-                    <td>{{ case.status }}</td>
-                    <td>{{ case.date_added|date:"m/d/Y" }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td>No cases found</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div><!--end of div of table-->
+
+    <!-- ───────── Section Header: Analytics ───────── -->
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <h4 class="fw-bold text-color-primary mb-0">
+            <i class='bx bx-search-alt text-color-gold me-1'></i>Why It's Happening
+        </h4>
+        <hr class="flex-grow-1 my-0 opacity-25">
+        <span class="badge bg-gold-light text-color-gold border border-warning fw-semibold small px-3 py-2">Causal Analysis</span>
+    </div>
+
+    <!-- Row 1: RA Violations + Abuse Types -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-color-primary mb-1">RA Violation Breakdown</h6>
+                    <p class="text-muted small mb-3">What laws are most frequently violated?</p>
+                    <canvas id="chartRA" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-color-primary mb-1">Type of Abuse (RA 9262)</h6>
+                    <p class="text-muted small mb-3">What form of abuse is most prevalent?</p>
+                    <canvas id="chartAbuseType" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Place of Incident + Perpetrator Relationship -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-color-primary mb-1">Place of Incident</h6>
+                    <p class="text-muted small mb-3">Where do incidents most often occur?</p>
+                    <canvas id="chartPlace" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-color-primary mb-1">Perpetrator Relationship to Victim</h6>
+                    <p class="text-muted small mb-3">Who is most often committing the violence?</p>
+                    <canvas id="chartRelationship" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: Age Group + Civil Status + Service Type -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-color-primary mb-1">Victim Age Group Distribution</h6>
+                    <p class="text-muted small mb-3">Which age groups are most affected?</p>
+                    <canvas id="chartAgeGroup" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-color-primary mb-1">Victim Civil Status</h6>
+                    <p class="text-muted small mb-3">Are married/live-in victims over-represented?</p>
+                    <canvas id="chartCivilStatus" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-color-primary mb-1">Service Type Provided</h6>
+                    <p class="text-muted small mb-3">What interventions are applied?</p>
+                    <canvas id="chartService" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 4: Monthly Trend Line -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-color-primary mb-1">Cases by Month — Trend</h6>
+                    <p class="text-muted small mb-3">Is VAWC violence increasing or decreasing over time?</p>
+                    <canvas id="chartMonthly" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ───────── Section Header: Cases Table ───────── -->
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <h4 class="fw-bold text-color-primary mb-0">
+            <i class='bx bx-table text-color-gold me-1'></i>Case Demographics
+        </h4>
+        <hr class="flex-grow-1 my-0 opacity-25">
+        <span class="badge bg-gold-light text-color-gold border border-warning fw-semibold small px-3 py-2">All Cases</span>
+    </div>
+
+    <!-- Filters Card -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <h6 class="fw-bold text-color-primary mb-3"><i class='bx bx-filter-alt text-color-gold me-1'></i>Filters</h6>
+            <div class="row g-3">
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label class="form-label small fw-semibold text-muted text-uppercase mb-1" style="font-size:0.65rem;letter-spacing:0.06em;">Start Date</label>
+                    <input type="text" class="form-control form-control-sm bg-light" id="min" placeholder="Start Date">
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label class="form-label small fw-semibold text-muted text-uppercase mb-1" style="font-size:0.65rem;letter-spacing:0.06em;">End Date</label>
+                    <input type="text" class="form-control form-control-sm bg-light" id="max" placeholder="End Date">
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label class="form-label small fw-semibold text-muted text-uppercase mb-1" style="font-size:0.65rem;letter-spacing:0.06em;">Barangay</label>
+                    <select id="consolidated-barangay-filter" class="form-select form-select-sm bg-light">
+                        <option value="">All Barangay</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label class="form-label small fw-semibold text-muted text-uppercase mb-1" style="font-size:0.65rem;letter-spacing:0.06em;">Service Type</label>
+                    <select id="consolidated-service-filter" class="form-select form-select-sm bg-light">
+                        <option value="">All Service Types</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label class="form-label small fw-semibold text-muted text-uppercase mb-1" style="font-size:0.65rem;letter-spacing:0.06em;">RA Violation</label>
+                    <select id="consolidated-filter-ra-select" class="form-select form-select-sm bg-light">
+                        <option value="">All RA</option>
+                        <option value="RA 9262">RA 9262</option>
+                        <option value="RA 8353">RA 8353</option>
+                        <option value="RA 7877">RA 7877</option>
+                        <option value="RA 7610">RA 7610</option>
+                        <option value="RA 9775">RA 9775</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-lg-1">
+                    <label class="form-label small fw-semibold text-muted text-uppercase mb-1" style="font-size:0.65rem;letter-spacing:0.06em;">Gender</label>
+                    <select id="consolidated-gender-filter" class="form-select form-select-sm bg-light">
+                        <option value="">All</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-lg-1">
+                    <label class="form-label small fw-semibold text-muted text-uppercase mb-1" style="font-size:0.65rem;letter-spacing:0.06em;">Age Group</label>
+                    <select id="consolidated-age-filter" class="form-select form-select-sm bg-light">
+                        <option value="">All Ages</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cases Table -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <table class="table table-hover align-middle border-bottom responsive nowrap w-100" id="consolidated-cases-table">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="all text-center">Case #</th>
+                        <th scope="col" class="all">Victim</th>
+                        <th scope="col" class="all">Victim Address</th>
+                        <th scope="col" class="all">Perpetrator</th>
+                        <th scope="col" class="all">Perpetrator Address</th>
+                        <th scope="col" class="all">Service Type</th>
+                        <th scope="col" class="all">RA Violation</th>
+                        <th scope="col" class="all">Victim Age</th>
+                        <th scope="col" class="all">Victim Gender</th>
+                        <th scope="col" class="none">Incident Address</th>
+                        <th scope="col" class="none">Incident Date</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider" id="consolidated-cases-table-content"></tbody>
+                <tfoot>
+                    <tr class="fw-bold small text-muted">
+                        <td>Cases: <span id="table-total-cases">—</span></td>
+                        <td>Victims: <span id="table-total-victim">—</span></td>
+                        <td></td>
+                        <td>Perpetrators: <span id="table-total-perpetrator">—</span></td>
+                        <td></td>
+                        <td></td>
+                        <td>RA Flags: <span id="table-total-ra">—</span></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
 </div>
-<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
-<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+
+<!-- Toasts -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header text-white" style="background-color:#E8A020;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="" style="width:20px; filter:brightness(0) invert(1);">
             <strong class="me-auto">Success</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark fw-bold">
-        </div>
+        <div class="toast-body text-dark fw-bold"></div>
     </div>
     <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header text-white bg-danger">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="" style="width:20px; filter:brightness(0) invert(1);">
             <strong class="me-auto">Error</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark fw-bold">
-        </div>
+        <div class="toast-body text-dark fw-bold"></div>
     </div>
 </div>
-
-{% include "super-admin/consolidated-report-modal.html" %}
-
 {% endblock content %}
+
 {% block scripts %}
-<script>
-    $( document ).ready(function() {
-
-        let minDate, maxDate;
-        // Custom filtering function which will search data in column four between two values
-        DataTable.ext.search.push(function (settings, data, dataIndex) {
-            let min = minDate.val();
-            let max = maxDate.val();
-            let date = new Date(data[4]);
-        
-            if (
-                (min === null && max === null) ||
-                (min === null && date <= max) ||
-                (min <= date && max === null) ||
-                (min <= date && date <= max)
-            ) {
-                return true;
-            }
-            return false;
-        });
-        
-        minDate = new DateTime('#min', {
-            format: 'MM/DD/YYYY'
-        });
-        maxDate = new DateTime('#max', {
-            format: 'MM/DD/YYYY'
-        });
-
-        // DataTables initialisation
-        //let table = new DataTable('#example');
-
-        let dataTable = $('#table-case').DataTable({
-            dom: 'Brt <"bottom"lp>',
-            responsive: true,
-            fixedHeader: true,
-            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-            order: [[4, 'desc']],
-            pageLength: 20,
-        });
-        
-        // Refilter the table
-        document.querySelectorAll('#min, #max').forEach((el) => {
-            el.addEventListener('change', () => dataTable.draw());
-        });
-
-        // Function to handle AJAX request
-        function sendAjaxRequest() {
-            $.ajax({
-                type: 'GET',
-                url: '/update_graph_table_report/',  // URL to fetch status information
-                dataType: 'json',
-                data: {
-                    min_date: $('#min').val(), // Get the value of the "Start Date" input
-                    max_date: $('#max').val()  // Get the value of the "End Date" input
-                },
-                success: function(response) {
-                    if (response.success) {
-                        console.log('Total Perpetrators: ' + response.total_perpetrators)
-                        // Update the spans with the returned data
-                        $('#total_cases').text(response.total_cases);
-                        $('#total_active').text(response.active_cases);
-                        $('#total_closed').text(response.closed_cases);
-                        $('#total_victim').text(response.total_victims);
-                        $('#total_perpetrator').text(response.total_perpetrators);
-
-                        console.log('success');
-                    } else {
-                        // Show toast with error message
-                        $('.toast-body').text(response.message);
-                        $('#errorToast').toast('show');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', status, error);
-                    // Show toast with AJAX error message
-                    $('.toast-body').text('AJAX Error: ' + error);
-                    $('#errorToast').toast('show');
-                }
-            });
-        }
-
-        // Bind change event handler to the "Start Date" and "End Date" inputs
-        $('#min, #max').on('change', function(event) {
-            // Check which input triggered the change event
-            if ($(this).attr('id') === 'min') {
-                // Log the value of the "Start Date" input
-                console.log('Start Date value:', $(this).val());
-            } else if ($(this).attr('id') === 'max') {
-                // Log the value of the "End Date" input
-                console.log('End Date value:', $(this).val());
-            }
-            // Call the function to handle AJAX request
-            sendAjaxRequest();
-            sendGraphRequest();
-        });
-
-        $('#sendreportbtn').click(function() {
-            console.log('Button clicked');
-        
-            // Retrieve the values from the spans
-            let total_cases = $('#total_cases').text();
-            let total_active_cases = $('#total_active').text();
-            let total_closed_cases = $('#total_closed').text();
-            let total_victims = $('#total_victim').text();
-            let total_perpetrators = $('#total_perpetrator').text();
-            
-            // Get the email value
-            let email = $('.email').val();
-        
-            // Send AJAX request
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'send_email_report' %}",
-                data: {
-                    'email': email,
-                    'total_cases': total_cases,
-                    'total_active_cases': total_active_cases,
-                    'total_closed_cases': total_closed_cases,
-                    'total_victims': total_victims,
-                    'total_perpetrators': total_perpetrators,
-                },
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    console.log('Report sent successfully!');
-                    $('.toast-body').text('Report Sent Successfully!');
-                    $('#successToast').toast('show');
-
-                    // Handle success response here
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error sending report:', error);
-                    // Handle error here
-                }
-            });
-        });
-
-        // Function to handle AJAX request
-        function sendGraphRequest() {
-            $.ajax({
-                type: 'GET',
-                url: '/update_graph_report/',  // URL to fetch status information
-                dataType: 'json',
-                data: {
-                    min_date: $('#min').val(), // Get the value of the "Start Date" input
-                    max_date: $('#max').val()  // Get the value of the "End Date" input
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Extract data from the response
-                        var dateData = response.data;
-                
-                        // Extract arrays for each data type
-                        var dates = dateData.map(entry => entry.date);
-                        var totalCases = dateData.map(entry => entry.total_cases);
-                        var totalVictims = dateData.map(entry => entry.total_victims);
-                        var totalPerpetrators = dateData.map(entry => entry.total_perpetrators);
-                
-                        // Update the labels and data for the chart
-                        myBarChart.data.labels = dates;
-                        myBarChart.data.datasets[0].data = totalVictims;
-                        myBarChart.data.datasets[1].data = totalPerpetrators;
-                        myBarChart.data.datasets[2].data = totalCases;
-                        myBarChart.update();
-                    } else {
-                        // Show toast with error message
-                        $('.toast-body').text(response.message);
-                        $('#errorToast').toast('show');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', status, error);
-                    // Show toast with AJAX error message
-                    $('.toast-body').text('AJAX Error: ' + error);
-                    $('#errorToast').toast('show');
-                }
-            });
-        }
-        sendGraphRequest();
-        // Initial chart setup
-        var ctx = document.getElementById('myBarChart').getContext('2d');
-
-        var myBarChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: [], // Initially empty labels
-                datasets: [{
-                    label: 'Victim',
-                    data: [], // Initially empty data
-                    backgroundColor: '#8a2be2', // Purple theme
-                    borderWidth: 1
-                }, {
-                    label: 'Perpetrator',
-                    data: [], // Initially empty data
-                    backgroundColor: '#E8A020', // Gold theme
-                    borderWidth: 1
-                }, {
-                    label: 'Total Cases',
-                    data: [], // Initially empty data
-                    backgroundColor: 'rgba(75, 192, 192, 0.8)', // Green color for total cases
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        stacked: false
-                    },
-                    y: {
-                        stacked: false,
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    });
-</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
-<script src="https://cdn.datatables.net/datetime/1.5.2/js/dataTables.dateTime.min.js" ></script>
+<script src="https://cdn.datatables.net/datetime/1.5.2/js/dataTables.dateTime.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -399,306 +318,450 @@
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 
 <script>
-$(document).ready(function() {
-    let consolidatedDataLoaded = false;
-    let consolidatedTable = null;
+$(document).ready(function () {
 
-    $('#consolidatedModal').on('shown.bs.modal', function () {
-        if (!consolidatedDataLoaded) {
-            loadConsolidatedData();
-        } else {
-            if(consolidatedTable) {
-                consolidatedTable.columns.adjust().responsive.recalc();
+    // ─── Color Palettes ───
+    const GOLD       = '#E8A020';
+    const GOLD_LIGHT = 'rgba(232,160,32,0.15)';
+    const PALETTE = [
+        '#E8A020','#5e2ca5','#2d9cdb','#27ae60','#e74c3c',
+        '#8e44ad','#16a085','#d35400','#2980b9','#c0392b',
+        '#1abc9c','#f39c12','#7f8c8d'
+    ];
+
+    // ─── Chart helpers ───
+    function hBar(ctx, labels, data, label) {
+        return new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{ label, data, backgroundColor: PALETTE.slice(0, data.length), borderRadius: 4, borderWidth: 0 }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
             }
-        }
-    });
-
-    async function loadConsolidatedData() {
-        
-        try {
-            const res = await fetch(`/admin-vawc/admin-consolidated-report-data/0/`);
-            if(!res.ok) throw new Error("Failed to load");
-            const data = await res.json();
-            
-            $('#consolidated-total-cases').text(data.total_cases);
-            $('#consolidated-ongoing-cases').text(data.ongoing_cases);
-            $('#consolidated-resolved-cases').text(data.resolved_cases);
-            $('#consolidated-services-provided').text(data.services_provided);
-            $('#consolidated-bpo').text(data.bpo_count);
-            $('#consolidated-tpo').text(data.tpo_count);
-            $('#consolidated-ppo').text(data.ppo_count);
-            $('#consolidated-cases-w-criminal-cases').text(data.cases_w_criminal_cases);
-
-            renderConsolidatedTable(data.cases_list);
-            consolidatedDataLoaded = true;
-            
-            $('#successToast .toast-body').text('Case Demographics Loaded. Ready to Export.');
-            $('#successToast').toast('show');
-        } catch(e) {
-            $('#errorToast .toast-body').text('Error loading case demographics.');
-            $('#errorToast').toast('show');
-        }
+        });
     }
 
-    function renderConsolidatedTable(data) {
-        if (consolidatedTable) {
-            consolidatedTable.destroy();
-        }
-        
-        const caseTable = document.getElementById('consolidated-cases-table-content');
-        caseTable.innerHTML = '';
-        let gender_types = [];
-        let age_groups = [];
-        let service_types = [];
-        let default_barangay_options = [];
+    function vBar(ctx, labels, data, label) {
+        return new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{ label, data, backgroundColor: PALETTE.slice(0, data.length), borderRadius: 4, borderWidth: 0 }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+
+    function doughnut(ctx, labels, data) {
+        return new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{ data, backgroundColor: PALETTE.slice(0, data.length), borderWidth: 2, borderColor: '#fff' }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '60%',
+                plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } } }
+            }
+        });
+    }
+
+    function lineChart(ctx, labels, data) {
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Cases',
+                    data,
+                    borderColor: GOLD,
+                    backgroundColor: GOLD_LIGHT,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: GOLD,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+
+    // ─── Chart instances (declared here so they can be updated) ───
+    let chartRA, chartAbuseType, chartPlace, chartRelationship,
+        chartAgeGroup, chartCivilStatus, chartService, chartMonthly;
+
+    // ─── Date-range filter for DataTable ───
+    let minDate, maxDate;
+    DataTable.ext.search.push(function (settings, data, dataIndex) {
+        if (settings.nTable.id !== 'consolidated-cases-table') return true;
+        let min = minDate ? minDate.val() : null;
+        let max = maxDate ? maxDate.val() : null;
+        let date = new Date(data[10]); // col 10 = Incident Date
+        if (!min && !max) return true;
+        if (!min && date <= new Date(max)) return true;
+        if (new Date(min) <= date && !max) return true;
+        if (new Date(min) <= date && date <= new Date(max)) return true;
+        return false;
+    });
+
+    minDate = new DateTime('#min', { format: 'MM/DD/YYYY' });
+    maxDate = new DateTime('#max', { format: 'MM/DD/YYYY' });
+    document.querySelectorAll('#min, #max').forEach(el =>
+        el.addEventListener('change', () => consolidatedTable && consolidatedTable.draw())
+    );
+
+    // ─── DataTable ───
+    let consolidatedTable = null;
+
+    function renderTable(data) {
+        if (consolidatedTable) consolidatedTable.destroy();
+
+        const tbody = document.getElementById('consolidated-cases-table-content');
+        tbody.innerHTML = '';
         const today = new Date();
 
+        let gender_types = [], age_groups = [], service_types = [], barangay_options = [];
+
         function getAgeGroup(age) {
-            if (age === "-" || age === "" || isNaN(age)) return "Unknown";
+            if (age === '-' || age === '' || isNaN(age)) return 'Unknown';
             const a = parseInt(age);
-            if (a < 18) return "Below 18";
-            if (a >= 18 && a <= 24) return "18-24";
-            if (a >= 25 && a <= 34) return "25-34";
-            if (a >= 35 && a <= 44) return "35-44";
-            if (a >= 45 && a <= 54) return "45-54";
-            if (a >= 55 && a <= 64) return "55-64";
-            return "65 and above";
+            if (a < 18) return 'Below 18';
+            if (a >= 18 && a <= 24) return '18-24';
+            if (a >= 25 && a <= 34) return '25-34';
+            if (a >= 35 && a <= 44) return '35-44';
+            if (a >= 45 && a <= 54) return '45-54';
+            if (a >= 55 && a <= 64) return '55-64';
+            return '65 and above';
         }
 
-        data.forEach(case_item => {
+        // Aggregation counters for charts
+        const raCount         = { 'RA 9262': 0, 'RA 8353': 0, 'RA 7877': 0, 'RA 9775': 0, 'RA 7610': 0 };
+        const abuseCount      = { Physical: 0, Sexual: 0, Psychological: 0, Economic: 0, Other: 0 };
+        const placeCount      = {};
+        const relationshipMap = {};
+        const ageGroupCount   = {};
+        const civilStatusMap  = {};
+        const serviceCount    = {};
+        const monthCount      = {};
+
+        data.forEach(c => {
+            const d = c.data;
             let victims = { names: [], addresses: [], genders: [], ages: [] };
-            let perpetrators = { names: [], addresses: [] };
-            let ra_violations = [];
-            
-            if(case_item.data.checkbox_ra_8353) ra_violations.push('RA 8353');
-            if(case_item.data.checkbox_ra_9262) ra_violations.push('RA 9262');
-            if(case_item.data.checkbox_ra_7877) ra_violations.push('RA 7877');
-            if(case_item.data.checkbox_ra_9775) ra_violations.push('RA 9775');
-            if(case_item.data.checkbox_a_7610) ra_violations.push('RA 7610');
-            
-            case_item.victims.forEach(victim => {
-                victims.names.push(`${victim.first_name || ''} ${victim.last_name || ''}`.trim() || 'Undisclosed');
-                let age = "-";
-                if(victim.date_of_birth && victim.date_of_birth !== 'None') {
-                    const birthDate = new Date(victim.date_of_birth);
-                    if(!isNaN(birthDate)) {
-                        age = today.getFullYear() - birthDate.getFullYear();
-                        const m = today.getMonth() - birthDate.getMonth();
-                        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+            let perps   = { names: [], addresses: [] };
+            let ra_list = [];
+
+            // ─── RA violations ───
+            if (d.checkbox_ra_9262) { ra_list.push('RA 9262'); raCount['RA 9262']++; }
+            if (d.checkbox_ra_8353) { ra_list.push('RA 8353'); raCount['RA 8353']++; }
+            if (d.checkbox_ra_7877) { ra_list.push('RA 7877'); raCount['RA 7877']++; }
+            if (d.checkbox_ra_9775) { ra_list.push('RA 9775'); raCount['RA 9775']++; }
+            if (d.checkbox_a_7610)  { ra_list.push('RA 7610'); raCount['RA 7610']++; }
+
+            // ─── Abuse type ───
+            if (d.checkbox_physical_abuse)     abuseCount.Physical++;
+            if (d.checkbox_sexual_abuse)       abuseCount.Sexual++;
+            if (d.checkbox_psychological_abuse) abuseCount.Psychological++;
+            if (d.checkbox_economic_abuse)     abuseCount.Economic++;
+            if (d.checkbox_others)             abuseCount.Other++;
+
+            // ─── Place of incident ───
+            const place = d.place_of_incident || 'Not Specified';
+            const placeLabel = {
+                house: 'House', work: 'Work', school: 'School',
+                commercialPlaces: 'Commercial Places', religion: 'Religious Institutions',
+                placeOfMedicalTreatment: 'Medical Treatment', transport: 'Transport',
+                brothles: 'Brothels', others: 'Others', noResponse: 'No Response'
+            }[place] || place;
+            placeCount[placeLabel] = (placeCount[placeLabel] || 0) + 1;
+
+            // ─── Service type ───
+            let svc = d.service_information || 'No Service Type';
+            if (svc === 'crisis')   svc = 'Crisis Intervention Including Rescue';
+            else if (svc === 'issuance') svc = 'Issuance / Enforcement of BPO';
+            else if (svc === 'None' || svc === '') svc = 'No Service Type';
+            serviceCount[svc] = (serviceCount[svc] || 0) + 1;
+            if (!service_types.includes(svc)) service_types.push(svc);
+
+            // ─── Monthly trend ───
+            if (d.date_added) {
+                const m = d.date_added.substring(0, 7); // "YYYY-MM"
+                monthCount[m] = (monthCount[m] || 0) + 1;
+            }
+
+            // ─── Victims ───
+            c.victims.forEach(v => {
+                victims.names.push(`${v.first_name || ''} ${v.last_name || ''}`.trim() || 'Undisclosed');
+                victims.addresses.push(`${v.barangay || ''} ${v.city || ''}`);
+                victims.genders.push(v.sex || 'Unknown');
+                if (v.sex && !gender_types.includes(v.sex)) gender_types.push(v.sex);
+
+                let age = '-';
+                if (v.date_of_birth && v.date_of_birth !== 'None') {
+                    const bd = new Date(v.date_of_birth);
+                    if (!isNaN(bd)) {
+                        age = today.getFullYear() - bd.getFullYear();
+                        const mo = today.getMonth() - bd.getMonth();
+                        if (mo < 0 || (mo === 0 && today.getDate() < bd.getDate())) age--;
                     }
                 }
-                
-                let group = getAgeGroup(age);
-                if(victim.sex && !gender_types.includes(victim.sex)) gender_types.push(victim.sex);
-                if(group !== "Unknown" && !age_groups.includes(group)) age_groups.push(group);
-                
-                victims.ages.push(`${age} <span class="d-none">${group}</span>`);
-                victims.addresses.push(`${victim.barangay || ''} ${victim.city || ''}`);
-                victims.genders.push(victim.sex || 'Unknown');
-            });
-            
-            case_item.perpetrators.forEach(perpetrator => {
-                perpetrators.names.push(`${perpetrator.first_name || ''} ${perpetrator.last_name || ''}`.trim() || 'Undisclosed');
-                perpetrators.addresses.push(`${perpetrator.barangay || ''} ${perpetrator.city || ''}`);
-            });
-            
-            if(case_item.data.barangay && !default_barangay_options.includes(case_item.data.barangay)) {
-                default_barangay_options.push(case_item.data.barangay);
-            }
-            
-            let service_text = case_item.data.service_information || "No Service Type";
-            if (service_text === 'crisis') service_text = 'Crisis Intervention Including Rescue';
-            else if (service_text === 'issuance') service_text = 'Issuance / Enforcement of Barangay Protection Order';
-            else if (service_text === 'None' || service_text === '') service_text = "No Service Type";
+                const grp = getAgeGroup(age);
+                victims.ages.push(`${age} <span class="d-none">${grp}</span>`);
+                if (grp !== 'Unknown') {
+                    ageGroupCount[grp] = (ageGroupCount[grp] || 0) + 1;
+                    if (!age_groups.includes(grp)) age_groups.push(grp);
+                }
 
-            if (!service_types.includes(service_text)) service_types.push(service_text);
-
-            caseTable.innerHTML += `
-            <tr class="border-bottom border-2">
-                <td class="text-center">${case_item.data.case_number || "--"}</td>
-                <td>${victims.names.join(", ")}</td>
-                <td>${victims.addresses.join(" | ")}</td>
-                <td>${perpetrators.names.join(", ")}</td>
-                <td>${perpetrators.addresses.join(" | ")}</td>
-                <td>${service_text}</td>
-                <td>${ra_violations.join(", ")}</td>
-                <td>${victims.ages.join(", ")}</td>
-                <td>${victims.genders.join(", ")}</td> 
-                <td>${case_item.data.barangay || ''} ${case_item.data.city || ''} ${case_item.data.province || ''}</td> 
-                <td>${case_item.data.date_added || "--"}</td> 
-            </tr>`;
-        });
-        
-        const barangayFilter = document.querySelector('#consolidated-barangay-filter');
-        barangayFilter.innerHTML = '<option value="">All Barangay</option>';
-        default_barangay_options.forEach(b => {
-            barangayFilter.innerHTML += `<option value="${b}">${b}</option>`;
-        });
-
-        if(gender_types.length) {
-            const genderFilter = document.querySelector('#consolidated-gender-filter');
-            genderFilter.innerHTML = '<option value="">All Genders</option>';
-            gender_types.forEach(g => {
-                genderFilter.innerHTML += `<option value="${g}">${g}</option>`;
+                // Civil status
+                const cs = v.civil_status || 'Unknown';
+                const csLabel = { single: 'Single', married: 'Married', 'live-in': 'Live-In', widowed: 'Widowed', separated: 'Separated' }[cs] || cs;
+                civilStatusMap[csLabel] = (civilStatusMap[csLabel] || 0) + 1;
             });
-        }
-        
-        // Sort age groups logically based on standard brackets
-        const orderMap = { "Below 18": 1, "18-24": 2, "25-34": 3, "35-44": 4, "45-54": 5, "55-64": 6, "65 and above": 7 };
-        age_groups.sort((a,b) => orderMap[a] - orderMap[b]);
-        if(age_groups.length) {
-            const ageFilter = document.querySelector('#consolidated-age-filter');
-            ageFilter.innerHTML = '<option value="">All Ages (Victim)</option>';
-            age_groups.forEach(a => {
-                ageFilter.innerHTML += `<option value="${a}">${a}</option>`;
-            });
-        }
-        
-        if(service_types.length) {
-            const serviceFilter = document.querySelector('#consolidated-service-filter');
-            serviceFilter.innerHTML = '<option value="">All Service Types</option>';
-            serviceFilter.innerHTML += `<option value="No Service Type">No Service Type</option>`;
-            service_types.forEach(s => {
-                if (s !== "No Service Type") {
-                    serviceFilter.innerHTML += `<option value="${s}">${s}</option>`;
+
+            // ─── Perpetrators ───
+            c.perpetrators.forEach(p => {
+                perps.names.push(`${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Undisclosed');
+                perps.addresses.push(`${p.barangay || ''} ${p.city || ''}`);
+                if (p.relationship_to_victim) {
+                    const relLabel = {
+                        currentSpouse: 'Current Spouse/Partner', formerSpouse: 'Former Spouse/Partner',
+                        currentFiance: 'Current Fiancé', formerFiance: 'Former Fiancé',
+                        employer: 'Employer', agentOfEmployer: 'Agent of Employer',
+                        teacher: 'Teacher/Instructor', coach: 'Coach/Trainer',
+                        immediateFamily: 'Immediate Family', otherRelatives: 'Other Relatives',
+                        peopleOfAuthority: 'People of Authority', neighbors: 'Neighbors/Peers', stranger: 'Stranger'
+                    }[p.relationship_to_victim] || p.relationship_to_victim;
+                    relationshipMap[relLabel] = (relationshipMap[relLabel] || 0) + 1;
                 }
             });
-        }
 
+            // ─── Barangay filter options ───
+            if (d.barangay && !barangay_options.includes(d.barangay)) barangay_options.push(d.barangay);
+
+            // ─── Table row ───
+            const svcDisplay = svc === 'No Service Type'
+                ? `<span class="badge bg-secondary rounded-pill">${svc}</span>`
+                : `<span class="badge bg-gold-light text-color-gold border border-warning rounded-pill small">${svc}</span>`;
+            const raDisplay = ra_list.length
+                ? ra_list.map(r => `<span class="badge bg-gold-light text-color-gold border border-warning rounded-pill me-1 small">${r}</span>`).join('')
+                : '<span class="text-muted small">—</span>';
+
+            tbody.innerHTML += `
+            <tr class="border-bottom">
+                <td class="text-center fw-semibold small">${d.case_number || '—'}</td>
+                <td class="small">${victims.names.join(', ')}</td>
+                <td class="small">${victims.addresses.join(' | ')}</td>
+                <td class="small">${perps.names.join(', ')}</td>
+                <td class="small">${perps.addresses.join(' | ')}</td>
+                <td class="small">${svcDisplay}</td>
+                <td class="small">${raDisplay}</td>
+                <td class="small">${victims.ages.join(', ')}</td>
+                <td class="small">${victims.genders.join(', ')}</td>
+                <td class="small">${d.barangay || ''} ${d.city || ''} ${d.province || ''}</td>
+                <td class="small">${d.date_added || '—'}</td>
+            </tr>`;
+        });
+
+        // ─── Populate filter dropdowns ───
+        const barangayFilter = document.querySelector('#consolidated-barangay-filter');
+        barangayFilter.innerHTML = '<option value="">All Barangay</option>';
+        barangay_options.forEach(b => barangayFilter.innerHTML += `<option value="${b}">${b}</option>`);
+
+        const genderFilter = document.querySelector('#consolidated-gender-filter');
+        genderFilter.innerHTML = '<option value="">All Genders</option>';
+        gender_types.forEach(g => genderFilter.innerHTML += `<option value="${g}">${g}</option>`);
+
+        const orderMap = { 'Below 18': 1, '18-24': 2, '25-34': 3, '35-44': 4, '45-54': 5, '55-64': 6, '65 and above': 7 };
+        age_groups.sort((a, b) => orderMap[a] - orderMap[b]);
+        const ageFilter = document.querySelector('#consolidated-age-filter');
+        ageFilter.innerHTML = '<option value="">All Ages</option>';
+        age_groups.forEach(a => ageFilter.innerHTML += `<option value="${a}">${a}</option>`);
+
+        const svcFilter = document.querySelector('#consolidated-service-filter');
+        svcFilter.innerHTML = '<option value="">All Service Types</option><option value="No Service Type">No Service Type</option>';
+        service_types.filter(s => s !== 'No Service Type').forEach(s => svcFilter.innerHTML += `<option value="${s}">${s}</option>`);
+
+        // ─── Init DataTable ───
         consolidatedTable = $('#consolidated-cases-table').DataTable({
-            dom: '<"d-flex justify-content-between flex-column flex-md-row gap-3 mb-3"<f><B>>rt<"d-flex justify-content-between pt-3 flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
+            dom: '<"d-flex justify-content-between flex-column flex-md-row gap-3 mb-3"f<B>>rt<"d-flex justify-content-between pt-3 flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
             scrollX: true,
             responsive: true,
             lengthMenu: [10, 25, 50, 100],
             pageLength: 20,
+            order: [[10, 'desc']],
             buttons: [
                 {
                     extend: 'excelHtml5',
                     title: 'System Wide Consolidated Case Demographics',
-                    text: "<div class='d-flex align-items-center justify-content-center'><i class='bx bx-file me-2' style='font-size: 1.5rem;'></i> <span class='fw-bold' style='font-size: 0.9rem;'>Download Excel</span></div>",
+                    text: "<div class='d-flex align-items-center'><i class='bx bx-file me-2 fs-5'></i><span class='fw-bold small'>Excel</span></div>",
                     className: 'btn btn-success text-white shadow-sm rounded-pill px-3 py-1 mx-1',
-                    titleAttr: 'Export to Excel',
-                    init: function(api, node, config) {
-                        $(node).removeClass('btn-secondary');
-                    },
+                    init: function(api, node) { $(node).removeClass('btn-secondary'); },
                     messageTop: function() {
-                        return `SUMMARY: Total Cases: ${$('#consolidated-total-cases').text()}   |   Active Cases: ${$('#consolidated-ongoing-cases').text()}   |   Resolved Cases: ${$('#consolidated-resolved-cases').text()}\nPROTECTION ORDERS: BPO: ${$('#consolidated-bpo').text()}   |   TPO: ${$('#consolidated-tpo').text()}   |   PPO: ${$('#consolidated-ppo').text()}`;
+                        return `SUMMARY: Total Cases: ${$('#stat-total-cases').text()} | Active: ${$('#stat-active-cases').text()} | Resolved: ${$('#stat-resolved-cases').text()}\nPROTECTION ORDERS: BPO: ${$('#stat-bpo').text()} | TPO: ${$('#stat-tpo').text()} | PPO: ${$('#stat-ppo').text()}`;
                     },
                     customize: function (xlsx) {
                         var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-                        // Set custom column widths for readability
                         var col = $('col', sheet);
-                        if(col.length) {
-                             $(col[0]).attr('width', 15);
-                             $(col[1]).attr('width', 25);
-                             $(col[2]).attr('width', 40);
-                             $(col[3]).attr('width', 25);
-                             $(col[4]).attr('width', 40);
-                             $(col[5]).attr('width', 35);
-                             $(col[6]).attr('width', 20);
-                             $(col[7]).attr('width', 15);
-                             $(col[8]).attr('width', 15);
-                             $(col[9]).attr('width', 35);
-                             $(col[10]).attr('width', 20);
-                        }
-
-                        // Style Title and Message Headers (Bold)
-                        $('row c[r^="A1"]', sheet).attr('s', '2'); 
-                        $('row c[r^="A2"]', sheet).attr('s', '50'); // Text wrap
-                        $('row c[r^="A3"]', sheet).attr('s', '2'); 
-                        
-                        // Style Table Header Row (Grey Fill + Bold)
-                        $('row', sheet).each(function() {
-                            var row = $(this);
-                            if (row.attr('r') == '4' || row.attr('r') == '3') { 
-                                // Since title and messageTop inject rows, table data often begins on Row 3 or 4 depending on newline parsing
-                                if(row.find('c t').text().includes('Case #') || row.find('is t').text().includes('Case #')) {
-                                    row.find('c').attr('s', '32');
-                                }
-                            }
-                        });
+                        [15,25,40,25,40,35,20,15,15,35,20].forEach((w, i) => { if(col[i]) $(col[i]).attr('width', w); });
+                        $('row c[r^="A1"]', sheet).attr('s', '2');
+                        $('row c[r^="A2"]', sheet).attr('s', '50');
                     }
                 },
                 {
                     extend: 'pdfHtml5',
                     title: 'System Wide Consolidated Case Demographics',
-                    text: "<div class='d-flex align-items-center justify-content-center'><i class='bx bxs-file-pdf me-2' style='font-size: 1.5rem;'></i> <span class='fw-bold' style='font-size: 0.9rem;'>Download PDF</span></div>",
+                    text: "<div class='d-flex align-items-center'><i class='bx bxs-file-pdf me-2 fs-5'></i><span class='fw-bold small'>PDF</span></div>",
                     orientation: 'landscape',
                     pageSize: 'LEGAL',
                     className: 'btn btn-danger text-white shadow-sm rounded-pill px-3 py-1 mx-1',
-                    titleAttr: 'Export to PDF',
-                    init: function(api, node, config) {
-                        $(node).removeClass('btn-secondary');
-                    },
+                    init: function(api, node) { $(node).removeClass('btn-secondary'); },
                     messageTop: function() {
-                        return `SUMMARY: Total Cases: ${$('#consolidated-total-cases').text()} | Active Cases: ${$('#consolidated-ongoing-cases').text()} | Resolved Cases: ${$('#consolidated-resolved-cases').text()}\nPROTECTION ORDERS: BPO: ${$('#consolidated-bpo').text()} | TPO: ${$('#consolidated-tpo').text()} | PPO: ${$('#consolidated-ppo').text()}`;
+                        return `SUMMARY: Total Cases: ${$('#stat-total-cases').text()} | Active: ${$('#stat-active-cases').text()} | Resolved: ${$('#stat-resolved-cases').text()}\nPROTECTION ORDERS: BPO: ${$('#stat-bpo').text()} | TPO: ${$('#stat-tpo').text()} | PPO: ${$('#stat-ppo').text()}`;
                     },
                     customize: function (doc) {
-                        // Title styling
-                        doc.content[0].fontSize = 20;
-                        doc.content[0].alignment = 'center';
-                        doc.content[0].margin = [0, 0, 0, 10]; 
-                        
-                        // messageTop styling
-                        if(doc.content[1]) {
-                            doc.content[1].fontSize = 12;
-                            doc.content[1].bold = true;
-                            doc.content[1].margin = [0, 0, 0, 15];
-                            doc.content[1].color = '#333333';
-                        }
-                        
-                        // Table styling overrides
-                        var objLayout = {};
-                        objLayout['hLineWidth'] = function(i) { return .5; };
-                        objLayout['vLineWidth'] = function(i) { return .5; };
-                        objLayout['hLineColor'] = function(i) { return '#aaaaaa'; };
-                        objLayout['vLineColor'] = function(i) { return '#aaaaaa'; };
-                        objLayout['paddingLeft'] = function(i) { return 4; };
-                        objLayout['paddingRight'] = function(i) { return 4; };
-                        doc.content[2].layout = objLayout;
-                        
-                        // Table header styling (Dark grey fill, white text)
-                        for (var i = 0; i < doc.content[2].table.body[0].length; i++) {
-                            doc.content[2].table.body[0][i].fillColor = '#343a40'; 
-                            doc.content[2].table.body[0][i].color = '#ffffff';
-                            doc.content[2].table.body[0][i].bold = true;
+                        doc.content[0].fontSize = 16; doc.content[0].alignment = 'center'; doc.content[0].margin = [0,0,0,10];
+                        if (doc.content[1]) { doc.content[1].fontSize = 10; doc.content[1].bold = true; doc.content[1].margin = [0,0,0,10]; }
+                        var layout = {};
+                        ['hLineWidth','vLineWidth'].forEach(k => layout[k] = () => 0.5);
+                        ['hLineColor','vLineColor'].forEach(k => layout[k] = () => '#aaaaaa');
+                        ['paddingLeft','paddingRight'].forEach(k => layout[k] = () => 4);
+                        if (doc.content[2]) doc.content[2].layout = layout;
+                        if (doc.content[2] && doc.content[2].table && doc.content[2].table.body[0]) {
+                            doc.content[2].table.body[0].forEach(cell => { cell.fillColor = '#343a40'; cell.color = '#ffffff'; cell.bold = true; });
                         }
                     }
                 }
             ]
         });
 
+        // Footer totals on draw
         consolidatedTable.on('draw.dt', () => {
-            function countTotal(arr) {
-                return arr.map(d => d.length ? d.split(',').length : 0).reduce((a, c) => a + c, 0);
-            }
-            $('#table-total-cases').text(countTotal(consolidatedTable.column(0, { filter: 'applied' }).data().toArray()));
-            $('#table-total-victim').text(countTotal(consolidatedTable.column(1, { filter: 'applied' }).data().toArray()));
-            $('#table-total-perpetrator').text(countTotal(consolidatedTable.column(3, { filter: 'applied' }).data().toArray()));
-            $('#table-total-ra').text(countTotal(consolidatedTable.column(6, { filter: 'applied' }).data().toArray()));
+            function ct(arr) { return arr.map(d => d.length ? d.split(',').length : 0).reduce((a,c) => a+c, 0); }
+            $('#table-total-cases').text(ct(consolidatedTable.column(0, { filter: 'applied' }).data().toArray()));
+            $('#table-total-victim').text(ct(consolidatedTable.column(1, { filter: 'applied' }).data().toArray()));
+            $('#table-total-perpetrator').text(ct(consolidatedTable.column(3, { filter: 'applied' }).data().toArray()));
+            $('#table-total-ra').text(ct(consolidatedTable.column(6, { filter: 'applied' }).data().toArray()));
         });
         consolidatedTable.draw();
-        
-        $('select#consolidated-service-filter').off('change').on('change', function(){
-            consolidatedTable.columns([5]).search($(this).val()).draw();
+
+        // Filter bindings
+        $('#consolidated-service-filter').off('change').on('change', function() { consolidatedTable.columns([5]).search($(this).val()).draw(); });
+        $('#consolidated-filter-ra-select').off('change').on('change', function() { consolidatedTable.columns([6]).search($(this).val()).draw(); });
+        $('#consolidated-age-filter').off('change').on('change', function() {
+            let t = $(this).val();
+            consolidatedTable.columns([7]).search(t ? t : '', false, true).draw();
         });
-        $('select#consolidated-filter-ra-select').off('change').on('change', function(){
-            consolidatedTable.columns([6]).search($(this).val()).draw();
+        $('#consolidated-gender-filter').off('change').on('change', function() {
+            let t = $(this).val();
+            consolidatedTable.columns([8]).search(t ? t : '', false, true).draw();
         });
-        $('select#consolidated-age-filter').off('change').on('change', function(){
-            let term = $(this).val();
-            consolidatedTable.columns([7]).search(term ? term : '', false, true).draw();
-        });
-        $('select#consolidated-gender-filter').off('change').on('change', function(){
-            let term = $(this).val();
-            consolidatedTable.columns([8]).search(term ? term : '', false, true).draw();
-        });
-        $('select#consolidated-barangay-filter').off('change').on('change', function(){
-            consolidatedTable.columns([9]).search($(this).val()).draw();
-        });
+        $('#consolidated-barangay-filter').off('change').on('change', function() { consolidatedTable.columns([9]).search($(this).val()).draw(); });
+
+        // ─── Build Charts ───
+        buildCharts({ raCount, abuseCount, placeCount, relationshipMap, ageGroupCount, civilStatusMap, serviceCount, monthCount });
     }
+
+    function buildCharts({ raCount, abuseCount, placeCount, relationshipMap, ageGroupCount, civilStatusMap, serviceCount, monthCount }) {
+        // Destroy existing charts safely
+        [chartRA, chartAbuseType, chartPlace, chartRelationship, chartAgeGroup, chartCivilStatus, chartService, chartMonthly]
+            .forEach(ch => ch && ch.destroy());
+
+        // Chart 1 — RA Violations (H-bar)
+        const raEntries = Object.entries(raCount).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
+        chartRA = hBar(document.getElementById('chartRA').getContext('2d'),
+            raEntries.map(e=>e[0]), raEntries.map(e=>e[1]), 'Cases');
+
+        // Chart 2 — Abuse Types (Doughnut)
+        const abuseEntries = Object.entries(abuseCount).filter(([,v]) => v > 0);
+        chartAbuseType = doughnut(document.getElementById('chartAbuseType').getContext('2d'),
+            abuseEntries.map(e=>e[0]), abuseEntries.map(e=>e[1]));
+
+        // Chart 3 — Place of Incident (Doughnut)
+        const placeEntries = Object.entries(placeCount).sort((a,b) => b[1]-a[1]);
+        chartPlace = doughnut(document.getElementById('chartPlace').getContext('2d'),
+            placeEntries.map(e=>e[0]), placeEntries.map(e=>e[1]));
+
+        // Chart 4 — Relationship (H-bar)
+        const relEntries = Object.entries(relationshipMap).sort((a,b) => b[1]-a[1]);
+        chartRelationship = hBar(document.getElementById('chartRelationship').getContext('2d'),
+            relEntries.map(e=>e[0]), relEntries.map(e=>e[1]), 'Cases');
+
+        // Chart 5 — Age Groups (V-bar)
+        const ageOrder = ['Below 18','18-24','25-34','35-44','45-54','55-64','65 and above'];
+        const ageLabels = ageOrder.filter(k => ageGroupCount[k]);
+        chartAgeGroup = vBar(document.getElementById('chartAgeGroup').getContext('2d'),
+            ageLabels, ageLabels.map(k => ageGroupCount[k] || 0), 'Victims');
+
+        // Chart 6 — Civil Status (Doughnut)
+        const csEntries = Object.entries(civilStatusMap).filter(([,v]) => v > 0);
+        chartCivilStatus = doughnut(document.getElementById('chartCivilStatus').getContext('2d'),
+            csEntries.map(e=>e[0]), csEntries.map(e=>e[1]));
+
+        // Chart 7 — Service Type (Doughnut)
+        const svcEntries = Object.entries(serviceCount).filter(([,v]) => v > 0);
+        chartService = doughnut(document.getElementById('chartService').getContext('2d'),
+            svcEntries.map(e=>e[0]), svcEntries.map(e=>e[1]));
+
+        // Chart 8 — Monthly Trend (Line)
+        const monthLabels = Object.keys(monthCount).sort();
+        chartMonthly = lineChart(document.getElementById('chartMonthly').getContext('2d'),
+            monthLabels, monthLabels.map(m => monthCount[m]));
+    }
+
+    // ─── Load all data on page load ───
+    async function loadData() {
+        try {
+            const res = await fetch('/admin-vawc/admin-consolidated-report-data/0/');
+            if (!res.ok) throw new Error('Failed to load');
+            const data = await res.json();
+
+            // Stats strip
+            $('#stat-total-cases').text(data.total_cases);
+            $('#stat-active-cases').text(data.ongoing_cases);
+            $('#stat-resolved-cases').text(data.resolved_cases);
+            $('#stat-bpo').text(data.bpo_count);
+            $('#stat-tpo').text(data.tpo_count);
+            $('#stat-ppo').text(data.ppo_count);
+            $('#stat-criminal').text(data.cases_w_criminal_cases);
+            $('#stat-services').text(data.services_provided);
+
+            // Victim/Perp totals from cases_list
+            let totalVictims = 0, totalPerps = 0;
+            data.cases_list.forEach(c => {
+                totalVictims += c.victims ? c.victims.length : 0;
+                totalPerps   += c.perpetrators ? c.perpetrators.length : 0;
+            });
+            $('#stat-total-victims').text(totalVictims);
+            $('#stat-total-perps').text(totalPerps);
+
+            renderTable(data.cases_list);
+
+            $('#successToast .toast-body').text('Analytics loaded successfully.');
+            $('#successToast').toast('show');
+        } catch(e) {
+            $('#errorToast .toast-body').text('Error loading analytics data. Check your connection.');
+            $('#errorToast').toast('show');
+        }
+    }
+
+    loadData();
 });
 </script>
-
 {% endblock scripts %}
