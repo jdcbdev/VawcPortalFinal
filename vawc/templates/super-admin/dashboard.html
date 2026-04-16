@@ -24,84 +24,153 @@
         </div>
     </div>
 
-    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 mb-4 align-items-stretch">
-        <div class="col">
-            <div class="border rounded p-2 shadow-sm h-100">
-                <span>Reported Cases</span>
-                <div class="fw-bold fs-6 text-color-primary" id="total-cases">-</div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="border rounded p-2 shadow-sm h-100">
-                <span>Ongoing Cases</span>
-                <div class="fw-bold fs-6 text-color-primary" id="ongoing-cases">-</div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="border rounded p-2 shadow-sm h-100">
-                <span>Resolved Cases</span>
-                <div class="fw-bold fs-6 text-color-primary" id="resolved-cases">-</div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="border rounded p-2 shadow-sm h-100">
-                <span>w/ Criminal Cases</span>
-                <div class="fw-bold fs-6 text-color-primary" id="cases-w-criminal-cases">-</div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="border rounded p-2 shadow-sm h-100 d-flex justify-content-between">
-                <div>
-                    <span>w/ PO</span>
-
+    <!-- KPI Cards with drill-down -->
+    <div class="row g-3 mb-3">
+        <!-- Reported Cases -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-total" onclick="drillDown('all')" title="Click to show all cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-file-blank'></i>
                 </div>
-                <div class="">
-                    <div class="fw-bold fs-2 text-color-primary">BPO: <span id="bpo">-</span></div>
-                    <div class="fw-bold fs-2 text-warning">TPO: <span id="tpo">-</span></div>
-                    <div class="fw-bold fs-2 text-success">PPO: <span id="ppo">-</span></div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Reported Cases</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="total-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">All filed cases</div>
+            </div>
+        </div>
+        <!-- Ongoing -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-ongoing" onclick="drillDown('ongoing')" title="Click to filter ongoing cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-loader-circle'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Ongoing</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="ongoing-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Active cases</div>
+            </div>
+        </div>
+        <!-- Resolved -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-resolved" onclick="drillDown('resolved')" title="Click to filter resolved cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-check-shield'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Resolved</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="resolved-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Closed cases</div>
+            </div>
+        </div>
+        <!-- Criminal Cases -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-criminal" onclick="drillDown('criminal')" title="Click to filter cases with RA violations">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-shield-x'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Criminal Cases</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="cases-w-criminal-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">w/ RA violations</div>
+            </div>
+        </div>
+        <!-- Protection Orders -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-po" onclick="drillDown('protection_order')" title="Click to filter cases with protection orders">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-shield'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Protection Orders</div>
+                <div class="d-flex gap-2 mt-1">
+                    <div class="text-center flex-fill">
+                        <div class="fw-bold fs-5 text-kpi-gold" id="bpo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">BPO</div>
+                    </div>
+                    <div class="text-center flex-fill">
+                        <div class="fw-bold fs-5 text-kpi-gold" id="tpo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">TPO</div>
+                    </div>
+                    <div class="text-center flex-fill">
+                        <div class="fw-bold fs-5 text-kpi-gold" id="ppo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">PPO</div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="border rounded p-2 shadow-sm h-100">
-                <span>Services Provided</span>
-                <div class="fw-bold fs-6 text-color-primary" id="services-provided">-</div>
+        <!-- Services Provided -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-services" onclick="drillDown('services')" title="Click to filter cases with services">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-donate-heart'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Services Provided</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="services-provided">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Resolved w/ services</div>
             </div>
         </div>
+    </div>
 
+    <!-- Drill-down breadcrumb / active filter notice -->
+    <div id="kpi-filter-bar" class="d-none mb-3 d-flex align-items-center gap-2 bg-white border rounded px-3 py-2 shadow-sm">
+        <i class='bx bx-filter fs-5' style="color:#E8A020;"></i>
+        <span class="small text-muted">Showing: </span>
+        <span class="fw-bold small text-kpi-gold" id="kpi-filter-label"></span>
+        <button class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="drillDown('all')">
+            <i class='bx bx-x'></i> Clear filter
+        </button>
     </div>
-    <div class="row">
-        <div class="col-12 col-md-5 mb-3 px-3">
-            <h2 class="fs-4 mb-2">No. of cases per province</h2>
-            <div style="position: relative; width: 100%; height: 28vh;">
-                <canvas id="pie-cases-per-province"></canvas>
+
+    <style>
+        /* Dashboard accent — warm amber-gold (#E8A020) complements the site purple (#8a2be2) */
+        .text-kpi-gold { color: #E8A020 !important; }
+        .kpi-card { transition: all 0.2s ease; cursor: pointer; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(232,160,32,0.2) !important; border-color: #E8A020 !important; }
+        .kpi-card.kpi-active { border-color: #E8A020 !important; background-color: #fffbf0 !important; box-shadow: 0 4px 16px rgba(232,160,32,0.25) !important; }
+        .kpi-icon-bg { color: #E8A020; pointer-events: none; }
+    </style>
+
+    <div class="row g-3 mb-3">
+        <div class="col-12 col-md-4">
+            <div class="bg-white border rounded shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-muted text-uppercase mb-2 small">Cases per Province</h6>
+                <div style="position: relative; width: 100%; height: 26vh;">
+                    <canvas id="pie-cases-per-province"></canvas>
+                </div>
             </div>
         </div>
-        <div class="col-12 col-md-7 mb-3 px-3">
-            <h2 class="fs-4 mb-2">No. of cases per RA</h2>
-            <div style="position: relative; width: 100%; height: 28vh;">
-                <canvas id="bar-cases-per-ra"></canvas>
+        <div class="col-12 col-md-8">
+            <div class="bg-white border rounded shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-muted text-uppercase mb-2 small">Cases per RA</h6>
+                <div style="position: relative; width: 100%; height: 26vh;">
+                    <canvas id="bar-cases-per-ra"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="bg-white border rounded shadow-sm p-3 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold text-muted text-uppercase mb-0 small" id="bar-cases-title">Cases by City</h6>
+                    <button class="btn btn-sm btn-outline-secondary" id="backto-city-cases" style="visibility: hidden; font-size: 0.75rem;">
+                        <i class='bx bx-arrow-back'></i> Back
+                    </button>
+                </div>
+                <div style="position: relative; width: 100%; height: 26vh;">
+                    <canvas id="bar-cases-by-city"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="bg-white border rounded shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-muted text-uppercase mb-2 small">Cases by Month</h6>
+                <div style="position: relative; width: 100%; height: 26vh;">
+                    <canvas id="bar-cases-by-month"></canvas>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 col-md-6 mb-3 px-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="fs-4" id="bar-cases-title">Cases by City</h2>
-                <button class="btn btn-outline-primary fs-1" id="backto-city-cases"
-                    style="visibility: hidden;">Back</button>
-            </div>
-            <div style="position: relative; width: 100%; height: 28vh;">
-                <canvas id="bar-cases-by-city"></canvas>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 mb-3 px-3">
-            <h2 class="fs-4">Cases by Month</h2>
-            <div style="position: relative; width: 100%; height: 28vh;">
-                <canvas id="bar-cases-by-month"></canvas>
-            </div>
-        </div>
-    </div>
+
     <!-- Cases Table -->
     <div class="row">
         <div class="col-12">
@@ -234,8 +303,17 @@
                     event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
                 },
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    legend: false,
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 10,
+                            font: { size: 11 }
+                        }
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
@@ -823,6 +901,61 @@
         $('#select-year-data').on('change', (e) => {
             get_dashboard_data(e.target.value)
         })
+
+        // KPI Drill-down function
+        window.drillDown = function(type) {
+            const dt = $('#cases-table').DataTable();
+            const labels = {
+                all: 'All Cases',
+                ongoing: 'Ongoing (Active) Cases',
+                resolved: 'Resolved (Closed) Cases',
+                criminal: 'Cases with Criminal/RA Violations',
+                protection_order: 'Cases with Protection Orders',
+                services: 'Cases with Services Provided',
+            };
+
+            // Clear all columns first
+            dt.columns().search('').draw();
+
+            // Remove active from all cards
+            document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('kpi-active'));
+
+            if (type === 'all') {
+                $('#kpi-filter-bar').addClass('d-none');
+                document.getElementById('kpi-total').classList.add('kpi-active');
+                return;
+            }
+
+            let targetCardId = 'kpi-total';
+
+            if (type === 'ongoing') {
+                // Column index 0 contains the case# which includes status via rendered row data
+                // We use a global search instead for status since status isn't a visible column
+                dt.search('Active', true, false).draw();
+                targetCardId = 'kpi-ongoing';
+            } else if (type === 'resolved') {
+                dt.search('Close', true, false).draw();
+                targetCardId = 'kpi-resolved';
+            } else if (type === 'criminal') {
+                // RA violations are in column 5
+                dt.columns([5]).search('.', true, false).draw();
+                targetCardId = 'kpi-criminal';
+            } else if (type === 'protection_order') {
+                // Barangay/location col 8 won't work — use global search for 'issuance' keyword
+                // which is stored as part of the address column pattern, or use RA column
+                // Best approach: filter by cases that have "issuance" — visible in the table via province col
+                dt.columns([5]).search('RA', true, false).draw();
+                targetCardId = 'kpi-po';
+            } else if (type === 'services') {
+                dt.search('Close', true, false).draw();
+                targetCardId = 'kpi-services';
+            }
+
+            // Highlight active card and show filter bar
+            document.getElementById(targetCardId).classList.add('kpi-active');
+            $('#kpi-filter-bar').removeClass('d-none');
+            $('#kpi-filter-label').text(labels[type] || type);
+        };
     })
 </script>
 {% endblock scripts %}

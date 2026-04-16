@@ -10,17 +10,19 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-9 col-12"><h1 class="mt-2">Report</h1></div>
-        <div class="col-lg-3 col-12 text-end">
-            <button class="btn btn-success mt-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#consolidatedModal">
-                Generate Consolidated Report
+    <div class="row align-items-center">
+        <div class="col-lg-7 col-12"><h1 class="mt-2 text-color-primary fw-bold">Report Analytics</h1></div>
+        <div class="col-lg-5 col-12 text-end">
+            <button class="btn btn-gold mt-2 shadow-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#consolidatedModal">
+                <i class='bx bxs-file-plus me-1'></i> Generate Consolidated Report
             </button>
         </div>
     </div>
     
     <div class="pt-3">
-        <h2>SUMMARY</h2>
+        <h2 class="fw-bold d-flex align-items-center">
+            <i class='bx bxs-bar-chart-alt-2 text-color-gold me-2'></i>SUMMARY
+        </h2>
     </div>
     <input type="hidden" class="email" name="email" value="{{ account.user.email }}">
     <div class="col-12">
@@ -29,41 +31,41 @@
     <!--table-->
     <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12">
-            <div class="pt-4 table-responsive-lg table-responsive-md table-responsive-sm">
-                <table class="table table-hover">
+            <div class="pt-4 table-responsive">
+                <table class="table table-hover border">
                     <tbody>
                         <tr class="border-bottom border-2">
-                            <th>Total of cases filed</th>
-                            <th><span id="total_cases">{{ total_cases }}</span></th>
+                            <th class="ps-3 py-3">Total cases filed</th>
+                            <th class="text-end pe-3 py-3"><span id="total_cases" class="fs-5 text-color-gold fw-bold">{{ total_cases }}</span></th>
                         </tr>
                         <tr class="border-bottom border-2">
-                            <th>Total number of Active Cases</th>
-                            <th><span id="total_active">{{ total_active }}</span></th>
+                            <th class="ps-3 py-3">Active Cases</th>
+                            <th class="text-end pe-3 py-3"><span id="total_active" class="fs-5 text-color-gold fw-bold">{{ total_active }}</span></th>
                         </tr>
                         <tr class="border-bottom border-2">
-                            <th>Total number of Close Cases</th>
-                            <th><span id="total_closed">{{ total_closed }}</span></th>
+                            <th class="ps-3 py-3">Resolved Cases</th>
+                            <th class="text-end pe-3 py-3"><span id="total_closed" class="fs-5 text-color-gold fw-bold">{{ total_closed }}</span></th>
                         </tr>
                     </tbody>
-                </table><!--end of table-->
-            </div><!--end of div of table-->
-        </div><!--end of col-->
+                </table>
+            </div>
+        </div>
         <div class="col-lg-6 col-md-6 col-sm-12">
-            <div class="pt-4 table-responsive-lg table-responsive-md table-responsive-sm">
-                <table class="table table-hover">
+            <div class="pt-4 table-responsive">
+                <table class="table table-hover border">
                 <tbody>
                     <tr class="border-bottom border-2">
-                        <th>Total number of Victims</th>
-                        <th><span id="total_victim">{{ total_victim }}</span></th>
+                        <th class="ps-3 py-3">Total Victims</th>
+                        <th class="text-end pe-3 py-3"><span id="total_victim" class="fs-5 text-color-gold fw-bold">{{ total_victim }}</span></th>
                     </tr>
                     <tr class="border-bottom border-2">
-                        <th>Total number of Perpetrators</th>
-                        <th><span id="total_perpetrator">{{ total_perpetrator }}</span></th>
+                        <th class="ps-3 py-3">Total Perpetrators</th>
+                        <th class="text-end pe-3 py-3"><span id="total_perpetrator" class="fs-5 text-color-gold fw-bold">{{ total_perpetrator }}</span></th>
                     </tr>
                 </tbody>
-                </table><!--end of table-->
-            </div><!--end of div of table-->
-        </div><!--end of col-->
+                </table>
+            </div>
+        </div>
     </div><!--end of row-->
     <div class="d-none row pt-3">
         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -142,23 +144,23 @@
 <!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Success</strong>
+        <div class="toast-header text-white" style="background-color:#E8A020;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <strong class="me-auto">Success</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark">
+        <div class="toast-body text-dark fw-bold">
         </div>
     </div>
     <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Error</strong>
+        <div class="toast-header text-white bg-danger">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <strong class="me-auto">Error</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark">
+        <div class="toast-body text-dark fw-bold">
         </div>
     </div>
 </div>
@@ -357,12 +359,12 @@
                 datasets: [{
                     label: 'Victim',
                     data: [], // Initially empty data
-                    backgroundColor: 'rgba(255, 99, 132, 0.8)', // Red color for victims
+                    backgroundColor: '#8a2be2', // Purple theme
                     borderWidth: 1
                 }, {
                     label: 'Perpetrator',
                     data: [], // Initially empty data
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)', // Blue color for perpetrators
+                    backgroundColor: '#E8A020', // Gold theme
                     borderWidth: 1
                 }, {
                     label: 'Total Cases',

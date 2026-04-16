@@ -11,7 +11,9 @@
 {% block content %}
 <div class="container-fluid py-4">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h3 class="mb-0 text-dark fw-bold">Settings</h3>
+        <h1 class="text-color-primary fw-bold d-flex align-items-center mb-0">
+            <i class='bx bxs-cog text-color-gold me-2'></i>Portal Settings
+        </h1>
     </div>
 
     <div class="row g-4">
@@ -19,8 +21,8 @@
         <div class="col-lg-5">
             <div class="card shadow-sm rounded-4 border-0 h-100">
                 <div class="card-header py-3 bg-white border-bottom-0 rounded-top-4">
-                    <h5 class="m-0 fw-bold text-primary d-flex align-items-center">
-                        <i class='bx bx-slider-alt fs-4 me-2'></i>System Settings
+                    <h5 class="m-0 fw-bold text-color-primary d-flex align-items-center">
+                        <i class='bx bx-slider-alt text-color-gold fs-4 me-2'></i>System Settings
                     </h5>
                 </div>
                 <div class="card-body">
@@ -45,8 +47,8 @@
         <div class="col-lg-7">
             <div class="card shadow-sm rounded-4 border-0 h-100">
                 <div class="card-header py-3 bg-white border-bottom-0 rounded-top-4">
-                    <h5 class="m-0 fw-bold text-primary d-flex align-items-center">
-                        <i class='bx bx-lock-alt fs-4 me-2'></i>Security Settings
+                    <h5 class="m-0 fw-bold text-color-primary d-flex align-items-center">
+                        <i class='bx bx-lock-alt text-color-gold fs-4 me-2'></i>Security Settings
                     </h5>
                 </div>
                 <div class="card-body">
@@ -94,7 +96,7 @@
                                 <label class="form-check-label text-muted small ms-1 pt-1" for="flexCheckDefault">Show
                                     Passwords</label>
                             </div>
-                            <button type="button" class="btn btn-primary px-4 py-2 rounded-3 shadow-sm fw-semibold"
+                            <button type="button" class="btn btn-gold px-4 py-2 rounded-3 shadow-sm fw-semibold"
                                 id="confirmPasswordBtn" onclick="changePassword()">Update Password</button>
                         </div>
                     </form>
@@ -117,9 +119,9 @@
                 (OTP)?
             </div>
             <div class="modal-footer border-top-0 pt-0">
-                <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal"
+                <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal"
                     id="cancelOtpToggle">Cancel</button>
-                <button type="button" class="btn btn-primary rounded-3 px-4" id="confirmOtpToggle">Confirm</button>
+                <button type="button" class="btn btn-gold rounded-3 px-4" id="confirmOtpToggle">Confirm Action</button>
             </div>
         </div>
     </div>
@@ -128,24 +130,24 @@
 <!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Success</strong>
+        <div class="toast-header text-white" style="background-color:#E8A020;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <strong class="me-auto">Success</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark">
+        <div class="toast-body text-dark fw-bold">
             Password changed successfully!
         </div>
     </div>
     <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Error</strong>
+        <div class="toast-header text-white bg-danger">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <strong class="me-auto">Error</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark">
+        <div class="toast-body text-dark fw-bold">
             Error changing password. Please check your input.
         </div>
     </div>
