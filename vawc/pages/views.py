@@ -610,7 +610,7 @@ def law_enforcement_manage_account_view(request):
     # Exclude the specified emails from the queryset
     users = CustomUser.objects.exclude(email__in=excluded_emails)
     accounts = LawEnforcementAccount.objects.filter(user__in=users)
-
+    cities = Municipality.objects.filter(province_id=province_id)
     regions = Region.objects.filter(id=region_id).values('id', 'code', 'name')
 
     # Strip names like 'REGION IX (ZAMBOANGA PENINSULA)' → 'REGION IX'
@@ -621,6 +621,7 @@ def law_enforcement_manage_account_view(request):
     return render(request, 'super-admin/law-enforcement-account.html', {
         'users': users,
         'accounts': accounts,
+        'default_cities': cities,
         'default_regions': regions,
         'default_provinces':Province.objects.filter(
             Q(region_id=region_id) | Q(name__icontains='Sulu')

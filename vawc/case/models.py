@@ -139,6 +139,8 @@ class Case(models.Model):
     
     date_closed = models.DateField(null=True, blank=True)
 
+    archived = models.BooleanField(default=False)
+    
     def __str__(self):
         return f"Case ID: {self.id}, Case Number: {self.case_number}"
     def get_user_name(self):

@@ -161,6 +161,13 @@
                 </div>  
                 
                 <div class="form-floating mb-3">
+                    <select class="form-select" id="account_city" name="account_city" disabled>
+                        <option value="">--Select Option--</option>
+                    </select>
+                    <label for="account_city">City</label>
+                </div>  
+
+                <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="account_hospital_name" name="account_hospital_name" placeholder="name@example.com" >
                     <label for="account_hospital_name">Hospital Name</label>
                 </div>
@@ -630,6 +637,18 @@
                 });
             } else {
                 console.log('Please select a province.');
+            }
+        });
+        city.addEventListener('change', (e) => {
+            const cityName = e.target.value;
+            if (cityName) {
+                setGeoSelectPoliceStation(city, {
+                    city: cityName,
+                    action: 'city',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+            } else {
+                console.log('Please select a city.');
             }
         });
     }
