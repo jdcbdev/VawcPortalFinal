@@ -350,3 +350,43 @@ span.required::before {
     font-weight: bold;
     color: red;
 }
+
+/* Dashboard & Global Amber Gold Theme Utilities */
+.text-color-gold {
+    color: #E8A020 !important;
+}
+
+.bg-gold {
+    background-color: #E8A020 !important;
+}
+
+.border-gold {
+    border-color: #E8A020 !important;
+}
+
+.btn-gold {
+    background-color: #E8A020 !important;
+    border-color: #E8A020 !important;
+    color: white !important;
+}
+
+.btn-gold:hover {
+    background-color: #d18d1a !important;
+    border-color: #d18d1a !important;
+    color: white !important;
+}
+
+.btn-outline-gold {
+    background-color: transparent !important;
+    color: #E8A020 !important;
+    border-color: #E8A020 !important;
+}
+
+.btn-outline-gold:hover {
+    background-color: #E8A020 !important;
+    color: white !important;
+}
+
+.bg-gold-light {
+    background-color: #fffbf0 !important;
+}

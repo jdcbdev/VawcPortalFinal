@@ -7,9 +7,11 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid pb-4">
-    <div class="row d-flex justify-content-between">
+    <div class="row d-flex justify-content-between align-items-center">
         <div class="col-auto">
-            <h1>Account Reset Requests</h1>
+            <h1 class="text-color-primary fw-bold d-flex align-items-center">
+                <i class='bx bx-reset text-color-gold me-2'></i>Account Reset Requests
+            </h1>
         </div>
     </div>
 
@@ -45,7 +47,7 @@
             </thead>
             <tbody class="table-group-divider">
                 {% for request in requests %}
-                    <tr class="{% if request.status == 'Pending' %}table-warning{% endif %}">
+                    <tr class="{% if request.status == 'Pending' %}bg-gold-light{% endif %}">
                         <td data-sort="{{ request.created_at|date:'YmdHis' }}">{{ request.created_at }}</td>
                         <td>{{ request.agency_name }}</td>
                         <td>{{ request.first_name }}</td>
@@ -60,16 +62,16 @@
                         </td>
                         <td>
                             {% if request.status == 'Pending' %}
-                                <span class="badge bg-warning">{{ request.status }}</span>
+                                <span class="badge bg-gold text-white">{{ request.status }}</span>
                             {% else %}
                                 <span class="badge bg-success">{{ request.status }}</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
                             {% if request.status == 'Pending' %}
-                                <button class="btn btn-outline-success mark-resolved-btn" role="button" data-request-id="{{ request.id }}">Mark Resolved</button>
+                                <button class="btn btn-gold btn-sm px-3 shadow-sm mark-resolved-btn" role="button" data-request-id="{{ request.id }}">Mark Resolved</button>
                             {% else %}
-                                -
+                                <span class="text-muted small"><i class='bx bx-check-double text-success'></i> Resolved</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -81,26 +83,26 @@
 
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Success</strong>
+        <div class="toast-header text-white" style="background-color:#E8A020;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <strong class="me-auto">Success</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark">
+        <div class="toast-body text-dark fw-bold">
         </div>
     </div>
     <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Error</strong>
+        <div class="toast-header text-white bg-danger">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <strong class="me-auto">Error</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark">
+        <div class="toast-body text-dark fw-bold">
         </div>
     </div>
-    </div>
+</div>
 </div>
 
 <!-- Modal confirm resolve -->

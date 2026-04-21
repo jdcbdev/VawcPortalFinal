@@ -7,28 +7,37 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid pb-4">
-    <div class="row d-flex justify-content-between">
+    <div class="row d-flex justify-content-between align-items-center">
         <div class="col-auto">
-            <h1>Healthcare Account</h1>
+            <h1 class="text-color-primary fw-bold d-flex align-items-center">
+                <i class='bx bxs-plus-medical text-color-gold me-2'></i>Healthcare Accounts
+            </h1>
         </div>
         <div class="col-auto">
-            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account"><i class="bx bx-plus"></i> Add Account</button>
+            <button class="btn btn-gold rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account">
+                <i class="bx bx-plus"></i> Add Account
+            </button>
         </div>
     </div>
 
     <div class="row mt-4">
-        <div class="col-lg-6 mb-lg-0 mb-3 ">
+        <div class="col-lg-5 mb-lg-0 mb-3 ">
             <div class="input-group search-keyword">
                 <input type="text" name="keyword" id="keyword" placeholder="Search Name" class="form-control">
                 <button class="btn btn-outline-secondary background-color-green" type="button"><i class='bx bx-search-alt'></i></button>
             </div>
         </div>
-        <div class="form-group col-lg-6 mb-lg-0 mb-3 ">
+        <div class="form-group col-lg-5 mb-lg-0 mb-3 ">
             <select name="status" id="status" class="form-select me-md-2">
                 <option value="">All Status</option>
                 <option value="Active">Active</option>
                 <option value="Not Active">Not Active</option>
             </select>
+        </div>
+        <div class="col-lg-2 mb-lg-0 mb-3 d-flex align-items-center justify-content-end">
+            <button class="btn btn-danger disabled w-100 shadow-sm" id="btn-bulk-delete" data-bs-toggle="modal" data-bs-target="#bulkDeleteModal">
+                <i class='bx bx-trash me-1'></i> Delete (<span id="bulk-delete-count">0</span>)
+            </button>
         </div>
     </div>
 
@@ -36,6 +45,9 @@
         <table class="table table-striped nowrap" id="table-account" style="width:100%">
             <thead class="border-bottom border-dark border-2 border-opacity-50">
                 <tr>
+                    <th class="text-center" scope="col" style="width: 40px;">
+                        <input class="form-check-input select-all-cb shadow-sm" type="checkbox" id="selectAllAccounts">
+                    </th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Status</th>
@@ -47,14 +59,17 @@
             <tbody class="table-group-divider">
                 {% for account in accounts %}
                     <tr>
+                        <td class="text-center">
+                            <input class="form-check-input row-cb border-secondary" type="checkbox" value="{{ account.user.id }}">
+                        </td>
                         <td>{{ account.last_name }},{{ account.first_name }}&nbsp;{{ account.middle_name }}</td>
                         <td>{{ account.user.email }}</td>
                         <td>{{ account.status }}</td>
                         <td>{{ account.hospital_name }}</td>
                         <td>{{ account.user.date_joined }}</td>
                         <td class="text-center">
-                            <button class="btn btn-outline-success edit-account-btn" role="button" data-account-id="{{ account.user.id }}">View</button>
-                            <button class="btn btn-outline-danger delete-account-btn ms-lg-3" role="button" data-account-id="{{ account.user.id }}">Delete</button>
+                            <button class="btn btn-outline-gold edit-account-btn btn-sm px-3" role="button" data-account-id="{{ account.user.id }}">View</button>
+                            <button class="btn btn-outline-danger delete-account-btn btn-sm px-3 ms-lg-2" role="button" data-account-id="{{ account.user.id }}">Delete</button>
                         </td>
                     </tr>
                 {% endfor %}
@@ -65,23 +80,23 @@
 <!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Success</strong>
+        <div class="toast-header text-white" style="background-color:#E8A020;">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <strong class="me-auto">Success</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark">
+        <div class="toast-body text-dark fw-bold">
         </div>
     </div>
     <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Error</strong>
+        <div class="toast-header text-white bg-danger">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
+            <strong class="me-auto">Error</strong>
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark">
+        <div class="toast-body text-dark fw-bold">
         </div>
     </div>
 </div>
@@ -89,9 +104,11 @@
 <!-- Modal add  -->
 <div class="modal fade" id="add_new_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Account</h1>
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header bg-gold-light border-bottom-0 rounded-top-4">
+          <h5 class="modal-title fw-bold text-color-primary" id="staticBackdropLabel">
+            <i class='bx bx-plus-medical me-2'></i>Add Healthcare Account
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -155,15 +172,22 @@
                 </div>  
                 
                 <div class="form-floating mb-3">
+                    <select class="form-select" id="account_city" name="account_city" disabled>
+                        <option value="">--Select Option--</option>
+                    </select>
+                    <label for="account_city">City</label>
+                </div>  
+
+                <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="account_hospital_name" name="account_hospital_name" placeholder="name@example.com" >
                     <label for="account_hospital_name">Hospital Name</label>
                 </div>
 
             </form>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" id="addAccountBtn" disabled>Add New Account</button>
+        <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-gold rounded-3 px-4" id="addAccountBtn" disabled>Create Account</button>
         </div>
       </div>
     </div>
@@ -172,9 +196,11 @@
 <!-- Modal edit -->
 <div class="modal fade" id="edit_healthcare_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Account</h1>
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header bg-gold-light border-bottom-0 rounded-top-4">
+          <h5 class="modal-title fw-bold text-color-primary" id="staticBackdropLabel">
+            <i class='bx bx-edit-alt me-2'></i>Edit Healthcare Account
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -233,9 +259,9 @@
                 </div>
             </form>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary" id="saveAccountBtn">Save Account</button>
+        <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-gold rounded-3 px-4" id="saveAccountBtn">Save Changes</button>
         </div>
       </div>
     </div>
@@ -244,7 +270,7 @@
 <!-- Modal confirm delete  -->
 <div class="modal fade" id="confirmAccountDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content border-top border-4 border-danger">
             <div class="modal-header">
                 <h5 class="modal-title">Confirm Delete</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -259,30 +285,78 @@
         </div>
     </div>
 </div>
+
+<!-- Modal confirm BULK delete -->
+<div class="modal fade" id="bulkDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-top border-4 border-danger shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger fw-bold"><i class='bx bx-error-circle me-1'></i>Bulk Delete Accounts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to completely permanently delete <strong id="bulkDeleteTextCount"></strong> selected accounts?</p>
+                <p class="text-muted small fst-italic">This action is irreversible and will remove all their system access.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger px-4" id="btn-confirm-bulk-delete">Yes, Delete All</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
 {% block scripts %}
 <!-- <script src="{% static 'js/police-station-address.js' %}"></script> -->
 <script>
     const csrf_token = '{{ csrf_token }}'
     $(document).ready(function() {
-        $('#table-account').DataTable({
+        const tableAccount = $('#table-account').DataTable({
             dom: 'Brt <"bottom"lp>',
             responsive: true,
             fixedHeader: true,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-            //order: [[4, 'desc']],
-            order: [[0, 'desc']],
+            order: [[1, 'desc']],
+            columnDefs: [
+                { orderable: false, targets: 0 },
+                { orderable: false, targets: 6 }
+            ],
             pageLength: 20,
+        });
+
+        // Bulk Selection Logic
+        function updateBulkDeleteBtn() {
+            const checkedCount = tableAccount.$('input.row-cb:checked').length;
+            $('#bulk-delete-count').text(checkedCount);
+            $('#bulkDeleteTextCount').text(checkedCount);
+            if (checkedCount > 0) {
+                $('#btn-bulk-delete').removeClass('disabled');
+            } else {
+                $('#btn-bulk-delete').addClass('disabled');
+            }
+        }
+        
+        $('#selectAllAccounts').on('click', function() {
+            var isChecked = $(this).is(':checked');
+            tableAccount.$('input.row-cb').prop('checked', isChecked);
+            updateBulkDeleteBtn();
+        });
+
+        $('#table-account tbody').on('change', 'input.row-cb', function() {
+            if (!$(this).is(':checked')) {
+                $('#selectAllAccounts').prop('checked', false);
+            }
+            updateBulkDeleteBtn();
         });
 
         // Your filter options and search functionality
         $('input#keyword').on('input', function(e){
             var status = $(this).val();
-            $('#table-account').DataTable().columns([0]).search(status).draw();
+            tableAccount.columns([1]).search(status).draw();
         });
         $('select#status').on('change', function(e){
             var status = $(this).val();
-            $('#table-account').DataTable().columns([2]).search(status).draw();
+            tableAccount.columns([3]).search(status).draw();
         });
 
         // Function to handle form submission
@@ -436,43 +510,67 @@
         $('#confirmAccountDeleteBtn').on('click', function() {
             // Retrieve the account ID from the data-account-id attribute of the Delete button in the modal
             var accountId = $(this).data('account-id');
-            $('#confirmAccountDeleteBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
-            $('#confirmAccountDeleteBtn').text('Deleting...'); // Change button text to indicate loading
+            var btn = $(this);
+            btn.prop('disabled', true).text('Deleting...');
             // Send an AJAX request to delete the account
             $.ajax({
                 url: '{% url "delete_account" %}',
                 method: 'POST',
                 data: {
                     account_id: accountId,
-                    // Add any additional data if needed
                 },
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                 },
                 success: function(response) {
-                    // Handle success response
-                    // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
-                    $('#confirmAccountDelete').modal('hide');
-                    $('#confirmAccountDeleteBtn').text('Delete'); // Change button text to indicate loading
-                    $('#confirmAccountDeleteBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
                     setTimeout(function() {
                         location.reload();
                     }, 1000);
-
                 },
                 error: function(xhr, status, error) {
-                    // Handle error
-                    console.error('Error:', error);
-                    // Display error message
-                    $('#errorToast .toast-body').text(response.message);
+                    btn.prop('disabled', false).text('Delete');
+                    $('#errorToast .toast-body').text("An error occurred");
                     $('#errorToast').toast('show');
-                    // Optionally, show an error message to the user
-                    $('#confirmAccountDeleteBtn').prop('disabled', false); // Disable the button to prevent multiple submissions
-                    $('#confirmAccountDeleteBtn').text('Delete'); // Change button text to indicate loading
                 }
             });
+        });
+
+        // Bulk Delete Executor
+        $('#btn-confirm-bulk-delete').on('click', async function() {
+            var btn = $(this);
+            btn.prop('disabled', true).text('Processing...');
+
+            const checkedNodes = tableAccount.$('input.row-cb:checked');
+            let successCounter = 0;
+            let errorCounter = 0;
+
+            for (let i = 0; i < checkedNodes.length; i++) {
+                const accountId = $(checkedNodes[i]).val();
+                try {
+                    await $.ajax({
+                        url: '{% url "delete_account" %}',
+                        method: 'POST',
+                        data: { account_id: accountId },
+                        headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+                    });
+                    successCounter++;
+                } catch (err) {
+                    errorCounter++;
+                }
+            }
+
+            $('#bulkDeleteModal').modal('hide');
+            if (successCounter > 0) {
+                $('#successToast .toast-body').text(successCounter + ' accounts firmly deleted.');
+                $('#successToast').toast('show');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                $('#errorToast .toast-body').text('Deletion failed.');
+                $('#errorToast').toast('show');
+                btn.prop('disabled', false).text('Yes, Delete All');
+            }
         });
 
 
@@ -622,6 +720,18 @@
                 });
             } else {
                 console.log('Please select a province.');
+            }
+        });
+        city.addEventListener('change', (e) => {
+            const cityName = e.target.value;
+            if (cityName) {
+                setGeoSelectPoliceStation(city, {
+                    city: cityName,
+                    action: 'city',
+                    csrfmiddlewaretoken: csrf_token,
+                });
+            } else {
+                console.log('Please select a city.');
             }
         });
     }

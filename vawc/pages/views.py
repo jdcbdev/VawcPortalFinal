@@ -204,7 +204,7 @@ def check_email_case(request):
             if Case.objects.filter(email=email).exists():
                 return JsonResponse({'success': True, 'message': 'There is an Email associated with at least one case.'})
             else:
-                return JsonResponse({'success': False, 'message': 'There is no Email associated with any case.'})
+                return JsonResponse({'success': False, 'message': 'There is no case found with the provided email.'})
         else:
             return JsonResponse({'success': False, 'message': 'No email provided.'})
     else:
@@ -390,10 +390,15 @@ def admin_dashboard_data (request, get_year):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
     
-    if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
-    else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(date_added__year = get_year)
+    start_date = request.GET.get('start')
+    end_date = request.GET.get('end')
+
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
+    
+    if start_date and end_date:
+        cases = cases.filter(date_added__range=[start_date, end_date])
+    elif get_year != 0:
+        cases = cases.filter(date_added__year=get_year)
 
     total_cases = cases.count() or 0
     ongoing_cases = cases.filter(status='Active').count() or 0
@@ -455,8 +460,11 @@ def admin_dashboard_data (request, get_year):
         # else:
         #     case_dict_data = Case.objects.filter(id=case.id).values().first()
         case_dict_data = {
+            'case_id': case.id,
+            'type_of_case': case.type_of_case,
+            'status': case.status,
             'case_number': case.case_number,
-            'date_added': case.date_added,
+            'date_added': str(case.date_added),
             'barangay': case.barangay,
             'city': case.city,
             'province': case.province,
@@ -465,6 +473,7 @@ def admin_dashboard_data (request, get_year):
             'checkbox_ra_7877': case.checkbox_ra_7877,
             'checkbox_ra_9775': case.checkbox_ra_9775,
             'checkbox_a_7610': case.checkbox_a_7610,
+            'service_information': case.service_information,
         }
         case_dict = {
             'data': case_dict_data,
@@ -472,6 +481,41 @@ def admin_dashboard_data (request, get_year):
             'perpetrators': list(case.perpetrator.values())
         }
         cases_list.append(case_dict)
+        
+        # Build geography tree
+        if not hasattr(case, '_geo_added'):
+            case._geo_added = True
+            # We'll use a local mapping dict to build the tree without circular refs
+            # but actually it's easier to just do it after the loop using the db
+
+    # Optimized geographical aggregation
+    # Build a tree of province -> city -> barangay
+    geo_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+    for c in cases:
+        if c.province and c.city and c.barangay:
+            geo_dict[c.province][c.city][c.barangay] += 1
+
+    for prov_name, cities in geo_dict.items():
+        prov_count = sum(sum(brgys.values()) for brgys in cities.values())
+        prov_data = {
+            'name': prov_name,
+            'count': prov_count,
+            'cities': []
+        }
+        for city_name, barangays in cities.items():
+            city_count = sum(barangays.values())
+            city_data = {
+                'name': city_name,
+                'count': city_count,
+                'barangays': []
+            }
+            for brgy_name, brgy_count in barangays.items():
+                city_data['barangays'].append({
+                    'name': brgy_name,
+                    'count': brgy_count
+                })
+            prov_data['cities'].append(city_data)
+        cases_per_geography.append(prov_data)
 
 
         # Count the number of impacted and behalf cases
@@ -479,60 +523,7 @@ def admin_dashboard_data (request, get_year):
         # behalf_count = len(list(filter(lambda case: case.type_of_case == Case.TYPE_REPORTING_BEHALF, cases)))
         #bpo_count = len(list(filter(lambda case: case.service_information == Case.ISSUANCE_ENFORCEMENT, cases)))
     
-    # Get all provinces within the region
-    provinces = Province.objects.filter(region_id=10) # 10 is region 9
-    for province in provinces:
-        if get_year:
-            province_case_count = Case.objects.filter(date_added__year=get_year, province=province.name).count() 
-        else:
-            province_case_count = Case.objects.filter(province=province.name).count()
-            
-        if province_case_count == 0:
-            continue
 
-        province_data = {
-            'name': province.name,
-            'count': province_case_count,
-            'cities': []
-        }
-
-        # Get all cities within the province
-        cities = Municipality.objects.filter(province=province)
-        for city in cities:
-            if get_year:
-                city_case_count = Case.objects.filter(date_added__year=get_year, city=city.name).count()
-            else:
-                city_case_count = Case.objects.filter(city=city.name).count()
-                
-            if city_case_count == 0:
-                continue
-
-            city_data = {
-                'name': city.name,
-                'count': city_case_count,
-                'barangays': []
-            }
-
-            # Get all barangays within the city
-            barangays = Barangay.objects.filter(municipality=city)
-            for barangay in barangays:
-                if get_year:
-                    barangay_case_count = Case.objects.filter(date_added__year=get_year, barangay=barangay.name, city=city.name).count()
-                else:
-                    barangay_case_count = Case.objects.filter(barangay=barangay.name, city=city.name).count()
-
-                if barangay_case_count == 0:
-                    continue
-
-                barangay_data = {
-                    'name': barangay.name,
-                    'count': barangay_case_count
-                }
-                city_data['barangays'].append(barangay_data)
-
-            province_data['cities'].append(city_data) # Add list of cities in province_data
-
-        cases_per_geography.append(province_data) # Add province_data to list of provinces
 
 
     republic_acts = {
@@ -610,7 +601,7 @@ def law_enforcement_manage_account_view(request):
     # Exclude the specified emails from the queryset
     users = CustomUser.objects.exclude(email__in=excluded_emails)
     accounts = LawEnforcementAccount.objects.filter(user__in=users)
-
+    cities = Municipality.objects.filter(province_id=province_id)
     regions = Region.objects.filter(id=region_id).values('id', 'code', 'name')
 
     # Strip names like 'REGION IX (ZAMBOANGA PENINSULA)' → 'REGION IX'
@@ -621,6 +612,7 @@ def law_enforcement_manage_account_view(request):
     return render(request, 'super-admin/law-enforcement-account.html', {
         'users': users,
         'accounts': accounts,
+        'default_cities': cities,
         'default_regions': regions,
         'default_provinces':Province.objects.filter(
             Q(region_id=region_id) | Q(name__icontains='Sulu')
@@ -6186,10 +6178,15 @@ def admin_consolidated_report_data(request, get_year):
     if request.method != 'GET':
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
     
-    if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
-    else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(date_added__year=get_year)
+    start_date = request.GET.get('start')
+    end_date = request.GET.get('end')
+
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
+    
+    if start_date and end_date:
+        cases = cases.filter(date_added__range=[start_date, end_date])
+    elif get_year != 0:
+        cases = cases.filter(date_added__year=get_year)
 
     total_cases = cases.count() or 0
     ongoing_cases = cases.filter(status='Active').count() or 0
@@ -6216,16 +6213,26 @@ def admin_consolidated_report_data(request, get_year):
             cases_w_criminal_cases += 1
         
         case_dict_data = {
+            'case_id': case.id,
+            'type_of_case': case.type_of_case,
+            'status': case.status,
             'case_number': case.case_number,
-            'date_added': case.date_added,
+            'date_added': str(case.date_added) if case.date_added else None,
             'barangay': case.barangay,
             'city': case.city,
             'province': case.province,
+            'place_of_incident': case.place_of_incident,
             'checkbox_ra_8353': case.checkbox_ra_8353,
             'checkbox_ra_9262': case.checkbox_ra_9262,
             'checkbox_ra_7877': case.checkbox_ra_7877,
             'checkbox_ra_9775': case.checkbox_ra_9775,
             'checkbox_a_7610': case.checkbox_a_7610,
+            'checkbox_physical_abuse': case.checkbox_physical_abuse,
+            'checkbox_sexual_abuse': case.checkbox_sexual_abuse,
+            'checkbox_psychological_abuse': case.checkbox_psychological_abuse,
+            'checkbox_economic_abuse': case.checkbox_economic_abuse,
+            'checkbox_others': case.checkbox_others,
+            'service_information': case.service_information,
         }
 
         # Decrypt victims focusing on gender and DOB (and names)
@@ -6365,3 +6372,15 @@ def reset_account_password(request, account_id):
         return JsonResponse({'success': False, 'message': 'User not found.'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
+
+@login_required
+def case_summary_modal(request, case_id):
+    from case.models import Case
+    try:
+        case = Case.objects.get(id=case_id)
+    except Case.DoesNotExist:
+        return HttpResponse("Case not found.", status=404)
+    
+    return render(request, 'base/case_modal_content.html', {
+        'case': case
+    })
