@@ -154,10 +154,23 @@
                     </select>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size:.63rem;">Age Group</label>
-                    <select id="consolidated-age-filter" class="form-select form-select-sm bg-light">
-                        <option value="">All Ages</option>
-                    </select>
+                    <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size:.63rem;">Age Range</label>
+                    <div class="dropdown" id="age-range-dropdown">
+                        <button class="form-select form-select-sm bg-light text-start text-truncate" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btn-consolidated-age" data-bs-auto-close="outside">
+                            All Ages
+                        </button>
+                        <div class="dropdown-menu p-3 shadow-sm" style="min-width: 220px;">
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold text-muted mb-1">Age Range</label>
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="number" id="consolidated-age-from" class="form-control form-control-sm" placeholder="From" min="0" max="150">
+                                    <span class="text-muted small">—</span>
+                                    <input type="number" id="consolidated-age-to" class="form-control form-control-sm" placeholder="To" min="0" max="150">
+                                </div>
+                            </div>
+                            <button id="consolidated-age-clear" class="btn btn-sm btn-outline-secondary w-100">Clear</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -557,7 +570,9 @@ $(document).ready(function () {
     function clearAllFilters() {
         if (!consolidatedTable) return;
         consolidatedTable.search('').columns().search('').draw();
-        $('#consolidated-barangay-filter, #consolidated-service-filter, #consolidated-filter-ra-select, #consolidated-gender-filter, #consolidated-age-filter').val('');
+        $('#consolidated-barangay-filter, #consolidated-service-filter, #consolidated-filter-ra-select, #consolidated-gender-filter').val('');
+        $('#consolidated-age-from, #consolidated-age-to').val('');
+        $('#btn-consolidated-age').text('All Ages');
     }
     $('#clear-filter-btn').on('click', clearAllFilters);
     $('#sc-total, #sc-victims, #sc-perps, #sc-services').on('click', clearAllFilters);
@@ -569,7 +584,7 @@ $(document).ready(function () {
         const tbody = document.getElementById('consolidated-cases-table-content');
         tbody.innerHTML = '';
         
-        let barangay_options = [], gender_types = [], age_groups = [], service_types = [];
+        let barangay_options = [], gender_types = [], service_types = [];
 
         data.forEach(c => {
             const d = c.data;
@@ -591,17 +606,18 @@ $(document).ready(function () {
             c.victims.forEach(v => {
                 victims.names.push(`${v.first_name||''} ${v.last_name||''}`.trim()||'Undisclosed');
                 victims.addresses.push(`${v.barangay||''} ${v.city||''}`);
-                victims.genders.push(v.sex||'Unknown');
-                if (v.sex && !gender_types.includes(v.sex)) gender_types.push(v.sex);
+                const sexRaw = v.sex ? v.sex.trim() : 'Unknown';
+                const sexNorm = sexRaw.charAt(0).toUpperCase() + sexRaw.slice(1).toLowerCase();
+                victims.genders.push(sexNorm);
+                if (!gender_types.includes(sexNorm)) gender_types.push(sexNorm);
 
                 let age='-';
                 if (v.date_of_birth && v.date_of_birth!=='None') {
                     const bd=new Date(v.date_of_birth);
                     if (!isNaN(bd)) { age=today.getFullYear()-bd.getFullYear(); const mo=today.getMonth()-bd.getMonth(); if(mo<0||(mo===0&&today.getDate()<bd.getDate()))age--; }
                 }
-                const grp=getAgeGroup(age);
-                victims.ages.push(`${age} <span class="d-none">${grp}</span>`);
-                if (grp!=='Unknown' && !age_groups.includes(grp)) age_groups.push(grp);
+                victims.ages.push(age);
+                // (no age-group tracking needed; using numeric range filter)
             });
 
             c.perpetrators.forEach(p => {
@@ -645,9 +661,20 @@ $(document).ready(function () {
         }
         
         el('#consolidated-gender-filter').innerHTML   = '<option value="">All Genders</option>'  + gender_types.map(g=>`<option value="${g}">${g}</option>`).join('');
-        const ord = {'Below 18':1,'18-24':2,'25-34':3,'35-44':4,'45-54':5,'55-64':6,'65 and above':7};
-        age_groups.sort((a,b)=>ord[a]-ord[b]);
-        el('#consolidated-age-filter').innerHTML      = '<option value="">All Ages</option>'      + age_groups.map(a=>`<option value="${a}">${a}</option>`).join('');
+        // Age range filter (from/to) — registered via ext.search
+        $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn._cAgeRangeFilter !== true);
+        const cAgeRangeFilter = function(settings, data, dataIndex) {
+            if (settings.nTable.id !== 'consolidated-cases-table') return true;
+            const from = parseInt($('#consolidated-age-from').val(), 10);
+            const to   = parseInt($('#consolidated-age-to').val(), 10);
+            if (isNaN(from) && isNaN(to)) return true;
+            const cellText = data[7] || '';
+            const ages = cellText.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+            if (ages.length === 0) return isNaN(from) && isNaN(to);
+            return ages.some(a => (!isNaN(from) ? a >= from : true) && (!isNaN(to) ? a <= to : true));
+        };
+        cAgeRangeFilter._cAgeRangeFilter = true;
+        $.fn.dataTable.ext.search.push(cAgeRangeFilter);
         el('#consolidated-service-filter').innerHTML  = '<option value="">All Service Types</option><option value="No Service Type">No Service Type</option>' + service_types.filter(s=>s!=='No Service Type').map(s=>`<option value="${s}">${s}</option>`).join('');
 
         // ── DataTable ──
@@ -691,7 +718,24 @@ $(document).ready(function () {
 
         // Dropdown filter bindings
         $('#consolidated-service-filter').off('change').on('change',function(){ consolidatedTable.columns([5]).search($(this).val()).draw(); });
-        $('#consolidated-age-filter').off('change').on('change',function(){ consolidatedTable.columns([7]).search($(this).val()?$(this).val():'',false,true).draw(); });
+        $('#consolidated-age-filter').off('change'); // no-op — replaced by range filter
+        function updateConsolidatedAgeLabel() {
+            const from = $('#consolidated-age-from').val();
+            const to   = $('#consolidated-age-to').val();
+            if (from && to)  $('#btn-consolidated-age').text(`${from} — ${to}`);
+            else if (from)   $('#btn-consolidated-age').text(`${from}+`);
+            else if (to)     $('#btn-consolidated-age').text(`Up to ${to}`);
+            else             $('#btn-consolidated-age').text('All Ages');
+        }
+        $('#consolidated-age-from, #consolidated-age-to').off('input.cAgeRange').on('input.cAgeRange', function() {
+            updateConsolidatedAgeLabel();
+            consolidatedTable.draw();
+        });
+        $('#consolidated-age-clear').off('click.cAgeRange').on('click.cAgeRange', function() {
+            $('#consolidated-age-from, #consolidated-age-to').val('');
+            updateConsolidatedAgeLabel();
+            consolidatedTable.draw();
+        });
         $('#consolidated-gender-filter').off('change').on('change',function(){ consolidatedTable.columns([8]).search($(this).val()?$(this).val():'',false,true).draw(); });
         
         $('.c-ra-cb').off('change').on('change', function() {
