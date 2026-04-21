@@ -692,11 +692,12 @@ $(document).ready(function () {
         if (dilgBase64) {
             return {
                 columns: [
-                    { image: dilgBase64, width: 60, alignment: 'center', margin: [0,0,0,0] },
-                    { stack: txt, width: '*', alignment: 'center', margin: [0,4,0,0] },
-                    { width: 60, text: '' }
+                    { width: '*', text: '' },
+                    { image: dilgBase64, width: 60, alignment: 'right', margin: [0,0,10,0] },
+                    { stack: txt, width: 'auto', alignment: 'center', margin: [0,4,0,0] },
+                    { width: '*', text: '' }
                 ],
-                columnGap: 8, margin: [0, 0, 0, 6]
+                columnGap: 0, margin: [0, 0, 0, 6]
             };
         } else {
             return { stack: txt, margin: [0, 0, 0, 6] };
@@ -760,21 +761,53 @@ $(document).ready(function () {
             try {
                 const goldLine = { canvas: [{ type: 'line', x1:0, y1:0, x2: 1080, y2:0, lineWidth:1.5, lineColor:'#E8A020' }], margin: [0, 6, 0, 10] };
 
-                // Build chart image blocks
+                // Build chart image blocks in a grid
+                const chartKeys = Object.keys(chartInstances);
                 let chartBlocks = [];
-                Object.keys(chartInstances).forEach((id, idx) => {
-                    const canvasEl = document.getElementById(`canvas-${id}`);
-                    if (!canvasEl) return;
+                for (let i = 0; i < chartKeys.length; i += 2) {
+                    const colArray = [];
                     
-                    const chartSubtitle = $(`#dim-${id} option:selected`).text();
-                    
-                    if (idx > 0 && idx % 2 === 0) {
-                        chartBlocks.push({ text: '', pageBreak: 'before' });
+                    // Left column chart
+                    const id1 = chartKeys[i];
+                    const canvas1 = document.getElementById(`canvas-${id1}`);
+                    const subtitle1 = canvas1 ? $(`#dim-${id1} option:selected`).text() : '';
+                    if (canvas1) {
+                        colArray.push({
+                            stack: [
+                                { text: `ANALYSIS: ${subtitle1.toUpperCase()}`, fontSize: 11, bold: true, color: '#3b1a6e', margin: [0, 0, 0, 6], alignment: 'center' },
+                                { image: canvas1.toDataURL('image/png', 0.95), fit: [500, 260], alignment: 'center' }
+                            ]
+                        });
                     }
-                    
-                    chartBlocks.push({ text: `ANALYSIS: ${chartSubtitle.toUpperCase()}`, fontSize: 11, bold: true, color: '#3b1a6e', margin: [0, 10, 0, 10], alignment: 'center' });
-                    chartBlocks.push({ image: canvasEl.toDataURL('image/png', 0.95), fit: [1000, 320], alignment: 'center', margin: [0, 0, 0, 20] });
-                });
+
+                    // Right column chart
+                    if (i + 1 < chartKeys.length) {
+                        const id2 = chartKeys[i + 1];
+                        const canvas2 = document.getElementById(`canvas-${id2}`);
+                        const subtitle2 = canvas2 ? $(`#dim-${id2} option:selected`).text() : '';
+                        if (canvas2) {
+                            colArray.push({
+                                stack: [
+                                    { text: `ANALYSIS: ${subtitle2.toUpperCase()}`, fontSize: 11, bold: true, color: '#3b1a6e', margin: [0, 0, 0, 6], alignment: 'center' },
+                                    { image: canvas2.toDataURL('image/png', 0.95), fit: [500, 260], alignment: 'center' }
+                                ]
+                            });
+                        }
+                    } else {
+                        colArray.push({ text: '' }); // Empty space
+                    }
+
+                    chartBlocks.push({
+                        columns: colArray,
+                        columnGap: 20,
+                        margin: [0, 10, 0, 20]
+                    });
+
+                    // Add page break after every two rows (4 charts) unless it's the last row
+                    if (i + 2 < chartKeys.length && ((i/2 + 1) % 2 === 0)) {
+                        chartBlocks.push({ text: '', pageBreak: 'after', margin: [0,0,0,0] });
+                    }
+                }
 
                 const summaryTable = {
                     table: {
