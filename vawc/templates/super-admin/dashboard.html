@@ -11,16 +11,16 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">Dashboard</h1>
-        <div class="d-flex align-items-center gap-3">
-            <div class="spinner-border-sm test-primary" id="select-year-data-loading" role="status">
+        <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded shadow-sm border">
+            <div class="spinner-border spinner-border-sm text-primary d-none" id="select-year-data-loading" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <select name="" id="select-year-data" class="form-select w-auto" disabled>
-                <option value="0">All year</option>
-                {% for year in year_list %}
-                <option value="{{year}}">{{year}}</option>
-                {% endfor %}
-            </select>
+            <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Date Range:</span>
+            <input type="date" id="dash-start-date" class="form-control form-control-sm" style="max-width: 140px;">
+            <span class="text-muted small px-1">to</span>
+            <input type="date" id="dash-end-date" class="form-control form-control-sm" style="max-width: 140px;">
+            <button id="dash-apply-btn" class="btn btn-sm btn-gold text-white fw-bold ms-2 px-3">Apply</button>
+            <button id="dash-clear-btn" class="btn btn-sm btn-outline-secondary ms-1">Reset</button>
         </div>
     </div>
 
@@ -375,8 +375,11 @@
             </div>
 
             <!-- Footer -->
-            <div class="modal-footer border-top">
+            <div class="modal-footer border-top d-flex justify-content-between align-items-center">
                 <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+                <a id="modal-view-case-btn" href="#" class="btn btn-gold rounded-3 px-4 fw-semibold">
+                    <i class='bx bx-right-arrow-circle me-1'></i>View Full Case
+                </a>
             </div>
 
         </div>
@@ -566,6 +569,22 @@
             }
         });
 
+        // RA bar chart — click a bar to filter cases table & scroll down
+        document.getElementById('bar-cases-per-ra').addEventListener('click', function(click) {
+            const els = casePerRa.getElementsAtEventForMode(click, 'nearest', { intersect: true }, true);
+            if (!els.length) return;
+            const raLabel = casePerRa.config.data.labels[els[0].index];
+            const dt = $('#cases-table').DataTable();
+            if (raLabel) {
+                dt.columns([5]).search(raLabel).draw();
+                $('#kpi-filter-bar').removeClass('d-none');
+                $('#kpi-filter-label').text('RA Filter: ' + raLabel);
+                document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('kpi-active'));
+                document.querySelector('#kpi-criminal') && document.getElementById('kpi-criminal').classList.add('kpi-active');
+                document.querySelector('#cases-table').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
         // Cities bar chart
         //var ctx = document.getElementById('bar-cases-by-city').getContext('2d');
         var ctx = document.getElementById('bar-cases-by-city');
@@ -682,13 +701,8 @@
             casesByCity.update()
         })
 
-        // Monthly cases line chart
+        // Monthly cases line chart — click point to filter table by month
         var ctx = document.getElementById('bar-cases-by-month').getContext('2d');
-        //let annualCases = ''//JSON.parse('{{ annual_cases|escapejs }}')
-        //const yearList = Object.entries(annualCases).map(([key, value]) => {
-        //    return key;
-        //});
-        //yearList.sort((a, b) => b - a);
         let lineLabels = Object.keys(annualCases)
         let lineData = Object.values(annualCases)
         var casesByMonth = new Chart(ctx, {
@@ -702,16 +716,17 @@
                     borderColor: 'rgba(255, 99, 132, 1)',
                     data: lineData,
                     borderWidth: 1,
-                    pointStyle: false,
+                    pointStyle: 'circle',
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
                     cubicInterpolationMode: 'monotone'
                 }]
             },
             options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                onHover: (event, chartElement) => {
+                    event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
                 },
+                scales: { y: { beginAtZero: true } },
                 responsive: true,
                 plugins: {
                     legend: false,
@@ -725,21 +740,23 @@
                 }
             }
         });
-        /* const yearFilter = document.querySelector('#year-filter')
-        yearList.forEach(year => {
-            yearFilter.innerHTML += `<option value=${year}>${year}</option>`
-        })
-        document.querySelector('#year-filter').addEventListener('change', (e) => {
-            const selected_year = e.target.value
-            yearList.forEach(year => {
-                if(selected_year == year) {
-                    casesByMonth.config.data.labels = Object.keys(annualCases[year])
-                    casesByMonth.config.data.datasets[0].data = Object.values(annualCases[year])
-                    casesByMonth.config.data.datasets[0].label = 'City Total'
-                    casesByMonth.update()
-                }
-            })
-        }) */
+        document.getElementById('bar-cases-by-month').addEventListener('click', function(click) {
+            const els = casesByMonth.getElementsAtEventForMode(click, 'nearest', { intersect: true }, true);
+            if (!els.length) return;
+            const monthLabel = casesByMonth.config.data.labels[els[0].index]; // e.g. 'Jan'
+            const dt = $('#cases-table').DataTable();
+            // month is in the date_added col (index 9) formatted as YYYY-MM-DD → match short month name
+            const monthMap = { Jan:'01', Feb:'02', Mar:'03', Apr:'04', May:'05', Jun:'06',
+                               Jul:'07', Aug:'08', Sep:'09', Oct:'10', Nov:'11', Dec:'12' };
+            const monthNum = monthMap[monthLabel];
+            if (monthNum) {
+                dt.columns([9]).search(`-${monthNum}-`, true, false).draw();
+                $('#kpi-filter-bar').removeClass('d-none');
+                $('#kpi-filter-label').text('Month Filter: ' + monthLabel);
+                document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('kpi-active'));
+                document.querySelector('#cases-table').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
 
 
         function changeBarangayFilter(geo_type, geo = false) {
@@ -784,17 +801,25 @@
             })
         }
 
-        async function get_dashboard_data(get_year = 0) {
+        async function get_dashboard_data(get_year = 0, start = '', end = '') {
 
-            $('#select-year-data-loading').addClass('spinner-border')
-            $('#select-year-data').prop('disabled', true)
-            const res = await fetch(`/admin-vawc/admin-dashboard-data/${get_year}/`)
+            $('#select-year-data-loading').removeClass('d-none');
+            $('#dash-start-date, #dash-end-date, #dash-apply-btn, #dash-clear-btn').prop('disabled', true);
+            
+            let url = `/admin-vawc/admin-dashboard-data/${get_year}/`;
+            if (start && end) {
+                url += `?start=${start}&end=${end}`;
+            }
+            
+            const res = await fetch(url)
             if (!res.ok) {
+                $('#select-year-data-loading').addClass('d-none');
+                $('#dash-start-date, #dash-end-date, #dash-apply-btn, #dash-clear-btn').prop('disabled', false);
                 return
             }
             const data = await res.json()
-            $('#select-year-data-loading').removeClass('spinner-border')
-            $('#select-year-data').prop('disabled', false)
+            $('#select-year-data-loading').addClass('d-none')
+            $('#dash-start-date, #dash-end-date, #dash-apply-btn, #dash-clear-btn').prop('disabled', false)
 
             $('#total-cases').text(data.total_cases)
             $('#ongoing-cases').text(data.ongoing_cases)
@@ -912,7 +937,15 @@
                     default_barangay_options.push(case_item.data.barangay)
                 }
 
+
+                const caseUrl = case_item.data.type_of_case === 'Behalf'
+                    ? `/admin-vawc/view-case/behalf/${case_item.data.case_id}/`
+                    : `/admin-vawc/view-case/impacted/${case_item.data.case_id}/`;
+
                 const rowData = JSON.stringify({
+                    caseId: case_item.data.case_id,
+                    caseType: case_item.data.type_of_case,
+                    caseUrl: caseUrl,
                     caseNumber: `${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}`,
                     status: case_item.data.status || '',
                     victimNames: victims.names.join(', '),
@@ -927,7 +960,7 @@
                 });
 
                 caseTable.innerHTML += `
-            <tr class="border-bottom border-2 case-detail-row" style="cursor:pointer;" data-case='${rowData.replace(/'/g, "&apos;")}'>
+            <tr class="border-bottom border-2 case-detail-row" style="cursor:pointer;" data-case='${rowData.replace(/'/g, "&apos;")}' data-href="${caseUrl}">
                 <td class="text-center">${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}</td>
                 <td>${victims.names.join(", ")}</td>
                 <td>${victims.addresses.join(", ")}</td>
@@ -1025,18 +1058,23 @@
             })
             casesTable.draw()
 
-            // Row-click → open case detail modal
-            $('#cases-table tbody').off('click', 'tr').on('click', 'tr', function () {
+            // Row-click → navigate to case view page (and still allow modal preview on right-click)
+            $('#cases-table tbody').off('click', 'tr').on('click', 'tr', function (e) {
                 const raw = $(this).attr('data-case');
                 if (!raw) return;
                 const d = JSON.parse(raw.replace(/&apos;/g, "'"));
 
-                // Case Number & Date
+                // Ctrl+Click or middle-click: open in new tab
+                if (e.ctrlKey || e.metaKey || e.which === 2) {
+                    window.open(d.caseUrl, '_blank');
+                    return;
+                }
+
+                // Populate modal data for quick preview
                 $('#modal-case-number').text(d.caseNumber);
                 $('#modal-incident-date').text(d.incidentDate || '-');
                 $('#modal-incident-address-strip').text(d.incidentAddress || '-');
 
-                // Status badge (in the dark banner)
                 const statusBadge = $('#modal-status-badge');
                 const statusLower = (d.status || '').toLowerCase();
                 if (statusLower.includes('active') || statusLower.includes('ongoing')) {
@@ -1049,17 +1087,13 @@
                     statusBadge.attr('style', 'display:none;');
                 }
 
-                // Victim
                 $('#modal-victim-names').text(d.victimNames || '—');
                 $('#modal-victim-addresses').text(d.victimAddresses || '—');
                 $('#modal-victim-ages').text(d.victimAges || '—');
                 $('#modal-victim-genders').text(d.victimGenders || '—');
-
-                // Perpetrator
                 $('#modal-perp-names').text(d.perpNames || '—');
                 $('#modal-perp-addresses').text(d.perpAddresses || '—');
 
-                // RA Violations — premium badges
                 const raBadgesContainer = $('#modal-ra-badges');
                 raBadgesContainer.empty();
                 if (d.raViolations && d.raViolations.length > 0) {
@@ -1069,6 +1103,9 @@
                 } else {
                     raBadgesContainer.html('<span class="text-muted small fst-italic">No RA violations recorded for this case.</span>');
                 }
+
+                // Wire the 'View Full Case' button
+                $('#modal-view-case-btn').attr('href', d.caseUrl);
 
                 $('#caseDetailModal').modal('show');
             });
@@ -1100,9 +1137,22 @@
                 console.log('dra')
             });
         }
-        $('#select-year-data').on('change', (e) => {
-            get_dashboard_data(e.target.value)
-        })
+        // Filter UI Event Listeners
+        $('#dash-apply-btn').on('click', () => {
+            const start = $('#dash-start-date').val();
+            const end = $('#dash-end-date').val();
+            if(!start || !end) {
+                alert("Please select both start and end dates.");
+                return;
+            }
+            get_dashboard_data(0, start, end);
+        });
+
+        $('#dash-clear-btn').on('click', () => {
+            $('#dash-start-date').val('');
+            $('#dash-end-date').val('');
+            get_dashboard_data(0);
+        });
 
         // KPI Drill-down function
         window.drillDown = function(type) {
