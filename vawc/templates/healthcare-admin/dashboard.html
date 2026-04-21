@@ -161,6 +161,34 @@
   </div>
 </div>
 
+<!-- Modal for Case Summary -->
+<div class="modal fade" id="caseDetailModal" tabindex="-1" aria-labelledby="caseDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-primary text-white border-bottom-0 rounded-top-4">
+                <h5 class="modal-title fw-bold" id="caseDetailModalLabel">
+                    <i class='bx bxs-file-find me-2'></i>Case Summary Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="caseDetailsContent">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Fetching case details...</p>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                <a href="#" id="modal-view-case-btn" class="btn btn-primary rounded-pill px-4 fw-semibold">
+                    <i class='bx bx-edit-alt'></i> Open for Full Editing
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
@@ -396,13 +424,13 @@ $(document).ready(function() {
                 }
             })
             
-            if(!default_barangay_options.includes(case_item.data.barangay)) {
-                default_barangay_options.push(case_item.data.barangay)
-            }
+            const caseUrl = case_item.data.type_of_case === 'Behalf'
+                ? `/admin-healthcare-vawc/view-healthcare-case/behalf/${case_item.data.case_id}/`
+                : `/admin-healthcare-vawc/view-healthcare-case/impacted/${case_item.data.case_id}/`;
     
             caseTable.innerHTML += `
-            <tr class="border-bottom border-2">
-                <td class="text-center">--</td>
+            <tr class="border-bottom border-2" style="cursor:pointer;" data-case-id="${case_item.data.case_id}" data-edit-url="${caseUrl}">
+                <td class="text-center">${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}</td>
                 <td>${victims.names.join(", ")}</td>
                 <td>${victims.addresses.join(", ")}</td>
                 <td>${perpetrators.names.join(", ")}</td>
@@ -523,6 +551,18 @@ $(document).ready(function() {
     $('#select-year-data').on('change', (e) => {
         get_dashboard_data(e.target.value)
     })
+
+    // Row-click handler for unified modal summary
+    $('#cases-table tbody').on('click', 'tr', function (e) {
+        if ($(e.target).closest('.action-btn, a, button').length) return;
+        const caseId = $(this).data('case-id');
+        const editUrl = $(this).data('edit-url');
+        if (!caseId) return;
+        $('#modal-view-case-btn').attr('href', editUrl);
+        $('#caseDetailsContent').html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>');
+        $('#caseDetailModal').modal('show');
+        $('#caseDetailsContent').load('/case-summary/' + caseId + '/');
+    });
 
 });
 </script>

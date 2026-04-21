@@ -6372,3 +6372,15 @@ def reset_account_password(request, account_id):
         return JsonResponse({'success': False, 'message': 'User not found.'})
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
+
+@login_required
+def case_summary_modal(request, case_id):
+    from case.models import Case
+    try:
+        case = Case.objects.get(id=case_id)
+    except Case.DoesNotExist:
+        return HttpResponse("Case not found.", status=404)
+    
+    return render(request, 'base/case_modal_content.html', {
+        'case': case
+    })

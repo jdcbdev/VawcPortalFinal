@@ -13,6 +13,13 @@
             text-align: center;
         }
     }
+    #table-case tbody tr {
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    #table-case tbody tr:hover {
+        background-color: rgba(232, 160, 32, 0.05) !important;
+    }
 </style>
 {% endblock %}
 {% block content %}
@@ -82,12 +89,12 @@
                     <th scope="col">Status</th>
                     <th scope="col">Date Added</th>
                     <th scope="col" style="display:none;">Barangay</th>
-                    <th class="text-center" scope="col">View</th>
+                    <th class="text-center" scope="col">Action</th>
                 </tr>
             </thead>
             <tbody class="table-group-divider">
                 {% for case in cases %}
-                <tr class="border-bottom border-2">
+                <tr class="border-bottom border-2" data-case-id="{{ case.id }}" data-edit-url="{% if case.type_of_case == 'Impacted' %}{% url 'admin case impacted view' case_id=case.id %}{% else %}{% url 'admin case behalf view' case_id=case.id %}{% endif %}">
                     <td class="text-center">{{ case.date_added|date:'Y-m' }}-{{ case.case_number }}</td>
                     <td>
                         {% if case.type_of_case == 'Impacted' %}
@@ -108,9 +115,9 @@
                     <td style="display:none;">{{ case.barangay }}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
-                            <a class="btn btn-outline-gold btn-sm px-3" href="{% url 'admin case impacted view' case_id=case.id %}" role="button">View</a>
+                            <a class="btn btn-outline-gold btn-sm px-3 action-btn" href="{% url 'admin case impacted view' case_id=case.id %}" role="button">Edit</a>
                         {% elif case.type_of_case == 'Behalf' %}
-                            <a class="btn btn-outline-gold btn-sm px-3" href="{% url 'admin case behalf view' case_id=case.id %}" role="button">View</a>
+                            <a class="btn btn-outline-gold btn-sm px-3 action-btn" href="{% url 'admin case behalf view' case_id=case.id %}" role="button">Edit</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -212,6 +219,34 @@
                     <button type="submit" class="btn btn-gold rounded-3 px-4" id="addCaseBtn">Create Case Entry</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Case Summary -->
+<div class="modal fade" id="caseDetailsModal" tabindex="-1" aria-labelledby="caseDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-gold-light border-bottom-0 rounded-top-4">
+                <h5 class="modal-title fw-bold text-color-primary" id="caseDetailsModalLabel">
+                    <i class='bx bxs-file-find me-2'></i>Case Summary Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="caseDetailsContent">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-gold" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Fetching case details...</p>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                <a href="#" id="caseEditLink" class="btn btn-gold rounded-pill px-4">
+                    <i class='bx bx-edit-alt'></i> Open for Full Editing
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -323,6 +358,27 @@
                     console.error(xhr.responseText);
                 }
             });
+        });
+
+        // Row Click Handler for Modal
+        $('#table-case tbody').on('click', 'tr', function(e) {
+            // Don't trigger if clicking on action buttons or anchors
+            if ($(e.target).closest('.action-btn, a, button').length) return;
+
+            var rowData = table.row(this).data(); // need to get the case numbers/ID differently or from a data attribute
+            // We'll add data-case-id to rows for easier access
+            var caseId = $(this).data('case-id');
+            var editUrl = $(this).data('edit-url');
+
+            if (!caseId) return;
+
+            // Prepare Modal
+            $('#caseEditLink').attr('href', editUrl);
+            $('#caseDetailsContent').html('<div class="text-center py-5"><div class="spinner-border text-gold" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>');
+            $('#caseDetailsModal').modal('show');
+
+            // Load Content
+            $('#caseDetailsContent').load('/case-summary/' + caseId + '/');
         });
     });
 </script>

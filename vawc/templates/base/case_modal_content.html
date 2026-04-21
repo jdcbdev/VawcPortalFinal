@@ -1,0 +1,141 @@
+<div class="row g-3">
+    <!-- Case Header Information -->
+    <div class="col-12">
+        <div class="card bg-light border-0">
+            <div class="card-body py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="text-color-primary fw-bold fs-6 mb-1">
+                            Case # {{ case.date_added|date:'Y-m' }}-{{ case.case_number }}
+                        </h5>
+                        <span class="badge {% if case.status == 'Active' %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ case.status|upper }}
+                        </span>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="mb-0 text-muted small">Date Added: <strong>{{ case.date_added|date:"F d, Y" }}</strong></p>
+                        <p class="mb-0 text-muted small">Type: <strong>{{ case.get_type_of_case_display|default:case.type_of_case }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Victim Information -->
+    <div class="col-md-6">
+        <h6 class="fw-bold border-bottom pb-2 mb-3"><i class='bx bxs-user-voice me-1 text-color-gold'></i> Victim Summary</h6>
+        {% with victim=case.victim_set.first %}
+            {% if victim %}
+                <div class="mb-2">
+                    <label class="small text-muted d-block">Full Name</label>
+                    <span class="fw-semibold">{{ victim.first_name }} {{ victim.middle_name|default:'' }} {{ victim.last_name }}</span>
+                </div>
+                <div class="row">
+                    <div class="col-4 mb-2">
+                        <label class="small text-muted d-block">Sex</label>
+                        <span>{{ victim.sex|default:"N/A" }}</span>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <label class="small text-muted d-block">Age</label>
+                        <span>{{ victim.age|default:"N/A" }}</span>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <label class="small text-muted d-block">Civil Status</label>
+                        <span>{{ victim.civil_status|default:"N/A" }}</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="small text-muted d-block">Contact</label>
+                    <span>{{ victim.contact_number|default:"N/A" }}</span>
+                </div>
+            {% else %}
+                <p class="text-muted fst-italic">No victim data recorded.</p>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Perpetrator Information -->
+    <div class="col-md-6 border-start-md">
+        <h6 class="fw-bold border-bottom pb-2 mb-3"><i class='bx bxs-user-x me-1 text-danger'></i> Perpetrator Summary</h6>
+        {% with perpetrator=case.perpetrator.first %}
+            {% if perpetrator %}
+                <div class="mb-2">
+                    <label class="small text-muted d-block">Full Name</label>
+                    <span class="fw-semibold">{{ perpetrator.first_name }} {{ perpetrator.middle_name|default:'' }} {{ perpetrator.last_name }}</span>
+                </div>
+                <div class="mb-2">
+                    <label class="small text-muted d-block">Relationship to Victim</label>
+                    <span>{{ perpetrator.get_relationship_to_victim_display|default:perpetrator.relationship_to_victim }}</span>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="small text-muted d-block">Sex</label>
+                        <span>{{ perpetrator.sex|default:"N/A" }}</span>
+                    </div>
+                    <div class="col-6">
+                        <label class="small text-muted d-block">Alias</label>
+                        <span>{{ perpetrator.alias|default:"N/A" }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-muted fst-italic">No perpetrator data recorded.</p>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Incident Details -->
+    <div class="col-12 mt-4">
+        <h6 class="fw-bold border-bottom pb-2 mb-3"><i class='bx bx-info-circle me-1 text-info'></i> Incident Details</h6>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="small text-muted d-block">Service Information</label>
+                <p class="mb-0">
+                    {% if case.service_information == 'crisis' %}
+                        Crisis Intervention Including Rescue
+                    {% elif case.service_information == 'issuance' %}
+                        Issuance / Enforcement of Barangay Protection Order
+                    {% else %}
+                        {{ case.service_information }}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="small text-muted d-block">Place of Incident</label>
+                <p class="mb-0">{{ case.place_of_incident|default:"N/A" }} ({{ case.barangay }}, {{ case.city }})</p>
+            </div>
+            <div class="col-12">
+                <label class="small text-muted d-block">Incident Description</label>
+                <div class="bg-white p-3 border rounded shadow-sm" style="max-height: 200px; overflow-y: auto;">
+                    {{ case.description_of_incident|linebreaks|default:"<span class='text-muted fst-italic'>No description provided.</span>" }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Status -->
+    <div class="col-12 mt-4">
+        <h6 class="fw-bold border-bottom pb-2 mb-3"><i class='bx bx-transfer me-1 text-success'></i> Referral Status</h6>
+        <div class="row g-2">
+            <div class="col-6 col-md-3">
+                <div class="p-2 border rounded text-center {% if case.refers_to_law_enforcement %}bg-success-subtle border-success{% else %}bg-light opacity-50{% endif %}">
+                    <small>Law Enforcement</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-2 border rounded text-center {% if case.refers_to_healthcare_provider %}bg-success-subtle border-success{% else %}bg-light opacity-50{% endif %}">
+                    <small>Healthcare</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-2 border rounded text-center {% if case.refers_to_social_welfare %}bg-success-subtle border-success{% else %}bg-light opacity-50{% endif %}">
+                    <small>Social Welfare</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-2 border rounded text-center {% if case.refers_to_other_service_provider %}bg-success-subtle border-success{% else %}bg-light opacity-50{% endif %}">
+                    <small>Other Provider</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
