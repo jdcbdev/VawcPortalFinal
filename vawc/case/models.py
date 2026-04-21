@@ -230,27 +230,6 @@ class Victim(models.Model):
     number_of_children = models.CharField(max_length=150,null=True, blank=True)
     ages_of_children = models.CharField(max_length=150,null=True, blank=True)
     
-    @property
-    def age(self):
-        if not self.date_of_birth:
-            return None
-        try:
-            from datetime import date, datetime
-            dob = None
-            # Standard formats
-            for fmt in ('%Y-%m-%d', '%m/%d/%Y', '%d/%m/%Y'):
-                try:
-                    dob = datetime.strptime(self.date_of_birth, fmt).date()
-                    break
-                except ValueError:
-                    continue
-            if not dob:
-                return None
-            today = date.today()
-            return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
-        except:
-            return None
-    
     def __str__(self):
         return f"Victim ID: {self.id}"
     def get_user_name(self):

@@ -31,17 +31,13 @@
                     <span class="fw-semibold">{{ victim.first_name }} {{ victim.middle_name|default:'' }} {{ victim.last_name }}</span>
                 </div>
                 <div class="row">
-                    <div class="col-4 mb-2">
+                    <div class="col-6 mb-2">
                         <label class="small text-muted d-block">Sex</label>
-                        <span>{{ victim.sex|default:"N/A" }}</span>
+                        <span>{{ victim.sex }}</span>
                     </div>
-                    <div class="col-4 mb-2">
-                        <label class="small text-muted d-block">Age</label>
-                        <span>{{ victim.age|default:"N/A" }}</span>
-                    </div>
-                    <div class="col-4 mb-2">
+                    <div class="col-6 mb-2">
                         <label class="small text-muted d-block">Civil Status</label>
-                        <span>{{ victim.civil_status|default:"N/A" }}</span>
+                        <span>{{ victim.civil_status }}</span>
                     </div>
                 </div>
                 <div class="mb-2">

@@ -276,30 +276,119 @@
     }
 </style>
 
-<!-- Modal for Case Summary -->
 <div class="modal fade" id="caseDetailModal" tabindex="-1" aria-labelledby="caseDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header bg-primary text-white border-bottom-0 rounded-top-4">
-                <h5 class="modal-title fw-bold" id="caseDetailModalLabel">
-                    <i class='bx bxs-file-find me-2'></i>Case Summary Details
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4" id="caseDetailsContent">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+            <!-- Gold Banner Header -->
+            <div class="case-modal-gold-header px-4 pt-4 pb-5 position-relative">
+                <i class='bx bx-file-blank position-absolute top-0 end-0 opacity-10 pe-none' style="font-size:9rem; margin-top:-1rem;"></i>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="mb-2">
+                            <span id="modal-status-badge" class="badge rounded-pill small fw-bold" style="display:none;"></span>
+                        </div>
+                        <h4 class="fw-bold mb-0 text-dark" id="caseDetailModalLabel">
+                            Case <span id="modal-case-number" class="fw-bold" style="color:#5a3400;"></span>
+                        </h4>
+                        <div class="small mt-1 text-dark text-opacity-50">
+                            <i class='bx bx-calendar me-1'></i><span id="modal-incident-date"></span>
+                        </div>
                     </div>
-                    <p class="mt-2 text-muted">Fetching case details...</p>
+                    <button type="button" class="btn-close mt-1" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
-            <div class="modal-footer border-top-0 pt-0">
-                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-                <a href="#" id="modal-view-case-btn" class="btn btn-primary rounded-pill px-4 fw-semibold">
-                    <i class='bx bx-edit-alt'></i> Open for Full Editing
+
+            <!-- Incident Address Strip -->
+            <div class="bg-gold-light border-top border-bottom py-2 px-4 d-flex align-items-center gap-2" style="border-color:#E8A020 !important;">
+                <i class='bx bx-map-pin text-color-gold fs-5'></i>
+                <span class="small fw-semibold text-secondary" id="modal-incident-address-strip"></span>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body p-0 bg-white">
+
+                <!-- Victim Section -->
+                <div class="px-4 pt-4 pb-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                            <i class='bx bx-user me-1'></i>Victim Information
+                        </span>
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Full Name(s)</div>
+                                <div class="fw-semibold text-dark" id="modal-victim-names">—</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Address</div>
+                                <div class="fw-semibold text-dark" id="modal-victim-addresses">—</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Age</div>
+                                <div class="fw-semibold text-dark" id="modal-victim-ages">—</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Gender</div>
+                                <div class="fw-semibold text-dark" id="modal-victim-genders">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Perpetrator Section -->
+                <div class="px-4 pt-4 pb-3 border-bottom">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                            <i class='bx bx-user-x me-1'></i>Perpetrator Information
+                        </span>
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Full Name(s)</div>
+                                <div class="fw-semibold text-dark" id="modal-perp-names">—</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="bg-light rounded-3 p-3 border border-light-subtle">
+                                <div class="text-uppercase fw-bold text-secondary mb-1" style="font-size:0.65rem; letter-spacing:0.07em;">Address</div>
+                                <div class="fw-semibold text-dark" id="modal-perp-addresses">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RA Violations Section -->
+                <div class="px-4 pt-4 pb-5">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                            <i class='bx bx-shield-x me-1'></i>RA Violations
+                        </span>
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                    </div>
+                    <div id="modal-ra-badges" class="d-flex flex-wrap gap-2"></div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer border-top d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
+                <a id="modal-view-case-btn" href="#" class="btn btn-gold rounded-3 px-4 fw-semibold">
+                    <i class='bx bx-right-arrow-circle me-1'></i>View Full Case
                 </a>
             </div>
+
         </div>
     </div>
 </div>
@@ -928,7 +1017,7 @@
                 });
 
                 caseTable.innerHTML += `
-            <tr class="border-bottom border-2 case-detail-row" style="cursor:pointer;" data-case-id="${case_item.data.case_id}" data-edit-url="${caseUrl}">
+            <tr class="border-bottom border-2 case-detail-row" style="cursor:pointer;" data-case='${rowData.replace(/'/g, "&apos;")}' data-href="${caseUrl}">
                 <td class="text-center">${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}</td>
                 <td>${victims.names.join(", ")}</td>
                 <td>${victims.addresses.join(", ")}</td>
@@ -1031,23 +1120,56 @@
             })
             casesTable.draw()
 
-            // Row-click → load unified modal summary
+            // Row-click → navigate to case view page (and still allow modal preview on right-click)
             $('#cases-table tbody').off('click', 'tr').on('click', 'tr', function (e) {
-                // Don't trigger if clicking on action buttons or specific links if any
-                if ($(e.target).closest('.action-btn, a, button').length) return;
+                const raw = $(this).attr('data-case');
+                if (!raw) return;
+                const d = JSON.parse(raw.replace(/&apos;/g, "'"));
 
-                const caseId = $(this).data('case-id');
-                const editUrl = $(this).data('edit-url');
+                // Ctrl+Click or middle-click: open in new tab
+                if (e.ctrlKey || e.metaKey || e.which === 2) {
+                    window.open(d.caseUrl, '_blank');
+                    return;
+                }
 
-                if (!caseId) return;
+                // Populate modal data for quick preview
+                $('#modal-case-number').text(d.caseNumber);
+                $('#modal-incident-date').text(d.incidentDate || '-');
+                $('#modal-incident-address-strip').text(d.incidentAddress || '-');
 
-                // Prepare Modal
-                $('#modal-view-case-btn').attr('href', editUrl);
-                $('#caseDetailsContent').html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>');
+                const statusBadge = $('#modal-status-badge');
+                const statusLower = (d.status || '').toLowerCase();
+                if (statusLower.includes('active') || statusLower.includes('ongoing')) {
+                    statusBadge.text('Active').attr('style', 'display:inline-block;background:rgba(0,0,0,0.18);color:#1a1a1a;border:1.5px solid rgba(0,0,0,0.3);font-size:0.72rem;font-weight:700;padding:0.35rem 0.9rem;border-radius:50px;');
+                } else if (statusLower.includes('close') || statusLower.includes('resolved')) {
+                    statusBadge.text('Resolved').attr('style', 'display:inline-block;background:rgba(0,0,0,0.18);color:#1a4a1a;border:1.5px solid rgba(0,80,0,0.4);font-size:0.72rem;font-weight:700;padding:0.35rem 0.9rem;border-radius:50px;');
+                } else if (d.status) {
+                    statusBadge.text(d.status).attr('style', 'display:inline-block;background:rgba(0,0,0,0.15);color:#1a1a1a;border:1.5px solid rgba(0,0,0,0.25);font-size:0.72rem;font-weight:700;padding:0.35rem 0.9rem;border-radius:50px;');
+                } else {
+                    statusBadge.attr('style', 'display:none;');
+                }
+
+                $('#modal-victim-names').text(d.victimNames || '—');
+                $('#modal-victim-addresses').text(d.victimAddresses || '—');
+                $('#modal-victim-ages').html(d.victimAges || '—');
+                $('#modal-victim-genders').text(d.victimGenders || '—');
+                $('#modal-perp-names').text(d.perpNames || '—');
+                $('#modal-perp-addresses').text(d.perpAddresses || '—');
+
+                const raBadgesContainer = $('#modal-ra-badges');
+                raBadgesContainer.empty();
+                if (d.raViolations && d.raViolations.length > 0) {
+                    d.raViolations.forEach(ra => {
+                        raBadgesContainer.append(`<span class="ra-badge"><i class='bx bx-shield-x'></i>${ra}</span>`);
+                    });
+                } else {
+                    raBadgesContainer.html('<span class="text-muted small fst-italic">No RA violations recorded for this case.</span>');
+                }
+
+                // Wire the 'View Full Case' button
+                $('#modal-view-case-btn').attr('href', d.caseUrl);
+
                 $('#caseDetailModal').modal('show');
-
-                // Load Content via AJAX from the unified summary endpoint
-                $('#caseDetailsContent').load('/case-summary/' + caseId + '/');
             });
 
             $('.ra-cb').off('change').on('change', function() {

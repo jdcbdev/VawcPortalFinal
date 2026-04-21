@@ -245,35 +245,6 @@
         </div>
     </div>
 
-    </div>
-</div>
-
-<!-- Modal for Case Summary -->
-<div class="modal fade" id="caseDetailModal" tabindex="-1" aria-labelledby="caseDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header bg-primary text-white border-bottom-0 rounded-top-4">
-                <h5 class="modal-title fw-bold" id="caseDetailModalLabel">
-                    <i class='bx bxs-file-find me-2'></i>Case Summary Details
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4" id="caseDetailsContent">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="mt-2 text-muted">Fetching case details...</p>
-                </div>
-            </div>
-            <div class="modal-footer border-top-0 pt-0">
-                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-                <a href="#" id="modal-view-case-btn" class="btn btn-primary rounded-pill px-4 fw-semibold">
-                    <i class='bx bx-edit-alt'></i> Open for Full Editing
-                </a>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- Toasts -->
@@ -647,8 +618,8 @@ $(document).ready(function () {
                 ? ra_list.map(r=>`<span class="badge bg-gold-light text-color-gold border border-warning rounded-pill me-1 small">${r}</span>`).join('')
                 : '<span class="text-muted small">—</span>';
 
-            caseTable.innerHTML += `
-            <tr class="border-bottom" style="cursor:pointer;" data-case-id="${d.case_id}" data-edit-url="${caseUrl}">
+            tbody.innerHTML += `
+            <tr class="border-bottom" data-href="${caseUrl}" data-caseid="${d.case_id}">
                 <td class="text-center fw-semibold small">${d.case_number||'—'}</td>
                 <td class="small">${victims.names.join(', ')}</td>
                 <td class="small">${victims.addresses.join(' | ')}</td>
@@ -692,16 +663,9 @@ $(document).ready(function () {
             }]
         });
 
-        // Row-click → load unified modal summary
-        $('#consolidated-cases-table tbody').on('click', 'tr', function (e) {
-            if ($(e.target).closest('.action-btn, a, button').length) return;
-            const caseId = $(this).data('case-id');
-            const editUrl = $(this).data('edit-url');
-            if (!caseId) return;
-            $('#modal-view-case-btn').attr('href', editUrl);
-            $('#caseDetailsContent').html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>');
-            $('#caseDetailModal').modal('show');
-            $('#caseDetailsContent').load('/case-summary/' + caseId + '/');
+        // Row click → case view
+        $('#consolidated-cases-table tbody').on('click', 'tr', function () {
+            const href = $(this).data('href'); if (href) window.location.href = href;
         });
 
         // Re-calculate KPIs and Dynamic Charts on EVERY filter change!
