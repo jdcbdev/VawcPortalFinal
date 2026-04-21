@@ -7,7 +7,6 @@
 <style>
     /* CSS for mobile devices */
     @media only screen and (max-width: 767px) {
-        /* Center pagination and show entries */
         .dataTables_wrapper .dataTables_length,
         .dataTables_wrapper .dataTables_paginate {
             text-align: center;
@@ -36,46 +35,108 @@
             </button>
         </div>
     </div>
-    <div class="d-flex align-items-center mb-3">
-        <p class="mb-0 me-2 text-muted">Filtered by Barangay: <span id="currentBarangayFilterText" class="fw-bold text-color-primary">{{ barangay|default:"All" }}</span></p>
-        <div class="dropdown">
-            <i class='bx bx-filter dropdown-toggle text-color-gold' type="button" id="barangayFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer; font-size: 1.5rem;" title="Filter by Barangay"></i>
-            <div class="dropdown-menu p-2 shadow" aria-labelledby="barangayFilterDropdown" style="min-width: 220px;">
-                <label for="barangay" class="form-label small fw-bold text-muted mb-1">Filter by Barangay</label>
-                <select name="barangay" id="barangay" class="form-select form-select-sm border-secondary">
-                    <option value="">All Barangays</option>
-                </select>
-            </div>
-        </div>
-    </div>
 
-    <div class="row mt-4">
-        <div class="col-lg-3 mb-lg-0 mb-3 ">
-            <div class="input-group search-keyword">
+    <!-- ── Row 1: Basic Filters ── -->
+    <div class="row g-2 mt-3 align-items-end">
+        <!-- Keyword Search -->
+        <div class="col-12 col-md-3">
+            <div class="input-group">
                 <input type="number" name="keyword" id="keyword" placeholder="Search Case Number" class="form-control">
-                <button class="btn btn-outline-secondary background-color-green" type="button"><i class='bx bx-search-alt'></i></button>
+                <button class="btn btn-outline-secondary" type="button"><i class='bx bx-search-alt'></i></button>
             </div>
         </div>
-        <div class="form-group col-lg-3 mb-lg-0 mb-3 ">
-            <select name="case_type" id="case_type" class="form-select me-md-2">
+        <!-- Case Type -->
+        <div class="col-6 col-md-3">
+            <select name="case_type" id="case_type" class="form-select">
                 <option value="">All Case Type</option>
                 <option value="Impacted Victim">Impacted Victim</option>
                 <option value="Behalf">Behalf of Impacted Victim</option>
             </select>
         </div>
-        <div class="form-group col-lg-3 mb-lg-0 mb-3 ">
-            <select name="service" id="service" class="form-select me-md-2">
+        <!-- Service -->
+        <div class="col-6 col-md-3">
+            <select name="service" id="service" class="form-select">
                 <option value="">All Service</option>
                 <option value="Rescue">Crisis Intervention Including Rescue</option>
                 <option value="Issuance">Issuance / Enforcement of Barangay Protection Order</option>
             </select>
         </div>
-        <div class="form-group col-lg-3 mb-lg-0 mb-3 ">
-            <select name="status" id="status" class="form-select me-md-2">
+        <!-- Status -->
+        <div class="col-6 col-md-3">
+            <select name="status" id="status" class="form-select">
                 <option value="">All Status</option>
                 <option value="Active">Active</option>
                 <option value="Close">Close</option>
             </select>
+        </div>
+    </div>
+
+    <!-- ── Row 2: Advanced Filters ── -->
+    <div class="row g-2 mt-2 align-items-end">
+        <div class="col-12 col-lg-auto d-flex align-items-center text-muted small fw-semibold" style="min-width: 80px;">
+            <i class='bx bx-filter me-1'></i> Advanced
+        </div>
+
+        <!-- Barangay Checklist -->
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="dropdown" id="barangay-dropdown">
+                <button class="form-select text-start bg-white text-truncate" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" id="btn-barangay-filter" data-bs-auto-close="outside">
+                    All Barangay
+                </button>
+                <ul class="dropdown-menu w-100 p-2 shadow-sm" id="barangay-filter-menu"
+                    style="max-height: 250px; overflow-y: auto;">
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-barangay-cb form-check-input me-2" value="" checked> All Barangay</label></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- RA Checklist -->
+        <div class="col-6 col-md-2 col-lg-2">
+            <div class="dropdown">
+                <button class="form-select text-start bg-white text-truncate" type="button"
+                    data-bs-toggle="dropdown" id="btn-ra-filter" data-bs-auto-close="outside">
+                    All RA
+                </button>
+                <ul class="dropdown-menu w-100 p-2 shadow-sm" style="max-height: 250px; overflow-y: auto;">
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="" checked> All RA</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 9262"> RA 9262</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 8353"> RA 8353</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 7877"> RA 7877</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 7610"> RA 7610</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 9775"> RA 9775</label></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="col-6 col-md-2 col-lg-2">
+            <select id="case-gender-filter" class="form-select">
+                <option value="">All Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+
+        <!-- Age Range -->
+        <div class="col-6 col-md-2 col-lg-2">
+            <div class="dropdown" id="age-range-dropdown">
+                <button class="form-select text-start bg-white text-truncate" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" id="btn-age-filter" data-bs-auto-close="outside">
+                    All Ages
+                </button>
+                <div class="dropdown-menu p-3 shadow-sm" style="min-width: 220px;">
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold text-muted mb-1">Age Range</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="number" id="case-age-from" class="form-control form-control-sm" placeholder="From" min="0" max="150">
+                            <span class="text-muted small">—</span>
+                            <input type="number" id="case-age-to" class="form-control form-control-sm" placeholder="To" min="0" max="150">
+                        </div>
+                    </div>
+                    <button id="case-age-clear" class="btn btn-sm btn-outline-secondary w-100">Clear</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -89,12 +150,17 @@
                     <th scope="col">Status</th>
                     <th scope="col">Date Added</th>
                     <th scope="col" style="display:none;">Barangay</th>
+                    <th scope="col" style="display:none;">RA Violations</th>
+                    <th scope="col" style="display:none;">Victim Gender</th>
+                    <th scope="col" style="display:none;">Victim Age</th>
                     <th class="text-center" scope="col">Action</th>
                 </tr>
             </thead>
             <tbody class="table-group-divider">
                 {% for case in cases %}
-                <tr class="border-bottom border-2" data-case-id="{{ case.id }}" data-edit-url="{% if case.type_of_case == 'Impacted' %}{% url 'admin case impacted view' case_id=case.id %}{% else %}{% url 'admin case behalf view' case_id=case.id %}{% endif %}">
+                <tr class="border-bottom border-2"
+                    data-case-id="{{ case.id }}"
+                    data-edit-url="{% if case.type_of_case == 'Impacted' %}{% url 'admin case impacted view' case_id=case.id %}{% else %}{% url 'admin case behalf view' case_id=case.id %}{% endif %}">
                     <td class="text-center">{{ case.date_added|date:'Y-m' }}-{{ case.case_number }}</td>
                     <td>
                         {% if case.type_of_case == 'Impacted' %}
@@ -112,7 +178,14 @@
                     </td>
                     <td>{{ case.status }}</td>
                     <td>{{ case.date_added|date:"m/d/Y" }}</td>
+                    <!-- Hidden: Barangay -->
                     <td style="display:none;">{{ case.barangay }}</td>
+                    <!-- Hidden: RA Violations -->
+                    <td style="display:none;">{% if case.checkbox_ra_9262 %}RA 9262{% endif %}{% if case.checkbox_ra_8353 %},RA 8353{% endif %}{% if case.checkbox_ra_7877 %},RA 7877{% endif %}{% if case.checkbox_a_7610 %},RA 7610{% endif %}{% if case.checkbox_ra_9775 %},RA 9775{% endif %}</td>
+                    <!-- Hidden: Victim Gender -->
+                    <td style="display:none;">{% for v in case.victim_set.all %}{{ v.sex }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
+                    <!-- Hidden: Victim Age (numeric, comma-separated) -->
+                    <td style="display:none;">{% for v in case.victim_set.all %}{{ v.date_of_birth }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
                             <a class="btn btn-outline-gold btn-sm px-3 action-btn" href="{% url 'admin case impacted view' case_id=case.id %}" role="button">Edit</a>
@@ -123,11 +196,12 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td></td>
-                    <td></td>
+                    <td></td><td></td>
                     <td>No cases found</td>
-                    <td></td>
-                    <td></td>
+                    <td></td><td></td>
+                    <td style="display:none;"></td>
+                    <td style="display:none;"></td>
+                    <td style="display:none;"></td>
                     <td style="display:none;"></td>
                     <td></td>
                 </tr>
@@ -136,7 +210,7 @@
         </table>
     </div><!--end of div of table-->
 </div>
-<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
+<!-- Toast container -->
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header text-white" style="background-color:#E8A020;">
@@ -145,8 +219,7 @@
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark fw-bold">
-        </div>
+        <div class="toast-body text-dark fw-bold"></div>
     </div>
     <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header text-white bg-danger">
@@ -155,10 +228,10 @@
             <small>Just Now</small>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <div class="toast-body text-dark fw-bold">
-        </div>
+        <div class="toast-body text-dark fw-bold"></div>
     </div>
 </div>
+
 <!-- Modal add case -->
 <div class="modal fade" id="add_case" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -175,13 +248,11 @@
                 <input type="hidden" name="status_case" value="Active">
                 <div class="modal-body">
                     <div class="form-floating mb-2">
-                        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" >
+                        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
                         <label for="email">Email</label>
                     </div>
                     <div class="row d-flex justify-content-start align-items-center ps-1">
-                        <div class="col-4">
-                            <h5>Type of Case:</h5>
-                        </div>
+                        <div class="col-4"><h5>Type of Case:</h5></div>
                         <div class="col">
                             <div class="d-grid">
                                 <input type="radio" class="btn-check btn-check-update" name="case_type" value="Impacted" id="Impacted" autocomplete="off" data-status="Impacted" checked>
@@ -190,16 +261,14 @@
                         </div>
                         <div class="col">
                             <div class="d-grid">
-                                <input type="radio" class="btn-check btn-check-update" name="case_type" value="Behalf" id="Behalf" autocomplete="off"  data-status="Behalf">
+                                <input type="radio" class="btn-check btn-check-update" name="case_type" value="Behalf" id="Behalf" autocomplete="off" data-status="Behalf">
                                 <label class="btn btn-outline-primary" for="Behalf">Behalf</label>
                             </div>
                         </div>
                     </div>
                     <br>
                     <div class="row d-flex align-items-center ps-1">
-                        <div class="col-4">
-                            <h5>Type of Service:</h5>
-                        </div>
+                        <div class="col-4"><h5>Type of Service:</h5></div>
                         <div class="col-4">
                             <div class="d-grid">
                                 <input type="radio" class="btn-check btn-check-update btn-block" name="service_type" value="crisis" id="crisis" autocomplete="off" data-status="crisis" checked>
@@ -208,7 +277,7 @@
                         </div>
                         <div class="col-4">
                             <div class="d-grid">
-                                <input type="radio" class="btn-check btn-check-update btn-block" name="service_type" value="issuance" id="issuance" autocomplete="off"  data-status="issuance">
+                                <input type="radio" class="btn-check btn-check-update btn-block" name="service_type" value="issuance" id="issuance" autocomplete="off" data-status="issuance">
                                 <label class="btn btn-outline-primary" for="issuance">Issuance</label>
                             </div>
                         </div>
@@ -235,9 +304,7 @@
             </div>
             <div class="modal-body p-4" id="caseDetailsContent">
                 <div class="text-center py-5">
-                    <div class="spinner-border text-gold" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+                    <div class="spinner-border text-gold" role="status"></div>
                     <p class="mt-2 text-muted">Fetching case details...</p>
                 </div>
             </div>
@@ -254,130 +321,168 @@
 {% block scripts %}
 <script>
     $(document).ready(function() {
-        $('#table-case').DataTable({
+        const BARANGAY_COL = 5;
+        const RA_COL       = 6;
+        const GENDER_COL   = 7;
+        const AGE_COL      = 8;  // stores raw date_of_birth strings
+
+        // ── Age range filter via ext.search ──
+        $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn._caseAgeFilter !== true);
+        const caseAgeFilter = function(settings, data, dataIndex) {
+            if (settings.nTable.id !== 'table-case') return true;
+            const from = parseInt($('#case-age-from').val(), 10);
+            const to   = parseInt($('#case-age-to').val(), 10);
+            if (isNaN(from) && isNaN(to)) return true;
+            const today = new Date();
+            // Column 8 holds comma-separated date_of_birth strings (YYYY-MM-DD or similar)
+            const dobText = data[AGE_COL] || '';
+            if (!dobText.trim()) return isNaN(from) && isNaN(to);
+            const dobs = dobText.split(',').map(s => s.trim()).filter(Boolean);
+            return dobs.some(dob => {
+                const bd = new Date(dob);
+                if (isNaN(bd)) return false;
+                let age = today.getFullYear() - bd.getFullYear();
+                const mo = today.getMonth() - bd.getMonth();
+                if (mo < 0 || (mo === 0 && today.getDate() < bd.getDate())) age--;
+                return (!isNaN(from) ? age >= from : true) && (!isNaN(to) ? age <= to : true);
+            });
+        };
+        caseAgeFilter._caseAgeFilter = true;
+        $.fn.dataTable.ext.search.push(caseAgeFilter);
+
+        // ── Initialize DataTable ──
+        var table = $('#table-case').DataTable({
             dom: 'Brt <"bottom"lp>',
             responsive: true,
             fixedHeader: true,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-            //order: [[4, 'desc']],
             order: [[0, 'desc']],
             pageLength: 20,
         });
 
-        // Your filter options and search functionality
-        $('input#keyword').on('input', function(e){
-            var status = $(this).val();
-            $('#table-case').DataTable().columns([0]).search(status).draw();
-        });
-        $('select#case_type').on('change', function(e){
-            var status = $(this).val();
-            $('#table-case').DataTable().columns([1]).search(status).draw();
-        });
-        $('select#service').on('change', function(e){
-            var status = $(this).val();
-            $('#table-case').DataTable().columns([2]).search(status).draw();
-        });
-        $('select#status').on('change', function(e){
-            var status = $(this).val();
-            $('#table-case').DataTable().columns([3]).search(status).draw();
+        // ── Keyword ──
+        $('input#keyword').on('input', function() {
+            table.columns([0]).search($(this).val()).draw();
         });
 
-        // Extract unique barangays from the table column and populate the dropdown
-        var table = $('#table-case').DataTable();
-        var barangayColIndex = 5;
-        table.column(barangayColIndex).data().unique().sort().each(function(d, j) {
-            if(d) {
-                var val = $('<div/>').html(d).text().trim();
-                if(val && val !== 'None') {
-                    $('select#barangay').append('<option value="' + val + '">' + val + '</option>');
-                }
+        // ── Basic selects ──
+        $('select#case_type').on('change', function() { table.columns([1]).search($(this).val()).draw(); });
+        $('select#service').on('change',   function() { table.columns([2]).search($(this).val()).draw(); });
+        $('select#status').on('change',    function() { table.columns([3]).search($(this).val()).draw(); });
+
+        // ── Barangay checkbox filter ──
+        var barangayMenu = document.getElementById('barangay-filter-menu');
+        table.column(BARANGAY_COL).data().unique().sort().each(function(d) {
+            var val = $('<div/>').html(d).text().trim();
+            if (val && val !== 'None') {
+                barangayMenu.innerHTML += `<li><label class="dropdown-item small"><input type="checkbox" class="case-barangay-cb form-check-input me-2" value="${val}"> ${val}</label></li>`;
             }
         });
 
-        $('select#barangay').on('change', function(e){
-            var rawVal = $(this).val();
-            var val = $.fn.dataTable.util.escapeRegex(rawVal);
-            $('#table-case').DataTable().columns([barangayColIndex]).search(val ? '^'+val+'$' : '', true, false).draw();
-            
-            // Update the display text to indicate the active filter
-            if(rawVal) {
-                $('#currentBarangayFilterText').text(rawVal);
+        $(document).on('change', '.case-barangay-cb', function() {
+            if ($(this).val() === '') {
+                if ($(this).is(':checked')) $('.case-barangay-cb').not(this).prop('checked', false);
             } else {
-                $('#currentBarangayFilterText').text('All');
+                $('.case-barangay-cb[value=""]').prop('checked', false);
+            }
+            let selected = [];
+            $('.case-barangay-cb:checked').each(function() { if ($(this).val()) selected.push($(this).val()); });
+            let label = selected.length ? selected.join(', ') : 'All Barangay';
+            $('#btn-barangay-filter').text(label).attr('title', label);
+            if (!selected.length) {
+                $('.case-barangay-cb[value=""]').prop('checked', true);
+                table.columns([BARANGAY_COL]).search('').draw();
+            } else {
+                let regex = selected.map(b => '^' + $.fn.dataTable.util.escapeRegex(b) + '$').join('|');
+                table.columns([BARANGAY_COL]).search(regex, true, false).draw();
             }
         });
 
+        // ── RA checkbox filter ──
+        $(document).on('change', '.case-ra-cb', function() {
+            if ($(this).val() === '') {
+                if ($(this).is(':checked')) $('.case-ra-cb').not(this).prop('checked', false);
+            } else {
+                $('.case-ra-cb[value=""]').prop('checked', false);
+            }
+            let selected = [];
+            $('.case-ra-cb:checked').each(function() { if ($(this).val()) selected.push($(this).val()); });
+            let label = selected.length ? selected.join(', ') : 'All RA';
+            $('#btn-ra-filter').text(label).attr('title', label);
+            if (!selected.length) {
+                $('.case-ra-cb[value=""]').prop('checked', true);
+                table.columns([RA_COL]).search('').draw();
+            } else {
+                let regex = selected.map(r => $.fn.dataTable.util.escapeRegex(r)).join('|');
+                table.columns([RA_COL]).search(regex, true, false).draw();
+            }
+        });
+
+        // ── Gender filter ──
+        $('#case-gender-filter').on('change', function() {
+            var val = $(this).val();
+            var regex = val ? `(?i)^${$.fn.dataTable.util.escapeRegex(val)}` : '';
+            table.columns([GENDER_COL]).search(val ? val : '', false, true).draw();
+        });
+
+        // ── Age range filter ──
+        function updateAgeLabel() {
+            var from = $('#case-age-from').val(), to = $('#case-age-to').val();
+            if (from && to)  $('#btn-age-filter').text(`${from} — ${to}`);
+            else if (from)   $('#btn-age-filter').text(`${from}+`);
+            else if (to)     $('#btn-age-filter').text(`Up to ${to}`);
+            else             $('#btn-age-filter').text('All Ages');
+        }
+        $('#case-age-from, #case-age-to').on('input.ageRange', function() { updateAgeLabel(); table.draw(); });
+        $('#case-age-clear').on('click.ageRange', function() {
+            $('#case-age-from, #case-age-to').val('');
+            updateAgeLabel(); table.draw();
+        });
+
+        // ── Add Case AJAX ──
         $('#addCaseBtn').click(function(e) {
-            e.preventDefault();  // Prevent default form submission
-
-            // Serialize form data
+            e.preventDefault();
             var formData = $('#add_case_form').serialize();
-
-            // Send AJAX POST request
             $.ajax({
                 type: 'POST',
-                url: "{% url 'add_new_case' %}",  // Replace with your actual URL for adding new case
+                url: "{% url 'add_new_case' %}",
                 data: formData,
                 success: function(response) {
                     if (response.success) {
-                        // Redirect based on type_of_case from the response
                         var caseId = response.case_id;
                         var typeOfCase = response.type_of_case;
                         if (typeOfCase === 'Impacted') {
-                            // Display success toast
-                            $('.toast-body').text('Case (Impcated Victim) added successfully');
+                            $('.toast-body').text('Case (Impacted Victim) added successfully');
                             $('#successToast').toast('show');
-                            
-                            // Close modal after 2 seconds
                             setTimeout(function() {
-                                $('#add_case').modal('hide'); // Close modal
+                                $('#add_case').modal('hide');
                                 window.location.href = '/admin-vawc/view-case/impacted/' + caseId + '/';
                             }, 2000);
-                            
                         } else if (typeOfCase === 'Behalf') {
-                            // Display success toast
                             $('.toast-body').text('Case (Behalf of Impacted Victim) added successfully');
                             $('#successToast').toast('show');
-                            
-                            // Close modal after 2 seconds
                             setTimeout(function() {
-                                $('#add_case').modal('hide'); // Close modal
+                                $('#add_case').modal('hide');
                                 window.location.href = '/admin-vawc/view-case/behalf/' + caseId + '/';
                             }, 2000);
-                            
-                        } else {
-                            // Handle other cases or errors
                         }
                     } else {
-                        // Handle error response
                         console.log(response.error);
                     }
                 },
-                error: function(xhr, status, error) {
-                    // Handle AJAX error
-                    console.error(xhr.responseText);
-                }
+                error: function(xhr, status, error) { console.error(xhr.responseText); }
             });
         });
 
-        // Row Click Handler for Modal
+        // ── Row Click → Case Summary Modal ──
         $('#table-case tbody').on('click', 'tr', function(e) {
-            // Don't trigger if clicking on action buttons or anchors
             if ($(e.target).closest('.action-btn, a, button').length) return;
-
-            var rowData = table.row(this).data(); // need to get the case numbers/ID differently or from a data attribute
-            // We'll add data-case-id to rows for easier access
-            var caseId = $(this).data('case-id');
+            var caseId  = $(this).data('case-id');
             var editUrl = $(this).data('edit-url');
-
             if (!caseId) return;
-
-            // Prepare Modal
             $('#caseEditLink').attr('href', editUrl);
             $('#caseDetailsContent').html('<div class="text-center py-5"><div class="spinner-border text-gold" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>');
             $('#caseDetailsModal').modal('show');
-
-            // Load Content
             $('#caseDetailsContent').load('/case-summary/' + caseId + '/');
         });
     });
