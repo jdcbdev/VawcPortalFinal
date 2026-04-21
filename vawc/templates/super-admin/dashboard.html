@@ -176,32 +176,39 @@
         <div class="col-12">
             <div class="row">
                 <div class="col-12 col-lg-auto d-flex align-items-center mb-2">Filter by</div>
-                <div class="col-6 col-md-2 mb-2">
-                    <select id="barangay-filter" class="form-select">
-                        <option value="">All Barangay</option>
-                    </select>
+                <div class="col-12 col-md-3 mb-2">
+                    <div class="dropdown" id="barangay-dropdown">
+                        <button class="form-select text-start bg-white text-truncate" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btn-barangay-filter">
+                            All Barangay
+                        </button>
+                        <ul class="dropdown-menu w-100 p-2 shadow-sm" id="barangay-filter-menu" style="max-height: 250px; overflow-y: auto;">
+                            <li><label class="dropdown-item small"><input type="checkbox" class="barangay-cb form-check-input me-2" value="" checked> All Barangay</label></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-6 col-md-2 mb-2">
-                    <select id="filter-ra-select" class="form-select">
-                        <option value="">All RA</option>
-                        <option value="RA 9262">RA 9262</option>
-                        <option value="RA 8353">RA 8353</option>
-                        <option value="RA 7877">RA 7877</option>
-                        <option value="RA 7610">RA 7610</option>
-                        <option value="RA 9775">RA 9775</option>
-                    </select>
+                    <div class="dropdown">
+                        <button class="form-select text-start bg-white text-truncate" type="button" data-bs-toggle="dropdown" id="btn-ra-filter">
+                            All RA
+                        </button>
+                        <ul class="dropdown-menu w-100 p-2 shadow-sm" style="max-height: 250px; overflow-y: auto;">
+                            <li><label class="dropdown-item small"><input type="checkbox" class="ra-cb form-check-input me-2" value="" checked> All RA</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="ra-cb form-check-input me-2" value="RA 9262"> RA 9262</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="ra-cb form-check-input me-2" value="RA 8353"> RA 8353</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="ra-cb form-check-input me-2" value="RA 7877"> RA 7877</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="ra-cb form-check-input me-2" value="RA 7610"> RA 7610</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="ra-cb form-check-input me-2" value="RA 9775"> RA 9775</label></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-6 col-md-2 mb-2">
                     <select id="gender-filter" class="form-select">
                         <option value="">All Gender</option>
                     </select>
                 </div>
-                <div class="col-6 col-md-2 mb-2">
+                <div class="col-6 col-md-3 mb-2">
                     <select id="age-filter" class="form-select">
-                        <option value="0-999">All Ages</option>
-                        <option value="0-12">0-12</option>
-                        <option value="13-17">13-17</option>
-                        <option value="18-999">18+</option>
+                        <option value="">All Ages</option>
                     </select>
                 </div>
             </div>
@@ -791,15 +798,46 @@
                 temp_barangay_list = default_barangay_options
             }
 
-            const barangayFilter = document.querySelector('#barangay-filter')
+            const barangayFilterMenu = document.querySelector('#barangay-filter-menu')
+            if(!barangayFilterMenu) return;
+            
+            barangayFilterMenu.innerHTML = `<li><label class="dropdown-item small"><input type="checkbox" class="barangay-cb form-check-input me-2" value="" checked> All Barangay</label></li>`
 
-            barangayFilter.innerHTML = ''
-            barangayFilter.innerHTML += `<option value="">All Barangay</option>`
+            // ORDER BY NAME as requested:
+            temp_barangay_list.sort();
 
             temp_barangay_list.forEach(barangay => {
-                barangayFilter.innerHTML += `<option value="${barangay}">${barangay}</option>`
+                barangayFilterMenu.innerHTML += `<li><label class="dropdown-item small"><input type="checkbox" class="barangay-cb form-check-input me-2" value="${barangay}"> ${barangay}</label></li>`
             })
+            
+            // Rebind the click listener
+            $('.barangay-cb').off('change').on('change', function() {
+                if ($(this).val() === '') {
+                    if ($(this).is(':checked')) $('.barangay-cb').not(this).prop('checked', false);
+                } else {
+                    $('.barangay-cb[value=""]').prop('checked', false);
+                }
+                
+                let selected = [];
+                $('.barangay-cb:checked').each(function() {
+                    if ($(this).val()) selected.push($(this).val());
+                });
+                
+                let text = selected.length ? selected.join(', ') : 'All Barangay';
+                $('#btn-barangay-filter').text(text);
+                $('#btn-barangay-filter').attr('title', text);
+                
+                if (selected.length === 0) {
+                    $('.barangay-cb[value=""]').prop('checked', true);
+                    $('#btn-barangay-filter').text('All Barangay');
+                    $('#cases-table').DataTable().columns([8]).search('').draw();
+                } else {
+                    let regex = selected.map(b => '^' + $.fn.dataTable.util.escapeRegex(b) + '(.*)?$').join('|');
+                    $('#cases-table').DataTable().columns([8]).search(regex, true, false).draw();
+                }
+            });
         }
+
 
         async function get_dashboard_data(get_year = 0, start = '', end = '') {
 
@@ -868,11 +906,25 @@
         }
 
 
+
+        function getAgeGroupLocal(age) {
+            if (age === '-') return 'Unknown';
+            if (age < 18) return 'Below 18';
+            if (age <= 24) return '18-24';
+            if (age <= 34) return '25-34';
+            if (age <= 44) return '35-44';
+            if (age <= 54) return '45-54';
+            if (age <= 64) return '55-64';
+            return '65 and above';
+        }
+
         function render_table(data) {
 
             $('#cases-table').DataTable().destroy()
             caseTable.innerHTML = ''
             default_barangay_options = []
+            gender_types = []
+            let age_groups_options = []
             const today = new Date()
 
             data.forEach(case_item => {
@@ -918,19 +970,24 @@
                         }
                     }
 
-                    if (!gender_types.includes(victim.sex)) {
-                        gender_types.push(victim.sex)
+                    const sexTrimmed = victim.sex ? victim.sex.trim() : 'Unknown';
+                    if (!gender_types.includes(sexTrimmed)) gender_types.push(sexTrimmed);
+                    victims.genders.push(sexTrimmed);
+                    
+                    const ageGrp = getAgeGroupLocal(age);
+                    if (ageGrp !== 'Unknown' && !age_groups_options.includes(ageGrp)) {
+                        age_groups_options.push(ageGrp);
                     }
-                    victims.ages.push(age);
+                    victims.ages.push(`${age} <span class="d-none">${ageGrp}</span>`);
                     victims.addresses.push(`${victim.barangay}-${victim.city}-${victim.province}`)
-                    victims.genders.push(victim.sex)
                 })
                 case_item.perpetrators.forEach((perpetrator, index) => {
 
                     perpetrators.names.push(`${perpetrator.first_name} ${perpetrator.middle_name} ${perpetrator.last_name}`)
                     perpetrators.addresses.push(`${perpetrator.barangay}-${perpetrator.city}-${perpetrator.province}`)
-                    if (!gender_types.includes(perpetrator.sex)) {
-                        gender_types.push(perpetrator.sex)
+                    const pSexTrimmed = perpetrator.sex ? perpetrator.sex.trim() : 'Unknown';
+                    if (!gender_types.includes(pSexTrimmed)) {
+                        gender_types.push(pSexTrimmed);
                     }
                 })
                 if (!default_barangay_options.includes(case_item.data.barangay)) {
@@ -989,6 +1046,11 @@
                 })
             }
 
+            // set initial data for age filter dropdown
+            const ageFilter = document.querySelector('#age-filter');
+            const ord = {'Below 18':1,'18-24':2,'25-34':3,'35-44':4,'45-54':5,'55-64':6,'65 and above':7};
+            age_groups_options.sort((a,b)=>ord[a]-ord[b]);
+            ageFilter.innerHTML = '<option value="">All Ages</option>' + age_groups_options.map(a=>`<option value="${a}">${a}</option>`).join('');
 
             const casesTable = $('#cases-table').DataTable({
                 dom: '<"d-flex justify-content-between align-items-center flex-column flex-md-row gap-3"<f><B>>' + 'tr' + '<"d-flex justify-content-between pt-3 align-items-center flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
@@ -1110,31 +1172,43 @@
                 $('#caseDetailModal').modal('show');
             });
 
-            $('select#filter-ra-select').off('change').on('change', function (e) {
-                var search_term = $(this).val();
-                $('#cases-table').DataTable().columns([5]).search(search_term).draw();
+            $('.ra-cb').off('change').on('change', function() {
+                if ($(this).val() === '') {
+                    if ($(this).is(':checked')) $('.ra-cb').not(this).prop('checked', false);
+                } else {
+                    $('.ra-cb[value=""]').prop('checked', false);
+                }
+                
+                let selected = [];
+                $('.ra-cb:checked').each(function() { if ($(this).val()) selected.push($(this).val()); });
+                
+                let text = selected.length ? selected.join(', ') : 'All RA';
+                $('#btn-ra-filter').text(text);
+                $('#btn-ra-filter').attr('title', text);
+                
+                if (selected.length === 0) {
+                    $('.ra-cb[value=""]').prop('checked', true);
+                    $('#btn-ra-filter').text('All RA');
+                    $('#cases-table').DataTable().columns([5]).search('').draw();
+                } else {
+                    let regex = selected.map(r => $.fn.dataTable.util.escapeRegex(r)).join('|');
+                    $('#cases-table').DataTable().columns([5]).search(regex, true, false).draw();
+                }
             });
+
             $('select#gender-filter').off('change').on('change', function (e) {
                 var search_term = $(this).val();
                 const regex = search_term ? `(?=.*${search_term})(?=.*\\b${search_term}\\b)` : ''
                 $('#cases-table').DataTable().columns([7]).search(regex, true, false).draw();
             });
-            $('select#barangay-filter').off('change').on('change', function (e) {
-                var search_term = $(this).val();
-                $('#cases-table').DataTable().columns([8]).search(`${search_term}-`).draw();
-            });
+
             $('select#age-filter').off('change').on('change', function (e) {
                 var search_term = $(this).val();
-                //$('#cases-table').DataTable().columns([5]).search(search_term).draw();
-                var range = document.querySelector('select#age-filter').value.split('-')
-                var min = parseInt(range[0]);
-                var max = parseInt(range[1]);
-
-                casesTable.column(6).search(function (value, index, rowData, node) {
-                    var age = parseFloat(value) || 0;
-                    return (age >= min && age <= max);
-                }).draw();
-                console.log('dra')
+                if (search_term) {
+                    $('#cases-table').DataTable().columns([6]).search($.fn.dataTable.util.escapeRegex(search_term), true, false).draw();
+                } else {
+                    $('#cases-table').DataTable().columns([6]).search('').draw();
+                }
             });
         }
         // Filter UI Event Listeners

@@ -116,9 +116,14 @@
             <div class="row g-3">
                 <div class="col-6 col-md-4 col-lg-3">
                     <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size:.63rem;">Barangay</label>
-                    <select id="consolidated-barangay-filter" class="form-select form-select-sm bg-light">
-                        <option value="">All Barangay</option>
-                    </select>
+                    <div class="dropdown" id="barangay-dropdown">
+                        <button class="form-select form-select-sm bg-light text-start text-truncate" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btn-consolidated-barangay">
+                            All Barangay
+                        </button>
+                        <ul class="dropdown-menu w-100 p-2 shadow-sm" id="consolidated-barangay-menu" style="max-height: 250px; overflow-y: auto;">
+                            <li><label class="dropdown-item small"><input type="checkbox" class="c-barangay-cb form-check-input me-2" value="" checked> All Barangay</label></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-6 col-md-4 col-lg-3">
                     <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size:.63rem;">Service Type</label>
@@ -128,14 +133,19 @@
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
                     <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size:.63rem;">RA Violation</label>
-                    <select id="consolidated-filter-ra-select" class="form-select form-select-sm bg-light">
-                        <option value="">All RA</option>
-                        <option value="RA 9262">RA 9262</option>
-                        <option value="RA 8353">RA 8353</option>
-                        <option value="RA 7877">RA 7877</option>
-                        <option value="RA 7610">RA 7610</option>
-                        <option value="RA 9775">RA 9775</option>
-                    </select>
+                    <div class="dropdown">
+                        <button class="form-select form-select-sm bg-light text-start text-truncate" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btn-consolidated-ra">
+                            All RA
+                        </button>
+                        <ul class="dropdown-menu w-100 p-2 shadow-sm" style="max-height: 250px; overflow-y: auto;">
+                            <li><label class="dropdown-item small"><input type="checkbox" class="c-ra-cb form-check-input me-2" value="" checked> All RA</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="c-ra-cb form-check-input me-2" value="RA 9262"> RA 9262</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="c-ra-cb form-check-input me-2" value="RA 8353"> RA 8353</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="c-ra-cb form-check-input me-2" value="RA 7877"> RA 7877</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="c-ra-cb form-check-input me-2" value="RA 7610"> RA 7610</label></li>
+                            <li><label class="dropdown-item small"><input type="checkbox" class="c-ra-cb form-check-input me-2" value="RA 9775"> RA 9775</label></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
                     <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size:.63rem;">Gender</label>
@@ -626,7 +636,14 @@ $(document).ready(function () {
 
         // ── Dropdowns ──
         const el = id => document.querySelector(id);
-        el('#consolidated-barangay-filter').innerHTML = '<option value="">All Barangay</option>' + barangay_options.map(b=>`<option value="${b}">${b}</option>`).join('');
+        
+        const bMenu = el('#consolidated-barangay-menu');
+        if(bMenu) {
+            barangay_options.sort();
+            bMenu.innerHTML = `<li><label class="dropdown-item small"><input type="checkbox" class="c-barangay-cb form-check-input me-2" value="" checked> All Barangay</label></li>` +
+                barangay_options.map(b=>`<li><label class="dropdown-item small"><input type="checkbox" class="c-barangay-cb form-check-input me-2" value="${b}"> ${b}</label></li>`).join('');
+        }
+        
         el('#consolidated-gender-filter').innerHTML   = '<option value="">All Genders</option>'  + gender_types.map(g=>`<option value="${g}">${g}</option>`).join('');
         const ord = {'Below 18':1,'18-24':2,'25-34':3,'35-44':4,'45-54':5,'55-64':6,'65 and above':7};
         age_groups.sort((a,b)=>ord[a]-ord[b]);
@@ -674,10 +691,56 @@ $(document).ready(function () {
 
         // Dropdown filter bindings
         $('#consolidated-service-filter').off('change').on('change',function(){ consolidatedTable.columns([5]).search($(this).val()).draw(); });
-        $('#consolidated-filter-ra-select').off('change').on('change',function(){ consolidatedTable.columns([6]).search($(this).val()).draw(); });
         $('#consolidated-age-filter').off('change').on('change',function(){ consolidatedTable.columns([7]).search($(this).val()?$(this).val():'',false,true).draw(); });
         $('#consolidated-gender-filter').off('change').on('change',function(){ consolidatedTable.columns([8]).search($(this).val()?$(this).val():'',false,true).draw(); });
-        $('#consolidated-barangay-filter').off('change').on('change',function(){ consolidatedTable.columns([9]).search($(this).val()).draw(); });
+        
+        $('.c-ra-cb').off('change').on('change', function() {
+            if ($(this).val() === '') {
+                if ($(this).is(':checked')) $('.c-ra-cb').not(this).prop('checked', false);
+            } else {
+                $('.c-ra-cb[value=""]').prop('checked', false);
+            }
+            
+            let selected = [];
+            $('.c-ra-cb:checked').each(function() { if ($(this).val()) selected.push($(this).val()); });
+            
+            let text = selected.length ? selected.join(', ') : 'All RA';
+            $('#btn-consolidated-ra').text(text);
+            $('#btn-consolidated-ra').attr('title', text);
+            
+            if (selected.length === 0) {
+                $('.c-ra-cb[value=""]').prop('checked', true);
+                $('#btn-consolidated-ra').text('All RA');
+                consolidatedTable.columns([6]).search('').draw();
+            } else {
+                let regex = selected.map(r => $.fn.dataTable.util.escapeRegex(r)).join('|');
+                consolidatedTable.columns([6]).search(regex, true, false).draw();
+            }
+        });
+
+        $('.c-barangay-cb').off('change').on('change', function() {
+            if ($(this).val() === '') {
+                if ($(this).is(':checked')) $('.c-barangay-cb').not(this).prop('checked', false);
+            } else {
+                $('.c-barangay-cb[value=""]').prop('checked', false);
+            }
+            
+            let selected = [];
+            $('.c-barangay-cb:checked').each(function() { if ($(this).val()) selected.push($(this).val()); });
+            
+            let text = selected.length ? selected.join(', ') : 'All Barangay';
+            $('#btn-consolidated-barangay').text(text);
+            $('#btn-consolidated-barangay').attr('title', text);
+            
+            if (selected.length === 0) {
+                $('.c-barangay-cb[value=""]').prop('checked', true);
+                $('#btn-consolidated-barangay').text('All Barangay');
+                consolidatedTable.columns([9]).search('').draw();
+            } else {
+                let regex = selected.map(b => '^' + $.fn.dataTable.util.escapeRegex(b) + '(.*)?$').join('|');
+                consolidatedTable.columns([9]).search(regex, true, false).draw();
+            }
+        });
     }
 
     // ── PDF Export Logic ──
