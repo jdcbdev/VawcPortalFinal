@@ -9,16 +9,17 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <div class="d-flex align-items-center justify-content-between flex-wrap mb-3 gap-3">
-        <div class="d-flex align-items-center">
-            <h1 class="pe-3 mb-0" style="border-right: 1px solid #dcdcdc;">Dashboard</h1>
-            <h2 class="ms-3 mb-0 fs-5 text-primary">{{ barangay }}</h2>
+    <div class="d-flex mb-4 gap-3 align-items-start align-items-md-center flex-column flex-md-row">
+        <div class="d-flex align-items-center me-auto">
+            <h1 class="pe-3 mb-0 border-end border-dark border-opacity-25 fs-3">Dashboard</h1>
+            <h2 class="ms-3 mb-0 fs-5 text-primary fw-bold">{{ hospital }}</h2>
         </div>
-        <div class="d-flex align-items-center gap-3 ms-auto">
-            <div class="spinner-border-sm test-primary" id="select-year-data-loading" role="status">
+        <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded shadow-sm border ms-auto">
+            <div class="spinner-border spinner-border-sm text-primary d-none" id="select-year-data-loading" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <select name="" id="select-year-data" class="form-select w-auto" disabled>
+            <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Date Range:</span>
+            <select name="" id="select-year-data" class="form-select form-select-sm border-0 bg-light fw-semibold" disabled style="width:120px;">
                 <option value="0">All year</option>
                 {% for year in year_list %}
                 <option value="{{year}}">{{year}}</option>
@@ -26,141 +27,194 @@
             </select>
         </div>
     </div>
-    
-    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 mb-4 align-items-stretch">
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>Reported Cases</span>
-            <div class="fw-bold fs-6 text-color-primary" id="total-cases">-</div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>Ongoing Cases</span>
-            <div class="fw-bold fs-6 text-color-primary" id="ongoing-cases">-</div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>Resolved Cases</span>
-            <div class="fw-bold fs-6 text-color-primary" id="resolved-cases">-</div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>w/ Criminal Cases</span>
-            <div class="fw-bold fs-6 text-color-primary" id="cases-w-criminal-cases">-</div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100 d-flex justify-content-between">
-              <div>
-                  <span>w/ PO</span>
-                  
-              </div>
-              <div class="">
-                  <div class="fw-bold fs-2 text-color-primary">BPO: <span id="bpo">-</span></div>
-                  <div class="fw-bold fs-2 text-warning">TPO: <span id="tpo">-</span></div>
-                  <div class="fw-bold fs-2 text-success">PPO: <span id="ppo">-</span></div>
-              </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>Services Provided</span>
-            <div class="fw-bold fs-6 text-color-primary" id="services-provided">-</div>
-          </div>
-        </div>
-  
-      </div>
 
-
-    
-    <div class="row row-cols-1 row-cols-md-2 mb-4">
-        <div class="col mb-3">
-            <h2 class="fs-4 mb-3">No. of cases per RA</h2>
-            <canvas id="bar-cases-per-ra"></canvas>
+    <!-- KPI Cards with drill-down -->
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-total" onclick="drillDown('all')" title="Click to show all cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-file-blank'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Reported Cases</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="total-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">All filed cases</div>
+            </div>
         </div>
-        <div class="col mb-3">
-            <h2 class="fs-4">Cases by Month</h2>
-            <canvas id="bar-cases-by-month"></canvas>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-ongoing" onclick="drillDown('ongoing')" title="Click to filter ongoing cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-loader-circle'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Ongoing</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="ongoing-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Active cases</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-resolved" onclick="drillDown('resolved')" title="Click to filter resolved cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-check-shield'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Resolved</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="resolved-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Closed cases</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-criminal" onclick="drillDown('criminal')" title="Click to filter cases with RA violations">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-shield-x'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Criminal Cases</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="cases-w-criminal-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">w/ RA violations</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-po" onclick="drillDown('protection_order')" title="Click to filter cases with protection orders">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-shield'></i>
+                </div>
+                <div class="text-muted fw-semibold text-uppercase mb-1" style="font-size:0.7rem;">Protection Orders</div>
+                <div class="d-flex justify-content-between mt-1">
+                    <div class="text-center">
+                        <div class="fw-bold fs-6 text-kpi-gold" id="bpo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">BPO</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold fs-6 text-kpi-gold" id="tpo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">TPO</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold fs-6 text-kpi-gold" id="ppo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">PPO</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-services" onclick="drillDown('services')" title="Click to filter cases with services">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-donate-heart'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Services Provided</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="services-provided">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Resolved w/ services</div>
+            </div>
         </div>
     </div>
 
-<!-- Cases Table -->
-<div class="row">
-  <div class="col-12">
-      <div class="row">
-          <div class="col-12 col-lg-auto d-flex align-items-center mb-2">Filter by</div>
-          <div class="col-6 col-md-2 mb-2">
-              <select id="barangay-filter" class="form-select">
-                  <option value="">All Barangay</option>
-              </select>
-          </div>
-          <div class="col-6 col-md-2 mb-2">
-              <select id="filter-ra-select" class="form-select">
-                  <option value="">All RA</option>
-                  <option value="RA 9262">RA 9262</option>
-                  <option value="RA 8353">RA 8353</option>
-                  <option value="RA 7877">RA 7877</option>
-                  <option value="RA 7610">RA 7610</option>
-                  <option value="RA 9775">RA 9775</option>
-              </select>
-          </div>
-          <div class="col-6 col-md-2 mb-2">
-              <select id="gender-filter" class="form-select">
-                  <option value="">All Gender</option>
-              </select>
-          </div>
-          <div class="col-6 col-md-2 mb-2">
-              <select id="age-filter" class="form-select">
-                  <option value="0-999">All Ages</option>
-                  <option value="0-12">0-12</option>
-                  <option value="13-17">13-17</option>
-                  <option value="18-999">18+</option>
-              </select>
-          </div>
-      </div>
-
-      <div class="pt-4 ">
-        <table class="table table-striped table-hover responsive nowrap" id="cases-table" style="width: 100%">
-          <thead class="">
-            <tr>
-              <th scope="col" class="all text-center">Case #</th>
-              <th scope="col" class="all">Victim</th>
-              <th scope="col" class="all">Vicitim Address</th>
-              <th scope="col" class="all">Perpetrator</th>
-              <th scope="col" class="all">Perpetrator Address</th>
-              <th scope="col" class="all">RA Violation</th>
-              <th scope="col" class="all">Victim Age</th>
-              <th scope="col" class="all">Victim Gender</th>
-              <th scope="col" class="none">Incident Address</th>
-              <th scope="col" class="none">Incident Date</th>
-            </tr>
-          </thead>
-          <tbody class="table-group-divider" id="cases-table-content">
-          </tbody>
-          <tfoot>
-            <tr>
-                <td><strong>Total Cases: </strong><span id="table-total-cases"></span></td>
-                <td><strong>Total Victims: </strong><span id="table-total-victim"></span></td>
-                <td></td>
-                <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator"></span></td>
-                <td></td>
-                <td><strong>Total RA Violations: </strong><span id="table-total-ra"></span></td>
-                <td></td>
-                {% comment %} <td id="table-total-gender"></td> {% endcomment %}
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+    <!-- Drill-down filter bar -->
+    <div id="kpi-filter-bar" class="d-none mb-3 d-flex align-items-center gap-2 bg-white border rounded px-3 py-2 shadow-sm">
+        <i class='bx bx-filter fs-5' style="color:#E8A020;"></i>
+        <span class="small text-muted">Showing: </span>
+        <span class="fw-bold small text-kpi-gold" id="kpi-filter-label"></span>
+        <button class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="drillDown('all')">
+            <i class='bx bx-x'></i> Clear filter
+        </button>
     </div>
-  </div>
+
+    <style>
+        .text-kpi-gold { color: #E8A020 !important; }
+        .kpi-card { transition: all 0.2s ease; cursor: pointer; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(232,160,32,0.2) !important; border-color: #E8A020 !important; }
+        .kpi-card.kpi-active { border-color: #E8A020 !important; background-color: #fffbf0 !important; box-shadow: 0 4px 16px rgba(232,160,32,0.25) !important; }
+        .kpi-icon-bg { color: #E8A020; pointer-events: none; }
+    </style>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6">
+            <div class="bg-white border rounded shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-muted text-uppercase mb-2 small">Cases per RA</h6>
+                <div style="position: relative; width: 100%; height: 26vh;">
+                    <canvas id="bar-cases-per-ra"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="bg-white border rounded shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-muted text-uppercase mb-2 small">Cases by Month</h6>
+                <div style="position: relative; width: 100%; height: 26vh;">
+                    <canvas id="bar-cases-by-month"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cases Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex flex-wrap align-items-center gap-3 bg-white px-3 py-2 rounded shadow-sm border mb-3">
+                <div class="fw-bold text-muted small text-uppercase">Filter by:</div>
+                <div style="width: 15%">
+                    <select id="barangay-filter" class="form-select form-select-sm border-secondary bg-light">
+                        <option value="">All Barangay</option>
+                    </select>
+                </div>
+                <div style="width: 15%">
+                    <select id="filter-ra-select" class="form-select form-select-sm border-secondary bg-light">
+                        <option value="">All RA</option>
+                        <option value="RA 9262">RA 9262</option>
+                        <option value="RA 8353">RA 8353</option>
+                        <option value="RA 7877">RA 7877</option>
+                        <option value="RA 7610">RA 7610</option>
+                        <option value="RA 9775">RA 9775</option>
+                    </select>
+                </div>
+                <div style="width: 15%">
+                    <select id="gender-filter" class="form-select form-select-sm border-secondary bg-light">
+                        <option value="">All Gender</option>
+                    </select>
+                </div>
+                <div style="width: 15%">
+                    <select id="age-filter" class="form-select form-select-sm border-secondary bg-light">
+                        <option value="0-999">All Ages</option>
+                        <option value="0-12">0-12</option>
+                        <option value="13-17">13-17</option>
+                        <option value="18-999">18+</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-4 bg-white border p-3 rounded shadow-sm">
+                <table class="table table-striped table-hover responsive nowrap" id="cases-table" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="all text-center">Case #</th>
+                            <th scope="col" class="all">Victim</th>
+                            <th scope="col" class="all">Victim Address</th>
+                            <th scope="col" class="all">Perpetrator</th>
+                            <th scope="col" class="all">Perpetrator Address</th>
+                            <th scope="col" class="all">RA Violation</th>
+                            <th scope="col" class="all">Victim Age</th>
+                            <th scope="col" class="all">Victim Gender</th>
+                            <th scope="col" class="none">Incident Address</th>
+                            <th scope="col" class="none">Incident Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider" id="cases-table-content"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>Total Cases: </strong><span id="table-total-cases" class="text-kpi-gold"></span></td>
+                            <td><strong>Total Victims: </strong><span id="table-total-victim" class="text-kpi-gold"></span></td>
+                            <td></td>
+                            <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator" class="text-kpi-gold"></span></td>
+                            <td></td>
+                            <td><strong>Total RA Violations: </strong><span id="table-total-ra" class="text-kpi-gold"></span></td>
+                            <td></td><td></td><td></td><td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-
 {% endblock content %}
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
@@ -169,363 +223,106 @@
 
 <script>
 $(document).ready(function() {
-    const current_year = new Date().getFullYear();
-    let annualCases = {}
-    let republic_acts = ''
-    let barangay_case_table = []
+    const GOLD = '#E8A020';
+    const GOLD_BG = 'rgba(232,160,32,0.15)';
+    const PALETTE = ['#E8A020','#5e2ca5','#2d9cdb','#27ae60','#e74c3c','#8e44ad'];
+    let casesTable = null;
+    let annualCases = {};
+    let republic_acts = {};
+    let default_barangay_options = [];
+    let gender_types = [];
     const caseTable = document.getElementById('cases-table-content');
+    const today = new Date();
 
-    get_dashboard_data()
-
-    let gender_types = []
-    let default_barangay_options = []
-
-    function changeBarangayFilter() {
-        if(!default_barangay_options) return;
-        const barangayFilter = document.querySelector('#barangay-filter')
-
-        barangayFilter.innerHTML = ''
-        barangayFilter.innerHTML += `<option value="">All Barangay</option>`
-        
-        default_barangay_options.forEach(barangay => {
-            barangayFilter.innerHTML += `<option value="${barangay}">${barangay}</option>`
-        })
-    }
-
-    // RA bar chart
-    var ctx = document.getElementById('bar-cases-per-ra').getContext('2d');
-    let barLabels = Object.keys(republic_acts)
-    let barData = Object.values(republic_acts)
-    var casePerRa = new Chart(ctx, {
+    const ctxRA = document.getElementById('bar-cases-per-ra').getContext('2d');
+    const casePerRa = new Chart(ctxRA, {
         type: 'bar',
-        data: {
-            labels: barLabels,
-            datasets: [{
-                label: 'Cases',
-                data: barData,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            responsive: true,
-            plugins: {
-                legend: false,
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
-                        }
-                    }
-                }
-            }
-        }
+        data: { labels: [], datasets: [{ label: 'Cases', data: [], backgroundColor: PALETTE, borderColor: 'transparent', borderRadius: 4, borderWidth: 0 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+    ctxRA.canvas.addEventListener('click', function(click) {
+        const els = casePerRa.getElementsAtEventForMode(click, 'nearest', { intersect: true }, true);
+        if (!els.length) return;
+        const label = casePerRa.data.labels[els[0].index];
+        if (label && casesTable) { casesTable.columns([5]).search(label).draw(); showFilterBar('RA: ' + label); highlightKpi('kpi-criminal'); }
     });
 
-    // Monthly cases line chart
-    var ctx = document.getElementById('bar-cases-by-month').getContext('2d');
-    
-    const yearList = Object.entries(annualCases).map(([key, value]) => {
-        return key;
-    });
-    yearList.sort((a, b) => b - a);
-    let lineLabels = Object.keys(annualCases)
-    let lineData = Object.values(annualCases)
-    var casesByMonth = new Chart(ctx, {
+    const ctxMonth = document.getElementById('bar-cases-by-month').getContext('2d');
+    const casesByMonth = new Chart(ctxMonth, {
         type: 'line',
-        data: {
-            labels: lineLabels,
-            datasets: [{
-                label: 'Cases',
-                fill: true,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                data: lineData,
-                borderWidth: 1,
-                pointStyle: false,
-                cubicInterpolationMode: 'monotone'
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            responsive: true,
-            plugins: {
-                legend: false,
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
-                        }
-                    }
-                }
-            }
-        }
+        data: { labels: [], datasets: [{ label: 'Cases', data: [], fill: true, backgroundColor: GOLD_BG, borderColor: GOLD, borderWidth: 2, tension: 0.4, pointBackgroundColor: GOLD, pointRadius: 4, cubicInterpolationMode: 'monotone' }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: false }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
     });
-  
-    
-    
+    ctxMonth.canvas.addEventListener('click', function(click) {
+        const els = casesByMonth.getElementsAtEventForMode(click, 'nearest', { intersect: true }, true);
+        if (!els.length) return;
+        const ml = casesByMonth.data.labels[els[0].index];
+        const mm = { Jan:'01', Feb:'02', Mar:'03', Apr:'04', May:'05', Jun:'06', Jul:'07', Aug:'08', Sep:'09', Oct:'10', Nov:'11', Dec:'12' };
+        if (mm[ml] && casesTable) { casesTable.columns([9]).search(`-${mm[ml]}-`, true, false).draw(); showFilterBar('Month: ' + ml); }
+    });
+
+    function showFilterBar(label) { $('#kpi-filter-bar').removeClass('d-none'); $('#kpi-filter-label').text(label); document.querySelector('#cases-table').scrollIntoView({behavior:'smooth',block:'start'}); }
+    function highlightKpi(id) { document.querySelectorAll('.kpi-card').forEach(c=>c.classList.remove('kpi-active')); const el=document.getElementById(id); if(el)el.classList.add('kpi-active'); }
+    window.drillDown = function(type) {
+        document.querySelectorAll('.kpi-card').forEach(c=>c.classList.remove('kpi-active'));
+        if (!casesTable) return;
+        casesTable.search('').columns().search('').draw();
+        $('#kpi-filter-bar').addClass('d-none');
+        if (type === 'all') return;
+        $('#kpi-filter-bar').removeClass('d-none');
+        if (type === 'ongoing') { casesTable.search('Active').draw(); $('#kpi-filter-label').text('Active Cases'); highlightKpi('kpi-ongoing'); }
+        else if (type === 'resolved') { casesTable.search('Close').draw(); $('#kpi-filter-label').text('Resolved Cases'); highlightKpi('kpi-resolved'); }
+        else if (type === 'criminal') { casesTable.columns([5]).search('RA').draw(); $('#kpi-filter-label').text('w/ RA Violations'); highlightKpi('kpi-criminal'); }
+        else if (type === 'services') { casesTable.search('Close').draw(); $('#kpi-filter-label').text('Resolved w/ Services'); highlightKpi('kpi-services'); }
+        document.querySelector('#cases-table').scrollIntoView({behavior:'smooth',block:'start'});
+    };
 
     async function get_dashboard_data(get_year = 0) {
-
-        $('#select-year-data-loading').addClass('spinner-border')
-        $('#select-year-data').prop('disabled', true) 
-        const res = await fetch(`/admin-healthcare-vawc/healthcare-dashboard-data/${get_year}/`)
-        if(!res.ok) {
-            return
-        }
-        const data = await res.json()
-        $('#select-year-data-loading').removeClass('spinner-border')
-        $('#select-year-data').prop('disabled', false)
-        
-        $('#total-cases').text(data.total_cases)
-        $('#ongoing-cases').text(data.ongoing_cases)
-        $('#resolved-cases').text(data.resolved_cases)
-        $('#services-provided').text(data.services_provided)
-        $('#services-provided').text(data.services_provided)
-        $('#bpo').text(data.bpo_count)
-        $('#tpo').text(data.tpo_count)
-        $('#ppo').text(data.ppo_count)
-        $('#cases-w-criminal-cases').text(data.cases_w_criminal_cases)
-
-        annualCases = data.annual_cases
-        republic_acts = data.republic_acts
-
-
-        // Bar Hor - 
-        casePerRa.config.data.datasets[0].data = Object.values(republic_acts)
-        casePerRa.config.data.labels = Object.keys(republic_acts)
-        casePerRa.update()
-
-        // Line - 
-        casesByMonth.config.data.datasets[0].data = Object.values(annualCases)
-        casesByMonth.config.data.labels = Object.keys(annualCases)
-        casesByMonth.update()
-
-        render_table(data.barangay_case_list)
+        $('#select-year-data-loading').removeClass('d-none');
+        $('#select-year-data').prop('disabled', true);
+        const res = await fetch(`/admin-healthcare-vawc/healthcare-dashboard-data/${get_year}/`);
+        if (!res.ok) { $('#select-year-data-loading').addClass('d-none'); $('#select-year-data').prop('disabled', false); return; }
+        const data = await res.json();
+        $('#select-year-data-loading').addClass('d-none');
+        $('#select-year-data').prop('disabled', false);
+        $('#total-cases').text(data.total_cases);
+        $('#ongoing-cases').text(data.ongoing_cases);
+        $('#resolved-cases').text(data.resolved_cases);
+        $('#services-provided').text(data.services_provided);
+        $('#bpo').text(data.bpo_count);
+        $('#tpo').text(data.tpo_count);
+        $('#ppo').text(data.ppo_count);
+        $('#cases-w-criminal-cases').text(data.cases_w_criminal_cases);
+        annualCases = data.annual_cases; republic_acts = data.republic_acts;
+        casePerRa.data.datasets[0].data = Object.values(republic_acts); casePerRa.data.labels = Object.keys(republic_acts); casePerRa.update();
+        casesByMonth.data.datasets[0].data = Object.values(annualCases); casesByMonth.data.labels = Object.keys(annualCases); casesByMonth.update();
+        render_table(data.barangay_case_list);
     }
 
     function render_table(data) {
-
-        $('#cases-table').DataTable().destroy()
-        caseTable.innerHTML = ''
-        default_barangay_options = []
-        const today = new Date()
-
-        data.forEach(case_item => {
-            let victims = {
-                names: [],
-                addresses: [],
-                genders: [],
-                ages: [],
-            }
-            let perpetrators = {
-                names: [],
-                addresses: [],
-            }
-            let ra_violations = []
-            
-            if(case_item.data.checkbox_ra_8353) {
-                ra_violations.push('RA 8353')
-            }
-            if(case_item.data.checkbox_ra_9262) {
-                ra_violations.push('RA 9262')
-            }
-            if(case_item.data.checkbox_ra_7877) {
-                ra_violations.push('RA 7877')
-            }
-            if(case_item.data.checkbox_ra_9775) {
-                ra_violations.push('RA 9775')
-            }
-            if(case_item.data.checkbox_a_7610) {
-                ra_violations.push('RA 7610')
-            }
-            
-            case_item.victims.forEach((victim, index) => {
-    
-                victims.names.push(`${victim.first_name} ${victim.middle_name} ${victim.last_name}`)
-                
-                let age = "-"
-                if(victim.date_of_birth) {
-                    const birthDate = new Date(victim.date_of_birth);
-                    age = today.getFullYear() - birthDate.getFullYear();
-                    const monthDifference = today.getMonth() - birthDate.getMonth();
-                    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-                        age--;
-                    }
-                    
-                }
-
-                if(!gender_types.includes(victim.sex)) {
-                    gender_types.push(victim.sex)
-                }
-                victims.ages.push(age);
-                victims.addresses.push(`${victim.barangay}-${victim.city}-${victim.province}`)
-                victims.genders.push(victim.sex)
-            })
-            case_item.perpetrators.forEach((perpetrator, index) => {
-    
-                perpetrators.names.push(`${perpetrator.first_name} ${perpetrator.middle_name} ${perpetrator.last_name}`)
-                perpetrators.addresses.push(`${perpetrator.barangay}-${perpetrator.city}-${perpetrator.province}`)
-                if(!gender_types.includes(perpetrator.sex)) {
-                    gender_types.push(perpetrator.sex)
-                }
-            })
-            
-            if(!default_barangay_options.includes(case_item.data.barangay)) {
-                default_barangay_options.push(case_item.data.barangay)
-            }
-    
-            caseTable.innerHTML += `
-            <tr class="border-bottom border-2">
-                <td class="text-center">--</td>
-                <td>${victims.names.join(", ")}</td>
-                <td>${victims.addresses.join(", ")}</td>
-                <td>${perpetrators.names.join(", ")}</td>
-                <td>${perpetrators.addresses.join(", ")}</td>
-                <td>${ra_violations}</td>
-                <td>${victims.ages}</td>
-                <td>${victims.genders}</td> 
-                <td>${case_item.data.barangay}-${case_item.data.city}-${case_item.data.province}</td> 
-                <td>${case_item.data.date_added}</td> 
-            </tr>
-            `
-        })
-    
-        // sets initial data of barangay filter dropdown
-        if(default_barangay_options) {
-            changeBarangayFilter()
-        }
-
-        // sets initial data of gender filter dropdown
-        if(gender_types.length) {
-            const genderFilter = document.querySelector('#gender-filter')
-            genderFilter.innerHTML = ''
-            genderFilter.innerHTML += `<option value="">All Gender</option>`
-            
-            gender_types.forEach(gender => {
-                genderFilter.innerHTML += `<option value="${gender}">${gender}</option>`
-            })
-        }
-    
-        const casesTable = $('#cases-table').DataTable({
-            dom: '<"d-flex justify-content-between align-items-center flex-column flex-md-row gap-3"<f><B>>' + 'tr' + '<"d-flex justify-content-between pt-3 align-items-center flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
-            scrollX: true,
-            responsive: true,
-            fixedHeader: true,
-            lengthMenu: [5, 10, 25, 50],
-            pageLength: 20,
-            buttons: [
-                {
-                    extend: 'excelHtml5',
-                    title: 'VAWC Cases',
-                    text: 'Excel',
-                },
-                {
-                    extend: 'pdfHtml5',
-                    title: 'VAWC Cases',
-                    text: 'PDF',
-                    orientation: 'landscape'
-                }
-            ],
-            layout: {
-                topStart: {
-                    buttons: [
-                        'copy', 'excel', 'pdf'
-                    ]
-                }
-            },
+        if (casesTable) { casesTable.destroy(); casesTable = null; }
+        caseTable.innerHTML = ''; default_barangay_options = []; gender_types = [];
+        data.forEach(ci => {
+            let vn=[],va=[],vg=[],vag=[],pn=[],pa=[],rv=[];
+            if(ci.data.checkbox_ra_8353)rv.push('RA 8353'); if(ci.data.checkbox_ra_9262)rv.push('RA 9262'); if(ci.data.checkbox_ra_7877)rv.push('RA 7877'); if(ci.data.checkbox_ra_9775)rv.push('RA 9775'); if(ci.data.checkbox_a_7610)rv.push('RA 7610');
+            ci.victims.forEach(v=>{vn.push(`${v.first_name||''} ${v.middle_name||''} ${v.last_name||''}`.trim());let age='-';if(v.date_of_birth){const bd=new Date(v.date_of_birth);age=today.getFullYear()-bd.getFullYear();const mo=today.getMonth()-bd.getMonth();if(mo<0||(mo===0&&today.getDate()<bd.getDate()))age--;}const sx=v.sex?(v.sex.charAt(0).toUpperCase()+v.sex.slice(1).toLowerCase()):'Unknown';if(!gender_types.includes(sx))gender_types.push(sx);vag.push(age);va.push(`${v.barangay||''}-${v.city||''}-${v.province||''}`);vg.push(sx);});
+            ci.perpetrators.forEach(p=>{pn.push(`${p.first_name||''} ${p.middle_name||''} ${p.last_name||''}`.trim());pa.push(`${p.barangay||''}-${p.city||''}-${p.province||''}`);});
+            if(ci.data.barangay&&!default_barangay_options.includes(ci.data.barangay))default_barangay_options.push(ci.data.barangay);
+            caseTable.innerHTML+=`<tr class="border-bottom border-2"><td class="text-center fw-semibold small">${ci.data.case_number||'--'}</td><td>${vn.join(', ')}</td><td>${va.join(' | ')}</td><td>${pn.join(', ')}</td><td>${pa.join(' | ')}</td><td>${rv.join(', ')||'—'}</td><td>${vag.join(', ')}</td><td>${vg.join(', ')}</td><td>${ci.data.barangay||''} ${ci.data.city||''} ${ci.data.province||''}</td><td>${ci.data.date_added||'—'}</td></tr>`;
         });
-    
-        casesTable.on('draw.dt', () => {
-    
-            function countTotal(arr) {
-                counts = arr.map(data => {
-                    if(data.length == 0) {
-                        return 0
-                    }
-                    return data.split(',').length
-                })
-                return counts.reduce((accu, curr) => accu + curr, 0)
-            }
-    
-            const case_rows = casesTable.column(0, { filter: 'applied' }).data().toArray()
-            const victim_rows = casesTable.column(1, { filter: 'applied' }).data().toArray()
-            const perpetrator_rows = casesTable.column(3, { filter: 'applied' }).data().toArray()
-            const ra_rows = casesTable.column(5, { filter: 'applied' }).data().toArray()
-            const gender_rows = casesTable.column(7, { filter: 'applied' }).data().toArray()
-    
-    
-            $('#table-total-cases').text(countTotal(case_rows))
-            $('#table-total-victim').text(countTotal(victim_rows))
-            $('#table-total-perpetrator').text(countTotal(perpetrator_rows))
-            $('#table-total-ra').text(countTotal(ra_rows))
-            $('#table-total-gender').text(countTotal(gender_rows))
-    
-    
-        })
-        casesTable.draw()
-    
-        
-        $('select#filter-ra-select').off('change').on('change', function(e){
-            var search_term = $(this).val();
-            $('#cases-table').DataTable().columns([5]).search(search_term).draw();
-        });
-        $('select#gender-filter').off('change').on('change', function(e){
-            var search_term = $(this).val();
-            const regex = search_term ? `(?=.*${search_term})(?=.*\\b${search_term}\\b)` : ''
-            $('#cases-table').DataTable().columns([7]).search(regex, true, false).draw();
-        });
-        $('select#barangay-filter').off('change').on('change', function(e){
-            var search_term = $(this).val();
-            // Since the address string is "Barangay-City-Province", search by "Barangay-"
-            $('#cases-table').DataTable().columns([8]).search(search_term ? `${search_term}-` : '').draw();
-        });
-        $('select#age-filter').off('change').on('change', function(e){
-            var search_term = $(this).val();
-            //$('#cases-table').DataTable().columns([5]).search(search_term).draw();
-            var range = document.querySelector('select#age-filter').value.split('-')
-            var min = parseInt(range[0]);
-            var max = parseInt(range[1]);
-    
-            casesTable.column(6).search(function(value, index, rowData, node) {
-                var age = parseFloat(value) || 0;
-                return (age >= min && age <= max);
-            }).draw();
-        });
-
+        document.querySelector('#barangay-filter').innerHTML='<option value="">All Barangay</option>'+default_barangay_options.sort().map(b=>`<option value="${b}">${b}</option>`).join('');
+        document.querySelector('#gender-filter').innerHTML='<option value="">All Gender</option>'+gender_types.map(g=>`<option value="${g}">${g}</option>`).join('');
+        casesTable=$('#cases-table').DataTable({dom:'<"d-flex justify-content-between align-items-center flex-column flex-md-row gap-3"fB>tr<"d-flex justify-content-between pt-3 align-items-center flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',scrollX:true,responsive:true,fixedHeader:true,lengthMenu:[5,10,25,50],pageLength:20,buttons:[{extend:'excelHtml5',title:'VAWC Healthcare Cases',text:"<i class='bx bx-file me-1'></i>Excel",className:'btn btn-success text-white shadow-sm rounded-pill px-3 py-1',init:function(api,node){$(node).removeClass('btn-secondary');}}]});
+        casesTable.on('draw.dt',()=>{function ct(a){return a.map(d=>d.length?d.split(',').length:0).reduce((x,c)=>x+c,0);}$('#table-total-cases').text(ct(casesTable.column(0,{filter:'applied'}).data().toArray()));$('#table-total-victim').text(ct(casesTable.column(1,{filter:'applied'}).data().toArray()));$('#table-total-perpetrator').text(ct(casesTable.column(3,{filter:'applied'}).data().toArray()));$('#table-total-ra').text(ct(casesTable.column(5,{filter:'applied'}).data().toArray()));});
+        casesTable.draw();
+        $('select#filter-ra-select').off('change').on('change',function(){casesTable.columns([5]).search($(this).val()).draw();});
+        $('select#gender-filter').off('change').on('change',function(){const v=$(this).val();casesTable.columns([7]).search(v?`(?=.*${v})(?=.*\\b${v}\\b)`:'',true,false).draw();});
+        $('select#barangay-filter').off('change').on('change',function(){casesTable.columns([8]).search($(this).val()?`${$(this).val()}-`:'').draw();});
+        $('select#age-filter').off('change').on('change',function(){const[min,max]=$(this).val().split('-').map(Number);casesTable.column(6).search(function(v){const a=parseFloat(v)||0;return a>=min&&a<=max;}).draw();});
     }
 
-    $('#select-year-data').on('change', (e) => {
-        get_dashboard_data(e.target.value)
-    })
-
+    $('#select-year-data').on('change', e => get_dashboard_data(e.target.value));
+    get_dashboard_data();
 });
 </script>
-
-
 {% endblock scripts %}

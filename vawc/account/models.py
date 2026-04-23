@@ -16,6 +16,7 @@ class CustomUser(AbstractUser):
 
 class Account(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=100)
@@ -47,6 +48,7 @@ class Account(models.Model):
     
 class LawEnforcementAccount(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=100)
@@ -71,6 +73,7 @@ class LawEnforcementAccount(models.Model):
     
 class SWDOaccount(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
     name = models.CharField(max_length=100)
     status = models.CharField(max_length=100, null=True, blank=True, default='Active')
     type = models.CharField(max_length=20, default='SWDO')
@@ -83,6 +86,7 @@ class SWDOaccount(models.Model):
 
 class HealthcareAccount(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=100)

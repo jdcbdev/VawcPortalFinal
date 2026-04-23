@@ -97,6 +97,99 @@ def get_logged_user(request):
     else:
         return JsonResponse({"success":False, "message":"Failed to get Username, Login first."})
 
+def get_user_profile_picture(request):
+    if request.user.is_authenticated:
+        user = request.user
+        profile_url = "dilg.png"
+        try:
+            if hasattr(user, 'account') and user.account.profile_picture:
+                profile_url = user.account.profile_picture.url
+            elif hasattr(user, 'lawenforcementaccount') and user.lawenforcementaccount.profile_picture:
+                profile_url = user.lawenforcementaccount.profile_picture.url
+            elif hasattr(user, 'swdoaccount') and user.swdoaccount.profile_picture:
+                profile_url = user.swdoaccount.profile_picture.url
+            elif hasattr(user, 'healthcareaccount') and user.healthcareaccount.profile_picture:
+                profile_url = user.healthcareaccount.profile_picture.url
+        except Exception:
+            pass
+        return JsonResponse({"success":True, "profile_url": profile_url})
+    return JsonResponse({"success":False, "profile_url":"dilg.png"})
+
+@login_required
+def profile_view(request):
+    user = request.user
+    account_obj = None
+    account_type = None
+
+    if hasattr(user, 'account'):
+        account_obj = user.account
+        account_type = 'account'
+    elif hasattr(user, 'lawenforcementaccount'):
+        account_obj = user.lawenforcementaccount
+        account_type = 'lawenforcementaccount'
+    elif hasattr(user, 'swdoaccount'):
+        account_obj = user.swdoaccount
+        account_type = 'swdoaccount'
+    elif hasattr(user, 'healthcareaccount'):
+        account_obj = user.healthcareaccount
+        account_type = 'healthcareaccount'
+
+    if request.method == 'POST':
+        # Handle username update
+        new_username = request.POST.get('username')
+        if new_username and new_username != user.username:
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            if User.objects.filter(username=new_username).exclude(id=user.id).exists():
+                messages.error(request, 'That username is already taken. Please choose another one.')
+                return redirect('profile')
+            user.username = new_username
+
+        # Handle file upload for profile picture
+        if 'profile_picture' in request.FILES and account_obj:
+            account_obj.profile_picture = request.FILES['profile_picture']
+        
+        # Determine specific update logic based on account_type
+        if account_type == 'account':
+            account_obj.first_name = request.POST.get('first_name', account_obj.first_name)
+            account_obj.middle_name = request.POST.get('middle_name', account_obj.middle_name)
+            account_obj.last_name = request.POST.get('last_name', account_obj.last_name)
+            account_obj.region = request.POST.get('region', account_obj.region)
+            account_obj.province = request.POST.get('province', account_obj.province)
+            account_obj.city = request.POST.get('city', account_obj.city)
+            account_obj.barangay = request.POST.get('barangay', account_obj.barangay)
+        elif account_type == 'lawenforcementaccount':
+            account_obj.first_name = request.POST.get('first_name', account_obj.first_name)
+            account_obj.middle_name = request.POST.get('middle_name', account_obj.middle_name)
+            account_obj.last_name = request.POST.get('last_name', account_obj.last_name)
+            account_obj.region = request.POST.get('region', account_obj.region)
+            account_obj.province = request.POST.get('province', account_obj.province)
+            account_obj.station = request.POST.get('station', account_obj.station)
+        elif account_type == 'swdoaccount':
+            account_obj.name = request.POST.get('name', account_obj.name)
+            account_obj.region = request.POST.get('region', account_obj.region)
+            account_obj.province = request.POST.get('province', account_obj.province)
+            account_obj.city = request.POST.get('city', account_obj.city)
+        elif account_type == 'healthcareaccount':
+            account_obj.first_name = request.POST.get('first_name', account_obj.first_name)
+            account_obj.middle_name = request.POST.get('middle_name', account_obj.middle_name)
+            account_obj.last_name = request.POST.get('last_name', account_obj.last_name)
+            account_obj.region = request.POST.get('region', account_obj.region)
+            account_obj.province = request.POST.get('province', account_obj.province)
+            account_obj.hospital_name = request.POST.get('hospital_name', account_obj.hospital_name)
+        
+        if account_obj:
+            account_obj.save()
+            user.email = request.POST.get('email', user.email)
+            user.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+
+    return render(request, 'account/profile.html', {
+        'account_obj': account_obj,
+        'account_type': account_type
+    })
+
 def address_view (request):
     return render(request, 'address.html')
 
@@ -6287,6 +6380,177 @@ def admin_consolidated_report_data(request, get_year):
         'cases_w_criminal_cases': cases_w_criminal_cases,
         'cases_list': cases_list,
     })
+
+# ── Provider Graph Report Views ────────────────────────────────────────────────
+
+@login_required
+def SWDO_graph_view(request):
+    return render(request, 'SWDO/graph-report.html', {})
+
+@login_required
+def law_enforcement_graph_view(request):
+    return render(request, 'law-enforcement-admin/graph-report.html', {})
+
+@login_required
+def healthcare_graph_view(request):
+    return render(request, 'healthcare-admin/graph-report.html', {})
+
+@login_required
+def barangay_graph_view(request):
+    return render(request, 'barangay-admin/graph-report.html', {})
+
+
+# ── Provider Consolidated Report Data Endpoints ────────────────────────────────
+
+def _build_cases_list(cases):
+    """Shared helper: build the rich cases_list payload used by graph report pages."""
+    cases_list = []
+    for case in cases:
+        case_dict_data = {
+            'case_id': case.id,
+            'type_of_case': case.type_of_case,
+            'status': case.status,
+            'case_number': case.case_number,
+            'date_added': str(case.date_added) if case.date_added else None,
+            'barangay': case.barangay,
+            'city': case.city,
+            'province': case.province,
+            'place_of_incident': case.place_of_incident,
+            'checkbox_ra_8353': case.checkbox_ra_8353,
+            'checkbox_ra_9262': case.checkbox_ra_9262,
+            'checkbox_ra_7877': case.checkbox_ra_7877,
+            'checkbox_ra_9775': case.checkbox_ra_9775,
+            'checkbox_a_7610': case.checkbox_a_7610,
+            'checkbox_physical_abuse': case.checkbox_physical_abuse,
+            'checkbox_sexual_abuse': case.checkbox_sexual_abuse,
+            'checkbox_psychological_abuse': case.checkbox_psychological_abuse,
+            'checkbox_economic_abuse': case.checkbox_economic_abuse,
+            'checkbox_others': case.checkbox_others,
+            'service_information': case.service_information,
+        }
+        victims_decrypted = []
+        for v in case.victim_set.all():
+            vd = vars(v).copy()
+            for attr, val in vd.items():
+                if isinstance(val, str) and val.startswith("b'gAAAAA"):
+                    try:
+                        vd[attr] = decrypt_data(val)
+                    except Exception:
+                        vd[attr] = val
+            vd.pop('_state', None)
+            victims_decrypted.append(vd)
+        perps_decrypted = []
+        for p in case.perpetrator.all():
+            pd = vars(p).copy()
+            for attr, val in pd.items():
+                if isinstance(val, str) and val.startswith("b'gAAAAA"):
+                    try:
+                        pd[attr] = decrypt_data(val)
+                    except Exception:
+                        pd[attr] = val
+            pd.pop('_state', None)
+            perps_decrypted.append(pd)
+        cases_list.append({'data': case_dict_data, 'victims': victims_decrypted, 'perpetrators': perps_decrypted})
+    return cases_list
+
+
+def _provider_graph_response(cases):
+    total_cases = cases.count()
+    ongoing_cases = cases.filter(status='Active').count()
+    resolved_cases = cases.filter(status='Close').count()
+    services_provided = 0
+    bpo_count = 0; tpo_count = 0; ppo_count = 0; cases_w_criminal_cases = 0
+    for case in cases:
+        if case.status == 'Close':
+            services_provided += (case.psychosocial_services + case.emergency_shelter + case.economic_assistance + case.provision_of_appropriate_medical_treatment + case.issuance_of_medical_certificate + case.medico_legal_exam + case.rescue_operations_of_vaw_cases + case.forensic_interview_and_investigation + case.enforcement_of_protection_order + case.refers_to_other_service_provider)
+        if case.service_information == 'issuance':
+            bpo_count += 1
+            if case.enforcement_of_protection_order:
+                ppo_count += 1
+            else:
+                tpo_count += 1
+        if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
+            cases_w_criminal_cases += 1
+    return JsonResponse({
+        'total_cases': total_cases,
+        'ongoing_cases': ongoing_cases,
+        'resolved_cases': resolved_cases,
+        'services_provided': services_provided,
+        'ppo_count': ppo_count,
+        'tpo_count': tpo_count,
+        'bpo_count': bpo_count,
+        'cases_w_criminal_cases': cases_w_criminal_cases,
+        'cases_list': _build_cases_list(cases),
+    })
+
+
+@login_required
+def SWDO_consolidated_report_data(request, get_year):
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    start_date = request.GET.get('start')
+    end_date = request.GET.get('end')
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(refers_to_social_welfare=True)
+    if start_date and end_date:
+        cases = cases.filter(date_added__range=[start_date, end_date])
+    elif get_year != 0:
+        cases = cases.filter(date_added__year=get_year)
+    return _provider_graph_response(cases)
+
+
+@login_required
+def law_enforcement_consolidated_report_data(request, get_year):
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    start_date = request.GET.get('start')
+    end_date = request.GET.get('end')
+    try:
+        station = request.user.lawenforcementaccount.station
+    except Exception:
+        station = None
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(law_enforcement_agency_name=station)
+    if start_date and end_date:
+        cases = cases.filter(date_added__range=[start_date, end_date])
+    elif get_year != 0:
+        cases = cases.filter(date_added__year=get_year)
+    return _provider_graph_response(cases)
+
+
+@login_required
+def healthcare_consolidated_report_data(request, get_year):
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    start_date = request.GET.get('start')
+    end_date = request.GET.get('end')
+    try:
+        hospital_name = request.user.healthcareaccount.hospital_name
+    except Exception:
+        hospital_name = None
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(healthcare_provider_name=hospital_name)
+    if start_date and end_date:
+        cases = cases.filter(date_added__range=[start_date, end_date])
+    elif get_year != 0:
+        cases = cases.filter(date_added__year=get_year)
+    return _provider_graph_response(cases)
+
+
+@login_required
+def barangay_consolidated_report_data(request, get_year):
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    start_date = request.GET.get('start')
+    end_date = request.GET.get('end')
+    try:
+        barangay_name = request.user.account.barangay
+    except Exception:
+        barangay_name = None
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(barangay=barangay_name)
+    if start_date and end_date:
+        cases = cases.filter(date_added__range=[start_date, end_date])
+    elif get_year != 0:
+        cases = cases.filter(date_added__year=get_year)
+    return _provider_graph_response(cases)
+
 
 def request_account_reset(request):
     if request.method == 'POST':
