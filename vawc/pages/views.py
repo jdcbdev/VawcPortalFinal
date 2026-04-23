@@ -88,6 +88,15 @@ def home_view (request):
         
     return render(request, 'landing/home.html')
 
+def get_logged_user(request):
+    
+    if request.user.is_authenticated:
+        username = request.user.username
+        
+        return JsonResponse({"success":True, "username":username})
+    else:
+        return JsonResponse({"success":False, "message":"Failed to get Username, Login first."})
+
 def address_view (request):
     return render(request, 'address.html')
 
@@ -356,7 +365,6 @@ def admin_dashboard_view (request):
         return redirect('login')
     
     year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
-
     return render (request, 'super-admin/dashboard.html', {"year_list": year_list})
 
 @login_required

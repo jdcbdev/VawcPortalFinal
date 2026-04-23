@@ -38,7 +38,9 @@ urlpatterns = [
     path('verify-otp-phone/', views.verify_otp_phone, name='verify_otp_phone'),
     path('resend-otp-email/', views.resend_otp_email, name='resend_otp_email'),
     path('resend-otp-phone/', views.resend_otp_phone, name='resend_otp_phone'),
-
+    # request username
+    path('request_username/', views.get_logged_user, name="request username"),
+    
     #super admin side
     path('admin-vawc/dashboard/', views.admin_dashboard_view, name='admin dashboard'),
     path('admin-vawc/admin-dashboard-data/<int:get_year>/', views.admin_dashboard_data, name='admin dashboard data'),
