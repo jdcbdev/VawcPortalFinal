@@ -188,6 +188,8 @@ urlpatterns = [
     
     #user
     path('custom_password_change/', views.custom_password_change_view, name='custom_password_change'),
+    path('check_current_password/', views.check_current_password, name='check_current_password'),
+
 
     path('encrypt_decrypt/', views.encrypt_decrypt, name='encrypt_decrypt'),
 

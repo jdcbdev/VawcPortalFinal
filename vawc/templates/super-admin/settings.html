@@ -71,7 +71,8 @@
                             <label for="currentPassword" class="form-label text-muted small fw-bold mb-1">Current
                                 Password</label>
                             <input type="password" class="form-control bg-light border-0 py-2 rounded-3"
-                                id="currentPassword" name="current_password">
+                                id="currentPassword" name="old_password">
+                            <div id="currentPasswordFeedback" class="small mt-1 fw-semibold" style="display: none;"></div>
                         </div>
 
                         <div class="row g-3 mb-4">
@@ -79,13 +80,13 @@
                                 <label for="newPassword1" class="form-label text-muted small fw-bold mb-1">New
                                     Password</label>
                                 <input type="password" class="form-control bg-light border-0 py-2 rounded-3"
-                                    id="newPassword1" name="new_password1">
+                                    id="newPassword1" name="new_password1" disabled>
                             </div>
                             <div class="col-md-6">
                                 <label for="newPassword2" class="form-label text-muted small fw-bold mb-1">Confirm New
                                     Password</label>
                                 <input type="password" class="form-control bg-light border-0 py-2 rounded-3"
-                                    id="newPassword2" name="new_password2">
+                                    id="newPassword2" name="new_password2" disabled>
                             </div>
                         </div>
 
@@ -190,12 +191,62 @@
         }
     }
     document.addEventListener('DOMContentLoaded', function () {
+        const currentPasswordInput = document.getElementById('currentPassword');
+        const currentPasswordFeedback = document.getElementById('currentPasswordFeedback');
         const newPasswordInput = document.getElementById('newPassword1');
         const confirmNewPasswordInput = document.getElementById('newPassword2');
         const validationMessageContainer = document.getElementById('validationAlert');
         const correctMessageContainer = document.getElementById('correctAlert');
         const validationMessage = document.getElementById('validationMessageText');
         const confirmPasswordBtn = document.querySelector('#confirmPasswordBtn');
+
+        let isCurrentPasswordValid = false;
+
+        const checkCurrentPassword = () => {
+            const password = currentPasswordInput.value;
+            if (password.length === 0) {
+                currentPasswordFeedback.style.display = 'none';
+                newPasswordInput.disabled = true;
+                confirmNewPasswordInput.disabled = true;
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "check_current_password" %}',
+                data: {
+                    'old_password': password,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data.valid) {
+                        currentPasswordFeedback.textContent = 'Current password verified';
+                        currentPasswordFeedback.style.color = '#198754';
+                        currentPasswordFeedback.style.display = 'block';
+                        newPasswordInput.disabled = false;
+                        confirmNewPasswordInput.disabled = false;
+                        isCurrentPasswordValid = true;
+                    } else {
+                        currentPasswordFeedback.textContent = 'Incorrect current password';
+                        currentPasswordFeedback.style.color = '#dc3545';
+                        currentPasswordFeedback.style.display = 'block';
+                        newPasswordInput.disabled = true;
+                        confirmNewPasswordInput.disabled = true;
+                        isCurrentPasswordValid = false;
+                    }
+                },
+                error: function () {
+                    console.error('Error verifying current password');
+                }
+            });
+        };
+
+        // Use debounce for performance
+        let timeout = null;
+        currentPasswordInput.addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(checkCurrentPassword, 500);
+        });
 
         const updateValidationMessage = (message) => {
             validationMessage.textContent = message;
@@ -236,7 +287,7 @@
             }
 
             // Password match validation
-            if (newPassword !== confirmPassword) {
+            if (confirmPassword !== '' && newPassword !== confirmPassword) {
                 updateValidationMessage('Passwords do not match.');
                 return;
             }
@@ -284,8 +335,15 @@
                         location.reload();
                     }, 3000);
                 } else {
-                    showToast('error');
-                    // Handle form validation errors here if needed
+                    let errorMsg = 'Error changing password. Please check your input.';
+                    if (data.errors) {
+                        if (data.errors.old_password) {
+                            errorMsg = data.errors.old_password[0];
+                        } else if (data.errors.__all__) {
+                            errorMsg = data.errors.__all__[0];
+                        }
+                    }
+                    showToast('error', errorMsg);
                     console.log(data.errors);
                 }
             },

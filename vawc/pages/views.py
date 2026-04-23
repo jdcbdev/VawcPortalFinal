@@ -1840,6 +1840,17 @@ def custom_password_change_view(request):
             return JsonResponse({'success': False, 'errors': errors})
 
 @login_required
+def check_current_password(request):
+    if request.method == 'POST':
+        password = request.POST.get('old_password')
+        if not password:
+            return JsonResponse({'valid': False, 'message': 'Password is required.'})
+        
+        is_valid = request.user.check_password(password)
+        return JsonResponse({'valid': is_valid})
+    return JsonResponse({'valid': False, 'message': 'Invalid request method.'}, status=405)
+
+@login_required
 def barangay_case_view(request):
     if request.user.account.type != 'staff':
         return redirect('login')
