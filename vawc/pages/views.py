@@ -2135,7 +2135,7 @@ def send_otp_email(email, otp):
         f'--------------------------\n\n'
         f'Your One-Time Password (OTP) is: {otp}\n\n'
         f'Please use this OTP to verify your account.\n\n'
-        f'This OTP will expire in 5 minutes.\n\n'
+        f'This OTP will expire in 38 seconds.\n\n'
         f'--------------------------\n'
         f'This email was sent automatically. Please do not reply.'
     )
@@ -2214,7 +2214,7 @@ def login_with_otp(request):
                 otp = generate_otp()
                 request.session['otp'] = otp
                 request.session['user_email'] = email
-                otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
+                otp_expiry = timezone.now() + timezone.timedelta(seconds=38)
                 request.session['otp_expiry'] = otp_expiry.isoformat()
                 request.session['security_status'] = "decrypted"
                 send_otp_email(email, otp)
@@ -2316,7 +2316,7 @@ def resend_otp(request):
                 user = CustomUser.objects.get(email=user_email)
                 otp = generate_otp()  # Assuming you have a function to generate OTP
                 request.session['otp'] = otp
-                otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
+                otp_expiry = timezone.now() + timezone.timedelta(seconds=38)
                 request.session['otp_expiry'] = otp_expiry.isoformat()
                 send_otp_email(user_email, otp)  # Assuming you have a function to send OTP email
                 return JsonResponse({'success': True, 'message': 'OTP resent successfully.'})
@@ -2349,7 +2349,7 @@ def email_confirm(request):
         otp = generate_otp()
         request.session['otp'] = otp
         request.session['user_email'] = email  # Store user email in session for later retrieval
-        otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
+        otp_expiry = timezone.now() + timezone.timedelta(seconds=38)
         request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
         send_otp_email(email, otp)
         print('OTP: ' + otp)
@@ -2379,7 +2379,7 @@ def phone_confirm(request):
         otp = generate_otp()
         request.session['otp'] = otp
         request.session['user_phone'] = phone  # Store user email in session for later retrieval
-        otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
+        otp_expiry = timezone.now() + timezone.timedelta(seconds=38)
         request.session['otp_expiry'] = otp_expiry.isoformat()  # Convert datetime to string
         print('OTP: ' + otp)
 
@@ -2437,7 +2437,7 @@ def resend_otp_email(request):
         user_email = request.session.get('user_email')  # Corrected key
         otp = generate_otp()  # Assuming you have a function to generate OTP
         request.session['otp'] = otp
-        otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
+        otp_expiry = timezone.now() + timezone.timedelta(seconds=38)
         request.session['otp_expiry'] = otp_expiry.isoformat()
         send_otp_email(user_email, otp)  # Assuming you have a function to send OTP email
         return JsonResponse({'success': True, 'message': 'OTP resent successfully.'})
@@ -2449,7 +2449,7 @@ def resend_otp_phone(request):
         user_phone = request.session.get('user_phone')  # Corrected key
         otp = generate_otp()  # Assuming you have a function to generate OTP
         request.session['otp'] = otp
-        otp_expiry = timezone.now() + timezone.timedelta(minutes=5)
+        otp_expiry = timezone.now() + timezone.timedelta(seconds=38)
         request.session['otp_expiry'] = otp_expiry.isoformat()
         send_otp_phone(user_phone, otp)  # Assuming you have a function to send OTP phone
         return JsonResponse({'success': True, 'message': 'OTP resent successfully.'})

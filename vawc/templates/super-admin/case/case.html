@@ -4,6 +4,7 @@
 {% block styles %}
 <link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
 <link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
 <style>
     /* CSS for mobile devices */
     @media only screen and (max-width: 767px) {
@@ -29,7 +30,13 @@
                 <i class='bx bxs-briefcase text-color-gold me-2'></i>Case Records
             </h1>
         </div>
-        <div class="col-auto">
+        <div class="col-auto d-flex gap-2">
+            <button id="btn-export-excel" class="btn btn-outline-success rounded-pill px-4 shadow-sm">
+                <i class='bx bx-file me-1'></i>Export Excel
+            </button>
+            <button id="btn-export-case-report" class="btn btn-outline-gold rounded-pill px-4 shadow-sm">
+                <i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)
+            </button>
             <button class="btn btn-gold rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="modal" data-bs-target="#add_case">
                 <i class="bx bx-plus"></i> Add Case
             </button>
@@ -140,6 +147,8 @@
         </div>
     </div>
 
+    <input type="hidden" id="dilg-static-url" value="{% static 'img/dilg.png' %}">
+
     <div class="pt-4">
         <table class="table table-striped nowrap" id="table-case" style="width:100%">
             <thead class="border-bottom border-dark border-2 border-opacity-50">
@@ -153,6 +162,9 @@
                     <th scope="col" style="display:none;">RA Violations</th>
                     <th scope="col" style="display:none;">Victim Gender</th>
                     <th scope="col" style="display:none;">Victim Age</th>
+                    <th scope="col" style="display:none;">Victim Names</th>
+                    <th scope="col" style="display:none;">Perpetrator Names</th>
+                    <th scope="col" style="display:none;">Full Address</th>
                     <th class="text-center" scope="col">Action</th>
                 </tr>
             </thead>
@@ -186,6 +198,12 @@
                     <td style="display:none;">{% for v in case.victim_set.all %}{{ v.sex }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
                     <!-- Hidden: Victim Age (numeric, comma-separated) -->
                     <td style="display:none;">{% for v in case.victim_set.all %}{{ v.date_of_birth }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
+                    <!-- Hidden: Victim Names -->
+                    <td style="display:none;">{% for v in case.victim_set.all %}{{ v.first_name }} {{ v.last_name }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
+                    <!-- Hidden: Perpetrator Names -->
+                    <td style="display:none;">{% for p in case.perpetrator.all %}{{ p.first_name }} {{ p.last_name }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
+                    <!-- Hidden: Full Address -->
+                    <td style="display:none;">{{ case.barangay }}, {{ case.city }}, {{ case.province }}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
                             <a class="btn btn-outline-gold btn-sm px-3 action-btn" href="{% url 'admin case impacted view' case_id=case.id %}" role="button">Edit</a>
@@ -352,12 +370,25 @@
 
         // ── Initialize DataTable ──
         var table = $('#table-case').DataTable({
-            dom: 'Brt <"bottom"lp>',
+            dom: 'rt <"bottom"lp>',
             responsive: true,
             fixedHeader: true,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
             order: [[0, 'desc']],
             pageLength: 20,
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    title: 'VAWC Case Records — System Wide',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                    }
+                }
+            ]
+        });
+
+        $('#btn-export-excel').on('click', function() {
+            table.button('.buttons-excel').trigger();
         });
 
         // ── Keyword ──
@@ -485,6 +516,150 @@
             $('#caseDetailsModal').modal('show');
             $('#caseDetailsContent').load('/case-summary/' + caseId + '/');
         });
+    });
+</script>
+
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
+<script>
+    let dilgBase64 = null;
+    (async function loadDilgLogo() {
+        try {
+            const url = document.getElementById('dilg-static-url').value;
+            const resp = await fetch(url);
+            const blob = await resp.blob();
+            dilgBase64 = await new Promise((res, rej) => {
+                const fr = new FileReader();
+                fr.onloadend = () => res(fr.result);
+                fr.onerror = rej;
+                fr.readAsDataURL(blob);
+            });
+        } catch (e) { console.warn('Could not load DILG logo:', e); }
+    })();
+
+    $('#btn-export-case-report').on('click', function() {
+        const table = $('#table-case').DataTable();
+        const visibleRows = table.rows({ filter: 'applied' });
+        if (visibleRows.count() === 0) {
+            alert("No data available to export.");
+            return;
+        }
+
+        const btn = $(this);
+        btn.prop('disabled', true).html("<i class='bx bx-loader-alt bx-spin me-1'></i>Building PDF...");
+
+        setTimeout(function() {
+            try {
+                // Calculate Stats from visible data
+                let stats = { total: 0, active: 0, resolved: 0, crim: 0, victims: 0, perps: 0, bpo: 0, services: 0 };
+                visibleRows.every(function() {
+                    let d = this.data();
+                    stats.total++;
+                    if (d[3].includes('Active')) stats.active++;
+                    if (d[3].includes('Close'))  stats.resolved++;
+                    if (d[6].trim()) stats.crim++;
+                    
+                    let vNames = d[9] ? d[9].split(',').filter(Boolean) : [];
+                    stats.victims += vNames.length;
+                    
+                    let pNames = d[10] ? d[10].split(',').filter(Boolean) : [];
+                    stats.perps += pNames.length;
+                    
+                    if (d[2].toLowerCase().includes('issuance')) stats.bpo++;
+                    if (d[3].includes('Close')) stats.services++;
+                });
+
+                const govHeader = () => {
+                    const txt = [
+                        { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444' },
+                        { text: 'Department of the Interior and Local Government', fontSize: 9, bold: true, alignment: 'center', color: '#222' },
+                        { text: 'Region IX – Zamboanga Peninsula', fontSize: 9, bold: true, alignment: 'center', color: '#222' },
+                        { text: 'Women and Children Protection Desk', fontSize: 9, italic: true, alignment: 'center', color: '#555', margin: [0,1,0,0] },
+                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0,3,0,0] },
+                    ];
+                    return dilgBase64 ? {
+                        columns: [
+                            { width: '*', text: '' },
+                            { image: dilgBase64, width: 60, alignment: 'right', margin: [0,0,10,0] },
+                            { stack: txt, width: 'auto', alignment: 'center', margin: [0,4,0,0] },
+                            { width: '*', text: '' }
+                        ], margin: [0, 0, 0, 10]
+                    } : { stack: txt, margin: [0, 0, 0, 10] };
+                };
+
+                const summaryTable = {
+                    table: {
+                        widths: ['*','*','*','*'],
+                        body: [
+                            [{ text: 'Total Cases', style: 'kpiLabel' }, { text: 'Active Cases', style: 'kpiLabel' }, { text: 'Resolved Cases', style: 'kpiLabel' }, { text: 'Criminal Cases', style: 'kpiLabel' }],
+                            [{ text: stats.total, style: 'kpiValue' }, { text: stats.active, style: 'kpiValue' }, { text: stats.resolved, style: 'kpiValue' }, { text: stats.crim, style: 'kpiValue' }],
+                            [{ text: 'Total Victims', style: 'kpiLabel' }, { text: 'Total Perpetrators', style: 'kpiLabel' }, { text: 'Protection Orders (BPO)', style: 'kpiLabel' }, { text: 'Services Provided', style: 'kpiLabel' }],
+                            [{ text: stats.victims, style: 'kpiValue' }, { text: stats.perps, style: 'kpiValue' }, { text: stats.bpo, style: 'kpiValue' }, { text: stats.services, style: 'kpiValue' }],
+                        ]
+                    },
+                    layout: 'lightHorizontalLines', margin: [0, 0, 0, 20]
+                };
+
+                const tableBody = [];
+                tableBody.push([
+                    { text: 'Case #', style: 'th' },
+                    { text: 'Victim(s)', style: 'th' },
+                    { text: 'Service', style: 'th' },
+                    { text: 'Status', style: 'th' },
+                    { text: 'Incident Address', style: 'th' },
+                    { text: 'Date', style: 'th' }
+                ]);
+
+                visibleRows.every(function() {
+                    let d = this.data();
+                    tableBody.push([
+                        { text: d[0], style: 'td' },
+                        { text: d[9] || 'Undisclosed', style: 'td' },
+                        { text: d[2], style: 'td' },
+                        { text: d[3], style: 'td' },
+                        { text: d[11] || '—', style: 'td' },
+                        { text: d[4], style: 'td' }
+                    ]);
+                });
+
+                const docDef = {
+                    pageOrientation: 'landscape',
+                    pageSize: 'A4',
+                    content: [
+                        govHeader(),
+                        { canvas: [{ type: 'line', x1:0, y1:0, x2: 760, y2:0, lineWidth:1.5, lineColor:'#E8A020' }], margin: [0, 0, 0, 10] },
+                        { text: 'CONSOLIDATED CASE RECORDS REPORT', fontSize: 14, bold: true, color: '#E8A020', alignment: 'center', margin: [0, 0, 0, 5] },
+                        { text: `Generated on: ${new Date().toLocaleDateString()}`, fontSize: 9, color: '#666', alignment: 'center', margin: [0, 0, 0, 15] },
+                        summaryTable,
+                        {
+                            table: { headerRows: 1, widths: [70, '*', '*', 60, '*', 70], body: tableBody },
+                            layout: {
+                                fillColor: (i) => i === 0 ? '#2d2d2d' : (i % 2 === 0 ? '#f9f9f9' : null),
+                                hLineColor: () => '#eee'
+                            }
+                        }
+                    ],
+                    styles: {
+                        kpiLabel: { fontSize: 8, bold: true, color: '#888', alignment: 'center', margin: [0, 5, 0, 0] },
+                        kpiValue: { fontSize: 14, bold: true, color: '#3b1a6e', alignment: 'center' },
+                        th: { fontSize: 9, bold: true, color: 'white', margin: [0, 3, 0, 3] },
+                        td: { fontSize: 8, margin: [0, 2, 0, 2] }
+                    }
+                };
+
+                pdfMake.createPdf(docDef).download('VAWC_Case_Records_Report.pdf');
+            } catch (e) {
+                console.error(e);
+                alert("Error generating PDF.");
+            } finally {
+                btn.prop('disabled', false).html("<i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)");
+            }
+        }, 100);
     });
 </script>
 {% endblock scripts %}

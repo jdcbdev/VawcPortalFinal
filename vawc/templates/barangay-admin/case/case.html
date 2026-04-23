@@ -4,64 +4,119 @@
 {% block styles %}
 <link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
 <link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
 <style>
-    /* CSS for mobile devices */
     @media only screen and (max-width: 767px) {
-        /* Center pagination and show entries */
         .dataTables_wrapper .dataTables_length,
-        .dataTables_wrapper .dataTables_paginate {
-            text-align: center;
-        }
+        .dataTables_wrapper .dataTables_paginate { text-align: center; }
     }
-    #table-case tbody tr {
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    #table-case tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05) !important;
-    }
+    #table-case tbody tr { cursor: pointer; transition: background-color 0.2s; }
+    #table-case tbody tr:hover { background-color: rgba(232, 160, 32, 0.05) !important; }
+    .text-color-primary { color: #3b1a6e; }
+    .text-color-gold { color: #E8A020; }
+    .btn-gold { background-color: #E8A020; color: white; border: none; }
+    .btn-gold:hover { background-color: #d4921c; color: white; }
+    .btn-outline-gold { border-color: #E8A020; color: #E8A020; }
+    .btn-outline-gold:hover { background-color: #E8A020; color: white; }
 </style>
 {% endblock %}
 {% block content %}
 <div class="container-fluid pb-4">
-    <div class="row d-flex justify-content-between">
+    <div class="row d-flex justify-content-between align-items-center">
         <div class="col-auto">
-            <h1>Case</h1>
+            <h1 class="text-color-primary fw-bold d-flex align-items-center">
+                <i class='bx bxs-briefcase text-color-gold me-2'></i>Case Records
+            </h1>
+            <p class="text-muted mb-0">Barangay: {{ barangay }}</p>
         </div>
-        <div class="col-auto">
-            <!-- <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_case" {% if global.security_status == "encrypted" %}disabled{% endif %}><i class="bx bx-plus"></i> Add Case</button> -->
-            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#add_case"><i class="bx bx-plus"></i> Add Case</button>
+        <div class="col-auto d-flex gap-2">
+            <button id="btn-export-excel" class="btn btn-outline-success rounded-pill px-4 shadow-sm">
+                <i class='bx bx-file me-1'></i>Export Excel
+            </button>
+            <button id="btn-export-case-report" class="btn btn-outline-gold rounded-pill px-4 shadow-sm">
+                <i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)
+            </button>
+            <button class="btn btn-gold rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="modal" data-bs-target="#add_case">
+                <i class="bx bx-plus"></i> Add Case
+            </button>
         </div>
     </div>
-    <p>Barangay: {{ barangay }}</p>
 
-    <div class="row mt-4">
-        <div class="col-lg-3 mb-lg-0 mb-3 ">
-            <div class="input-group search-keyword">
-                <input type="number" name="keyword" id="keyword" placeholder="Search Case Number" class="form-control">
-                <button class="btn btn-outline-secondary background-color-green" type="button"><i class='bx bx-search-alt'></i></button>
+    <input type="hidden" id="dilg-static-url" value="{% static 'img/dilg.png' %}">
+
+    <!-- ── Row 1: Basic Filters ── -->
+    <div class="row g-2 mt-3 align-items-end">
+        <div class="col-12 col-md-3">
+            <div class="input-group">
+                <input type="number" id="keyword" placeholder="Search Case Number" class="form-control">
+                <button class="btn btn-outline-secondary" type="button"><i class='bx bx-search-alt'></i></button>
             </div>
         </div>
-        <div class="form-group col-lg-3 mb-lg-0 mb-3 ">
-            <select name="case_type" id="case_type" class="form-select me-md-2">
+        <div class="col-6 col-md-3">
+            <select id="case_type" class="form-select">
                 <option value="">All Case Type</option>
                 <option value="Impacted Victim">Impacted Victim</option>
                 <option value="Behalf">Behalf of Impacted Victim</option>
             </select>
         </div>
-        <div class="form-group col-lg-3 mb-lg-0 mb-3 ">
-            <select name="service" id="service" class="form-select me-md-2">
+        <div class="col-6 col-md-3">
+            <select id="service" class="form-select">
                 <option value="">All Service</option>
                 <option value="Rescue">Crisis Intervention Including Rescue</option>
                 <option value="Issuance">Issuance / Enforcement of Barangay Protection Order</option>
             </select>
         </div>
-        <div class="form-group col-lg-3 mb-lg-0 mb-3 ">
-            <select name="status" id="status" class="form-select me-md-2">
+        <div class="col-6 col-md-3">
+            <select id="status" class="form-select">
                 <option value="">All Status</option>
                 <option value="Active">Active</option>
                 <option value="Close">Close</option>
             </select>
+        </div>
+    </div>
+
+    <!-- ── Row 2: Advanced Filters ── -->
+    <div class="row g-2 mt-3 align-items-end">
+        <div class="col-12 col-lg-auto d-flex align-items-center text-muted small fs-6 fw-semibold" style="min-width: 80px;">
+            <i class='bx bx-filter me-1'></i> Advanced
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="dropdown">
+                <button class="form-select text-start bg-white text-truncate" type="button" data-bs-toggle="dropdown" id="btn-ra-filter" data-bs-auto-close="outside">
+                    All RA
+                </button>
+                <ul class="dropdown-menu w-100 p-2 shadow-sm" style="max-height: 250px; overflow-y: auto;">
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="" checked> All RA</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 9262"> RA 9262</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 8353"> RA 8353</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 7877"> RA 7877</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 7610"> RA 7610</label></li>
+                    <li><label class="dropdown-item small"><input type="checkbox" class="case-ra-cb form-check-input me-2" value="RA 9775"> RA 9775</label></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <select id="case-gender-filter" class="form-select">
+                <option value="">All Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="dropdown" id="age-range-dropdown">
+                <button class="form-select text-start bg-white text-truncate" type="button" data-bs-toggle="dropdown" id="btn-age-filter" data-bs-auto-close="outside">
+                    All Ages
+                </button>
+                <div class="dropdown-menu p-3 shadow-sm" style="min-width: 220px;">
+                    <label class="form-label small fw-semibold text-muted mb-1">Age Range</label>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <input type="number" id="case-age-from" class="form-control_sm form-control" placeholder="From" min="0">
+                        <span class="text-muted small">—</span>
+                        <input type="number" id="case-age-to" class="form-control_sm form-control" placeholder="To" min="0">
+                    </div>
+                    <button id="case-age-clear" class="btn btn-sm btn-outline-secondary w-100">Clear</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -74,6 +129,12 @@
                     <th scope="col">Service</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date Added</th>
+                    <th scope="col" style="display:none;">RA Violations</th>
+                    <th scope="col" style="display:none;">Victim Gender</th>
+                    <th scope="col" style="display:none;">Victim Age</th>
+                    <th scope="col" style="display:none;">Victim Names</th>
+                    <th scope="col" style="display:none;">Perpetrator Names</th>
+                    <th scope="col" style="display:none;">Full Address</th>
                     <th class="text-center" scope="col">Action</th>
                 </tr>
             </thead>
@@ -82,21 +143,19 @@
                 <tr class="border-bottom border-2" data-case-id="{{ case.id }}" data-edit-url="{% if case.type_of_case == 'Impacted' %}{% url 'barangay case impacted view' case_id=case.id %}{% else %}{% url 'barangay case behalf view' case_id=case.id %}{% endif %}">
                     <td class="text-center">{{ case.date_added|date:'Y-m' }}-{{ case.case_number }}</td>
                     <td>
-                        {% if case.type_of_case == 'Impacted' %}
-                            Impacted
-                        {% elif case.type_of_case == 'Behalf' %}
-                            Behalf of Impacted Victim
-                        {% endif %}
+                        {% if case.type_of_case == 'Impacted' %}Impacted{% elif case.type_of_case == 'Behalf' %}Behalf of Impacted Victim{% endif %}
                     </td>
                     <td>
-                        {% if case.service_information == 'crisis' %}
-                            Crisis Intervention Including Rescue
-                        {% elif case.service_information == 'issuance' %}
-                            Issuance / Enforcement of Barangay Protection Order
-                        {% endif %}
+                        {% if case.service_information == 'crisis' %}Crisis Intervention Including Rescue{% elif case.service_information == 'issuance' %}Issuance / Enforcement of Barangay Protection Order{% endif %}
                     </td>
                     <td>{{ case.status }}</td>
                     <td>{{ case.date_added|date:"m/d/Y" }}</td>
+                    <td style="display:none;">{% if case.checkbox_ra_9262 %}RA 9262{% endif %}{% if case.checkbox_ra_8353 %},RA 8353{% endif %}{% if case.checkbox_ra_7877 %},RA 7877{% endif %}{% if case.checkbox_a_7610 %},RA 7610{% endif %}{% if case.checkbox_ra_9775 %},RA 9775{% endif %}</td>
+                    <td style="display:none;">{% for v in case.victim_set.all %}{{ v.sex }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
+                    <td style="display:none;">{% for v in case.victim_set.all %}{{ v.date_of_birth|date:'Y-m-d' }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
+                    <td style="display:none;">{% for v in case.victim_set.all %}{{ v.first_name }} {{ v.last_name }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
+                    <td style="display:none;">{% for p in case.perpetrator.all %}{{ p.first_name }} {{ p.last_name }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
+                    <td style="display:none;">{{ case.barangay }}, {{ case.city }}, {{ case.province }}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
                             <a class="btn btn-outline-success btn-sm action-btn" href="{% url 'barangay case impacted view' case_id=case.id %}" role="button">Edit</a>
@@ -105,94 +164,37 @@
                         {% endif %}
                     </td>
                 </tr>
-                {% empty %}
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td>No cases found</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div><!--end of div of table-->
-</div>
-<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
-<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Success</strong>
-            <small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-dark">
-        </div>
-    </div>
-    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Error</strong>
-            <small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-dark">
-        </div>
     </div>
 </div>
+
 <!-- Modal add case -->
-<div class="modal fade" id="add_case" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="add_case" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header  border-bottom ">
+            <div class="modal-header border-bottom">
                 <h5 class="modal-title">Add Case</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="add_case_form" action="{% url 'add_new_case' %}" method="post">
+            <form id="add_case_form" method="post">
                 {% csrf_token %}
-                <input type="hidden" name="barangay" value="{{ barangay }}">
                 <input type="hidden" name="status_case" value="Active">
                 <div class="modal-body">
                     <div class="form-floating mb-2">
-                        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" >
+                        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
                         <label for="email">Email</label>
                     </div>
-                    <div class="row d-flex justify-content-start align-items-center ps-1">
-                        <div class="col-4">
-                            <h5>Type of Case:</h5>
-                        </div>
-                        <div class="col">
-                            <div class="d-grid">
-                                <input type="radio" class="btn-check btn-check-update" name="case_type" value="Impacted" id="Impacted" autocomplete="off" data-status="Impacted" checked>
-                                <label class="btn btn-outline-primary mx-2" for="Impacted">Impacted</label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="d-grid">
-                                <input type="radio" class="btn-check btn-check-update" name="case_type" value="Behalf" id="Behalf" autocomplete="off"  data-status="Behalf">
-                                <label class="btn btn-outline-primary" for="Behalf">Behalf</label>
-                            </div>
-                        </div>
+                    <div class="row d-flex align-items-center ps-1 mb-3">
+                        <div class="col-4"><h5>Type of Case:</h5></div>
+                        <div class="col"><input type="radio" class="btn-check" name="case_type" value="Impacted" id="Impacted" checked><label class="btn btn-outline-primary w-100" for="Impacted">Impacted</label></div>
+                        <div class="col"><input type="radio" class="btn-check" name="case_type" value="Behalf" id="Behalf"><label class="btn btn-outline-primary w-100" for="Behalf">Behalf</label></div>
                     </div>
-                    <br>
                     <div class="row d-flex align-items-center ps-1">
-                        <div class="col-4">
-                            <h5>Type of Service:</h5>
-                        </div>
-                        <div class="col-4">
-                            <div class="d-grid">
-                                <input type="radio" class="btn-check btn-check-update btn-block" name="service_type" value="crisis" id="crisis" autocomplete="off" data-status="crisis" checked>
-                                <label class="btn btn-outline-primary mx-2" for="crisis">Crisis</label>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="d-grid">
-                                <input type="radio" class="btn-check btn-check-update btn-block" name="service_type" value="issuance" id="issuance" autocomplete="off"  data-status="issuance">
-                                <label class="btn btn-outline-primary" for="issuance">Issuance</label>
-                            </div>
-                        </div>
+                        <div class="col-4"><h5>Service:</h5></div>
+                        <div class="col"><input type="radio" class="btn-check" name="service_type" value="crisis" id="crisis" checked><label class="btn btn-outline-primary w-100" for="crisis">Crisis</label></div>
+                        <div class="col"><input type="radio" class="btn-check" name="service_type" value="issuance" id="issuance"><label class="btn btn-outline-primary w-100" for="issuance">Issuance</label></div>
                     </div>
                 </div>
                 <div class="modal-footer border-top">
@@ -204,136 +206,140 @@
     </div>
 </div>
 
-<!-- Modal for Case Summary -->
-<div class="modal fade" id="caseDetailsModal" tabindex="-1" aria-labelledby="caseDetailsModalLabel" aria-hidden="true">
+<!-- Case Summary Modal -->
+<div class="modal fade" id="caseDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg rounded-4">
             <div class="modal-header bg-primary text-white border-bottom-0 rounded-top-4">
-                <h5 class="modal-title fw-bold" id="caseDetailsModalLabel">
-                    <i class='bx bxs-file-find me-2'></i>Case Summary Details
-                </h5>
+                <h5 class="modal-title fw-bold" id="caseDetailsModalLabel"><i class='bx bxs-file-find me-2'></i>Case Summary Details</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4" id="caseDetailsContent">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="mt-2 text-muted">Fetching case details...</p>
-                </div>
+                <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>
             </div>
             <div class="modal-footer border-top-0 pt-0">
                 <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-                <a href="#" id="caseEditLink" class="btn btn-primary rounded-pill px-4">
-                    <i class='bx bx-edit-alt'></i> Open for Full Editing
-                </a>
+                <a href="#" id="caseEditLink" class="btn btn-gold rounded-pill px-4"><i class='bx bx-edit-alt'></i> Open for Full Editing</a>
             </div>
         </div>
     </div>
 </div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header text-dark" style="background-color:#E8A020;">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body text-dark"></div>
+    </div>
+</div>
 {% endblock content %}
+
 {% block scripts %}
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
 <script>
     $(document).ready(function() {
-        $('#table-case').DataTable({
-            dom: 'Brt <"bottom"lp>',
-            responsive: true,
-            fixedHeader: true,
-            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-            //order: [[4, 'desc']],
-            order: [[0, 'desc']],
-            pageLength: 20,
+        const RA_COL = 5, GENDER_COL = 6, AGE_COL = 7, V_NAMES_COL = 8, P_NAMES_COL = 9, ADDR_COL = 10;
+
+        $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn._caseAgeFilter !== true);
+        const caseAgeFilter = function(settings, data, dataIndex) {
+            if (settings.nTable.id !== 'table-case') return true;
+            const from = parseInt($('#case-age-from').val(), 10), to = parseInt($('#case-age-to').val(), 10);
+            if (isNaN(from) && isNaN(to)) return true;
+            const dobText = data[AGE_COL] || '', today = new Date();
+            if (!dobText.trim()) return isNaN(from) && isNaN(to);
+            return dobText.split(',').some(dob => {
+                const bd = new Date(dob.trim());
+                if (isNaN(bd)) return false;
+                let age = today.getFullYear() - bd.getFullYear();
+                if (today.getMonth() < bd.getMonth() || (today.getMonth() === bd.getMonth() && today.getDate() < bd.getDate())) age--;
+                return (isNaN(from) || age >= from) && (isNaN(to) || age <= to);
+            });
+        };
+        caseAgeFilter._caseAgeFilter = true;
+        $.fn.dataTable.ext.search.push(caseAgeFilter);
+
+        const table = $('#table-case').DataTable({
+            dom: 'rt <"bottom"lp>', responsive: true, order: [[0, 'desc']], pageLength: 20,
+            buttons: [{ extend: 'excelHtml5', title: 'VAWC Case Records', exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9,10] } }]
         });
 
-        // Your filter options and search functionality
-        $('input#keyword').on('input', function(e){
-            var status = $(this).val();
-            $('#table-case').DataTable().columns([0]).search(status).draw();
+        $('#btn-export-excel').on('click', () => table.button('.buttons-excel').trigger());
+        $('#keyword').on('input', function() { table.columns([0]).search($(this).val()).draw(); });
+        $('#case_type').on('change', function() { table.columns([1]).search($(this).val()).draw(); });
+        $('#service').on('change', function() { table.columns([2]).search($(this).val()).draw(); });
+        $('#status').on('change', function() { table.columns([3]).search($(this).val()).draw(); });
+
+        $(document).on('change', '.case-ra-cb', function() {
+            if (!$(this).val()) { if ($(this).is(':checked')) $('.case-ra-cb').not(this).prop('checked', false); }
+            else { $('.case-ra-cb[value=""]').prop('checked', false); }
+            let sel = $('.case-ra-cb:checked').map((i, el) => $(el).val()).get().filter(Boolean);
+            $('#btn-ra-filter').text(sel.length ? sel.join(', ') : 'All RA');
+            table.columns([RA_COL]).search(sel.length ? sel.map(r => $.fn.dataTable.util.escapeRegex(r)).join('|') : '', true, false).draw();
         });
-        $('select#case_type').on('change', function(e){
-            var status = $(this).val();
-            $('#table-case').DataTable().columns([1]).search(status).draw();
+
+        $('#case-gender-filter').on('change', function() { table.columns([GENDER_COL]).search($(this).val(), false, true).draw(); });
+        $('#case-age-from, #case-age-to').on('input', () => { 
+            let f = $('#case-age-from').val(), t = $('#case-age-to').val();
+            $('#btn-age-filter').text(f && t ? `${f}-${t}` : (f ? `${f}+` : (t ? `Up to ${t}` : 'All Ages')));
+            table.draw();
         });
-        $('select#service').on('change', function(e){
-            var status = $(this).val();
-            $('#table-case').DataTable().columns([2]).search(status).draw();
+        $('#case-age-clear').on('click', () => { $('#case-age-from, #case-age-to').val(''); $('#btn-age-filter').text('All Ages'); table.draw(); });
+
+        let logo = null;
+        fetch($('#dilg-static-url').val()).then(r => r.blob()).then(b => {
+            let fr = new FileReader(); fr.onloadend = () => logo = fr.result; fr.readAsDataURL(b);
         });
-        $('select#status').on('change', function(e){
-            var status = $(this).val();
-            $('#table-case').DataTable().columns([3]).search(status).draw();
+
+        $('#btn-export-case-report').on('click', function() {
+            const rows = table.rows({ filter: 'applied' });
+            if (!rows.count()) return alert("No data.");
+            const btn = $(this); btn.prop('disabled', true).html("<i class='bx bx-loader-alt bx-spin me-1'></i>Building PDF...");
+            setTimeout(() => {
+                let s = { t:0, a:0, r:0, c:0, v:0, p:0, b:0 };
+                rows.every(function() {
+                    let d = this.data(); s.t++;
+                    if (d[3].includes('Active')) s.a++; if (d[3].includes('Close')) s.r++;
+                    if (d[RA_COL].trim()) s.c++;
+                    s.v += d[V_NAMES_COL].split(',').filter(Boolean).length;
+                    s.p += d[P_NAMES_COL].split(',').filter(Boolean).length;
+                    if (d[2].toLowerCase().includes('issuance')) s.b++;
+                });
+                const doc = {
+                    pageOrientation: 'landscape', content: [
+                        { columns: [{ text: '' }, logo ? { image: logo, width: 50 } : { text: '' }, { stack: ['Republic of the Philippines', 'VAWC CASE MANAGEMENT SYSTEM'], alignment: 'center' }, { text: '' }] },
+                        { text: 'CONSOLIDATED CASE RECORDS REPORT', bold: true, alignment: 'center', margin: [0, 20] },
+                        { table: { widths: ['*','*','*','*'], body: [[{text:'Total',bold:true},{text:'Active',bold:true},{text:'Resolved',bold:true},{text:'Criminal',bold:true}],[s.t,s.a,s.r,s.c]] }, margin: [0,0,0,20] },
+                        { table: { headerRows: 1, widths: [80, '*', '*', 60, '*', 70], body: [['Case #', 'Victim(s)', 'Service', 'Status', 'Address', 'Date'], ...rows.data().toArray().map(d => [d[0], d[V_NAMES_COL]||'—', d[2], d[3], d[ADDR_COL], d[4]])] } }
+                    ]
+                };
+                pdfMake.createPdf(doc).download('Barangay_Case_Report.pdf');
+                btn.prop('disabled', false).html("<i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)");
+            }, 100);
         });
 
         $('#addCaseBtn').click(function(e) {
-            e.preventDefault();  // Prevent default form submission
-
-            // Serialize form data
-            var formData = $('#add_case_form').serialize();
-
-            // Send AJAX POST request
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'add_new_case' %}",  // Replace with your actual URL for adding new case
-                data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        // Redirect based on type_of_case from the response
-                        var caseId = response.case_id;
-                        var typeOfCase = response.type_of_case;
-                        if (typeOfCase === 'Impacted') {
-                            // Display success toast
-                            $('.toast-body').text('Case (Impcated Victim) added successfully');
-                            $('#successToast').toast('show');
-                            
-                            // Close modal after 2 seconds
-                            setTimeout(function() {
-                                $('#add_case').modal('hide'); // Close modal
-                                window.location.href = '/admin-barangay-vawc/view-case/impacted/' + caseId + '/';
-                            }, 2000);
-                            
-                        } else if (typeOfCase === 'Behalf') {
-                            // Display success toast
-                            $('.toast-body').text('Case (Behalf of Impacted Victim) added successfully');
-                            $('#successToast').toast('show');
-                            
-                            // Close modal after 2 seconds
-                            setTimeout(function() {
-                                $('#add_case').modal('hide'); // Close modal
-                                window.location.href = '/admin-barangay-vawc/view-case/behalf/' + caseId + '/';
-                            }, 2000);
-                            
-                        } else {
-                            // Handle other cases or errors
-                        }
-                    } else {
-                        // Handle error response
-                        console.log(response.error);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle AJAX error
-                    console.error(xhr.responseText);
+            e.preventDefault();
+            $.ajax({ type: 'POST', url: "{% url 'add_new_case' %}", data: $('#add_case_form').serialize(), success: r => {
+                if (r.success) {
+                    $('.toast-body').text('Case added.'); $('#successToast').toast('show');
+                    setTimeout(() => window.location.href = `/admin-barangay-vawc/view-case/${r.type_of_case.toLowerCase()}/${r.case_id}/`, 1500);
                 }
-            });
+            }});
         });
 
-        // Row Click Handler for Modal
         $('#table-case tbody').on('click', 'tr', function(e) {
-            // Don't trigger if clicking on action buttons or anchors
-            if ($(e.target).closest('.action-btn, a, button').length) return;
-
-            var table = $('#table-case').DataTable();
-            var caseId = $(this).data('case-id');
-            var editUrl = $(this).data('edit-url');
-
-            if (!caseId) return;
-
-            // Prepare Modal
-            $('#caseEditLink').attr('href', editUrl);
-            $('#caseDetailsContent').html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>');
+            if ($(e.target).closest('a, button').length) return;
+            $('#caseEditLink').attr('href', $(this).data('edit-url'));
             $('#caseDetailsModal').modal('show');
-
-            // Load Content
-            $('#caseDetailsContent').load('/case-summary/' + caseId + '/');
+            $('#caseDetailsContent').load('/case-summary/' + $(this).data('case-id') + '/');
         });
     });
 </script>
