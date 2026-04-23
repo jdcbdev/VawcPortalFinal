@@ -119,6 +119,30 @@
 
     <script>
         $(document).ready(function() {
+            $.ajax({
+                type: 'GET',
+                url: '/request_username/',
+                success: function(response) {
+                    $('#username').text(`Welcome, ${response.username}!`);
+                    console.log(response.username)
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching username:', error);
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: '/request_user_profile_picture/',
+                success: function(response) {
+                    let src = response.profile_url;
+                    if (!src.startsWith('/') && !src.startsWith('http')) {
+                        src = `/static/img/${src}`;
+                    }
+                    $('#user-icon').attr('src', src);
+                    $('#dropdown-user-icon').attr('src', src);
+                    console.log(`Profile URL loaded: ${src}`);
+                }
+            });
             // "Next" button on Email Modal
             $('#resetPasswordEmailNextBtn').on('click', function() {
                 var targetEmail = $('#reset_target_email_input').val();
