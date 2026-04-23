@@ -9,16 +9,17 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <div class="d-flex align-items-center justify-content-between flex-wrap mb-3 gap-3">
-        <div class="d-flex align-items-center">
-            <h1 class="pe-3 mb-0" style="border-right: 1px solid #dcdcdc;">Dashboard</h1>
-            <h2 class="ms-3 mb-0 fs-5 text-primary">{{ SWDO }}</h2>
+    <div class="d-flex mb-4 gap-3 align-items-start align-items-md-center flex-column flex-md-row">
+        <div class="d-flex align-items-center me-auto">
+            <h1 class="pe-3 mb-0 border-end border-dark border-opacity-25 fs-3" style="border-right: 1px solid #dcdcdc;">Dashboard</h1>
+            <h2 class="ms-3 mb-0 fs-5 text-primary fw-bold">{{ SWDO }}</h2>
         </div>
-        <div class="d-flex align-items-center gap-3 ms-auto">
-            <div class="spinner-border-sm test-primary" id="select-year-data-loading" role="status">
+        <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded shadow-sm border ms-auto">
+            <div class="spinner-border spinner-border-sm text-primary d-none" id="select-year-data-loading" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <select name="" id="select-year-data" class="form-select w-auto" disabled>
+            <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Date Range:</span>
+            <select name="" id="select-year-data" class="form-select form-select-sm border-0 bg-light fw-semibold" disabled style="width:120px;">
                 <option value="0">All year</option>
                 {% for year in year_list %}
                 <option value="{{year}}">{{year}}</option>
@@ -27,78 +28,143 @@
         </div>
     </div>
     
-    <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 mb-4 align-items-stretch">
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>Reported Cases</span>
-            <div class="fw-bold fs-6 text-color-primary" id="total-cases">-</div>
-          </div>
+    <!-- KPI Cards with drill-down -->
+    <div class="row g-3 mb-3">
+        <!-- Reported Cases -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-total" onclick="drillDown('all')" title="Click to show all cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-file-blank'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Reported Cases</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="total-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">All filed cases</div>
+            </div>
         </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>Ongoing Cases</span>
-            <div class="fw-bold fs-6 text-color-primary" id="ongoing-cases">-</div>
-          </div>
+        <!-- Ongoing -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-ongoing" onclick="drillDown('ongoing')" title="Click to filter ongoing cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-loader-circle'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Ongoing</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="ongoing-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Active cases</div>
+            </div>
         </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>Resolved Cases</span>
-            <div class="fw-bold fs-6 text-color-primary" id="resolved-cases">-</div>
-          </div>
+        <!-- Resolved -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-resolved" onclick="drillDown('resolved')" title="Click to filter resolved cases">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-check-shield'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Resolved</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="resolved-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Closed cases</div>
+            </div>
         </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>w/ Criminal Cases</span>
-            <div class="fw-bold fs-6 text-color-primary" id="cases-w-criminal-cases">-</div>
-          </div>
+        <!-- Criminal Cases -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-criminal" onclick="drillDown('criminal')" title="Click to filter cases with RA violations">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-shield-x'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Criminal Cases</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="cases-w-criminal-cases">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">w/ RA violations</div>
+            </div>
         </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100 d-flex justify-content-between">
-              <div>
-                  <span>w/ PO</span>
-                  
-              </div>
-              <div class="">
-                  <div class="fw-bold fs-2 text-color-primary">BPO: <span id="bpo">-</span></div>
-                  <div class="fw-bold fs-2 text-warning">TPO: <span id="tpo">-</span></div>
-                  <div class="fw-bold fs-2 text-success">PPO: <span id="ppo">-</span></div>
-              </div>
-          </div>
+        <!-- Protection Orders -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-po" onclick="drillDown('protection_order')" title="Click to filter cases with protection orders">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-shield'></i>
+                </div>
+                <div class="text-muted fw-semibold text-uppercase mb-1" style="font-size:0.7rem;">Protection Orders</div>
+                <div class="d-flex justify-content-between mt-1">
+                    <div class="text-center">
+                        <div class="fw-bold fs-6 text-kpi-gold" id="bpo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">BPO</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold fs-6 text-kpi-gold" id="tpo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">TPO</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="fw-bold fs-6 text-kpi-gold" id="ppo">-</div>
+                        <div class="text-muted" style="font-size:0.65rem;">PPO</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col">
-          <div class="border rounded p-2 shadow-sm h-100">
-            <span>Services Provided</span>
-            <div class="fw-bold fs-6 text-color-primary" id="services-provided">-</div>
-          </div>
+        <!-- Services Provided -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card border rounded p-3 shadow-sm h-100 cursor-pointer position-relative overflow-hidden"
+                 id="kpi-services" onclick="drillDown('services')" title="Click to filter cases with services">
+                <div class="kpi-icon-bg position-absolute top-0 end-0 p-2 opacity-25" style="font-size:3rem;">
+                    <i class='bx bx-donate-heart'></i>
+                </div>
+                <div class="text-muted small fw-semibold text-uppercase mb-1">Services Provided</div>
+                <div class="fw-bold fs-3 text-kpi-gold" id="services-provided">-</div>
+                <div class="text-muted" style="font-size:0.72rem;">Resolved w/ services</div>
+            </div>
         </div>
-  
-      </div>
-
-
+    </div>
     
-    <div class="row row-cols-1 row-cols-md-2 mb-4">
-        <div class="col mb-3">
-            <h2 class="fs-4 mb-3">No. of cases per RA</h2>
-            <canvas id="bar-cases-per-ra"></canvas>
+    <!-- Drill-down breadcrumb / active filter notice -->
+    <div id="kpi-filter-bar" class="d-none mb-3 d-flex align-items-center gap-2 bg-white border rounded px-3 py-2 shadow-sm">
+        <i class='bx bx-filter fs-5' style="color:#E8A020;"></i>
+        <span class="small text-muted">Showing: </span>
+        <span class="fw-bold small text-kpi-gold" id="kpi-filter-label"></span>
+        <button class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="drillDown('all')">
+            <i class='bx bx-x'></i> Clear filter
+        </button>
+    </div>
+
+    <style>
+        .text-kpi-gold { color: #E8A020 !important; }
+        .kpi-card { transition: all 0.2s ease; cursor: pointer; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(232,160,32,0.2) !important; border-color: #E8A020 !important; }
+        .kpi-card.kpi-active { border-color: #E8A020 !important; background-color: #fffbf0 !important; box-shadow: 0 4px 16px rgba(232,160,32,0.25) !important; }
+        .kpi-icon-bg { color: #E8A020; pointer-events: none; }
+    </style>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6">
+            <div class="bg-white border rounded shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-muted text-uppercase mb-2 small">Cases per RA</h6>
+                <div style="position: relative; width: 100%; height: 26vh;">
+                    <canvas id="bar-cases-per-ra"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="col mb-3">
-            <h2 class="fs-4">Cases by Month</h2>
-            <canvas id="bar-cases-by-month"></canvas>
+        <div class="col-12 col-md-6">
+            <div class="bg-white border rounded shadow-sm p-3 h-100">
+                <h6 class="fw-bold text-muted text-uppercase mb-2 small">Cases by Month</h6>
+                <div style="position: relative; width: 100%; height: 26vh;">
+                    <canvas id="bar-cases-by-month"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
 <!-- Cases Table -->
 <div class="row">
   <div class="col-12">
-      <div class="row">
-          <div class="col-12 col-lg-auto d-flex align-items-center mb-2">Filter by</div>
-          <div class="col-6 col-md-2 mb-2">
-              <select id="barangay-filter" class="form-select">
+      <div class="d-flex flex-wrap align-items-center gap-3 bg-white px-3 py-2 rounded shadow-sm border mb-3">
+          <div class="fw-bold text-muted small text-uppercase">Filter by:</div>
+          <div style="width: 15%">
+              <select id="barangay-filter" class="form-select form-select-sm border-secondary bg-light">
                   <option value="">All Barangay</option>
               </select>
           </div>
-          <div class="col-6 col-md-2 mb-2">
-              <select id="filter-ra-select" class="form-select">
+          <div style="width: 15%">
+              <select id="filter-ra-select" class="form-select form-select-sm border-secondary bg-light">
                   <option value="">All RA</option>
                   <option value="RA 9262">RA 9262</option>
                   <option value="RA 8353">RA 8353</option>
@@ -107,13 +173,13 @@
                   <option value="RA 9775">RA 9775</option>
               </select>
           </div>
-          <div class="col-6 col-md-2 mb-2">
-              <select id="gender-filter" class="form-select">
+          <div style="width: 15%">
+              <select id="gender-filter" class="form-select form-select-sm border-secondary bg-light">
                   <option value="">All Gender</option>
               </select>
           </div>
-          <div class="col-6 col-md-2 mb-2">
-              <select id="age-filter" class="form-select">
+          <div style="width: 15%">
+              <select id="age-filter" class="form-select form-select-sm border-secondary bg-light">
                   <option value="0-999">All Ages</option>
                   <option value="0-12">0-12</option>
                   <option value="13-17">13-17</option>
@@ -122,7 +188,7 @@
           </div>
       </div>
 
-      <div class="pt-4 ">
+      <div class="pt-4 bg-white border p-3 rounded shadow-sm">
         <table class="table table-striped table-hover responsive nowrap" id="cases-table" style="width: 100%">
           <thead class="">
             <tr>
@@ -142,14 +208,13 @@
           </tbody>
           <tfoot>
             <tr>
-                <td><strong>Total Cases: </strong><span id="table-total-cases"></span></td>
-                <td><strong>Total Victims: </strong><span id="table-total-victim"></span></td>
+                <td><strong>Total Cases: </strong><span id="table-total-cases" class="text-kpi-gold"></span></td>
+                <td><strong>Total Victims: </strong><span id="table-total-victim" class="text-kpi-gold"></span></td>
                 <td></td>
-                <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator"></span></td>
+                <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator" class="text-kpi-gold"></span></td>
                 <td></td>
-                <td><strong>Total RA Violations: </strong><span id="table-total-ra"></span></td>
+                <td><strong>Total RA Violations: </strong><span id="table-total-ra" class="text-kpi-gold"></span></td>
                 <td></td>
-                {% comment %} <td id="table-total-gender"></td> {% endcomment %}
                 <td></td>
                 <td></td>
                 <td></td>
@@ -157,7 +222,6 @@
           </tfoot>
         </table>
       </div>
-    </div>
   </div>
 </div>
 

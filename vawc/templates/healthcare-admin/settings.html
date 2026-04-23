@@ -31,19 +31,20 @@
         <div class="col-lg-4">
             <label for="currentPassword" class="form-label">Current Password</label>
             <div class="input-group">
-                <input type="password" class="form-control" id="currentPassword" name="current_password">
+                <input type="password" class="form-control" id="currentPassword" name="old_password">
             </div>
+            <div id="currentPasswordFeedback" class="small mt-1 fw-semibold" style="display: none;"></div>
         </div>
         <div class="col-lg-4">
             <label for="newPassword1" class="form-label">New Password</label>
             <div class="input-group">
-                <input type="password" class="form-control" id="newPassword1" name="new_password1">
+                <input type="password" class="form-control" id="newPassword1" name="new_password1" disabled>
             </div>
         </div>
         <div class="col-lg-4">
             <label for="newPassword2" class="form-label">Confirm New Password</label>
             <div class="input-group">
-                <input type="password" class="form-control" id="newPassword2" name="new_password2">
+                <input type="password" class="form-control" id="newPassword2" name="new_password2" disabled>
             </div>
         </div>
         <div class="form-check ms-3 mt-3">
@@ -263,9 +264,19 @@
     });
 </script>
 <script>
-    function showToast(type) {
+    function showToast(type, message) {
         var toastId = type === 'success' ? '#successToast' : '#errorToast';
-        var toast = new bootstrap.Toast(document.querySelector(toastId));
+        var toastEl = document.querySelector(toastId);
+        if (message) {
+            toastEl.querySelector('.toast-body').textContent = message;
+        } else {
+            if (type === 'success') {
+                toastEl.querySelector('.toast-body').textContent = 'Password changed successfully!';
+            } else {
+                toastEl.querySelector('.toast-body').textContent = 'Error changing password. Please check your input.';
+            }
+        }
+        var toast = new bootstrap.Toast(toastEl);
         toast.show();
     }
     function togglePasswordVisibility() {
@@ -284,14 +295,64 @@
             confirmPasswordInput.type = 'password';
         }
     }
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentPasswordInput = document.getElementById('currentPassword');
+        const currentPasswordFeedback = document.getElementById('currentPasswordFeedback');
         const newPasswordInput = document.getElementById('newPassword1');
         const confirmNewPasswordInput = document.getElementById('newPassword2');
         const validationMessageContainer = document.querySelector('.bg-danger');
         const correctMessageContainer = document.querySelector('.bg-success');
         const validationMessage = document.querySelector('.bg-danger span');
         const confirmPasswordBtn = document.querySelector('#confirmPasswordBtn');
-    
+
+        let isCurrentPasswordValid = false;
+
+        const checkCurrentPassword = () => {
+            const password = currentPasswordInput.value;
+            if (password.length === 0) {
+                currentPasswordFeedback.style.display = 'none';
+                newPasswordInput.disabled = true;
+                confirmNewPasswordInput.disabled = true;
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "check_current_password" %}',
+                data: {
+                    'old_password': password,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    if (data.valid) {
+                        currentPasswordFeedback.textContent = 'Current password verified';
+                        currentPasswordFeedback.style.color = '#198754';
+                        currentPasswordFeedback.style.display = 'block';
+                        newPasswordInput.disabled = false;
+                        confirmNewPasswordInput.disabled = false;
+                        isCurrentPasswordValid = true;
+                    } else {
+                        currentPasswordFeedback.textContent = 'Incorrect current password';
+                        currentPasswordFeedback.style.color = '#dc3545';
+                        currentPasswordFeedback.style.display = 'block';
+                        newPasswordInput.disabled = true;
+                        confirmNewPasswordInput.disabled = true;
+                        isCurrentPasswordValid = false;
+                    }
+                },
+                error: function () {
+                    console.error('Error verifying current password');
+                }
+            });
+        };
+
+        // Use debounce for performance
+        let timeout = null;
+        currentPasswordInput.addEventListener('input', () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(checkCurrentPassword, 500);
+        });
+
         const updateValidationMessage = (message) => {
             validationMessage.textContent = message;
             validationMessageContainer.style.display = 'block';
@@ -331,7 +392,7 @@
             }
     
             // Password match validation
-            if (newPassword !== confirmPassword) {
+            if (confirmPassword !== '' && newPassword !== confirmPassword) {
                 updateValidationMessage('Passwords do not match.');
                 return;
             }
@@ -374,13 +435,19 @@
             success: function (data) {
                 if (data.success) {
                     showToast('success');
-                    // Reload the page after 3 seconds
                     setTimeout(function () {
                         location.reload();
                     }, 3000);
                 } else {
-                    showToast('error');
-                    // Handle form validation errors here if needed
+                    let errorMsg = 'Error changing password. Please check your input.';
+                    if (data.errors) {
+                        if (data.errors.old_password) {
+                            errorMsg = data.errors.old_password[0];
+                        } else if (data.errors.__all__) {
+                            errorMsg = data.errors.__all__[0];
+                        }
+                    }
+                    showToast('error', errorMsg);
                     console.log(data.errors);
                 }
             },

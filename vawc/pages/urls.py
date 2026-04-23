@@ -38,7 +38,10 @@ urlpatterns = [
     path('verify-otp-phone/', views.verify_otp_phone, name='verify_otp_phone'),
     path('resend-otp-email/', views.resend_otp_email, name='resend_otp_email'),
     path('resend-otp-phone/', views.resend_otp_phone, name='resend_otp_phone'),
-
+    # request username
+    path('request_username/', views.get_logged_user, name="request username"),
+    path('request_user_profile_picture/', views.get_user_profile_picture, name="request profile picture"),
+    path('profile/', views.profile_view, name='profile'),
     #super admin side
     path('admin-vawc/dashboard/', views.admin_dashboard_view, name='admin dashboard'),
     path('admin-vawc/admin-dashboard-data/<int:get_year>/', views.admin_dashboard_data, name='admin dashboard data'),
@@ -133,7 +136,17 @@ urlpatterns = [
     # path('admin-SWDO-vawc/acc_city', views.acc_city, name='acc city'),
     path('admin-SWDO-vawc/get_city_by_province/<int:province_id>/', views.get_city_by_province, name='get city by province'),
     path('admin-SWDO-vawc/get_province_id', views.get_province_id, name='get province id'),
-    
+
+    # ── Provider Graph Report Pages ──────────────────────────────────────────────
+    path('admin-SWDO-vawc/graph-report/', views.SWDO_graph_view, name='SWDO graph'),
+    path('admin-SWDO-vawc/SWDO-consolidated-report-data/<int:get_year>/', views.SWDO_consolidated_report_data, name='SWDO consolidated report data'),
+    path('admin-law-enforcement-vawc/graph-report/', views.law_enforcement_graph_view, name='law enforcement graph'),
+    path('admin-law-enforcement-vawc/law-enforcement-consolidated-report-data/<int:get_year>/', views.law_enforcement_consolidated_report_data, name='law enforcement consolidated report data'),
+    path('admin-healthcare-vawc/graph-report/', views.healthcare_graph_view, name='healthcare graph'),
+    path('admin-healthcare-vawc/healthcare-consolidated-report-data/<int:get_year>/', views.healthcare_consolidated_report_data, name='healthcare consolidated report data'),
+    path('admin-barangay-vawc/graph-report/', views.barangay_graph_view, name='barangay graph'),
+    path('admin-barangay-vawc/barangay-consolidated-report-data/<int:get_year>/', views.barangay_consolidated_report_data, name='barangay consolidated report data'),
+
     # NOTIF
     path('admin-barangay-vawc/notification', views.admin_notification_view, name="Notification"),
     path('admin-law-enforcement-vawc/notification', views.law_enforcement_notification_view, name="Notification Law Enforcement"),
@@ -175,6 +188,8 @@ urlpatterns = [
     
     #user
     path('custom_password_change/', views.custom_password_change_view, name='custom_password_change'),
+    path('check_current_password/', views.check_current_password, name='check_current_password'),
+
 
     path('encrypt_decrypt/', views.encrypt_decrypt, name='encrypt_decrypt'),
 

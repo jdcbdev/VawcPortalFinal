@@ -201,7 +201,9 @@ div.bg-light {
 .text-cust-color {
     color: #6717b2 !important;
 }
-
+.text-alt-cust-color {
+    color: #E8A020 !important;
+}
 .form-check-input:checked {
     background-color: #6717b2 !important;
     border: 0;
@@ -389,4 +391,4 @@ span.required::before {
 
 .bg-gold-light {
     background-color: #fffbf0 !important;
-}
+}
