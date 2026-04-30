@@ -123,7 +123,7 @@
                                 <input type="text" name="province" class="form-control" value="{{ account_obj.province|default:'' }}">
                             </div>
                             
-                            {% if account_type == 'account' or account_type == 'swdoaccount' %}
+                            {% if account_type == 'account' or account_type == 'swdoaccount' or account_type == 'lawenforcementaccount' or account_type == 'healthcareaccount' %}
                             <div class="col-md-6 mb-3">
                                 <label class="form-label text-muted small fw-semibold">City / Municipality</label>
                                 <input type="text" name="city" class="form-control" value="{{ account_obj.city|default:'' }}">
@@ -134,6 +134,13 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label text-muted small fw-semibold">Barangay</label>
                                 <input type="text" name="barangay" class="form-control" value="{{ account_obj.barangay|default:'' }}">
+                            </div>
+                            {% endif %}
+
+                            {% if account_type == 'swdoaccount' %}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-semibold">Office Assigned</label>
+                                <input type="text" name="office_assigned" class="form-control" value="{{ account_obj.office_assigned|default:'' }}">
                             </div>
                             {% endif %}
 

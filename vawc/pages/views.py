@@ -164,18 +164,21 @@ def profile_view(request):
             account_obj.last_name = request.POST.get('last_name', account_obj.last_name)
             account_obj.region = request.POST.get('region', account_obj.region)
             account_obj.province = request.POST.get('province', account_obj.province)
+            account_obj.city = request.POST.get('city', account_obj.city)
             account_obj.station = request.POST.get('station', account_obj.station)
         elif account_type == 'swdoaccount':
             account_obj.name = request.POST.get('name', account_obj.name)
             account_obj.region = request.POST.get('region', account_obj.region)
             account_obj.province = request.POST.get('province', account_obj.province)
             account_obj.city = request.POST.get('city', account_obj.city)
+            account_obj.office_assigned = request.POST.get('office_assigned', account_obj.office_assigned)
         elif account_type == 'healthcareaccount':
             account_obj.first_name = request.POST.get('first_name', account_obj.first_name)
             account_obj.middle_name = request.POST.get('middle_name', account_obj.middle_name)
             account_obj.last_name = request.POST.get('last_name', account_obj.last_name)
             account_obj.region = request.POST.get('region', account_obj.region)
             account_obj.province = request.POST.get('province', account_obj.province)
+            account_obj.city = request.POST.get('city', account_obj.city)
             account_obj.hospital_name = request.POST.get('hospital_name', account_obj.hospital_name)
         
         if account_obj:
@@ -795,8 +798,9 @@ def create_swdo_manage_account(request):
             region = request.POST.get('region')
             province = request.POST.get('province')
             city = request.POST.get('city')
+            office_assigned = request.POST.get('account_office_assigned')
             
-            print(username, email, name,region,province,city)
+            print(username, email, name,region,province,city,office_assigned)
             
             try:
                 password = generate_random_password()
@@ -810,6 +814,7 @@ def create_swdo_manage_account(request):
                     f'Region:  {region}\n'
                     f'Province:  {province}\n'
                     f'City:  {city}\n'
+                    f'Office Assigned:  {office_assigned}\n'
                     f'Email:  {email}\n'
                     f'Username:  {username}\n'
                     f'Password:  {password}\n\n'
@@ -826,6 +831,7 @@ def create_swdo_manage_account(request):
                     region=region,
                     province=province,
                     city=city,
+                    office_assigned=office_assigned,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -952,6 +958,7 @@ def edit_law_enforcement_account_view(request, account_id):
                 'status': police_account.status,
                 'region': police_account.region,
                 'province': police_account.province,
+                'city': police_account.city,
                 'station': police_account.station,
                 'email': police_account.user.email,
                 'default_regions': regions,
@@ -971,7 +978,8 @@ def edit_law_enforcement_account_view(request, account_id):
             police_account.status = request.POST.get('edit_status')
             police_account.region = request.POST.get('edit_account_region')
             police_account.province = request.POST.get('edit_account_province')
-            police_account.city = request.POST.get('edit_account_police_station')
+            police_account.city = request.POST.get('edit_account_city')
+            police_account.station = request.POST.get('edit_account_police_station')
             police_account.save()
 
             new_email = request.POST.get('edit_account_email')
@@ -1007,6 +1015,7 @@ def edit_healthcare_account_view(request, account_id):
                 'status': healthcare_account.status,
                 'region': healthcare_account.region,
                 'province': healthcare_account.province,
+                'city': healthcare_account.city,
                 'email': healthcare_account.user.email,
                 'default_regions': regions,
                 'default_provinces': provinces,
@@ -1025,6 +1034,7 @@ def edit_healthcare_account_view(request, account_id):
             healthcare_account.status = request.POST.get('edit_status')
             healthcare_account.region = request.POST.get('edit_account_region')
             healthcare_account.province = request.POST.get('edit_account_province')
+            healthcare_account.city = request.POST.get('edit_account_city')
             healthcare_account.hospital_name = request.POST.get('edit_account_hospital_name')
             healthcare_account.save()
 
@@ -1058,6 +1068,7 @@ def edit_swdo_account_view(request, account_id):
                 'region': SWDO_account.region,
                 'province': SWDO_account.province,
                 'city': SWDO_account.city,
+                'office_assigned': SWDO_account.office_assigned,
                 'email': SWDO_account.user.email,
             })
         except SWDOaccount.DoesNotExist:
@@ -1072,6 +1083,7 @@ def edit_swdo_account_view(request, account_id):
             SWDO_account.region = request.POST.get('edit_region')
             SWDO_account.province = request.POST.get('edit_province')
             SWDO_account.city = request.POST.get('edit_city')
+            SWDO_account.office_assigned = request.POST.get('edit_account_office_assigned')
             SWDO_account.save()
 
             new_email = request.POST.get('edit_account_email')
@@ -1189,9 +1201,10 @@ def create_law_enforcement_account(request):
             last_name = request.POST.get('account_lname')
             region = request.POST.get('account_region')
             province = request.POST.get('account_province')
+            city = request.POST.get('account_city')
             station = request.POST.get('account_police_station')
             
-            print(username, email, first_name, middle_name, last_name, region, province, station)
+            print(username, email, first_name, middle_name, last_name, region, province, city, station)
             
             try:
                 password = generate_random_password()
@@ -1210,6 +1223,7 @@ def create_law_enforcement_account(request):
                     f'Last Name:  {last_name}\n\n'
                     f'Region:  {region}\n'
                     f'Province:  {province}\n'
+                    f'City/Municipality:  {city}\n'
                     f'Station:  {station}\n\n'
                     f'--------------------------\n'
                     f'This email was sent automatically. Please do not reply.'
@@ -1225,6 +1239,7 @@ def create_law_enforcement_account(request):
                     last_name=last_name,
                     region=region, 
                     province=province, 
+                    city=city,
                     station=station
                 )
             except Exception as e:
@@ -1255,9 +1270,10 @@ def create_healthcare_account(request):
             last_name = request.POST.get('account_lname')
             region = request.POST.get('account_region')
             province = request.POST.get('account_province')
+            city = request.POST.get('account_city')
             hospital_name = request.POST.get('account_hospital_name')
             
-            print(username, email, first_name, middle_name, last_name, region, province, hospital_name)
+            print(username, email, first_name, middle_name, last_name, region, province, city, hospital_name)
             
             try:
                 password = generate_random_password()
@@ -1276,6 +1292,7 @@ def create_healthcare_account(request):
                     f'Last Name:  {last_name}\n\n'
                     f'Region:  {region}\n'
                     f'Province:  {province}\n'
+                    f'City/Municipality:  {city}\n'
                     f'Hospital Name:  {hospital_name}\n\n'
                     f'--------------------------\n'
                     f'This email was sent automatically. Please do not reply.'
@@ -1291,6 +1308,7 @@ def create_healthcare_account(request):
                     last_name=last_name,
                     region=region, 
                     province=province, 
+                    city=city,
                     hospital_name=hospital_name
                 )
             except Exception as e:

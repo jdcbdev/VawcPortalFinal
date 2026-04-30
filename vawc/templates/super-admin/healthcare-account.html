@@ -51,6 +51,7 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Status</th>
+                    <th scope="col">City</th>
                     <th scope="col">Hospital Name</th>
                     <th scope="col">Date Added</th>
                     <th class="text-center" scope="col">Manage</th>
@@ -65,6 +66,7 @@
                         <td>{{ account.last_name }},{{ account.first_name }}&nbsp;{{ account.middle_name }}</td>
                         <td>{{ account.user.email }}</td>
                         <td>{{ account.status }}</td>
+                        <td>{{ account.city }}</td>
                         <td>{{ account.hospital_name }}</td>
                         <td>{{ account.user.date_joined }}</td>
                         <td class="text-center">
@@ -175,7 +177,7 @@
                     <select class="form-select" id="account_city" name="account_city" disabled>
                         <option value="">--Select Option--</option>
                     </select>
-                    <label for="account_city">City</label>
+                    <label for="account_city">City/Municipality</label>
                 </div>  
 
                 <div class="form-floating mb-3">
@@ -252,6 +254,13 @@
                     </select>
                     <label for="edit_account_province">Province</label>
                 </div>  
+
+                <div class="form-floating mb-3">
+                    <select class="form-select" id="edit_account_city" name="edit_account_city" disabled>
+                        <option value="">--Select Option--</option>
+                    </select>
+                    <label for="edit_account_city">City/Municipality</label>
+                </div>
                 
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="edit_account_hospital_name" name="edit_account_hospital_name" placeholder="name@example.com" >
@@ -415,6 +424,7 @@
                         response[dataKey].forEach(item => {
                             const value = item[itemKey];
                             if (!value) return;
+                            if (value === "ZAMBOANGA CITY" && dataKey === 'default_provinces') return; // Skip Zamboanga City
 
                             const option = document.createElement('option');
                             option.value = value;
@@ -430,8 +440,21 @@
                     $('#edit_account_lname').val(response.last_name);
                     $('#edit_account_email').val(response.email);
                     $('#edit_status').val(response.status);
+
+                    // Fix implication of removed ZAMBOANGA CITY province
+                    if (response.province === "ZAMBOANGA CITY") {
+                        response.province = "ZAMBOANGA DEL SUR";
+                        response.city = "ZAMBOANGA CITY";
+                    }
+
                     $('#edit_account_region').val(response.region);
                     $('#edit_account_province').val(response.province);
+                    // Fetch and set city
+                    if(response.province) {
+                        populateEditCities('#edit_account_city', response.province, response.city);
+                    } else {
+                        $('#edit_account_city').empty().append('<option value="">--Select Option--</option>').prop('disabled', true);
+                    }
                     $('#edit_account_hospital_name').val(response.hospital_name);
                     // Show the modal
                     $('#edit_healthcare_account').modal('show');
@@ -630,19 +653,19 @@
     function addAddressListener(formElement, formType, count = 0) {
         let region = null
         let province = null
-        let police_station = null
+        let city = null
 
         if(formType === 'perp' || formType === 'victim') {
             region = formElement.querySelector(`#${formType}_region_${count}`)
             province = formElement.querySelector(`#${formType}_province_${count}`)
-            
+            city = formElement.querySelector(`#${formType}_city_${count}`)
         } else {
             region = formElement.querySelector(`#${formType}_region`)   
             province = formElement.querySelector(`#${formType}_province`)   
-            
+            city = formElement.querySelector(`#${formType}_city`)   
         }
         province.disabled = true
-        
+        if(city) city.disabled = true
 
         region.addEventListener('change', (e) => {
 
@@ -656,7 +679,11 @@
                     csrfmiddlewaretoken: csrf_token,
                 });
                 province.disabled=false
-                console.log("enabled police station")
+                console.log("enabled province")
+                if(city) {
+                    city.innerHTML = '<option value="">--Select Option--</option>';
+                    city.disabled = true;
+                }
             } else {
                 console.log('Please select a region.');
             }
@@ -666,31 +693,32 @@
         province.addEventListener('change', (e) => {
             const provinceName = e.target.value;
             if (provinceName) {
-                setGeoSelectPoliceStation(police_station, {
-                    province: provinceName,
-                    action: 'province',
-                    csrfmiddlewaretoken: csrf_token,
-                });
-                police_station.disabled = false;
-                
+                if(city) {
+                    fetchCitiesByProvince(provinceName, city);
+                }
             } else {
                 console.log('Please select a province.');
+                if(city) {
+                    city.innerHTML = '<option value="">--Select Option--</option>';
+                    city.disabled = true;
+                }
             }
         });
     }
+
     function editAddressListener(formElement, formType, count = 0) {
         let region = null
         let province = null
-        let police_station = null
+        let city = null
 
         if(formType === 'perp' || formType === 'victim') {
             region = formElement.querySelector(`#${formType}_region_${count}`)
             province = formElement.querySelector(`#${formType}_province_${count}`)
-            police_station = formElement.querySelector(`#${formType}_police_${count}`) 
+            city = formElement.querySelector(`#${formType}_city_${count}`) 
         } else {
             region = formElement.querySelector(`#${formType}_region`)   
             province = formElement.querySelector(`#${formType}_province`)   
-            police_station = formElement.querySelector(`#${formType}_police`)   
+            city = formElement.querySelector(`#${formType}_city`)   
         }
 
         region.addEventListener('change', (e) => {
@@ -704,6 +732,10 @@
                     action: 'province',
                     csrfmiddlewaretoken: csrf_token,
                 });
+                if(city) {
+                    city.innerHTML = '<option value="">--Select Option--</option>';
+                    city.disabled = true;
+                }
             } else {
                 console.log('Please select a region.');
             }
@@ -713,25 +745,15 @@
         province.addEventListener('change', (e) => {
             const provinceName = e.target.value;
             if (provinceName) {
-                setGeoSelectPoliceStation(police_station, {
-                    province: provinceName,
-                    action: 'province',
-                    csrfmiddlewaretoken: csrf_token,
-                });
+                if(city) {
+                    fetchCitiesByProvince(provinceName, city);
+                }
             } else {
                 console.log('Please select a province.');
-            }
-        });
-        city.addEventListener('change', (e) => {
-            const cityName = e.target.value;
-            if (cityName) {
-                setGeoSelectPoliceStation(city, {
-                    city: cityName,
-                    action: 'city',
-                    csrfmiddlewaretoken: csrf_token,
-                });
-            } else {
-                console.log('Please select a city.');
+                if(city) {
+                    city.innerHTML = '<option value="">--Select Option--</option>';
+                    city.disabled = true;
+                }
             }
         });
     }
@@ -794,6 +816,7 @@
             selectElement.appendChild(blankOption);
 
             data.forEach(item => {
+                if(item.name === "ZAMBOANGA CITY") return; // Skip Zamboanga City
                 const option = document.createElement('option');
                 option.value = item.name;
                 option.textContent = item.name;
@@ -801,7 +824,121 @@
                 console.log(item.name);
             });
         } catch (error) {
-            console.error("Failed to fetch police stations:", error);
+            console.error("Failed to fetch data:", error);
+        }
+    }
+
+    async function fetchCitiesByProvince(provinceName, selectElement) {
+        try {
+            // First get the province ID using the dedicated endpoint
+            const provinceResponse = await fetch('{% url "get province id" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrf_token
+                },
+                body: new URLSearchParams({
+                    'province_name': provinceName,
+                    'csrfmiddlewaretoken': csrf_token,
+                })
+            });
+            
+            const provinceData = await provinceResponse.json();
+            
+            if (provinceData.success) {
+                const provinceId = provinceData.province_id;
+                
+                // Now fetch cities using the province ID
+                const cityResponse = await fetch(`{% url 'get city by province' 0 %}`.replace('0', provinceId), {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': csrf_token
+                    }
+                });
+                
+                const cityData = await cityResponse.json();
+                
+                // Clear existing options
+                selectElement.innerHTML = '';
+                const blankOption = document.createElement('option');
+                blankOption.textContent = '--Select Option--';
+                blankOption.value = '';
+                selectElement.appendChild(blankOption);
+                
+                // Add cities to dropdown
+                cityData.city_list.forEach(cityName => {
+                    const option = document.createElement('option');
+                    option.value = cityName;
+                    option.textContent = cityName;
+                    selectElement.appendChild(option);
+                });
+                
+                selectElement.disabled = false;
+                console.log(`Loaded ${cityData.city_list.length} cities for province: ${provinceName}`);
+                
+            } else {
+                console.error('Province not found:', provinceData.error);
+                selectElement.innerHTML = '<option value="">Province not found</option>';
+                selectElement.disabled = true;
+            }
+            
+        } catch (error) {
+            console.error("Failed to fetch cities:", error);
+            selectElement.innerHTML = '<option value="">Error loading cities</option>';
+            selectElement.disabled = true;
+        }
+    }
+
+    async function populateEditCities(selectId, provinceName, selectedCity = '') {
+        const selectElement = document.querySelector(selectId);
+
+        // Get province ID
+        const provinceResponse = await fetch('{% url "get province id" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrf_token
+            },
+            body: new URLSearchParams({
+                'province_name': provinceName,
+                'csrfmiddlewaretoken': csrf_token,
+            })
+        });
+        const provinceData = await provinceResponse.json();
+
+        if (provinceData.success) {
+            const provinceId = provinceData.province_id;
+
+            // Get cities by province ID
+            const cityResponse = await fetch(`{% url 'get city by province' 0 %}`.replace('0', provinceId), {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': csrf_token
+                }
+            });
+            const cityData = await cityResponse.json();
+
+            // Populate city dropdown
+            selectElement.innerHTML = '';
+            const blankOption = document.createElement('option');
+            blankOption.textContent = '--Select Option--';
+            blankOption.value = '';
+            selectElement.appendChild(blankOption);
+
+            cityData.city_list.forEach(cityName => {
+                const option = document.createElement('option');
+                option.value = cityName;
+                option.textContent = cityName;
+                if (cityName === selectedCity) {
+                    option.selected = true;
+                }
+                selectElement.appendChild(option);
+            });
+
+            selectElement.disabled = false;
+        } else {
+            selectElement.innerHTML = '<option value="">Province not found</option>';
+            selectElement.disabled = true;
         }
     }
 

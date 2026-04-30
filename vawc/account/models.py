@@ -64,6 +64,7 @@ class LawEnforcementAccount(models.Model):
     status = models.CharField(max_length=100, null=True, blank=True, default='Active')
     region = models.CharField(max_length=100, null=True, blank=True)
     province = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
     station = models.CharField(max_length=100, null=True, blank=True)
     type = models.CharField(max_length=20, default='law_enforcement')
     passkey = models.CharField(max_length=100, null=True, blank=True)
@@ -80,6 +81,7 @@ class SWDOaccount(models.Model):
     region = models.CharField(max_length=100, null=True, blank=True)
     province = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
+    office_assigned = models.CharField(max_length=100, null=True, blank=True)
     
     def __str__(self):
         return self.user.username
@@ -93,6 +95,7 @@ class HealthcareAccount(models.Model):
     status = models.CharField(max_length=100, null=True, blank=True, default='Active')
     region = models.CharField(max_length=100, null=True, blank=True)
     province = models.CharField(max_length=100, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
     hospital_name = models.CharField(max_length=100, null=True, blank=True)
     type = models.CharField(max_length=20, default='healthcare')
     

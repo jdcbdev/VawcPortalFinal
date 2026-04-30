@@ -51,8 +51,8 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Region</th>
-                    <th scope="col">Province</th>
                     <th scope="col">City</th>
+                    <th scope="col">Office Assigned</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date Added</th>
                     <th class="text-center" scope="col">Manage</th>
@@ -67,8 +67,8 @@
                         <td>{{ account.name }}</td>
                         <td>{{ account.user.email }}</td>
                         <td>{{ account.region }}</td>
-                        <td>{{ account.province }}</td>
                         <td>{{ account.city }}</td>
+                        <td>{{ account.office_assigned }}</td>
                         <td>{{ account.status }}</td>
                         <td>{{ account.user.date_joined }}</td>
                         <td class="text-center">
@@ -178,6 +178,11 @@
                     </div>
                 </div>
 
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="account_office_assigned" name="account_office_assigned" placeholder="Office Assigned">
+                    <label for="account_office_assigned">Office Assigned</label>
+                </div>
+
             </form>
         </div>
         <div class="modal-footer">
@@ -255,6 +260,11 @@
                     <div class="valid-feedback">
                         Looks good!
                     </div>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="edit_account_office_assigned" name="edit_account_office_assigned" placeholder="Office Assigned">
+                    <label for="edit_account_office_assigned">Office Assigned</label>
                 </div>
               
             </form>
@@ -400,6 +410,7 @@
                     $('#edit_account_fname').val(response.name);
                     $('#edit_account_email').val(response.email);
                     $('#edit_status').val(response.status);
+                    $('#edit_account_office_assigned').val(response.office_assigned);
 
                     // Populate regions
                     populateRegions('#edit_region', response.region);
