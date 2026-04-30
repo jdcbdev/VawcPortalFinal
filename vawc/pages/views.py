@@ -824,6 +824,8 @@ def create_swdo_manage_account(request):
                 send_email(email, subject, message)
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                id_picture = request.FILES.get('account_id_picture')
+
                 # Create the Account instance and link it to the user
                 account = SWDOaccount.objects.create(
                     user=user,
@@ -832,6 +834,7 @@ def create_swdo_manage_account(request):
                     province=province,
                     city=city,
                     office_assigned=office_assigned,
+                    id_picture=id_picture,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -1162,6 +1165,8 @@ def create_account(request):
                 send_email(email, subject, message)
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                id_picture = request.FILES.get('account_id_picture')
+
                 # Create the Account instance and link it to the user
                 account = Account.objects.create(
                     user=user,
@@ -1171,7 +1176,8 @@ def create_account(request):
                     region=region, 
                     province=province, 
                     city=city,
-                    barangay=barangay
+                    barangay=barangay,
+                    id_picture=id_picture,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -1231,6 +1237,8 @@ def create_law_enforcement_account(request):
                 send_email(email, subject, message)
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                id_picture = request.FILES.get('account_id_picture')
+
                 # Create the Account instance and link it to the user
                 account = LawEnforcementAccount.objects.create(
                     user=user,
@@ -1240,7 +1248,8 @@ def create_law_enforcement_account(request):
                     region=region, 
                     province=province, 
                     city=city,
-                    station=station
+                    station=station,
+                    id_picture=id_picture,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -1300,6 +1309,8 @@ def create_healthcare_account(request):
                 send_email(email, subject, message)
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                id_picture = request.FILES.get('account_id_picture')
+
                 # Create the Account instance and link it to the user
                 account = HealthcareAccount.objects.create(
                     user=user,
@@ -1309,7 +1320,8 @@ def create_healthcare_account(request):
                     region=region, 
                     province=province, 
                     city=city,
-                    hospital_name=hospital_name
+                    hospital_name=hospital_name,
+                    id_picture=id_picture,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -5302,10 +5314,19 @@ def get_police_station(request):
             data = [{"name": province} for province in provinces]
             return JsonResponse(data, safe=False)
 
-        elif action == "police_station":
+        elif action == "city":
             province_name = request.POST.get("province")
-            stations = PoliceStations.objects.filter(
+            cities = PoliceStations.objects.filter(
                 province=province_name
+            ).exclude(city__isnull=True).exclude(city__exact='').values_list("city", flat=True).distinct().order_by("city")
+
+            data = [{"name": city} for city in cities]
+            return JsonResponse(data, safe=False)
+
+        elif action == "police_station":
+            city_name = request.POST.get("city")
+            stations = PoliceStations.objects.filter(
+                city=city_name
             ).values_list("name", flat=True).order_by("name")
 
             data = [{"name": station} for station in stations]

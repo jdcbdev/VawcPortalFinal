@@ -185,6 +185,11 @@
                     <label for="account_hospital_name">Hospital Name</label>
                 </div>
 
+                <div class="mb-3">
+                    <label for="account_id_picture" class="form-label text-muted small">Upload ID Picture / Scanned ID</label>
+                    <input type="file" class="form-control" id="account_id_picture" name="account_id_picture" accept="image/*" required>
+                </div>
+
             </form>
         </div>
         <div class="modal-footer border-top-0 pt-0">
@@ -373,10 +378,15 @@
             event.preventDefault(); // Prevent default form submission
             $('#addAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
             $('#addAccountBtn').text('Adding...'); // Change button text to indicate loading
+            
+            var formData = new FormData(this);
+
             $.ajax({
                 url: '{% url "create healthcare account" %}',
                 method: 'POST',
-                data: $(this).serialize(), // Serialize form data
+                data: formData, // Serialize form data
+                processData: false,
+                contentType: false,
                 success: function(response) {
                     if (response.success) {
                         // Display success message and reload page after 2 seconds
