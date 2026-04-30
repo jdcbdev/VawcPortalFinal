@@ -48,6 +48,13 @@
 
     <input type="hidden" id="dilg-static-url" value="{% static 'img/dilg.png' %}">
     <input type="hidden" class="email" name="email" value="{{ account.user.email }}">
+    <!-- Provider print info (used by PDF govHeader) -->
+    <input type="hidden" id="provider-agency-name" value="{{ print_info.agency_name|default:'' }}">
+    <input type="hidden" id="provider-region" value="{{ print_info.region|default:'' }}">
+    <input type="hidden" id="provider-province" value="{{ print_info.province|default:'' }}">
+    <input type="hidden" id="provider-city" value="{{ print_info.city|default:'' }}">
+    <input type="hidden" id="provider-label" value="{{ print_info.provider_label|default:'' }}">
+    <input type="hidden" id="provider-profile-url" value="{{ print_info.profile_picture_url|default:'' }}">
 
     <!-- Stats Strip -->
     <div class="row g-3 mb-5">
@@ -323,6 +330,23 @@ $(document).ready(function () {
                 fr.readAsDataURL(blob);
             });
         } catch (e) { console.warn('Could not load DILG logo:', e); }
+    })();
+
+    // ── Pre-load Provider profile picture as base64 ──
+    let providerLogoBase64 = null;
+    (async function loadProviderLogo() {
+        const url = document.getElementById('provider-profile-url')?.value;
+        if (!url) return;
+        try {
+            const resp = await fetch(url);
+            const blob = await resp.blob();
+            providerLogoBase64 = await new Promise((res, rej) => {
+                const fr  = new FileReader();
+                fr.onloadend = () => res(fr.result);
+                fr.onerror   = rej;
+                fr.readAsDataURL(blob);
+            });
+        } catch (e) { console.warn('Could not load provider logo:', e); }
     })();
 
     // ── Age Group Helper ──
@@ -787,20 +811,29 @@ $(document).ready(function () {
         });
     }
 
-    // ── PDF Export Logic ──
+    // ── Dynamic Provider Header for PDF ──
     function govHeader() {
+        const agencyName    = document.getElementById('provider-agency-name')?.value || '';
+        const region        = document.getElementById('provider-region')?.value || '';
+        const province      = document.getElementById('provider-province')?.value || '';
+        const city          = document.getElementById('provider-city')?.value || '';
+        const providerLabel = document.getElementById('provider-label')?.value || '';
+        const locationParts = [region, province, city].filter(Boolean).join(', ');
+
         const txt = [
             { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444' },
-            { text: 'Department of the Interior and Local Government', fontSize: 9, bold: true, alignment: 'center', color: '#222' },
-            { text: 'Region IX – Zamboanga Peninsula', fontSize: 9, bold: true, alignment: 'center', color: '#222' },
-            { text: 'Women and Children Protection Desk', fontSize: 9, italic: true, alignment: 'center', color: '#555', margin: [0,1,0,0] },
+            { text: providerLabel, fontSize: 9, bold: true, alignment: 'center', color: '#222' },
+            { text: agencyName, fontSize: 13, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0,2,0,0] },
+            { text: locationParts, fontSize: 9, alignment: 'center', color: '#555', margin: [0,1,0,0] },
             { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0,3,0,0] },
         ];
-        if (dilgBase64) {
+
+        const logoToUse = providerLogoBase64 || dilgBase64;
+        if (logoToUse) {
             return {
                 columns: [
                     { width: '*', text: '' },
-                    { image: dilgBase64, width: 60, alignment: 'right', margin: [0,0,10,0] },
+                    { image: logoToUse, width: 60, alignment: 'right', margin: [0,0,10,0] },
                     { stack: txt, width: 'auto', alignment: 'center', margin: [0,4,0,0] },
                     { width: '*', text: '' }
                 ],
