@@ -524,12 +524,11 @@ def admin_dashboard_data (request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     cases_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:
-        annual_cases[month_temp] = 0     
     
     # Iterate through filtered cases
     for case in cases:
@@ -562,9 +561,12 @@ def admin_dashboard_data (request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
         
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b')
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
         
         # if get_year:
         #     case_dict_data = Case.objects.filter(date_added__year=get_year, id=case.id).values().first()
@@ -659,6 +661,8 @@ def admin_dashboard_data (request, get_year):
         'cases_per_geography': cases_per_geography,
         'republic_acts': republic_acts,
         'annual_cases': annual_cases,
+        'quarterly_cases': quarterly_cases,
+        'yearly_cases': dict(sorted(yearly_cases.items())),
         'cases_list': cases_list,
     })
 
@@ -1705,7 +1709,7 @@ def barangay_dashboard_data(request, get_year):
     try:
         account = logged_in_user.account
         barangay = account.barangay
-    except Account.DoesNotExist:
+    except (AttributeError, ObjectDoesNotExist):
         barangay = None
     
     base_q = Q(created_by=logged_in_user) | Q(barangay=barangay)
@@ -1727,12 +1731,11 @@ def barangay_dashboard_data(request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
 
     # Iterate through filtered cases
     for case in cases:
@@ -1760,9 +1763,12 @@ def barangay_dashboard_data(request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
 
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b') 
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
 
         case_dict_data = {
             'case_number': case.case_number,
@@ -1805,6 +1811,8 @@ def barangay_dashboard_data(request, get_year):
         'cases_w_criminal_cases': cases_w_criminal_cases,
         'republic_acts': republic_acts,
         'annual_cases': annual_cases,
+        'quarterly_cases': quarterly_cases,
+        'yearly_cases': dict(sorted(yearly_cases.items())),
         'barangay_case_list': barangay_case_list,
         # 'logged_in_user': logged_in_user,
         # 'email' : logged_in_user.email,
@@ -6060,13 +6068,14 @@ def LawEnforcement_dashboard_data(request, get_year):
     try:
         law_enforcement_account = request.user.lawenforcementaccount
         station = law_enforcement_account.station
-    except Account.DoesNotExist:
+    except (AttributeError, ObjectDoesNotExist):
         station = None
     
+    base_q = Q(created_by=logged_in_user) | Q(law_enforcement_agency_name=station, refers_to_law_enforcement=True)
     if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(law_enforcement_agency_name=station)
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( law_enforcement_agency_name=station, date_added__year = get_year)
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year=get_year).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6081,12 +6090,11 @@ def LawEnforcement_dashboard_data(request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
 
     # Iterate through filtered cases
     for case in cases:
@@ -6114,9 +6122,12 @@ def LawEnforcement_dashboard_data(request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
 
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b') 
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
 
         case_dict_data = {
             'case_number': case.case_number,
@@ -6197,7 +6208,7 @@ def healthcare_dashboard_data(request, get_year):
     try:
         healthcare_account = request.user.healthcareaccount
         hospital_name = healthcare_account.hospital_name
-    except Account.DoesNotExist:
+    except (AttributeError, ObjectDoesNotExist):
         hospital_name = None
     
     base_q = Q(created_by=logged_in_user) | Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
@@ -6219,12 +6230,11 @@ def healthcare_dashboard_data(request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
 
     # Iterate through filtered cases
     for case in cases:
@@ -6252,9 +6262,12 @@ def healthcare_dashboard_data(request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
 
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b') 
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
 
         case_dict_data = {
             'case_number': case.case_number,
@@ -6297,6 +6310,8 @@ def healthcare_dashboard_data(request, get_year):
         'cases_w_criminal_cases': cases_w_criminal_cases,
         'republic_acts': republic_acts,
         'annual_cases': annual_cases,
+        'quarterly_cases': quarterly_cases,
+        'yearly_cases': dict(sorted(yearly_cases.items())),
         'barangay_case_list': barangay_case_list,
         # 'logged_in_user': logged_in_user,
         # 'email' : logged_in_user.email,
@@ -6332,14 +6347,15 @@ def SWDO_dashboard_data(request, get_year):
     # Retrieve the Account object associated with the logged-in user
     try:
         swdo_account = request.user.swdoaccount
-        SWDO = swdo_account.name
-    except Account.DoesNotExist:
-        SWDO = None
+        SWDO_name = swdo_account.name
+    except (AttributeError, ObjectDoesNotExist):
+        SWDO_name = None
     
+    base_q = Q(created_by=logged_in_user) | Q(refers_to_social_welfare=True)
     if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(refers_to_social_welfare = True)
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( refers_to_social_welfare = True, date_added__year = get_year)
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year=get_year).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6354,12 +6370,11 @@ def SWDO_dashboard_data(request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
 
     # Iterate through filtered cases
     for case in cases:
@@ -6387,9 +6402,12 @@ def SWDO_dashboard_data(request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
 
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b') 
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
 
         case_dict_data = {
             'case_number': case.case_number,
@@ -6432,10 +6450,12 @@ def SWDO_dashboard_data(request, get_year):
         'cases_w_criminal_cases': cases_w_criminal_cases,
         'republic_acts': republic_acts,
         'annual_cases': annual_cases,
+        'quarterly_cases': quarterly_cases,
+        'yearly_cases': dict(sorted(yearly_cases.items())),
         'barangay_case_list': barangay_case_list,
         # 'logged_in_user': logged_in_user,
         # 'email' : logged_in_user.email,
-        'barangay': SWDO,
+        'barangay': SWDO_name,
         # 'global': request.session,
     })
 

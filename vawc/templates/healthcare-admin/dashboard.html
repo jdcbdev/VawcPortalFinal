@@ -139,7 +139,14 @@
         </div>
         <div class="col-12 col-md-6">
             <div class="bg-white border rounded shadow-sm p-3 h-100">
-                <h6 class="fw-bold text-muted text-uppercase mb-2 small">Cases by Month</h6>
+                <div class="d-flex align-items-center mb-2">
+                    <h6 class="fw-bold text-muted text-uppercase mb-0 small" id="chart-title">Cases by Month</h6>
+                    <select id="chart-view-selector" class="form-select form-select-sm border-0 bg-light fw-semibold ms-auto" style="width:110px;">
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
                 <div style="position: relative; width: 100%; height: 26vh;">
                     <canvas id="bar-cases-by-month"></canvas>
                 </div>
@@ -277,12 +284,14 @@ $(document).ready(function() {
         document.querySelector('#cases-table').scrollIntoView({behavior:'smooth',block:'start'});
     };
 
+    let currentDashboardData = null;
     async function get_dashboard_data(get_year = 0) {
         $('#select-year-data-loading').removeClass('d-none');
         $('#select-year-data').prop('disabled', true);
         const res = await fetch(`/admin-healthcare-vawc/healthcare-dashboard-data/${get_year}/`);
         if (!res.ok) { $('#select-year-data-loading').addClass('d-none'); $('#select-year-data').prop('disabled', false); return; }
         const data = await res.json();
+        currentDashboardData = data;
         $('#select-year-data-loading').addClass('d-none');
         $('#select-year-data').prop('disabled', false);
         $('#total-cases').text(data.total_cases);
@@ -295,9 +304,37 @@ $(document).ready(function() {
         $('#cases-w-criminal-cases').text(data.cases_w_criminal_cases);
         annualCases = data.annual_cases; republic_acts = data.republic_acts;
         casePerRa.data.datasets[0].data = Object.values(republic_acts); casePerRa.data.labels = Object.keys(republic_acts); casePerRa.update();
-        casesByMonth.data.datasets[0].data = Object.values(annualCases); casesByMonth.data.labels = Object.keys(annualCases); casesByMonth.update();
+        
+        updateTrendChart();
+        
         render_table(data.barangay_case_list);
     }
+
+    function updateTrendChart() {
+        if (!currentDashboardData || !casesByMonth) return;
+        const view = $('#chart-view-selector').val();
+        let labels, data;
+        
+        if (view === 'monthly') {
+            labels = Object.keys(currentDashboardData.annual_cases);
+            data = Object.values(currentDashboardData.annual_cases);
+            $('#chart-title').text('Cases by Month');
+        } else if (view === 'quarterly') {
+            labels = Object.keys(currentDashboardData.quarterly_cases);
+            data = Object.values(currentDashboardData.quarterly_cases);
+            $('#chart-title').text('Cases by Quarter');
+        } else if (view === 'yearly') {
+            labels = Object.keys(currentDashboardData.yearly_cases);
+            data = Object.values(currentDashboardData.yearly_cases);
+            $('#chart-title').text('Cases by Year');
+        }
+        
+        casesByMonth.data.labels = labels;
+        casesByMonth.data.datasets[0].data = data;
+        casesByMonth.update();
+    }
+
+    $('#chart-view-selector').on('change', updateTrendChart);
 
     function render_table(data) {
         if (casesTable) { casesTable.destroy(); casesTable = null; }
