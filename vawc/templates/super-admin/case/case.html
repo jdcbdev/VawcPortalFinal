@@ -232,26 +232,6 @@
         </table>
     </div><!--end of div of table-->
 </div>
-<!-- Toast container -->
-<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white" style="background-color:#E8A020;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
-            <strong class="me-auto">Success</strong>
-            <small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-dark fw-bold"></div>
-    </div>
-    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white bg-danger">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
-            <strong class="me-auto">Error</strong>
-            <small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-dark fw-bold"></div>
-    </div>
 </div>
 
 <!-- Modal add case -->
@@ -487,15 +467,13 @@
                         var caseId = response.case_id;
                         var typeOfCase = response.type_of_case;
                         if (typeOfCase === 'Impacted') {
-                            $('.toast-body').text('Case (Impacted Victim) added successfully');
-                            $('#successToast').toast('show');
+                            showToast('success', 'Case (Impacted Victim) added successfully');
                             setTimeout(function() {
                                 $('#add_case').modal('hide');
                                 window.location.href = '/admin-vawc/view-case/impacted/' + caseId + '/';
                             }, 2000);
                         } else if (typeOfCase === 'Behalf') {
-                            $('.toast-body').text('Case (Behalf of Impacted Victim) added successfully');
-                            $('#successToast').toast('show');
+                            showToast('success', 'Case (Behalf of Impacted Victim) added successfully');
                             setTimeout(function() {
                                 $('#add_case').modal('hide');
                                 window.location.href = '/admin-vawc/view-case/behalf/' + caseId + '/';
@@ -578,7 +556,7 @@
         const table = $('#table-case').DataTable();
         const visibleRows = table.rows({ filter: 'applied' });
         if (visibleRows.count() === 0) {
-            alert("No data available to export.");
+            showToast('error', "No data available to export.");
             return;
         }
 
@@ -707,7 +685,7 @@
                 pdfMake.createPdf(docDef).download('VAWC_Case_Records_Report.pdf');
             } catch (e) {
                 console.error(e);
-                alert("Error generating PDF.");
+                showToast('error', "Error generating PDF.");
             } finally {
                 btn.prop('disabled', false).html("<i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)");
             }

@@ -90,6 +90,37 @@
 
 
 
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header text-white" style="background-color: #198754;">
+                <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+                <strong class="me-auto">Success</strong>
+                <small>Just Now</small>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body"></div>
+        </div>
+        <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header text-white" style="background-color: #dc3545;">
+                <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+                <strong class="me-auto">Error</strong>
+                <small>Just Now</small>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body"></div>
+        </div>
+    </div>
+
+    <script>
+        function showToast(type, message) {
+            const toastId = type === 'success' ? '#successToast' : '#errorToast';
+            const $toast = $(toastId);
+            $toast.find('.toast-body').text(message);
+            const toast = new bootstrap.Toast($toast[0]);
+            toast.show();
+        }
+    </script>
+
     {% block scripts %}{% endblock %}
   </body>
   {{ redirect_to_login_immediately }}

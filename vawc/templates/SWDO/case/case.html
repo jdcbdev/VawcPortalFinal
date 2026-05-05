@@ -251,14 +251,6 @@
     </div>
 </div>
 
-<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#E8A020;">
-            <strong class="me-auto">Success</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body text-dark"></div>
-    </div>
 </div>
 {% endblock content %}
 
@@ -375,7 +367,7 @@
 
         $('#btn-export-case-report').on('click', async function() {
             const rows = table.rows({ filter: 'applied' });
-            if (!rows.count()) return alert("No data to export.");
+            if (!rows.count()) return showToast('error', "No data to export.");
 
             // Ensure logos are loaded
             if (!dilgLogo || ($('#provider-logo-url').val() && !providerLogo)) {
@@ -480,7 +472,7 @@
             e.preventDefault();
             $.ajax({ type: 'POST', url: "{% url 'add_new_case' %}", data: $('#add_case_form').serialize(), success: r => {
                 if (r.success) {
-                    $('.toast-body').text('Case added.'); $('#successToast').toast('show');
+                    showToast('success', 'Case added.');
                     setTimeout(() => window.location.href = `/admin-SWDO-vawc/view-SWDO-case/${r.type_of_case.toLowerCase()}/${r.case_id}/`, 1500);
                 }
             }});

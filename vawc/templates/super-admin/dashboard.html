@@ -1346,7 +1346,8 @@
             const start = $('#dash-start-date').val();
             const end = $('#dash-end-date').val();
             if(!start || !end) {
-                alert("Please select both start and end dates.");
+                $('#errorToast .toast-body').text("Please select both start and end dates.");
+                $('#errorToast').toast('show');
                 return;
             }
             get_dashboard_data('0', start, end);

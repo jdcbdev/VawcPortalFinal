@@ -284,25 +284,6 @@
 
 </div>
 
-<!-- Toasts -->
-<div class="toast-container position-fixed top-0 end-0 p-3">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white" style="background-color:#E8A020;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="" style="width:20px;filter:brightness(0) invert(1);">
-            <strong class="me-auto">Success</strong><small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body text-dark fw-bold"></div>
-    </div>
-    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white bg-danger">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="" style="width:20px;filter:brightness(0) invert(1);">
-            <strong class="me-auto">Error</strong><small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body text-dark fw-bold"></div>
-    </div>
-</div>
 {% endblock content %}
 
 {% block scripts %}
@@ -404,7 +385,7 @@ $(document).ready(function () {
     // ── Multiple Graph UI Logic ──
     function addChartBlock() {
         if (Object.keys(chartInstances).length >= MAX_GRAPHS) {
-            alert('Maximum of ' + MAX_GRAPHS + ' charts allowed.');
+            showToast('error', 'Maximum of ' + MAX_GRAPHS + ' charts allowed.');
             return;
         }
         chartCounter++;
@@ -448,7 +429,7 @@ $(document).ready(function () {
         
         $(removeBtn).on('click', function() {
             if (Object.keys(chartInstances).length <= 1) {
-                alert('You must have at least one chart displaying.');
+                showToast('error', 'You must have at least one chart displaying.');
                 return;
             }
             if (chartInstances[cardId]) {
@@ -899,7 +880,8 @@ $(document).ready(function () {
 
     $('#btn-export-pdf-charts').on('click', function () {
         if (Object.keys(chartInstances).length === 0 || rawCasesData.length === 0) {
-            alert('Data not fully loaded yet or no charts present.'); return;
+            showToast('error', 'Data not fully loaded yet or no charts present.');
+            return;
         }
 
         const btn = $(this);
@@ -1036,7 +1018,7 @@ $(document).ready(function () {
                 pdfMake.createPdf(docDef).download('VAWC_Custom_Analytics_Report.pdf');
             } catch(e) {
                 console.error(e);
-                alert("An error occurred building the PDF.");
+                showToast('error', "An error occurred building the PDF.");
             } finally {
                 btn.prop('disabled', false).html("<i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)");
             }
@@ -1076,14 +1058,12 @@ $(document).ready(function () {
             rawCasesData = data.cases_list || [];
             renderTable(rawCasesData);
 
-            $('#successToast .toast-body').text('Analytics loaded successfully.');
-            $('#successToast').toast('show');
+            showToast('success', 'Analytics loaded successfully.');
         } catch(e) {
             console.error(e);
             $('#graph-date-loading').addClass('d-none');
             $('#graph-start-date, #graph-end-date, #graph-apply-btn, #graph-clear-btn').prop('disabled', false);
-            $('#errorToast .toast-body').text('Error loading analytics: ' + e.message);
-            $('#errorToast').toast('show');
+            showToast('error', 'Error loading analytics: ' + e.message);
         }
     }
 
