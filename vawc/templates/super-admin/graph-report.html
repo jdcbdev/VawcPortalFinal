@@ -640,7 +640,7 @@ $(document).ready(function () {
 
             tbody.innerHTML += `
             <tr class="border-bottom" data-href="${caseUrl}" data-caseid="${d.case_id}">
-                <td class="text-center fw-semibold small">${d.case_number||'—'}</td>
+                <td class="text-center fw-semibold small">${d.date_added.split('-')[0]}-${d.date_added.split('-')[1]}-${d.case_number}</td>
                 <td class="small">${victims.names.join(', ')}</td>
                 <td class="small">${victims.addresses.join(' | ')}</td>
                 <td class="small">${perps.names.join(', ')}</td>

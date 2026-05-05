@@ -440,7 +440,7 @@ $(document).ready(function() {
             if (case_item.data.barangay && !default_barangay_options.includes(case_item.data.barangay)) default_barangay_options.push(case_item.data.barangay);
             const raBadge = ra_violations.length ? ra_violations.join(', ') : '—';
             caseTable.innerHTML += `<tr class="border-bottom border-2">
-                <td class="text-center fw-semibold small">${case_item.data.case_number||'--'}</td>
+                <td class="text-center fw-semibold small">${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}</td>
                 <td>${victims.names.join(', ')}</td>
                 <td>${victims.addresses.join(' | ')}</td>
                 <td>${perpetrators.names.join(', ')}</td>

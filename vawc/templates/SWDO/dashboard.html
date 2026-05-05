@@ -549,7 +549,7 @@ $(document).ready(function() {
     
             caseTable.innerHTML += `
             <tr class="border-bottom border-2">
-                <td class="text-center">--</td>
+                <td class="text-center">${case_item.data.date_added.split('-')[0]}-${case_item.data.date_added.split('-')[1]}-${case_item.data.case_number}</td>
                 <td>${victims.names.join(", ")}</td>
                 <td>${victims.addresses.join(", ")}</td>
                 <td>${perpetrators.names.join(", ")}</td>
