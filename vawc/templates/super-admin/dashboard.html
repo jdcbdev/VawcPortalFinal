@@ -10,11 +10,44 @@
 {% block content %}
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Dashboard</h1>
+        <div class="d-flex flex-column">
+            <h1 class="mb-0">Dashboard</h1>
+            <div class="text-muted small mt-1 fw-semibold" id="dashboard-period-display" style="letter-spacing: 0.02em;">
+                <i class='bx bx-calendar-event me-1'></i>Period: <span class="text-dark">All Time</span>
+            </div>
+        </div>
         <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded shadow-sm border">
             <div class="spinner-border spinner-border-sm text-primary d-none" id="select-year-data-loading" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Select Year:</span>
+                <div class="dropdown" id="year-filter-dropdown">
+                    <button class="btn btn-sm btn-light dropdown-toggle fw-semibold text-truncate" type="button" id="dropdownYearMenu" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 130px; max-width: 150px;">
+                        All Years
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-3" aria-labelledby="dropdownYearMenu" style="min-width: 200px;">
+                        <div class="mb-2 pb-2 border-bottom">
+                            <div class="form-check">
+                                <input class="form-check-input year-cb-all" type="checkbox" value="0" id="year-all" checked>
+                                <label class="form-check-label fw-bold" for="year-all">All Years</label>
+                            </div>
+                        </div>
+                        {% for year in year_list %}
+                        <div class="form-check mb-1">
+                            <input class="form-check-input year-cb" type="checkbox" value="{{year}}" id="year-{{year}}">
+                            <label class="form-check-label" for="year-{{year}}">{{year}}</label>
+                        </div>
+                        {% endfor %}
+                        <div class="mt-3 pt-2 border-top">
+                            <button class="btn btn-primary btn-sm w-100 fw-bold" id="apply-year-filter">Apply Year Filter</button>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="vr mx-2"></div>
+
             <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Date Range:</span>
             <input type="date" id="dash-start-date" class="form-control form-control-sm" style="max-width: 140px;">
             <span class="text-muted small px-1">to</span>
@@ -859,8 +892,42 @@
         }
 
 
+        $('.year-cb-all').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('.year-cb').prop('checked', false);
+            }
+        });
+
+        $('.year-cb').on('change', function() {
+            if ($(this).is(':checked')) {
+                $('.year-cb-all').prop('checked', false);
+            }
+        });
+
+        $('#apply-year-filter').on('click', function() {
+            let selectedYears = [];
+            if ($('.year-cb-all').is(':checked')) {
+                selectedYears = ['0'];
+                $('#dropdownYearMenu').text('All Years');
+            } else {
+                $('.year-cb:checked').each(function() {
+                    selectedYears.push($(this).val());
+                });
+                if (selectedYears.length === 0) {
+                    $('.year-cb-all').prop('checked', true);
+                    selectedYears = ['0'];
+                    $('#dropdownYearMenu').text('All Years');
+                } else {
+                    $('#dropdownYearMenu').text(selectedYears.join(', '));
+                }
+            }
+            // Clear date inputs when using year filter to avoid confusion
+            $('#dash-start-date, #dash-end-date').val('');
+            get_dashboard_data(selectedYears.join(','));
+        });
+
         let currentDashboardData = null;
-        async function get_dashboard_data(get_year = 0, start = '', end = '') {
+        async function get_dashboard_data(get_year = '0', start = '', end = '') {
 
             $('#select-year-data-loading').removeClass('d-none');
             $('#dash-start-date, #dash-end-date, #dash-apply-btn, #dash-clear-btn').prop('disabled', true);
@@ -880,6 +947,17 @@
             currentDashboardData = data;
             $('#select-year-data-loading').addClass('d-none')
             $('#dash-start-date, #dash-end-date, #dash-apply-btn, #dash-clear-btn').prop('disabled', false)
+
+            // Update Period Display
+            let periodText = 'All Time';
+            if (start && end) {
+                periodText = `${start} to ${end}`;
+                // Also reset year checkboxes to "All" when using date range? 
+                // Or just show both. 
+            } else if (get_year !== '0') {
+                periodText = get_year.replace(/,/g, ', ');
+            }
+            $('#dashboard-period-display span').text(periodText);
 
             $('#total-cases').text(data.total_cases)
             $('#ongoing-cases').text(data.ongoing_cases)
@@ -955,7 +1033,6 @@
 
         function render_table(data) {
 
-            $('#cases-table').DataTable().destroy()
             caseTable.innerHTML = ''
             default_barangay_options = []
             gender_types = []
@@ -1096,6 +1173,7 @@
             $.fn.dataTable.ext.search.push(ageRangeFilter);
 
             const casesTable = $('#cases-table').DataTable({
+                destroy: true,
                 dom: '<"d-flex justify-content-between align-items-center flex-column flex-md-row gap-3"<f><B>>' + 'tr' + '<"d-flex justify-content-between pt-3 align-items-center flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
                 scrollX: true,
                 responsive: true,
@@ -1271,13 +1349,13 @@
                 alert("Please select both start and end dates.");
                 return;
             }
-            get_dashboard_data(0, start, end);
+            get_dashboard_data('0', start, end);
         });
 
         $('#dash-clear-btn').on('click', () => {
             $('#dash-start-date').val('');
             $('#dash-end-date').val('');
-            get_dashboard_data(0);
+            get_dashboard_data('0');
         });
 
         // KPI Drill-down function

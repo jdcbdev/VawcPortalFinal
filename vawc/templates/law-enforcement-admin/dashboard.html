@@ -10,21 +10,42 @@
 {% block content %}
 <div class="container-fluid">
     <div class="d-flex mb-4 gap-3 align-items-start align-items-md-center flex-column flex-md-row">
-        <div class="d-flex align-items-center me-auto">
-            <h1 class="pe-3 mb-0 border-end border-dark border-opacity-25 fs-3">Dashboard</h1>
-            <h2 class="ms-3 mb-0 fs-5 text-primary fw-bold">{{ station }}</h2>
+        <div class="d-flex flex-column me-auto">
+            <div class="d-flex align-items-center">
+                <h1 class="pe-3 mb-0 border-end border-dark border-opacity-25">Dashboard</h1>
+                <h2 class="ms-3 mb-0 fs-5 text-primary fw-bold">{{ station }}</h2>
+            </div>
+            <div class="text-muted small mt-1 fw-semibold" id="dashboard-period-display" style="letter-spacing: 0.02em;">
+                <i class='bx bx-calendar-event me-1'></i>Period: <span class="text-dark">All Time</span>
+            </div>
         </div>
         <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded shadow-sm border ms-auto">
             <div class="spinner-border spinner-border-sm text-primary d-none" id="select-year-data-loading" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Date Range:</span>
-            <select name="" id="select-year-data" class="form-select form-select-sm border-0 bg-light fw-semibold" disabled style="width:120px;">
-                <option value="0">All year</option>
-                {% for year in year_list %}
-                <option value="{{year}}">{{year}}</option>
-                {% endfor %}
-            </select>
+            <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Select Year:</span>
+            <div class="dropdown" id="year-filter-dropdown">
+                <button class="btn btn-sm btn-light dropdown-toggle fw-semibold" type="button" id="dropdownYearMenu" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 130px;">
+                    All Years
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 p-3" aria-labelledby="dropdownYearMenu" style="min-width: 200px;">
+                    <div class="mb-2 pb-2 border-bottom">
+                        <div class="form-check">
+                            <input class="form-check-input year-cb-all" type="checkbox" value="0" id="year-all" checked>
+                            <label class="form-check-label fw-bold" for="year-all">All Years</label>
+                        </div>
+                    </div>
+                    {% for year in year_list %}
+                    <div class="form-check mb-1">
+                        <input class="form-check-input year-cb" type="checkbox" value="{{year}}" id="year-{{year}}">
+                        <label class="form-check-label" for="year-{{year}}">{{year}}</label>
+                    </div>
+                    {% endfor %}
+                    <div class="mt-3 pt-2 border-top">
+                        <button class="btn btn-primary btn-sm w-100 fw-bold" id="apply-year-filter">Apply Filter</button>
+                    </div>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -298,16 +319,52 @@ $(document).ready(function() {
     };
 
     // ── Load & render ──
-    let currentDashboardData = null;
-    async function get_dashboard_data(get_year = 0) {
+    $('.year-cb-all').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.year-cb').prop('checked', false);
+        }
+    });
+
+    $('.year-cb').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.year-cb-all').prop('checked', false);
+        }
+    });
+
+    $('#apply-year-filter').on('click', function() {
+        let selectedYears = [];
+        if ($('.year-cb-all').is(':checked')) {
+            selectedYears = ['0'];
+            $('#dropdownYearMenu').text('All Years');
+        } else {
+            $('.year-cb:checked').each(function() {
+                selectedYears.push($(this).val());
+            });
+            if (selectedYears.length === 0) {
+                $('.year-cb-all').prop('checked', true);
+                selectedYears = ['0'];
+                $('#dropdownYearMenu').text('All Years');
+            } else {
+                $('#dropdownYearMenu').text(selectedYears.join(', '));
+            }
+        }
+        get_dashboard_data(selectedYears.join(','));
+    });
+
+    async function get_dashboard_data(get_year = '0') {
         $('#select-year-data-loading').removeClass('d-none');
-        $('#select-year-data').prop('disabled', true);
         const res = await fetch(`/admin-law-enforcement-vawc/law-enforcement-dashboard-data/${get_year}/`);
-        if (!res.ok) { $('#select-year-data-loading').addClass('d-none'); $('#select-year-data').prop('disabled', false); return; }
+        if (!res.ok) {
+            $('#select-year-data-loading').addClass('d-none');
+            return;
+        }
         const data = await res.json();
         currentDashboardData = data;
         $('#select-year-data-loading').addClass('d-none');
-        $('#select-year-data').prop('disabled', false);
+        
+        // Update Period Display
+        const periodText = get_year === '0' ? 'All Time' : get_year.replace(/,/g, ', ');
+        $('#dashboard-period-display span').text(periodText);
         $('#total-cases').text(data.total_cases);
         $('#ongoing-cases').text(data.ongoing_cases);
         $('#resolved-cases').text(data.resolved_cases);
@@ -354,7 +411,6 @@ $(document).ready(function() {
     $('#chart-view-selector').on('change', updateTrendChart);
 
     function render_table(data) {
-        if (casesTable) { casesTable.destroy(); casesTable = null; }
         caseTable.innerHTML = '';
         default_barangay_options = [];
         gender_types = [];
@@ -402,6 +458,7 @@ $(document).ready(function() {
         genderFilter.innerHTML = '<option value="">All Gender</option>' + gender_types.map(g=>`<option value="${g}">${g}</option>`).join('');
 
         casesTable = $('#cases-table').DataTable({
+            destroy: true,
             dom: '<"d-flex justify-content-between align-items-center flex-column flex-md-row gap-3"fB>tr<"d-flex justify-content-between pt-3 align-items-center flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
             scrollX: true, responsive: true, fixedHeader: true, lengthMenu: [5,10,25,50], pageLength: 20,
             buttons: [{ extend: 'excelHtml5', title: 'VAWC Law Enforcement Cases', text: "<i class='bx bx-file me-1'></i>Excel", className: 'btn btn-success text-white shadow-sm rounded-pill px-3 py-1', init: function(api,node){ $(node).removeClass('btn-secondary'); } }]
@@ -420,8 +477,42 @@ $(document).ready(function() {
         $('select#age-filter').off('change').on('change', function(){ const [min,max]=$(this).val().split('-').map(Number); casesTable.column(6).search(function(v){const a=parseFloat(v)||0;return a>=min&&a<=max;}).draw(); });
     }
 
-    $('#select-year-data').on('change', e => get_dashboard_data(e.target.value));
-    get_dashboard_data();
+    $('.year-cb-all').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.year-cb').prop('checked', false);
+        }
+    });
+
+    $('.year-cb').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.year-cb-all').prop('checked', false);
+        }
+    });
+
+    $('#apply-year-filter').on('click', () => {
+        let selectedYears = [];
+        if ($('.year-cb-all').is(':checked')) {
+            selectedYears = ['0'];
+            $('#dropdownYearMenu').text('All Years');
+            $('#dashboard-period-display span').text('All Time');
+        } else {
+            $('.year-cb:checked').each(function() {
+                selectedYears.push($(this).val());
+            });
+            if (selectedYears.length === 0) {
+                $('.year-cb-all').prop('checked', true);
+                selectedYears = ['0'];
+                $('#dropdownYearMenu').text('All Years');
+                $('#dashboard-period-display span').text('All Time');
+            } else {
+                $('#dropdownYearMenu').text(selectedYears.join(', '));
+                $('#dashboard-period-display span').text(selectedYears.join(', '));
+            }
+        }
+        get_dashboard_data(selectedYears.join(','));
+    });
+
+    get_dashboard_data('0');
 });
 </script>
 {% endblock scripts %}

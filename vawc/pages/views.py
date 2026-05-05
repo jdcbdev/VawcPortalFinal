@@ -508,8 +508,10 @@ def admin_dashboard_data (request, get_year):
     
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
 
     total_cases = cases.count() or 0
     ongoing_cases = cases.filter(status='Active').count() or 0
@@ -1447,7 +1449,9 @@ def admin_graph_view(request):
     total_victim = victims.count()
     total_perpetrator = perpetrators.count()
 
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
     return render(request, 'super-admin/graph-report.html', {
+        'year_list': year_list,
         'cases': cases,
         'account': account,
         'total_cases': total_cases,
@@ -1713,10 +1717,14 @@ def barangay_dashboard_data(request, get_year):
         barangay = None
     
     base_q = Q(created_by=logged_in_user) | Q(barangay=barangay)
-    if get_year == 0:
+    if get_year == '0':
         cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year=get_year).distinct()
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+        else:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6072,10 +6080,14 @@ def LawEnforcement_dashboard_data(request, get_year):
         station = None
     
     base_q = Q(created_by=logged_in_user) | Q(law_enforcement_agency_name=station, refers_to_law_enforcement=True)
-    if get_year == 0:
+    if get_year == '0':
         cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year=get_year).distinct()
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+        else:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6212,10 +6224,14 @@ def healthcare_dashboard_data(request, get_year):
         hospital_name = None
     
     base_q = Q(created_by=logged_in_user) | Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
-    if get_year == 0:
+    if get_year == '0':
         cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year=get_year).distinct()
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+        else:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6352,10 +6368,14 @@ def SWDO_dashboard_data(request, get_year):
         SWDO_name = None
     
     base_q = Q(created_by=logged_in_user) | Q(refers_to_social_welfare=True)
-    if get_year == 0:
+    if get_year == '0':
         cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year=get_year).distinct()
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+        else:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6482,8 +6502,10 @@ def admin_consolidated_report_data(request, get_year):
     
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
 
     total_cases = cases.count() or 0
     ongoing_cases = cases.filter(status='Active').count() or 0
@@ -6582,22 +6604,30 @@ def admin_consolidated_report_data(request, get_year):
 @login_required
 def SWDO_graph_view(request):
     print_info = _build_print_info(request)
-    return render(request, 'SWDO/graph-report.html', {'print_info': print_info})
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    return render(request, 'SWDO/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
 def law_enforcement_graph_view(request):
     print_info = _build_print_info(request)
-    return render(request, 'law-enforcement-admin/graph-report.html', {'print_info': print_info})
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    return render(request, 'law-enforcement-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
 def healthcare_graph_view(request):
     print_info = _build_print_info(request)
-    return render(request, 'healthcare-admin/graph-report.html', {'print_info': print_info})
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    return render(request, 'healthcare-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
 def barangay_graph_view(request):
     print_info = _build_print_info(request)
-    return render(request, 'barangay-admin/graph-report.html', {'print_info': print_info})
+    try:
+        barangay = request.user.account.barangay
+    except:
+        barangay = None
+    year_list = Case.objects.filter(barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    return render(request, 'barangay-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 
 # ── Provider Consolidated Report Data Endpoints ────────────────────────────────
@@ -6693,8 +6723,10 @@ def SWDO_consolidated_report_data(request, get_year):
     cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(refers_to_social_welfare=True)
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
     return _provider_graph_response(cases)
 
 
@@ -6714,8 +6746,10 @@ def law_enforcement_consolidated_report_data(request, get_year):
     ).distinct()
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
     return _provider_graph_response(cases)
 
 
@@ -6735,8 +6769,10 @@ def healthcare_consolidated_report_data(request, get_year):
     ).distinct()
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
     return _provider_graph_response(cases)
 
 
@@ -6755,8 +6791,10 @@ def barangay_consolidated_report_data(request, get_year):
     ).distinct()
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
     return _provider_graph_response(cases)
 
 

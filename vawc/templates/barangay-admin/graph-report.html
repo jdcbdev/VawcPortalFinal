@@ -33,11 +33,35 @@
                 <div class="spinner-border spinner-border-sm text-primary d-none" id="graph-date-loading" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Date Range:</span>
+                
+                <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Select Year:</span>
+                <div class="dropdown me-3" id="year-filter-dropdown">
+                    <button class="btn btn-sm btn-light dropdown-toggle fw-semibold" type="button" id="dropdownYearMenu" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 130px;">
+                        All Years
+                    </button>
+                    <ul class="dropdown-menu shadow-sm border-0 p-3" aria-labelledby="dropdownYearMenu" style="min-width: 200px;">
+                        <div class="mb-2 pb-2 border-bottom">
+                            <div class="form-check">
+                                <input class="form-check-input year-cb-all" type="checkbox" value="0" id="year-all" checked>
+                                <label class="form-check-label fw-bold" for="year-all">All Years</label>
+                            </div>
+                        </div>
+                        {% for year in year_list %}
+                        <div class="form-check mb-1">
+                            <input class="form-check-input year-cb" type="checkbox" value="{{year}}" id="year-{{year}}">
+                            <label class="form-check-label" for="year-{{year}}">{{year}}</label>
+                        </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="vr me-3"></div>
+
+                <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Custom Range:</span>
                 <input type="date" id="graph-start-date" class="form-control form-control-sm" style="max-width: 140px;">
                 <span class="text-muted small px-1">to</span>
                 <input type="date" id="graph-end-date" class="form-control form-control-sm" style="max-width: 140px;">
-                <button id="graph-apply-btn" class="btn btn-sm btn-gold text-white fw-bold ms-2 px-3">Apply</button>
+                <button id="graph-apply-btn" class="btn btn-sm btn-gold text-white fw-bold ms-2 px-3">Apply Filter</button>
                 <button id="graph-clear-btn" class="btn btn-sm btn-outline-secondary ms-1">Reset</button>
             </div>
             <button id="btn-export-pdf-charts" class="btn btn-gold shadow-sm rounded-pill px-4">
@@ -604,7 +628,6 @@ $(document).ready(function () {
 
     // ── Render cases table ──
     function renderTable(data) {
-        if (consolidatedTable) { consolidatedTable.destroy(); }
         const tbody = document.getElementById('consolidated-cases-table-content');
         tbody.innerHTML = '';
         
@@ -703,6 +726,7 @@ $(document).ready(function () {
 
         // ── DataTable ──
         consolidatedTable = $('#consolidated-cases-table').DataTable({
+            destroy: true,
             dom: '<"d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3"Bf>rt<"d-flex justify-content-between pt-3 flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
             scrollX: true, responsive: true, lengthMenu: [10,25,50,100], pageLength:25, order:[[10,'desc']],
             buttons: [{
@@ -1043,13 +1067,25 @@ $(document).ready(function () {
         }, 100);
     });
 
+    $('.year-cb-all').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.year-cb').prop('checked', false);
+        }
+    });
+
+    $('.year-cb').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.year-cb-all').prop('checked', false);
+        }
+    });
+
     // ── Load data ──
-    async function loadData(start = '', end = '') {
+    async function loadData(get_year = '0', start = '', end = '') {
         try {
             $('#graph-date-loading').removeClass('d-none');
             $('#graph-start-date, #graph-end-date, #graph-apply-btn, #graph-clear-btn').prop('disabled', true);
             
-            let url = '/admin-barangay-vawc/barangay-consolidated-report-data/0/';
+            let url = `/admin-barangay-vawc/barangay-consolidated-report-data/${get_year}/`;
             if (start && end) {
                 url += `?start=${start}&end=${end}`;
             }
@@ -1075,25 +1111,45 @@ $(document).ready(function () {
         }
     }
 
-    // Filter UI Event Listeners
     $('#graph-apply-btn').on('click', () => {
         const start = $('#graph-start-date').val();
-        const end = $('#graph-end-date').val();
-        if(!start || !end) {
-            alert("Please select both start and end dates.");
-            return;
+        const end   = $('#graph-end-date').val();
+        if (!start || !end) {
+            let selectedYears = [];
+            if ($('.year-cb-all').is(':checked')) {
+                selectedYears = ['0'];
+                $('#dropdownYearMenu').text('All Years');
+            } else {
+                $('.year-cb:checked').each(function() {
+                    selectedYears.push($(this).val());
+                });
+                if (selectedYears.length === 0) {
+                    $('.year-cb-all').prop('checked', true);
+                    selectedYears = ['0'];
+                    $('#dropdownYearMenu').text('All Years');
+                } else {
+                    $('#dropdownYearMenu').text(selectedYears.join(', '));
+                }
+            }
+            loadData(selectedYears.join(','));
+        } else {
+            $('.year-cb-all').prop('checked', true);
+            $('.year-cb').prop('checked', false);
+            $('#dropdownYearMenu').text('All Years');
+            loadData('0', start, end);
         }
-        loadData(start, end);
     });
 
     $('#graph-clear-btn').on('click', () => {
-        $('#graph-start-date').val('');
-        $('#graph-end-date').val('');
-        loadData('');
+        $('#graph-start-date, #graph-end-date').val('');
+        $('.year-cb-all').prop('checked', true);
+        $('.year-cb').prop('checked', false);
+        $('#dropdownYearMenu').text('All Years');
+        loadData('0');
     });
 
     addChartBlock();
-    loadData();
+    loadData('0');
 });
 </script>
 {% endblock scripts %}
