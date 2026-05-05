@@ -120,19 +120,25 @@ def profile_view(request):
     user = request.user
     account_obj = None
     account_type = None
+    base_template = 'base/base_admin.html'
 
     if hasattr(user, 'account'):
         account_obj = user.account
         account_type = 'account'
+        if account_obj.type == 'staff':
+            base_template = 'base/base_barangay.html'
     elif hasattr(user, 'lawenforcementaccount'):
         account_obj = user.lawenforcementaccount
         account_type = 'lawenforcementaccount'
+        base_template = 'base/base_law_enforcement.html'
     elif hasattr(user, 'swdoaccount'):
         account_obj = user.swdoaccount
         account_type = 'swdoaccount'
+        base_template = 'base/base_SWDO.html'
     elif hasattr(user, 'healthcareaccount'):
         account_obj = user.healthcareaccount
         account_type = 'healthcareaccount'
+        base_template = 'base/base_healthcare.html'
 
     if request.method == 'POST':
         # Handle username update
@@ -190,7 +196,8 @@ def profile_view(request):
 
     return render(request, 'account/profile.html', {
         'account_obj': account_obj,
-        'account_type': account_type
+        'account_type': account_type,
+        'base_template': base_template
     })
 
 def address_view (request):
@@ -457,7 +464,7 @@ def logout_view(request):
 
 @login_required
 def admin_dashboard_view (request):
-    if request.user.account.type != 'admin':
+    if not hasattr(request.user, 'account') or request.user.account.type != 'admin':
         return redirect('login')
     
     year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
@@ -465,7 +472,7 @@ def admin_dashboard_view (request):
 
 @login_required
 def admin_case_view(request):
-    if request.user.account.type != 'admin':
+    if not hasattr(request.user, 'account') or request.user.account.type != 'admin':
         return redirect('login')
     
     logged_in_user = request.user  # Retrieve the logged-in user
@@ -1672,7 +1679,7 @@ def law_enforcement_view_case_impacted(request):
 
 @login_required
 def barangay_dashboard_view (request):
-    if request.user.account.type != 'staff':
+    if not hasattr(request.user, 'account') or request.user.account.type != 'staff':
         return redirect('login')
     
     logged_in_user = request.user  # Retrieve the logged-in user
