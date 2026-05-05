@@ -43,6 +43,10 @@
     </div>
 
     <input type="hidden" id="dilg-static-url" value="{% static 'img/dilg.png' %}">
+    <input type="hidden" id="provider-logo-url" value="{% if request.user.swdoaccount.profile_picture %}{{ request.user.swdoaccount.profile_picture.url }}{% endif %}">
+    <input type="hidden" id="agency-name" value="Social Welfare and Development Office">
+    <input type="hidden" id="provider-label" value="SWDO">
+    <input type="hidden" id="agency-location" value="{{ request.user.swdoaccount.region|default:'' }}{% if request.user.swdoaccount.province %}, {{ request.user.swdoaccount.province }}{% endif %}{% if request.user.swdoaccount.city %}, {{ request.user.swdoaccount.city }}{% endif %}">
 
     <!-- ── Row 1: Basic Filters ── -->
     <div class="row g-2 mt-3 align-items-end">
@@ -328,15 +332,59 @@
         });
         $('#case-age-clear').on('click', () => { $('#case-age-from, #case-age-to').val(''); $('#btn-age-filter').text('All Ages'); table.draw(); });
 
-        let logo = null;
-        fetch($('#dilg-static-url').val()).then(r => r.blob()).then(b => {
-            let fr = new FileReader(); fr.onloadend = () => logo = fr.result; fr.readAsDataURL(b);
-        });
+        let dilgLogo = null;
+        let providerLogo = null;
 
-        $('#btn-export-case-report').on('click', function() {
+        async function loadLogos() {
+            try {
+                const dilgUrl = $('#dilg-static-url').val();
+                if (dilgUrl) {
+                    const r = await fetch(dilgUrl);
+                    if (!r.ok) throw new Error("DILG logo fetch failed");
+                    const b = await r.blob();
+                    dilgLogo = await new Promise(res => {
+                        let fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(b);
+                    });
+                }
+                const pLogoUrl = $('#provider-logo-url').val();
+                if (pLogoUrl) {
+                    const r = await fetch(pLogoUrl);
+                    if (r.ok) {
+                        const b = await r.blob();
+                        providerLogo = await new Promise(res => {
+                            let fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(b);
+                        });
+                    }
+                }
+            } catch (e) { 
+                console.error("Logo load error:", e);
+                if (!dilgLogo) {
+                    try {
+                        const r = await fetch(window.location.origin + $('#dilg-static-url').val());
+                        if (r.ok) {
+                            const b = await r.blob();
+                            dilgLogo = await new Promise(res => {
+                                let fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(b);
+                            });
+                        }
+                    } catch(err) { console.error("Logo fallback failed:", err); }
+                }
+            }
+        }
+        loadLogos();
+
+        $('#btn-export-case-report').on('click', async function() {
             const rows = table.rows({ filter: 'applied' });
-            if (!rows.count()) return alert("No data.");
-            const btn = $(this); btn.prop('disabled', true).html("<i class='bx bx-loader-alt bx-spin me-1'></i>Building PDF...");
+            if (!rows.count()) return alert("No data to export.");
+
+            // Ensure logos are loaded
+            if (!dilgLogo || ($('#provider-logo-url').val() && !providerLogo)) {
+                await loadLogos();
+            }
+
+            const btn = $(this); 
+            btn.prop('disabled', true).html("<i class='bx bx-loader-alt bx-spin me-1'></i>Building PDF...");
+            
             setTimeout(() => {
                 let s = { t:0, a:0, r:0, c:0, v:0, p:0, b:0 };
                 rows.every(function() {
@@ -347,17 +395,85 @@
                     s.p += d[P_NAMES_COL].split(',').filter(Boolean).length;
                     if (d[2].toLowerCase().includes('issuance')) s.b++;
                 });
+
                 const doc = {
-                    pageOrientation: 'landscape', content: [
-                        { columns: [{ text: '' }, logo ? { image: logo, width: 50 } : { text: '' }, { stack: ['Republic of the Philippines', 'VAWC CASE MANAGEMENT SYSTEM'], alignment: 'center' }, { text: '' }] },
-                        { text: 'CONSOLIDATED CASE RECORDS REPORT', bold: true, alignment: 'center', margin: [0, 20] },
-                        { table: { widths: ['*','*','*','*'], body: [[{text:'Total',bold:true},{text:'Active',bold:true},{text:'Resolved',bold:true},{text:'Criminal',bold:true}],[s.t,s.a,s.r,s.c]] }, margin: [0,0,0,20] },
-                        { table: { headerRows: 1, widths: [80, '*', '*', 60, '*', 70], body: [['Case #', 'Victim(s)', 'Service', 'Status', 'Address', 'Date'], ...rows.data().toArray().map(d => [d[0], d[V_NAMES_COL]||'—', d[2], d[3], d[ADDR_COL], d[4]])] } }
-                    ]
+                    pageOrientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    pageMargins: [30, 30, 30, 30],
+                    content: [
+                        // Hierarchical Header
+                        {
+                            columns: [
+                                // Left: DILG Logo
+                                {
+                                    width: 80,
+                                    stack: [
+                                        dilgLogo ? { image: dilgLogo, width: 60, alignment: 'left' } : { text: '' }
+                                    ]
+                                },
+                                // Center: Agency Info
+                                {
+                                    width: '*',
+                                    stack: [
+                                        { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444', margin: [0, 0, 0, 2] },
+                                        { text: $('#provider-label').val(), fontSize: 10, bold: true, alignment: 'center', color: '#222' },
+                                        { text: $('#agency-name').val(), fontSize: 16, bold: true, alignment: 'center', color: '#000', margin: [0, 2, 0, 2] },
+                                        { text: $('#agency-location').val(), fontSize: 9, alignment: 'center', color: '#555' },
+                                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0, 5, 0, 0] }
+                                    ]
+                                },
+                                // Right: Provider Logo
+                                {
+                                    width: 80,
+                                    stack: [
+                                        providerLogo ? { image: providerLogo, width: 60, alignment: 'right' } : { text: '' }
+                                    ]
+                                }
+                            ],
+                            margin: [0, 0, 0, 10]
+                        },
+                        // Border line
+                        { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 900, y2: 0, lineWidth: 2 }], margin: [0, 0, 0, 20] },
+                        
+                        { text: 'CONSOLIDATED CASE RECORDS REPORT', bold: true, fontSize: 14, alignment: 'center', margin: [0, 10, 0, 20] },
+                        
+                        { 
+                            table: { 
+                                widths: ['*','*','*','*'], 
+                                body: [
+                                    [{text:'Total Cases', bold:true, fillColor: '#f3f3f3'}, {text:'Active', bold:true, fillColor: '#f3f3f3'}, {text:'Resolved/Closed', bold:true, fillColor: '#f3f3f3'}, {text:'Criminal Cases (RA)', bold:true, fillColor: '#f3f3f3'}],
+                                    [s.t, s.a, s.r, s.c]
+                                ] 
+                            }, 
+                            margin: [0, 0, 0, 20] 
+                        },
+                        
+                        { 
+                            table: { 
+                                headerRows: 1, 
+                                widths: [70, '*', '*', 60, '*', 70], 
+                                body: [
+                                    [
+                                        {text: 'Case #', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Victim(s)', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Service', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Status', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Address', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Date Added', bold: true, fillColor: '#3b1a6e', color: 'white'}
+                                    ],
+                                    ...rows.data().toArray().map(d => [d[0], d[V_NAMES_COL]||'—', d[2], d[3], d[ADDR_COL], d[4]])
+                                ] 
+                            } 
+                        }
+                    ],
+                    styles: {
+                        header: { fontSize: 18, bold: true },
+                        subheader: { fontSize: 12, bold: true }
+                    }
                 };
-                pdfMake.createPdf(doc).download('SWDO_Case_Report.pdf');
+                pdfMake.createPdf(doc).download('SWDO_Consolidated_Case_Report.pdf');
                 btn.prop('disabled', false).html("<i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)");
-            }, 100);
+            }, 500);
         });
 
         $('#addCaseBtn').click(function(e) {

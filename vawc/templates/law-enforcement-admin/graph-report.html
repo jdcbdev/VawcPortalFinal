@@ -820,28 +820,36 @@ $(document).ready(function () {
         const providerLabel = document.getElementById('provider-label')?.value || '';
         const locationParts = [region, province, city].filter(Boolean).join(', ');
 
-        const txt = [
-            { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444' },
-            { text: providerLabel, fontSize: 9, bold: true, alignment: 'center', color: '#222' },
-            { text: agencyName, fontSize: 13, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0,2,0,0] },
-            { text: locationParts, fontSize: 9, alignment: 'center', color: '#555', margin: [0,1,0,0] },
-            { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0,3,0,0] },
-        ];
-
-        const logoToUse = providerLogoBase64 || dilgBase64;
-        if (logoToUse) {
-            return {
-                columns: [
-                    { width: '*', text: '' },
-                    { image: logoToUse, width: 60, alignment: 'right', margin: [0,0,10,0] },
-                    { stack: txt, width: 'auto', alignment: 'center', margin: [0,4,0,0] },
-                    { width: '*', text: '' }
-                ],
-                columnGap: 0, margin: [0, 0, 0, 6]
-            };
-        } else {
-            return { stack: txt, margin: [0, 0, 0, 6] };
-        }
+        return {
+            columns: [
+                // Left: DILG Logo
+                {
+                    width: 80,
+                    stack: [
+                        dilgBase64 ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
+                    ]
+                },
+                // Center: Agency Info
+                {
+                    width: '*',
+                    stack: [
+                        { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444', margin: [0, 0, 0, 2] },
+                        { text: providerLabel, fontSize: 10, bold: true, alignment: 'center', color: '#222' },
+                        { text: agencyName, fontSize: 16, bold: true, alignment: 'center', color: '#000', margin: [0, 2, 0, 2] },
+                        { text: locationParts, fontSize: 9, alignment: 'center', color: '#555' },
+                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0, 5, 0, 0] }
+                    ]
+                },
+                // Right: Provider Logo
+                {
+                    width: 80,
+                    stack: [
+                        providerLogoBase64 ? { image: providerLogoBase64, width: 60, alignment: 'right' } : { text: '' }
+                    ]
+                }
+            ],
+            margin: [0, 0, 0, 10]
+        };
     }
 
     function buildPdfFilteredTableBody() {

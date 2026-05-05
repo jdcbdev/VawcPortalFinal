@@ -3778,8 +3778,15 @@ def _build_print_info(request):
     account = None
     account_type = None
 
+    # Check if Super Admin (Barangay Account with type='admin' or no account but superuser)
+    is_super_admin = False
+    if user.is_superuser:
+        is_super_admin = True
+    
     try:
         account = user.account
+        if getattr(account, 'type', '') == 'admin':
+            is_super_admin = True
         account_type = 'barangay'
     except Exception:
         pass
@@ -3805,10 +3812,23 @@ def _build_print_info(request):
         except Exception:
             pass
 
+    dilg_logo_url = request.build_absolute_uri(settings.STATIC_URL + 'img/dilg.png')
+    # Local path for server-side PDF engines
+    dilg_logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'dilg.png')
+
     if not account:
+        if is_super_admin:
+            return {
+                'agency_name': 'System Administrator Office',
+                'region': 'NCR', 'province': 'Metro Manila', 'city': 'Quezon City',
+                'provider_label': 'Super Admin', 'profile_picture_url': '', 
+                'account_type': 'admin', 'dilg_logo_url': dilg_logo_url,
+                'dilg_logo_path': dilg_logo_path
+            }
         return {
             'agency_name': '', 'region': '', 'province': '', 'city': '',
-            'provider_label': '', 'profile_picture_url': '', 'account_type': None
+            'provider_label': '', 'profile_picture_url': '', 'account_type': None,
+            'dilg_logo_url': dilg_logo_url, 'dilg_logo_path': dilg_logo_path
         }
 
     REGION_MAP = {
@@ -3820,7 +3840,11 @@ def _build_print_info(request):
         'ncr': 'NCR', 'car': 'CAR', 'barmm': 'BARMM',
     }
 
-    if account_type == 'barangay':
+    if is_super_admin:
+        account_type = 'admin'
+        agency_name = 'DILG Central Office'
+        provider_label = 'Super Admin / System Administrator'
+    elif account_type == 'barangay':
         agency_name = getattr(account, 'barangay', '') or ''
         provider_label = 'Barangay VAW Desk'
     elif account_type == 'law_enforcement':
@@ -3854,6 +3878,8 @@ def _build_print_info(request):
         'provider_label': provider_label,
         'profile_picture_url': profile_picture_url,
         'account_type': account_type,
+        'dilg_logo_url': dilg_logo_url,
+        'dilg_logo_path': dilg_logo_path
     }
 
 
@@ -3986,6 +4012,7 @@ def pdf_template_view(request, case_id):
         'law_enforcement': 'law-enforcement-admin/case/pdf-template.html',
         'swdo': 'SWDO/case/pdf-template.html',
         'healthcare': 'healthcare-admin/case/pdf-template.html',
+        'admin': 'super-admin/case/pdf-template.html',
     }
     template_name = template_map.get(print_info['account_type'], 'barangay-admin/case/pdf-template.html')
 
