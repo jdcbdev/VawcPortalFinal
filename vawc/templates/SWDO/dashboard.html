@@ -280,7 +280,9 @@ $(document).ready(function() {
         barangayFilter.innerHTML = ''
         barangayFilter.innerHTML += `<option value="">All Barangay</option>`
         
-        default_barangay_options.forEach(barangay => {
+        const filteredBarangays = default_barangay_options.filter(b => b && b.toLowerCase() !== 'all' && b.toLowerCase() !== 'all barangay');
+        
+        filteredBarangays.forEach(barangay => {
             barangayFilter.innerHTML += `<option value="${barangay}">${barangay}</option>`
         })
     }

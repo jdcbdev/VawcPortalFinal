@@ -454,7 +454,8 @@ $(document).ready(function() {
             </tr>`;
         });
         const barangayFilter = document.querySelector('#barangay-filter');
-        barangayFilter.innerHTML = '<option value="">All Barangay</option>' + default_barangay_options.sort().map(b=>`<option value="${b}">${b}</option>`).join('');
+        const filteredBarangays = default_barangay_options.filter(b => b && b.toLowerCase() !== 'all' && b.toLowerCase() !== 'all barangay').sort();
+        barangayFilter.innerHTML = '<option value="">All Barangay</option>' + filteredBarangays.map(b=>`<option value="${b}">${b}</option>`).join('');
         const genderFilter = document.querySelector('#gender-filter');
         genderFilter.innerHTML = '<option value="">All Gender</option>' + gender_types.map(g=>`<option value="${g}">${g}</option>`).join('');
 

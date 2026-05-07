@@ -391,7 +391,7 @@
         var barangayMenu = document.getElementById('barangay-filter-menu');
         table.column(BARANGAY_COL).data().unique().sort().each(function(d) {
             var val = $('<div/>').html(d).text().trim();
-            if (val && val !== 'None') {
+            if (val && val !== 'None' && val.toLowerCase() !== 'all' && val.toLowerCase() !== 'all barangay') {
                 barangayMenu.innerHTML += `<li><label class="dropdown-item small"><input type="checkbox" class="case-barangay-cb form-check-input me-2" value="${val}"> ${val}</label></li>`;
             }
         });

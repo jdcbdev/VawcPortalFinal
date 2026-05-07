@@ -297,7 +297,9 @@
         $('#ownership').on('change', function() { table.columns([OWNERSHIP_COL]).search($(this).val()).draw(); });
 
         table.column(BARANGAY_COL).data().unique().sort().each(d => {
-            if(d) $('#barangay-filter-menu').append(`<li><label class="dropdown-item small"><input type="checkbox" class="case-barangay-cb form-check-input me-2" value="${d}"> ${d}</label></li>`);
+            if(d && d.toLowerCase() !== 'all' && d.toLowerCase() !== 'all barangay') {
+                $('#barangay-filter-menu').append(`<li><label class="dropdown-item small"><input type="checkbox" class="case-barangay-cb form-check-input me-2" value="${d}"> ${d}</label></li>`);
+            }
         });
 
         $(document).on('change', '.case-barangay-cb', function() {

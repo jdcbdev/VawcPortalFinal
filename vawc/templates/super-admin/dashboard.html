@@ -859,8 +859,9 @@
 
             // ORDER BY NAME as requested:
             temp_barangay_list.sort();
+            const filteredBarangays = temp_barangay_list.filter(b => b && b.toLowerCase() !== 'all' && b.toLowerCase() !== 'all barangay');
 
-            temp_barangay_list.forEach(barangay => {
+            filteredBarangays.forEach(barangay => {
                 barangayFilterMenu.innerHTML += `<li><label class="dropdown-item small"><input type="checkbox" class="barangay-cb form-check-input me-2" value="${barangay}"> ${barangay}</label></li>`
             })
             
