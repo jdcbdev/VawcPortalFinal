@@ -831,7 +831,7 @@ $(document).ready(function () {
                 {
                     width: 80,
                     stack: [
-                        dilgBase64 ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
+                        (typeof dilgBase64 !== 'undefined' && dilgBase64) ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
                     ]
                 },
                 // Center: Agency Info
@@ -849,7 +849,7 @@ $(document).ready(function () {
                 {
                     width: 80,
                     stack: [
-                        providerLogoBase64 ? { image: providerLogoBase64, width: 60, alignment: 'right' } : { text: '' }
+                        (typeof providerLogoBase64 !== 'undefined' && providerLogoBase64) ? { image: providerLogoBase64, width: 60, alignment: 'right' } : { text: '' }
                     ]
                 }
             ],

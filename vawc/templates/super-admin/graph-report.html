@@ -72,6 +72,13 @@
 
     <input type="hidden" id="dilg-static-url" value="{% static 'img/dilg.png' %}">
     <input type="hidden" class="email" name="email" value="{{ account.user.email }}">
+    <!-- Provider print info (used by PDF govHeader) -->
+    <input type="hidden" id="provider-agency-name" value="{{ print_info.agency_name|default:'' }}">
+    <input type="hidden" id="provider-region" value="{{ print_info.region|default:'' }}">
+    <input type="hidden" id="provider-province" value="{{ print_info.province|default:'' }}">
+    <input type="hidden" id="provider-city" value="{{ print_info.city|default:'' }}">
+    <input type="hidden" id="provider-label" value="{{ print_info.provider_label|default:'' }}">
+    <input type="hidden" id="provider-profile-url" value="{{ print_info.profile_picture_url|default:'' }}">
 
     <!-- Stats Strip -->
     <div class="row g-3 mb-5">
@@ -328,6 +335,23 @@ $(document).ready(function () {
                 fr.readAsDataURL(blob);
             });
         } catch (e) { console.warn('Could not load DILG logo:', e); }
+    })();
+
+    // ── Pre-load Provider profile picture as base64 ──
+    let providerLogoBase64 = null;
+    (async function loadProviderLogo() {
+        const url = document.getElementById('provider-profile-url')?.value;
+        if (!url) return;
+        try {
+            const resp = await fetch(url);
+            const blob = await resp.blob();
+            providerLogoBase64 = await new Promise((res, rej) => {
+                const fr  = new FileReader();
+                fr.onloadend = () => res(fr.result);
+                fr.onerror   = rej;
+                fr.readAsDataURL(blob);
+            });
+        } catch (e) { console.warn('Could not load provider logo:', e); }
     })();
 
     // ── Age Group Helper ──
@@ -807,7 +831,7 @@ $(document).ready(function () {
                 {
                     width: 80,
                     stack: [
-                        dilgBase64 ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
+                        (typeof dilgBase64 !== 'undefined' && dilgBase64) ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
                     ]
                 },
                 // Center: Agency Info
@@ -825,7 +849,7 @@ $(document).ready(function () {
                 {
                     width: 80,
                     stack: [
-                        providerLogoBase64 ? { image: providerLogoBase64, width: 60, alignment: 'right' } : { text: '' }
+                        (typeof providerLogoBase64 !== 'undefined' && providerLogoBase64) ? { image: providerLogoBase64, width: 60, alignment: 'right' } : { text: '' }
                     ]
                 }
             ],

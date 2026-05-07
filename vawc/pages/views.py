@@ -1450,7 +1450,9 @@ def admin_graph_view(request):
     total_perpetrator = perpetrators.count()
 
     year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    print_info = _build_print_info(request)
     return render(request, 'super-admin/graph-report.html', {
+        'print_info': print_info,
         'year_list': year_list,
         'cases': cases,
         'account': account,
@@ -1458,7 +1460,7 @@ def admin_graph_view(request):
         'total_active': total_active,
         'total_closed': total_closed,
         'total_victim': total_victim,
-        'total_perpetrator': total_perpetrator
+        'total_perpetrator': total_perpetrator,
     })
 
 @login_required

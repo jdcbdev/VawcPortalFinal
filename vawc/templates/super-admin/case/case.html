@@ -327,6 +327,8 @@
         const RA_COL       = 6;
         const GENDER_COL   = 7;
         const AGE_COL      = 8;  // stores raw date_of_birth strings
+        let dilgBase64     = null;
+        let providerBase64 = null;
 
         // ── Age range filter via ext.search ──
         $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn._caseAgeFilter !== true);
@@ -596,7 +598,7 @@
                             {
                                 width: 80,
                                 stack: [
-                                    dilgBase64 ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
+                                    (typeof dilgBase64 !== 'undefined' && dilgBase64) ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
                                 ]
                             },
                             // Center: Agency Info
@@ -614,7 +616,7 @@
                             {
                                 width: 80,
                                 stack: [
-                                    providerBase64 ? { image: providerBase64, width: 60, alignment: 'right' } : { text: '' }
+                                    (typeof providerBase64 !== 'undefined' && providerBase64) ? { image: providerBase64, width: 60, alignment: 'right' } : { text: '' }
                                 ]
                             }
                         ],
