@@ -58,6 +58,7 @@ def can_edit_case(user, case):
     Rules:
       - Super admin (account.type == 'admin') can always edit
       - Barangay staff whose barangay matches the case's barangay can edit
+      - Barangay staff whose barangay is a target of an active referral can edit
       - The user who created the case (case.created_by) can edit
       - Everyone else is view-only
     """
@@ -66,8 +67,17 @@ def can_edit_case(user, case):
         if user.account.type == 'admin':
             return True
         # Barangay staff in the matching barangay can edit
-        if user.account.type == 'staff' and user.account.barangay and user.account.barangay == case.barangay:
-            return True
+        if hasattr(user, 'account') and user.account.type == 'staff':
+            if user.account.barangay and user.account.barangay == case.barangay:
+                return True
+            # Check if referred to this barangay
+            if BarangayReferral.objects.filter(
+                case=case, 
+                to_barangay=user.account.barangay,
+                to_city=user.account.city,
+                to_province=user.account.province
+            ).exists():
+                return True
     except Exception:
         pass
 
@@ -1919,8 +1929,13 @@ def barangay_case_view(request):
         barangay = None
 
     # Show cases created by this user OR cases in their barangay (referrals/walk-ins)
+    # OR cases referred to this barangay
     cases = Case.objects.filter(
-        Q(created_by=logged_in_user) | Q(barangay=barangay)
+        Q(created_by=logged_in_user) | 
+        Q(barangay=barangay) |
+        Q(barangay_referrals__to_barangay=barangay, 
+          barangay_referrals__to_city=account.city,
+          barangay_referrals__to_province=account.province)
     ).distinct()
 
     return render(request, 'barangay-admin/case/case.html', {
@@ -3239,6 +3254,23 @@ def view_case_behalf(request, case_id):
     try:
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
+        
+        # Check if the user is authorized to view this case
+        is_authorized = False
+        if request.user.account.type == 'admin':
+            is_authorized = True
+        elif request.user.account.barangay == case.barangay or case.created_by == request.user:
+            is_authorized = True
+        elif BarangayReferral.objects.filter(
+            case=case, 
+            to_barangay=request.user.account.barangay,
+            to_city=request.user.account.city,
+            to_province=request.user.account.province
+        ).exists():
+            is_authorized = True
+            
+        if not is_authorized:
+            return redirect('barangay dashboard')
         # Retrieve related objects such as contact persons, evidence, victims, perpetrators, and parents
         contact_persons = Contact_Person.objects.filter(case_contact=case)
         evidences = Evidence.objects.filter(case=case)
@@ -3398,6 +3430,23 @@ def view_case_impact(request, case_id):
     try:
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
+
+        # Check if the user is authorized to view this case
+        is_authorized = False
+        if request.user.account.type == 'admin':
+            is_authorized = True
+        elif request.user.account.barangay == case.barangay or case.created_by == request.user:
+            is_authorized = True
+        elif BarangayReferral.objects.filter(
+            case=case, 
+            to_barangay=request.user.account.barangay,
+            to_city=request.user.account.city,
+            to_province=request.user.account.province
+        ).exists():
+            is_authorized = True
+            
+        if not is_authorized:
+            return redirect('barangay dashboard')
         # Retrieve related objects such as evidence, victims, perpetrators, and parents
         evidences = Evidence.objects.filter(case=case)
         victims = Victim.objects.filter(case_victim=case)
@@ -5153,6 +5202,62 @@ def refer_law_enforcement(request):
     else:
         # Return a JSON response indicating failure
         return JsonResponse({'error': 'Invalid request method.'})
+
+
+@login_required
+@require_POST
+def refer_to_barangay(request):
+    if not hasattr(request.user, 'account') or request.user.account.type != 'staff':
+        return JsonResponse({'success': False, 'message': 'Unauthorized.'}, status=403)
+
+    case_id = request.POST.get('case_id')
+    case = get_object_or_404(Case, id=case_id)
+    
+    to_barangay = request.POST.get('to_barangay')
+    to_city = request.POST.get('to_city')
+    to_province = request.POST.get('to_province')
+    to_region = request.POST.get('to_region')
+    reason = request.POST.get('reason')
+    
+    if not to_barangay:
+        return JsonResponse({'success': False, 'message': 'Target barangay is required.'})
+
+    # Check if referral already exists
+    if BarangayReferral.objects.filter(
+        case=case,
+        to_barangay=to_barangay,
+        to_city=to_city,
+        to_province=to_province
+    ).exists():
+        return JsonResponse({'success': False, 'message': f'Case is already referred to {to_barangay}.'})
+
+    referral = BarangayReferral.objects.create(
+        case=case,
+        from_barangay=request.user.account.barangay,
+        to_barangay=to_barangay,
+        to_city=to_city,
+        to_province=to_province,
+        to_region=to_region,
+        reason=reason,
+        referred_by=request.user
+    )
+    
+    # Create notification for target barangay users
+    target_users = Account.objects.filter(
+        barangay=to_barangay, 
+        city=to_city, 
+        province=to_province, 
+        type='staff'
+    )
+    
+    for account in target_users:
+        Notification.objects.create(
+            receiver_account=account.user.username,
+            message=f"New Case Referral from {request.user.account.barangay}: {case.case_number if case.case_number else 'ID '+str(case.id)}",
+            link=reverse('barangay case')
+        )
+
+    return JsonResponse({'success': True, 'message': f'Case referred to {to_barangay} successfully.'})
 
 
 @login_required(login_url='login')

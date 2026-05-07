@@ -52,7 +52,10 @@
             <div class="container-fluid">
                 <div class="d-flex justify-content-between py-3">
                     <h2>Status</h2>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#statusAdd"><i class="bx bx-plus"></i> Add Status</button>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#barangayReferralModal"><i class="bx bx-share-alt"></i> Refer to Barangay</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#statusAdd"><i class="bx bx-plus"></i> Add Status</button>
+                    </div>
                 </div><!--end of row-->
 
                 <div class="pt-2">
@@ -3820,4 +3823,116 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endif %}
+
+<!-- Barangay Referral Modal -->
+<div class="modal fade" id="barangayReferralModal" tabindex="-1" aria-labelledby="barangayReferralModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="barangayReferralModalLabel">Refer Case to another Barangay</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="barangay_referral_form">
+                {% csrf_token %}
+                <input type="hidden" name="case_id" value="{{ case.id }}">
+                <div class="modal-body">
+                    <p class="text-muted small">Use this to refer the case to the victim's or perpetrator's resident barangay for localized support and monitoring.</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="refer_region" name="to_region" required>
+                                    <option value="">--Select Region--</option>
+                                    {% for region in default_regions %}
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="refer_region">Region</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="refer_province" name="to_province" required disabled>
+                                    <option value="">--Select Province--</option>
+                                </select>
+                                <label for="refer_province">Province</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="refer_city" name="to_city" required disabled>
+                                    <option value="">--Select City/Municipality--</option>
+                                </select>
+                                <label for="refer_city">City/Municipality</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="refer_barangay" name="to_barangay" required disabled>
+                                    <option value="">--Select Barangay--</option>
+                                </select>
+                                <label for="refer_barangay">Barangay</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" id="refer_reason" name="reason" style="height: 100px" placeholder="Reason for referral" required></textarea>
+                        <label for="refer_reason">Reason for Referral</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-barangay-referral">Send Referral</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const referralForm = document.querySelector("#barangay_referral_form");
+    if (referralForm && typeof addAddressListener === 'function') {
+        addAddressListener(referralForm, 'refer');
+    }
+
+    $('#barangay_referral_form').on('submit', function(e) {
+        e.preventDefault();
+        const submitBtn = $('#btn-submit-barangay-referral');
+        submitBtn.prop('disabled', true).text('Sending...');
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "refer_to_barangay" %}',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.success) {
+                    const statusTitle = 'Referred to Barangay ' + $('#refer_barangay').val();
+                    const statusText = 'Reason: ' + $('#refer_reason').val();
+                    const statusEventDate = getDateNow();
+                    
+                    addingStatusPerAction('{{case.id}}', statusTitle, statusText, statusEventDate, response.message);
+                    
+                    $('#successToast .toast-body').text(response.message);
+                    $('#successToast').toast('show');
+                    $('#barangayReferralModal').modal('hide');
+                } else {
+                    $('#errorToast .toast-body').text(response.message);
+                    $('#errorToast').toast('show');
+                    submitBtn.prop('disabled', false).text('Send Referral');
+                }
+            },
+            error: function() {
+                $('#errorToast .toast-body').text('An error occurred while sending the referral.');
+                $('#errorToast').toast('show');
+                submitBtn.prop('disabled', false).text('Send Referral');
+            }
+        });
+    });
+});
+</script>
 {% endblock scripts %}

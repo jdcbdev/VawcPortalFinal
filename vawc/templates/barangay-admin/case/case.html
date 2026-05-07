@@ -145,7 +145,12 @@
             <tbody class="table-group-divider">
                 {% for case in cases %}
                 <tr class="border-bottom border-2" data-case-id="{{ case.id }}" data-edit-url="{% if case.type_of_case == 'Impacted' %}{% url 'barangay case impacted view' case_id=case.id %}{% else %}{% url 'barangay case behalf view' case_id=case.id %}{% endif %}">
-                    <td class="text-center">{{ case.date_added|date:'Y-m' }}-{{ case.case_number }}</td>
+                    <td class="text-center">
+                        {{ case.date_added|date:'Y-m' }}-{{ case.case_number }}
+                        {% if case.barangay != request.user.account.barangay %}
+                            <br><span class="badge bg-info text-dark shadow-sm" style="font-size: 0.65rem;"><i class='bx bx-redo'></i> REFERRED</span>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if case.type_of_case == 'Impacted' %}Impacted{% elif case.type_of_case == 'Behalf' %}Behalf of Impacted Victim{% endif %}
                     </td>

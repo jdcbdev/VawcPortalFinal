@@ -197,6 +197,7 @@ urlpatterns = [
     path('pages/get-police-station/', views.get_police_station, name='get police station'),
     
     path('case-summary/<int:case_id>/', views.case_summary_modal, name='case_summary_modal'),
+    path('refer-to-barangay/', views.refer_to_barangay, name='refer_to_barangay'),
 ]
 
 # Serve media files during development
