@@ -4,6 +4,11 @@
 {% block styles %}
 <link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
 <link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
+<style>
+    .btn-gold { background-color: #E8A020; color: white; border: none; }
+    .btn-gold:hover { background-color: #d4921c; color: white; }
+    .text-gold { color: #E8A020; }
+</style>
 {% endblock %}
 {% load custom_filter %}
 {% block content %}
@@ -19,6 +24,30 @@
     <div class="pt-1 row">
         <a class="col text-decoration-none text-dark" href="{% url 'barangay case' %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
     </div>
+
+    {% if referral_status == 'Pending' %}
+    <div class="alert shadow-sm d-flex justify-content-between align-items-center mt-3 mb-4 rounded-4 border-start border-4" style="background-color: #fff9e6; border-color: #E8A020 !important;">
+        <div class="ps-3">
+            <h5 class="alert-heading mb-1 fw-bold" style="color: #E8A020;"><i class='bx bxs-info-circle me-2'></i>Incoming Case Referral</h5>
+            <p class="mb-0 text-dark">This case was referred to your barangay by <strong>{{ referral.from_barangay }}</strong>. Please accept the referral to view full victim details and start collaborating.</p>
+        </div>
+        <div class="d-flex gap-2 pe-3">
+            <button class="btn btn-gold rounded-pill px-4 shadow-sm" onclick="handleReferralAction('accept', '{{ referral.id }}')">
+                <i class='bx bx-check me-1'></i> Accept Referral
+            </button>
+            <button class="btn btn-outline-danger rounded-pill px-4 bg-white" onclick="handleReferralAction('reject', '{{ referral.id }}')">
+                Decline
+            </button>
+        </div>
+    </div>
+    {% elif referral_status == 'Accepted' and not is_true_owner %}
+    <div class="alert shadow-sm mt-3 mb-4 rounded-4 border-start border-4 border-success" style="background-color: #f0fdf4;">
+        <div class="ps-3">
+            <h5 class="alert-heading mb-1 fw-bold text-success"><i class='bx bxs-check-circle me-2'></i>Collaboration Mode</h5>
+            <p class="mb-0 text-dark small">Your barangay is collaborating on this case (Referred by {{ referral.from_barangay }}). You have full edit access for service delivery and history updates.</p>
+        </div>
+    </div>
+    {% endif %}
     <div class="row">
         <div class="col-lg-8 col-12">
             <h2>Case Number: {{ case.date_added|date:'Y-m' }}-{{ case.case_number }} <span class="h5">(Date Added:{{ case.date_added }})</span>  </h2>
@@ -31,12 +60,14 @@
                 </a>
             </div>
         {% endif %}
+        {% if is_true_owner %}
         <div class="d-grid gap-2 mx-auto d-grid gap-2  mx-auto {% if global.security_status == 'encrypted' %} col-lg-4 {% elif global.security_status == 'decrypted'  %} col-lg-2 {% endif %} col-12">
             <button class="btn btn-danger btn-confirm-delete-case" data-case-id="{{ case.id }}" data-bs-toggle="modal" data-bs-target="#confirmDeletCase" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                 <i class='bx bx-trash me-2'></i>
                 Delete Case
             </button>
         </div>
+        {% endif %}
     </div>
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -127,11 +158,17 @@
                         <div class="col-6">
                             <div class="d-flex align-items-center">
                                 <h4><strong>CASE STATUS:</strong></h4>
-                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active" id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %} data-status="Active">
-                                <label class="btn btn-outline-primary mx-2" for="option1">Active</label>
+                                {% if is_true_owner %}
+                                    <input type="radio" class="btn-check btn-check-update" name="status_case" value="Active" id="option1" autocomplete="off" {% if case.status == 'Active' %}checked{% endif %} data-status="Active">
+                                    <label class="btn btn-outline-primary mx-2" for="option1">Active</label>
 
-                                <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close" id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %} data-status="Close">
-                                <label class="btn btn-outline-primary" for="option2">Closed</label>
+                                    <input type="radio" class="btn-check btn-check-update" name="status_case" value="Close" id="option2" autocomplete="off" {% if case.status == 'Close' %}checked{% endif %} data-status="Close">
+                                    <label class="btn btn-outline-primary" for="option2">Closed</label>
+                                {% else %}
+                                    <span class="badge {% if case.status == 'Active' %}bg-success{% else %}bg-secondary{% endif %} fs-6 px-3 py-2 rounded-pill ms-2">
+                                        {{ case.status }}
+                                    </span>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="col-6">
@@ -4246,5 +4283,71 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+function handleReferralAction(action, referralId) {
+    if (action === 'reject') {
+        Swal.fire({
+            title: 'Decline Referral?',
+            text: 'Please provide a reason for declining this referral:',
+            input: 'textarea',
+            inputPlaceholder: 'Reason for rejection...',
+            showCancelButton: true,
+            confirmButtonText: 'Confirm Decline',
+            confirmButtonColor: '#d33',
+            preConfirm: (reason) => {
+                if (!reason) {
+                    Swal.showValidationMessage('Reason is required');
+                }
+                return reason;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitReferralResponse(action, referralId, result.value);
+            }
+        });
+    } else {
+        submitReferralResponse(action, referralId);
+    }
+}
+
+function submitReferralResponse(action, referralId, reason = '') {
+    const url = action === 'accept' ? `/accept-referral/${referralId}/` : `/reject-referral/${referralId}/`;
+    
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'reason': reason
+        },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: response.message,
+                    confirmButtonColor: '#E8A020'
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message,
+                    confirmButtonColor: '#E8A020'
+                });
+            }
+        },
+        error: function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An unexpected error occurred.',
+                confirmButtonColor: '#E8A020'
+            });
+        }
+    });
+}
 </script>
 {% endblock scripts %}

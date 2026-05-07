@@ -198,6 +198,8 @@ urlpatterns = [
     
     path('case-summary/<int:case_id>/', views.case_summary_modal, name='case_summary_modal'),
     path('refer-to-barangay/', views.refer_to_barangay, name='refer_to_barangay'),
+    path('accept-referral/<int:referral_id>/', views.accept_referral, name='accept_referral'),
+    path('reject-referral/<int:referral_id>/', views.reject_referral, name='reject_referral'),
 ]
 
 # Serve media files during development

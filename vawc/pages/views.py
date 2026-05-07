@@ -3255,27 +3255,45 @@ def view_case_behalf(request, case_id):
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
         
-        # Check if the user is authorized to view this case
-        is_authorized = False
-        if request.user.account.type == 'admin':
-            is_authorized = True
-        elif request.user.account.barangay == case.barangay or case.created_by == request.user:
-            is_authorized = True
-        elif BarangayReferral.objects.filter(
+        # Ownership and Referral Status
+        account = request.user.account
+        is_owner = (case.barangay == account.barangay or case.created_by == request.user)
+        referral = BarangayReferral.objects.filter(
             case=case, 
-            to_barangay=request.user.account.barangay,
-            to_city=request.user.account.city,
-            to_province=request.user.account.province
-        ).exists():
-            is_authorized = True
-            
-        if not is_authorized:
-            return redirect('barangay dashboard')
+            to_barangay=account.barangay,
+            to_city=account.city,
+            to_province=account.province
+        ).last()
+        
+        referral_status = referral.status if referral else None
+        
+        if not is_owner and not referral_status:
+             return redirect('barangay dashboard')
+             
+        # Log Access
+        CaseEditHistory.objects.create(
+            case=case,
+            user=request.user,
+            section_edited="Case Viewed (Barangay Staff)"
+        )
+
         # Retrieve related objects such as contact persons, evidence, victims, perpetrators, and parents
         contact_persons = Contact_Person.objects.filter(case_contact=case)
         evidences = Evidence.objects.filter(case=case)
         victims = Victim.objects.filter(case_victim=case)
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
+        
+        # Redaction for Pending Referrals
+        if not is_owner and referral_status == 'Pending':
+            for v in victims:
+                v.first_name = "REDACTED"
+                v.last_name = "REDACTED"
+                v.middle_name = "REDACTED"
+            for p in perpetrators:
+                p.first_name = "REDACTED"
+                p.last_name = "REDACTED"
+                p.middle_name = "REDACTED"
+                
         witnesses = Witness.objects.filter(case_witness=case)
         hospitals = HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct()
         status_history = Status_History.objects.filter(case_status_history=case)
@@ -3397,6 +3415,9 @@ def view_case_behalf(request, case_id):
 
         return render(request, 'barangay-admin/case/view-case-behalf.html', {
             'case': case,
+            'is_true_owner': is_owner,
+            'referral_status': referral_status,
+            'referral': referral,
             'contact_persons': contact_persons,
             'evidence': evidences,
             'victims': victims,
@@ -3431,22 +3452,28 @@ def view_case_impact(request, case_id):
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
 
-        # Check if the user is authorized to view this case
-        is_authorized = False
-        if request.user.account.type == 'admin':
-            is_authorized = True
-        elif request.user.account.barangay == case.barangay or case.created_by == request.user:
-            is_authorized = True
-        elif BarangayReferral.objects.filter(
+        # Ownership and Referral Status
+        account = request.user.account
+        is_owner = (case.barangay == account.barangay or case.created_by == request.user)
+        referral = BarangayReferral.objects.filter(
             case=case, 
-            to_barangay=request.user.account.barangay,
-            to_city=request.user.account.city,
-            to_province=request.user.account.province
-        ).exists():
-            is_authorized = True
-            
-        if not is_authorized:
-            return redirect('barangay dashboard')
+            to_barangay=account.barangay,
+            to_city=account.city,
+            to_province=account.province
+        ).last()
+        
+        referral_status = referral.status if referral else None
+        
+        if not is_owner and not referral_status:
+             return redirect('barangay dashboard')
+             
+        # Log Access
+        CaseEditHistory.objects.create(
+            case=case,
+            user=request.user,
+            section_edited="Case Viewed (Barangay Staff)"
+        )
+
         # Retrieve related objects such as evidence, victims, perpetrators, and parents
         evidences = Evidence.objects.filter(case=case)
         victims = Victim.objects.filter(case_victim=case)
@@ -3539,6 +3566,9 @@ def view_case_impact(request, case_id):
         
         return render(request, 'barangay-admin/case/view-case-impacted.html', {
             'case': case,
+            'is_true_owner': is_owner,
+            'referral_status': referral_status,
+            'referral': referral,
             'evidence': evidences,
             'victims': victims,
             'perpetrators': perpetrators,
@@ -5258,6 +5288,63 @@ def refer_to_barangay(request):
         )
 
     return JsonResponse({'success': True, 'message': f'Case referred to {to_barangay} successfully.'})
+
+
+@login_required
+@require_POST
+def accept_referral(request, referral_id):
+    referral = get_object_or_404(BarangayReferral, id=referral_id)
+    # Authorization: only the target barangay can accept
+    if referral.to_barangay != request.user.account.barangay:
+        return JsonResponse({'success': False, 'message': 'Unauthorized.'}, status=403)
+    
+    referral.status = 'Accepted'
+    referral.save()
+
+    # Log action
+    CaseEditHistory.objects.create(
+        case=referral.case,
+        user=request.user,
+        section_edited="Referral Accepted"
+    )
+
+    # Notify sender
+    Notification.objects.create(
+        receiver_account=referral.referred_by.username,
+        message=f"Referral for Case {referral.case.case_number} was ACCEPTED by {referral.to_barangay}.",
+        link=reverse('barangay case')
+    )
+
+    return JsonResponse({'success': True, 'message': 'Referral accepted.'})
+
+
+@login_required
+@require_POST
+def reject_referral(request, referral_id):
+    referral = get_object_or_404(BarangayReferral, id=referral_id)
+    # Authorization: only the target barangay can reject
+    if referral.to_barangay != request.user.account.barangay:
+        return JsonResponse({'success': False, 'message': 'Unauthorized.'}, status=403)
+    
+    reason = request.POST.get('reason', 'No reason provided.')
+    referral.status = 'Rejected'
+    referral.save()
+
+    # Log action
+    CaseEditHistory.objects.create(
+        case=referral.case,
+        user=request.user,
+        section_edited=f"Referral Rejected: {reason}"
+    )
+
+    # Notify sender
+    Notification.objects.create(
+        receiver_account=referral.referred_by.username,
+        message=f"Referral for Case {referral.case.case_number} was REJECTED by {referral.to_barangay}. Reason: {reason}",
+        link=reverse('barangay case')
+    )
+
+    return JsonResponse({'success': True, 'message': 'Referral rejected.'})
 
 
 @login_required(login_url='login')
@@ -7006,6 +7093,30 @@ def case_summary_modal(request, case_id):
     except Case.DoesNotExist:
         return HttpResponse("Case not found.", status=404)
     
+    # Check if authorized (simplified for summary modal)
+    is_authorized = False
+    is_owner = False
+    referral_status = None
+    
+    if hasattr(request.user, 'account'):
+        account = request.user.account
+        is_owner = (case.barangay == account.barangay or case.created_by == request.user)
+        referral = BarangayReferral.objects.filter(
+            case=case, 
+            to_barangay=account.barangay,
+            to_city=account.city,
+            to_province=account.province
+        ).last()
+        referral_status = referral.status if referral else None
+        
+        if is_owner or referral_status or account.type == 'admin':
+            is_authorized = True
+
+    if not is_authorized:
+        return HttpResponse("Unauthorized.", status=403)
+        
     return render(request, 'base/case_modal_content.html', {
-        'case': case
+        'case': case,
+        'is_true_owner': is_owner,
+        'referral_status': referral_status
     })

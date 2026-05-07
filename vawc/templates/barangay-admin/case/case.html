@@ -106,7 +106,7 @@
                 <option value="Female">Female</option>
             </select>
         </div>
-        <div class="col-6 col-md-3 col-lg-2">
+        <div class="col-6 col-md-2 col-lg-2">
             <div class="dropdown" id="age-range-dropdown">
                 <button class="form-select text-start bg-white text-truncate" type="button" data-bs-toggle="dropdown" id="btn-age-filter" data-bs-auto-close="outside">
                     All Ages
@@ -121,6 +121,13 @@
                     <button id="case-age-clear" class="btn btn-sm btn-outline-secondary w-100">Clear</button>
                 </div>
             </div>
+        </div>
+        <div class="col-6 col-md-2 col-lg-2">
+            <select id="case-source-filter" class="form-select">
+                <option value="">All Sources</option>
+                <option value="Owned">My Barangay</option>
+                <option value="Referred">Referred to Me</option>
+            </select>
         </div>
     </div>
 
@@ -139,6 +146,7 @@
                     <th scope="col" style="display:none;">Victim Names</th>
                     <th scope="col" style="display:none;">Perpetrator Names</th>
                     <th scope="col" style="display:none;">Full Address</th>
+                    <th scope="col" style="display:none;">Source</th>
                     <th class="text-center" scope="col">Action</th>
                 </tr>
             </thead>
@@ -165,6 +173,7 @@
                     <td style="display:none;">{% for v in case.victim_set.all %}{{ v.first_name }} {{ v.last_name }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
                     <td style="display:none;">{% for p in case.perpetrator.all %}{{ p.first_name }} {{ p.last_name }}{% if not forloop.last %},{% endif %}{% endfor %}</td>
                     <td style="display:none;">{{ case.barangay }}, {{ case.city }}, {{ case.province }}</td>
+                    <td style="display:none;">{% if case.barangay == request.user.account.barangay %}Owned{% else %}Referred{% endif %}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
                             <a class="btn btn-outline-success btn-sm action-btn" href="{% url 'barangay case impacted view' case_id=case.id %}" role="button">Edit</a>
@@ -247,7 +256,7 @@
 
 <script>
     $(document).ready(function() {
-        const RA_COL = 5, GENDER_COL = 6, AGE_COL = 7, V_NAMES_COL = 8, P_NAMES_COL = 9, ADDR_COL = 10;
+        const RA_COL = 5, GENDER_COL = 6, AGE_COL = 7, V_NAMES_COL = 8, P_NAMES_COL = 9, ADDR_COL = 10, SOURCE_COL = 11;
 
         $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn._caseAgeFilter !== true);
         const caseAgeFilter = function(settings, data, dataIndex) {
@@ -287,6 +296,7 @@
         });
 
         $('#case-gender-filter').on('change', function() { table.columns([GENDER_COL]).search($(this).val(), false, true).draw(); });
+        $('#case-source-filter').on('change', function() { table.columns([SOURCE_COL]).search($(this).val()).draw(); });
         $('#case-age-from, #case-age-to').on('input', () => { 
             let f = $('#case-age-from').val(), t = $('#case-age-to').val();
             $('#btn-age-filter').text(f && t ? `${f}-${t}` : (f ? `${f}+` : (t ? `Up to ${t}` : 'All Ages')));
