@@ -90,31 +90,6 @@
       </div>
     </div>
 </div>
-<!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
-<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Success</strong>
-            <small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-dark">
-            Password changed successfully!
-        </div>
-    </div>
-    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#899499;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-            <strong class="me-auto text-dark">Error</strong>
-            <small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-dark">
-            Error changing password. Please check your input.
-        </div>
-    </div>
-</div>
 {% endblock content %}
 {% block scripts %}
 <script>
@@ -262,23 +237,8 @@
 
         
     });
-</script>
-<script>
-    function showToast(type, message) {
-        var toastId = type === 'success' ? '#successToast' : '#errorToast';
-        var toastEl = document.querySelector(toastId);
-        if (message) {
-            toastEl.querySelector('.toast-body').textContent = message;
-        } else {
-            if (type === 'success') {
-                toastEl.querySelector('.toast-body').textContent = 'Password changed successfully!';
-            } else {
-                toastEl.querySelector('.toast-body').textContent = 'Error changing password. Please check your input.';
-            }
-        }
-        var toast = new bootstrap.Toast(toastEl);
-        toast.show();
-    }
+
+
     function togglePasswordVisibility() {
         var currentPasswordInput = document.getElementById('currentPassword');
         var passwordInput = document.getElementById('newPassword1');
@@ -434,7 +394,7 @@
             data: formData,
             success: function (data) {
                 if (data.success) {
-                    showToast('success');
+                    showToast('success', 'Password changed successfully!');
                     setTimeout(function () {
                         location.reload();
                     }, 3000);
@@ -452,7 +412,7 @@
                 }
             },
             error: function () {
-                showToast('error');
+                showToast('error', 'Error changing password. Please check your input.');
             }
         });
     }

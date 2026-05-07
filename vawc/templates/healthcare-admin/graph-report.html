@@ -28,19 +28,54 @@
             </h1>
             <p class="text-muted small mb-0">Click any card, chart segment, or case row to navigate.</p>
         </div>
-        <div class="col-auto d-flex gap-2 align-items-center">
-            <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded shadow-sm border me-3">
+        <div class="col-12 col-xl-auto mt-3 mt-xl-0 d-flex flex-wrap gap-3 align-items-center justify-content-xl-end">
+            <!-- Filter Group -->
+            <div class="d-flex flex-wrap align-items-center gap-2 bg-white px-3 py-2 rounded-4 shadow-sm border">
                 <div class="spinner-border spinner-border-sm text-primary d-none" id="graph-date-loading" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Date Range:</span>
-                <input type="date" id="graph-start-date" class="form-control form-control-sm" style="max-width: 140px;">
-                <span class="text-muted small px-1">to</span>
-                <input type="date" id="graph-end-date" class="form-control form-control-sm" style="max-width: 140px;">
-                <button id="graph-apply-btn" class="btn btn-sm btn-gold text-white fw-bold ms-2 px-3">Apply</button>
-                <button id="graph-clear-btn" class="btn btn-sm btn-outline-secondary ms-1">Reset</button>
+                
+                <div class="d-flex align-items-center me-2">
+                    <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em; font-size: 0.7rem;">Select Year:</span>
+                    <div class="dropdown" id="year-filter-dropdown">
+                        <button class="btn btn-sm btn-light dropdown-toggle fw-semibold border-0" type="button" id="dropdownYearMenu" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 110px; background-color: #f8f9fa;">
+                            All Years
+                        </button>
+                        <ul class="dropdown-menu shadow-lg border-0 p-3 rounded-3" aria-labelledby="dropdownYearMenu" style="min-width: 200px;">
+                            <div class="mb-2 pb-2 border-bottom">
+                                <div class="form-check">
+                                    <input class="form-check-input year-cb-all" type="checkbox" value="0" id="year-all" checked>
+                                    <label class="form-check-label fw-bold" for="year-all">All Years</label>
+                                </div>
+                            </div>
+                            {% for year in year_list %}
+                            <div class="form-check mb-1">
+                                <input class="form-check-input year-cb" type="checkbox" value="{{year}}" id="year-{{year}}">
+                                <label class="form-check-label" for="year-{{year}}">{{year}}</label>
+                            </div>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="vr mx-2 d-none d-md-block" style="height: 20px; opacity: 0.1;"></div>
+
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                    <span class="small fw-bold text-muted text-uppercase me-1" style="letter-spacing:0.05em; font-size: 0.7rem;">Custom Range:</span>
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="date" id="graph-start-date" class="form-control form-control-sm border-0 shadow-none" style="max-width: 130px; background-color: #f8f9fa;">
+                        <span class="text-muted small">to</span>
+                        <input type="date" id="graph-end-date" class="form-control form-control-sm border-0 shadow-none" style="max-width: 130px; background-color: #f8f9fa;">
+                    </div>
+                    <div class="d-flex gap-1 ms-md-2">
+                        <button id="graph-apply-btn" class="btn btn-sm btn-gold text-white fw-bold px-3 text-nowrap rounded-pill">Apply</button>
+                        <button id="graph-clear-btn" class="btn btn-sm btn-outline-secondary px-3 text-nowrap rounded-pill border-0">Reset</button>
+                    </div>
+                </div>
             </div>
-            <button id="btn-export-pdf-charts" class="btn btn-gold shadow-sm rounded-pill px-4">
+
+            <!-- Export Button -->
+            <button id="btn-export-pdf-charts" class="btn btn-gold shadow-sm rounded-pill px-4 py-2 text-nowrap">
                 <i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)
             </button>
         </div>
@@ -48,6 +83,13 @@
 
     <input type="hidden" id="dilg-static-url" value="{% static 'img/dilg.png' %}">
     <input type="hidden" class="email" name="email" value="{{ account.user.email }}">
+    <!-- Provider print info (used by PDF govHeader) -->
+    <input type="hidden" id="provider-agency-name" value="{{ print_info.agency_name|default:'' }}">
+    <input type="hidden" id="provider-region" value="{{ print_info.region|default:'' }}">
+    <input type="hidden" id="provider-province" value="{{ print_info.province|default:'' }}">
+    <input type="hidden" id="provider-city" value="{{ print_info.city|default:'' }}">
+    <input type="hidden" id="provider-label" value="{{ print_info.provider_label|default:'' }}">
+    <input type="hidden" id="provider-profile-url" value="{{ print_info.profile_picture_url|default:'' }}">
 
     <!-- Stats Strip -->
     <div class="row g-3 mb-5">
@@ -260,25 +302,6 @@
 
 </div>
 
-<!-- Toasts -->
-<div class="toast-container position-fixed top-0 end-0 p-3">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white" style="background-color:#E8A020;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="" style="width:20px;filter:brightness(0) invert(1);">
-            <strong class="me-auto">Success</strong><small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body text-dark fw-bold"></div>
-    </div>
-    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white bg-danger">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="" style="width:20px;filter:brightness(0) invert(1);">
-            <strong class="me-auto">Error</strong><small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body text-dark fw-bold"></div>
-    </div>
-</div>
 {% endblock content %}
 
 {% block scripts %}
@@ -323,6 +346,23 @@ $(document).ready(function () {
                 fr.readAsDataURL(blob);
             });
         } catch (e) { console.warn('Could not load DILG logo:', e); }
+    })();
+
+    // ── Pre-load Provider profile picture as base64 ──
+    let providerLogoBase64 = null;
+    (async function loadProviderLogo() {
+        const url = document.getElementById('provider-profile-url')?.value;
+        if (!url) return;
+        try {
+            const resp = await fetch(url);
+            const blob = await resp.blob();
+            providerLogoBase64 = await new Promise((res, rej) => {
+                const fr  = new FileReader();
+                fr.onloadend = () => res(fr.result);
+                fr.onerror   = rej;
+                fr.readAsDataURL(blob);
+            });
+        } catch (e) { console.warn('Could not load provider logo:', e); }
     })();
 
     // ── Age Group Helper ──
@@ -380,7 +420,7 @@ $(document).ready(function () {
     // ── Multiple Graph UI Logic ──
     function addChartBlock() {
         if (Object.keys(chartInstances).length >= MAX_GRAPHS) {
-            alert('Maximum of ' + MAX_GRAPHS + ' charts allowed.');
+            showToast('error', 'Maximum of ' + MAX_GRAPHS + ' charts allowed.');
             return;
         }
         chartCounter++;
@@ -424,7 +464,7 @@ $(document).ready(function () {
         
         $(removeBtn).on('click', function() {
             if (Object.keys(chartInstances).length <= 1) {
-                alert('You must have at least one chart displaying.');
+                showToast('error', 'You must have at least one chart displaying.');
                 return;
             }
             if (chartInstances[cardId]) {
@@ -580,7 +620,6 @@ $(document).ready(function () {
 
     // ── Render cases table ──
     function renderTable(data) {
-        if (consolidatedTable) { consolidatedTable.destroy(); }
         const tbody = document.getElementById('consolidated-cases-table-content');
         tbody.innerHTML = '';
         
@@ -636,7 +675,7 @@ $(document).ready(function () {
 
             tbody.innerHTML += `
             <tr class="border-bottom" data-href="${caseUrl}" data-caseid="${d.case_id}">
-                <td class="text-center fw-semibold small">${d.case_number||'—'}</td>
+                <td class="text-center fw-semibold small">${d.date_added.split('-')[0]}-${d.date_added.split('-')[1]}-${d.case_number}</td>
                 <td class="small">${victims.names.join(', ')}</td>
                 <td class="small">${victims.addresses.join(' | ')}</td>
                 <td class="small">${perps.names.join(', ')}</td>
@@ -656,8 +695,9 @@ $(document).ready(function () {
         const bMenu = el('#consolidated-barangay-menu');
         if(bMenu) {
             barangay_options.sort();
+            const filteredBarangays = barangay_options.filter(b => b && b.toLowerCase() !== 'all' && b.toLowerCase() !== 'all barangay');
             bMenu.innerHTML = `<li><label class="dropdown-item small"><input type="checkbox" class="c-barangay-cb form-check-input me-2" value="" checked> All Barangay</label></li>` +
-                barangay_options.map(b=>`<li><label class="dropdown-item small"><input type="checkbox" class="c-barangay-cb form-check-input me-2" value="${b}"> ${b}</label></li>`).join('');
+                filteredBarangays.map(b=>`<li><label class="dropdown-item small"><input type="checkbox" class="c-barangay-cb form-check-input me-2" value="${b}"> ${b}</label></li>`).join('');
         }
         
         el('#consolidated-gender-filter').innerHTML   = '<option value="">All Genders</option>'  + gender_types.map(g=>`<option value="${g}">${g}</option>`).join('');
@@ -679,6 +719,7 @@ $(document).ready(function () {
 
         // ── DataTable ──
         consolidatedTable = $('#consolidated-cases-table').DataTable({
+            destroy: true,
             dom: '<"d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3"Bf>rt<"d-flex justify-content-between pt-3 flex-column-reverse flex-md-row"<"mb-2"l><"mb-2"p>>',
             scrollX: true, responsive: true, lengthMenu: [10,25,50,100], pageLength:25, order:[[10,'desc']],
             buttons: [{
@@ -787,28 +828,45 @@ $(document).ready(function () {
         });
     }
 
-    // ── PDF Export Logic ──
+    // ── Dynamic Provider Header for PDF ──
     function govHeader() {
-        const txt = [
-            { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444' },
-            { text: 'Department of the Interior and Local Government', fontSize: 9, bold: true, alignment: 'center', color: '#222' },
-            { text: 'Region IX – Zamboanga Peninsula', fontSize: 9, bold: true, alignment: 'center', color: '#222' },
-            { text: 'Women and Children Protection Desk', fontSize: 9, italic: true, alignment: 'center', color: '#555', margin: [0,1,0,0] },
-            { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0,3,0,0] },
-        ];
-        if (dilgBase64) {
-            return {
-                columns: [
-                    { width: '*', text: '' },
-                    { image: dilgBase64, width: 60, alignment: 'right', margin: [0,0,10,0] },
-                    { stack: txt, width: 'auto', alignment: 'center', margin: [0,4,0,0] },
-                    { width: '*', text: '' }
-                ],
-                columnGap: 0, margin: [0, 0, 0, 6]
-            };
-        } else {
-            return { stack: txt, margin: [0, 0, 0, 6] };
-        }
+        const agencyName    = document.getElementById('provider-agency-name')?.value || '';
+        const region        = document.getElementById('provider-region')?.value || '';
+        const province      = document.getElementById('provider-province')?.value || '';
+        const city          = document.getElementById('provider-city')?.value || '';
+        const providerLabel = document.getElementById('provider-label')?.value || '';
+        const locationParts = [region, province, city].filter(Boolean).join(', ');
+
+        return {
+            columns: [
+                // Left: DILG Logo
+                {
+                    width: 80,
+                    stack: [
+                        (typeof dilgBase64 !== 'undefined' && dilgBase64) ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
+                    ]
+                },
+                // Center: Agency Info
+                {
+                    width: '*',
+                    stack: [
+                        { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444', margin: [0, 0, 0, 2] },
+                        { text: providerLabel, fontSize: 10, bold: true, alignment: 'center', color: '#222' },
+                        { text: agencyName, fontSize: 16, bold: true, alignment: 'center', color: '#000', margin: [0, 2, 0, 2] },
+                        { text: locationParts, fontSize: 9, alignment: 'center', color: '#555' },
+                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0, 5, 0, 0] }
+                    ]
+                },
+                // Right: Provider Logo
+                {
+                    width: 80,
+                    stack: [
+                        (typeof providerLogoBase64 !== 'undefined' && providerLogoBase64) ? { image: providerLogoBase64, width: 60, alignment: 'right' } : { text: '' }
+                    ]
+                }
+            ],
+            margin: [0, 0, 0, 10]
+        };
     }
 
     function buildPdfFilteredTableBody() {
@@ -858,7 +916,8 @@ $(document).ready(function () {
 
     $('#btn-export-pdf-charts').on('click', function () {
         if (Object.keys(chartInstances).length === 0 || rawCasesData.length === 0) {
-            alert('Data not fully loaded yet or no charts present.'); return;
+            showToast('error', 'Data not fully loaded yet or no charts present.');
+            return;
         }
 
         const btn = $(this);
@@ -995,20 +1054,32 @@ $(document).ready(function () {
                 pdfMake.createPdf(docDef).download('VAWC_Custom_Analytics_Report.pdf');
             } catch(e) {
                 console.error(e);
-                alert("An error occurred building the PDF.");
+                showToast('error', "An error occurred building the PDF.");
             } finally {
                 btn.prop('disabled', false).html("<i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)");
             }
         }, 100);
     });
 
+    $('.year-cb-all').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.year-cb').prop('checked', false);
+        }
+    });
+
+    $('.year-cb').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.year-cb-all').prop('checked', false);
+        }
+    });
+
     // ── Load data ──
-    async function loadData(start = '', end = '') {
+    async function loadData(get_year = '0', start = '', end = '') {
         try {
             $('#graph-date-loading').removeClass('d-none');
             $('#graph-start-date, #graph-end-date, #graph-apply-btn, #graph-clear-btn').prop('disabled', true);
             
-            let url = '/admin-healthcare-vawc/healthcare-consolidated-report-data/0/';
+            let url = `/admin-healthcare-vawc/healthcare-consolidated-report-data/${get_year}/`;
             if (start && end) {
                 url += `?start=${start}&end=${end}`;
             }
@@ -1023,36 +1094,54 @@ $(document).ready(function () {
             rawCasesData = data.cases_list || [];
             renderTable(rawCasesData);
 
-            $('#successToast .toast-body').text('Analytics loaded successfully.');
-            $('#successToast').toast('show');
+            showToast('success', 'Analytics loaded successfully.');
         } catch(e) {
             console.error(e);
             $('#graph-date-loading').addClass('d-none');
             $('#graph-start-date, #graph-end-date, #graph-apply-btn, #graph-clear-btn').prop('disabled', false);
-            $('#errorToast .toast-body').text('Error loading analytics: ' + e.message);
-            $('#errorToast').toast('show');
+            showToast('error', 'Error loading analytics: ' + e.message);
         }
     }
 
-    // Filter UI Event Listeners
     $('#graph-apply-btn').on('click', () => {
         const start = $('#graph-start-date').val();
-        const end = $('#graph-end-date').val();
-        if(!start || !end) {
-            alert("Please select both start and end dates.");
-            return;
+        const end   = $('#graph-end-date').val();
+        if (!start || !end) {
+            let selectedYears = [];
+            if ($('.year-cb-all').is(':checked')) {
+                selectedYears = ['0'];
+                $('#dropdownYearMenu').text('All Years');
+            } else {
+                $('.year-cb:checked').each(function() {
+                    selectedYears.push($(this).val());
+                });
+                if (selectedYears.length === 0) {
+                    $('.year-cb-all').prop('checked', true);
+                    selectedYears = ['0'];
+                    $('#dropdownYearMenu').text('All Years');
+                } else {
+                    $('#dropdownYearMenu').text(selectedYears.join(', '));
+                }
+            }
+            loadData(selectedYears.join(','));
+        } else {
+            $('.year-cb-all').prop('checked', true);
+            $('.year-cb').prop('checked', false);
+            $('#dropdownYearMenu').text('All Years');
+            loadData('0', start, end);
         }
-        loadData(start, end);
     });
 
     $('#graph-clear-btn').on('click', () => {
-        $('#graph-start-date').val('');
-        $('#graph-end-date').val('');
-        loadData('');
+        $('#graph-start-date, #graph-end-date').val('');
+        $('.year-cb-all').prop('checked', true);
+        $('.year-cb').prop('checked', false);
+        $('#dropdownYearMenu').text('All Years');
+        loadData('0');
     });
 
     addChartBlock();
-    loadData();
+    loadData('0');
 });
 </script>
 {% endblock scripts %}

@@ -422,3 +422,18 @@ class CaseEditHistory(models.Model):
             pass
         return user.username
 
+
+class BarangayReferral(models.Model):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name='barangay_referrals')
+    from_barangay = models.CharField(max_length=255) # Originating Barangay
+    to_barangay = models.CharField(max_length=255)   # Target Barangay
+    to_city = models.CharField(max_length=255, null=True, blank=True)
+    to_province = models.CharField(max_length=255, null=True, blank=True)
+    to_region = models.CharField(max_length=255, null=True, blank=True)
+    reason = models.TextField()
+    status = models.CharField(max_length=50, default='Pending') # Pending, Accepted, Closed
+    date_referred = models.DateTimeField(auto_now_add=True)
+    referred_by = models.ForeignKey('account.CustomUser', on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"Referral: {self.from_barangay} -> {self.to_barangay} (Case {self.case.id})"

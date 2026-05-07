@@ -44,8 +44,8 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     #super admin side
     path('admin-vawc/dashboard/', views.admin_dashboard_view, name='admin dashboard'),
-    path('admin-vawc/admin-dashboard-data/<int:get_year>/', views.admin_dashboard_data, name='admin dashboard data'),
-    path('admin-vawc/admin-consolidated-report-data/<int:get_year>/', views.admin_consolidated_report_data, name='admin consolidated report data'),
+    path('admin-vawc/admin-dashboard-data/<str:get_year>/', views.admin_dashboard_data, name='admin dashboard data'),
+    path('admin-vawc/admin-consolidated-report-data/<str:get_year>/', views.admin_consolidated_report_data, name='admin consolidated report data'),
     path('admin-vawc/graph-report/', views.admin_graph_view, name='admin graph'),
     path('admin-vawc/manage/account/', views.admin_manage_account_view, name='admin account'),
     path('admin-vawc/manage/law-enforcement-account/', views.law_enforcement_manage_account_view, name='law enforcement account'),
@@ -81,7 +81,7 @@ urlpatterns = [
     
     #barangay admin side
     path('admin-barangay-vawc/dashboard/', views.barangay_dashboard_view, name='barangay dashboard'),
-    path('admin-barangay-vawc/barangay-dashboard-data/<int:get_year>/', views.barangay_dashboard_data, name='barangay dashboard data'),
+    path('admin-barangay-vawc/barangay-dashboard-data/<str:get_year>/', views.barangay_dashboard_data, name='barangay dashboard data'),
     path('admin-barangay-vawc/settings/', views.barangay_settings_view, name='barangay settings'),
 
     path('add_status/<int:case_id>/', views.add_status, name='add_status'),
@@ -105,7 +105,7 @@ urlpatterns = [
     path('delete_status/<int:status_id>/', views.delete_status, name='delete_status'),
 
     path('admin-law-enforcement-vawc/dashboard/', views.lawEnforcement_dashboard_view, name='law enforcement dashboard'),
-    path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<int:get_year>/', views.LawEnforcement_dashboard_data, name='law enforcement dashboard data'),
+    path('admin-law-enforcement-vawc/law-enforcement-dashboard-data/<str:get_year>/', views.LawEnforcement_dashboard_data, name='law enforcement dashboard data'),
     path('admin-law-enforcement-vawc/case/', views.law_enforcement_case_view, name='law enforcement case'),
     path('admin-law-enforcement-vawc/view-law-enforcement-case/behalf/<int:case_id>/', views.view_enforcement_case_behalf, name='law enforcement case behalf view'),
     path('admin-law-enforcement-vawc/view-law-enforcement-case/impacted/<int:case_id>/', views.view_enforcement_case_impact, name='law enforcement case impacted view'),
@@ -115,7 +115,7 @@ urlpatterns = [
 
     # healthcare admin side============================================================================================
     path('admin-healthcare-vawc/dashboard/', views.healthcare_dashboard_view, name='healthcare dashboard'),
-    path('admin-healthcare-vawc/healthcare-dashboard-data/<int:get_year>/', views.healthcare_dashboard_data, name='healthcare dashboard data'),
+    path('admin-healthcare-vawc/healthcare-dashboard-data/<str:get_year>/', views.healthcare_dashboard_data, name='healthcare dashboard data'),
     path('admin-healthcare-vawc/case/', views.healthcare_case_view, name='healthcare case'),
     path('admin-healthcare-vawc/settings/', views.healthcare_settings_view, name='healthcare settings'),
     path('refer-healthcare/', views.refer_healthcare, name='refer_healthcare'),
@@ -126,7 +126,7 @@ urlpatterns = [
     # SWDO admin side============================================================================================
 
     path('admin-SWDO-vawc/dashboard/', views.SWDO_dashboard_view, name='SWDO dashboard'),
-    path('admin-SWDO-vawc/SWDO-dashboard-data/<int:get_year>/', views.SWDO_dashboard_data, name='SWDO dashboard data'),
+    path('admin-SWDO-vawc/SWDO-dashboard-data/<str:get_year>/', views.SWDO_dashboard_data, name='SWDO dashboard data'),
     path('admin-SWDO-vawc/case/', views.SWDO_case_view, name='SWDO case'),
     path('admin-SWDO-vawc/settings/', views.SWDO_settings_view, name='SWDO settings'),
     path('admin-SWDO-vawc/view-SWDO-case/behalf/<int:case_id>/', views.view_SWDO_case_behalf, name='SWDO case behalf view'),
@@ -139,13 +139,11 @@ urlpatterns = [
 
     # ── Provider Graph Report Pages ──────────────────────────────────────────────
     path('admin-SWDO-vawc/graph-report/', views.SWDO_graph_view, name='SWDO graph'),
-    path('admin-SWDO-vawc/SWDO-consolidated-report-data/<int:get_year>/', views.SWDO_consolidated_report_data, name='SWDO consolidated report data'),
-    path('admin-law-enforcement-vawc/graph-report/', views.law_enforcement_graph_view, name='law enforcement graph'),
-    path('admin-law-enforcement-vawc/law-enforcement-consolidated-report-data/<int:get_year>/', views.law_enforcement_consolidated_report_data, name='law enforcement consolidated report data'),
-    path('admin-healthcare-vawc/graph-report/', views.healthcare_graph_view, name='healthcare graph'),
-    path('admin-healthcare-vawc/healthcare-consolidated-report-data/<int:get_year>/', views.healthcare_consolidated_report_data, name='healthcare consolidated report data'),
+    path('admin-SWDO-vawc/SWDO-consolidated-report-data/<str:get_year>/', views.SWDO_consolidated_report_data, name='SWDO consolidated report data'),
+    path('admin-law-enforcement-vawc/law-enforcement-consolidated-report-data/<str:get_year>/', views.law_enforcement_consolidated_report_data, name='law enforcement consolidated report data'),
+    path('admin-healthcare-vawc/healthcare-consolidated-report-data/<str:get_year>/', views.healthcare_consolidated_report_data, name='healthcare consolidated report data'),
     path('admin-barangay-vawc/graph-report/', views.barangay_graph_view, name='barangay graph'),
-    path('admin-barangay-vawc/barangay-consolidated-report-data/<int:get_year>/', views.barangay_consolidated_report_data, name='barangay consolidated report data'),
+    path('admin-barangay-vawc/barangay-consolidated-report-data/<str:get_year>/', views.barangay_consolidated_report_data, name='barangay consolidated report data'),
 
     # NOTIF
     path('admin-barangay-vawc/notification', views.admin_notification_view, name="Notification"),
@@ -199,6 +197,9 @@ urlpatterns = [
     path('pages/get-police-station/', views.get_police_station, name='get police station'),
     
     path('case-summary/<int:case_id>/', views.case_summary_modal, name='case_summary_modal'),
+    path('refer-to-barangay/', views.refer_to_barangay, name='refer_to_barangay'),
+    path('accept-referral/<int:referral_id>/', views.accept_referral, name='accept_referral'),
+    path('reject-referral/<int:referral_id>/', views.reject_referral, name='reject_referral'),
 ]
 
 # Serve media files during development

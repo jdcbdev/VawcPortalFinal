@@ -195,6 +195,11 @@
                         {% endfor %}
                     </select>
                     <label for="account_barangay">Barangay</label>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="account_id_picture" class="form-label text-muted small">Upload ID Picture / Scanned ID</label>
+                    <input type="file" class="form-control" id="account_id_picture" name="account_id_picture" accept="image/*" required>
                 </div><!--End of col-->
                
             </form>
@@ -404,11 +409,15 @@
         // Function to handle form submission
         $('#addAccountForm').submit(function(event) {
             event.preventDefault(); // Prevent default form submission
+            
+            var formData = new FormData(this);
 
             $.ajax({
                 url: '{% url "create account" %}',
                 method: 'POST',
-                data: $(this).serialize(), // Serialize form data
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function(response) {
                     if (response.success) {
                         // Display success message and reload page after 2 seconds

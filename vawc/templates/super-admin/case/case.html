@@ -148,6 +148,10 @@
     </div>
 
     <input type="hidden" id="dilg-static-url" value="{% static 'img/dilg.png' %}">
+    <input type="hidden" id="provider-logo-url" value="{% if request.user.account and request.user.account.profile_picture %}{{ request.user.account.profile_picture.url }}{% endif %}">
+    <input type="hidden" id="agency-name" value="System Administrator Office">
+    <input type="hidden" id="provider-label" value="Super Admin">
+    <input type="hidden" id="agency-location" value="National Government Center">
 
     <div class="pt-4">
         <table class="table table-striped nowrap" id="table-case" style="width:100%">
@@ -228,26 +232,6 @@
         </table>
     </div><!--end of div of table-->
 </div>
-<!-- Toast container -->
-<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white" style="background-color:#E8A020;">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
-            <strong class="me-auto">Success</strong>
-            <small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-dark fw-bold"></div>
-    </div>
-    <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white bg-danger">
-            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
-            <strong class="me-auto">Error</strong>
-            <small>Just Now</small>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-dark fw-bold"></div>
-    </div>
 </div>
 
 <!-- Modal add case -->
@@ -343,6 +327,8 @@
         const RA_COL       = 6;
         const GENDER_COL   = 7;
         const AGE_COL      = 8;  // stores raw date_of_birth strings
+        let dilgBase64     = null;
+        let providerBase64 = null;
 
         // ── Age range filter via ext.search ──
         $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => fn._caseAgeFilter !== true);
@@ -405,7 +391,7 @@
         var barangayMenu = document.getElementById('barangay-filter-menu');
         table.column(BARANGAY_COL).data().unique().sort().each(function(d) {
             var val = $('<div/>').html(d).text().trim();
-            if (val && val !== 'None') {
+            if (val && val !== 'None' && val.toLowerCase() !== 'all' && val.toLowerCase() !== 'all barangay') {
                 barangayMenu.innerHTML += `<li><label class="dropdown-item small"><input type="checkbox" class="case-barangay-cb form-check-input me-2" value="${val}"> ${val}</label></li>`;
             }
         });
@@ -483,15 +469,13 @@
                         var caseId = response.case_id;
                         var typeOfCase = response.type_of_case;
                         if (typeOfCase === 'Impacted') {
-                            $('.toast-body').text('Case (Impacted Victim) added successfully');
-                            $('#successToast').toast('show');
+                            showToast('success', 'Case (Impacted Victim) added successfully');
                             setTimeout(function() {
                                 $('#add_case').modal('hide');
                                 window.location.href = '/admin-vawc/view-case/impacted/' + caseId + '/';
                             }, 2000);
                         } else if (typeOfCase === 'Behalf') {
-                            $('.toast-body').text('Case (Behalf of Impacted Victim) added successfully');
-                            $('#successToast').toast('show');
+                            showToast('success', 'Case (Behalf of Impacted Victim) added successfully');
                             setTimeout(function() {
                                 $('#add_case').modal('hide');
                                 window.location.href = '/admin-vawc/view-case/behalf/' + caseId + '/';
@@ -527,27 +511,60 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 
 <script>
-    let dilgBase64 = null;
-    (async function loadDilgLogo() {
+    async function loadLogos() {
         try {
-            const url = document.getElementById('dilg-static-url').value;
-            const resp = await fetch(url);
-            const blob = await resp.blob();
-            dilgBase64 = await new Promise((res, rej) => {
-                const fr = new FileReader();
-                fr.onloadend = () => res(fr.result);
-                fr.onerror = rej;
-                fr.readAsDataURL(blob);
-            });
-        } catch (e) { console.warn('Could not load DILG logo:', e); }
-    })();
+            const dilgUrl = document.getElementById('dilg-static-url').value;
+            if (dilgUrl) {
+                const dilgResp = await fetch(dilgUrl);
+                if (!dilgResp.ok) throw new Error("DILG logo fetch failed");
+                const dilgBlob = await dilgResp.blob();
+                dilgBase64 = await new Promise((res) => {
+                    const fr = new FileReader();
+                    fr.onloadend = () => res(fr.result);
+                    fr.readAsDataURL(dilgBlob);
+                });
+            }
 
-    $('#btn-export-case-report').on('click', function() {
+            const pUrl = document.getElementById('provider-logo-url').value;
+            if (pUrl) {
+                const pResp = await fetch(pUrl);
+                if (pResp.ok) {
+                    const pBlob = await pResp.blob();
+                    providerBase64 = await new Promise((res) => {
+                        const fr = new FileReader();
+                        fr.onloadend = () => res(fr.result);
+                        fr.readAsDataURL(pBlob);
+                    });
+                }
+            }
+        } catch (e) { 
+            console.warn('Logo load error:', e);
+            if (!dilgBase64) {
+                try {
+                    const r = await fetch(window.location.origin + document.getElementById('dilg-static-url').value);
+                    if (r.ok) {
+                        const b = await r.blob();
+                        dilgBase64 = await new Promise(res => {
+                            let fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(b);
+                        });
+                    }
+                } catch(err) { console.error("Logo fallback failed:", err); }
+            }
+        }
+    }
+    loadLogos();
+
+    $('#btn-export-case-report').on('click', async function() {
         const table = $('#table-case').DataTable();
         const visibleRows = table.rows({ filter: 'applied' });
         if (visibleRows.count() === 0) {
-            alert("No data available to export.");
+            showToast('error', "No data available to export.");
             return;
+        }
+
+        // Ensure logos are loaded
+        if (!dilgBase64 || ($('#provider-logo-url').val() && !providerBase64)) {
+            await loadLogos();
         }
 
         const btn = $(this);
@@ -575,21 +592,36 @@
                 });
 
                 const govHeader = () => {
-                    const txt = [
-                        { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444' },
-                        { text: 'Department of the Interior and Local Government', fontSize: 9, bold: true, alignment: 'center', color: '#222' },
-                        { text: 'Region IX – Zamboanga Peninsula', fontSize: 9, bold: true, alignment: 'center', color: '#222' },
-                        { text: 'Women and Children Protection Desk', fontSize: 9, italic: true, alignment: 'center', color: '#555', margin: [0,1,0,0] },
-                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0,3,0,0] },
-                    ];
-                    return dilgBase64 ? {
+                    return {
                         columns: [
-                            { width: '*', text: '' },
-                            { image: dilgBase64, width: 60, alignment: 'right', margin: [0,0,10,0] },
-                            { stack: txt, width: 'auto', alignment: 'center', margin: [0,4,0,0] },
-                            { width: '*', text: '' }
-                        ], margin: [0, 0, 0, 10]
-                    } : { stack: txt, margin: [0, 0, 0, 10] };
+                            // Left: DILG Logo
+                            {
+                                width: 80,
+                                stack: [
+                                    (typeof dilgBase64 !== 'undefined' && dilgBase64) ? { image: dilgBase64, width: 60, alignment: 'left' } : { text: '' }
+                                ]
+                            },
+                            // Center: Agency Info
+                            {
+                                width: '*',
+                                stack: [
+                                    { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444', margin: [0, 0, 0, 2] },
+                                    { text: $('#provider-label').val(), fontSize: 10, bold: true, alignment: 'center', color: '#222' },
+                                    { text: $('#agency-name').val(), fontSize: 16, bold: true, alignment: 'center', color: '#000', margin: [0, 2, 0, 2] },
+                                    { text: $('#agency-location').val(), fontSize: 9, alignment: 'center', color: '#555' },
+                                    { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0, 5, 0, 0] }
+                                ]
+                            },
+                            // Right: Provider Logo
+                            {
+                                width: 80,
+                                stack: [
+                                    (typeof providerBase64 !== 'undefined' && providerBase64) ? { image: providerBase64, width: 60, alignment: 'right' } : { text: '' }
+                                ]
+                            }
+                        ],
+                        margin: [0, 0, 0, 10]
+                    };
                 };
 
                 const summaryTable = {
@@ -655,7 +687,7 @@
                 pdfMake.createPdf(docDef).download('VAWC_Case_Records_Report.pdf');
             } catch (e) {
                 console.error(e);
-                alert("Error generating PDF.");
+                showToast('error', "Error generating PDF.");
             } finally {
                 btn.prop('disabled', false).html("<i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)");
             }

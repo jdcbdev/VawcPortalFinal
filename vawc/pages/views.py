@@ -58,6 +58,7 @@ def can_edit_case(user, case):
     Rules:
       - Super admin (account.type == 'admin') can always edit
       - Barangay staff whose barangay matches the case's barangay can edit
+      - Barangay staff whose barangay is a target of an active referral can edit
       - The user who created the case (case.created_by) can edit
       - Everyone else is view-only
     """
@@ -66,8 +67,17 @@ def can_edit_case(user, case):
         if user.account.type == 'admin':
             return True
         # Barangay staff in the matching barangay can edit
-        if user.account.type == 'staff' and user.account.barangay and user.account.barangay == case.barangay:
-            return True
+        if hasattr(user, 'account') and user.account.type == 'staff':
+            if user.account.barangay and user.account.barangay == case.barangay:
+                return True
+            # Check if referred to this barangay
+            if BarangayReferral.objects.filter(
+                case=case, 
+                to_barangay=user.account.barangay,
+                to_city=user.account.city,
+                to_province=user.account.province
+            ).exists():
+                return True
     except Exception:
         pass
 
@@ -120,19 +130,25 @@ def profile_view(request):
     user = request.user
     account_obj = None
     account_type = None
+    base_template = 'base/base_admin.html'
 
     if hasattr(user, 'account'):
         account_obj = user.account
         account_type = 'account'
+        if account_obj.type == 'staff':
+            base_template = 'base/base_barangay.html'
     elif hasattr(user, 'lawenforcementaccount'):
         account_obj = user.lawenforcementaccount
         account_type = 'lawenforcementaccount'
+        base_template = 'base/base_law_enforcement.html'
     elif hasattr(user, 'swdoaccount'):
         account_obj = user.swdoaccount
         account_type = 'swdoaccount'
+        base_template = 'base/base_SWDO.html'
     elif hasattr(user, 'healthcareaccount'):
         account_obj = user.healthcareaccount
         account_type = 'healthcareaccount'
+        base_template = 'base/base_healthcare.html'
 
     if request.method == 'POST':
         # Handle username update
@@ -164,18 +180,21 @@ def profile_view(request):
             account_obj.last_name = request.POST.get('last_name', account_obj.last_name)
             account_obj.region = request.POST.get('region', account_obj.region)
             account_obj.province = request.POST.get('province', account_obj.province)
+            account_obj.city = request.POST.get('city', account_obj.city)
             account_obj.station = request.POST.get('station', account_obj.station)
         elif account_type == 'swdoaccount':
             account_obj.name = request.POST.get('name', account_obj.name)
             account_obj.region = request.POST.get('region', account_obj.region)
             account_obj.province = request.POST.get('province', account_obj.province)
             account_obj.city = request.POST.get('city', account_obj.city)
+            account_obj.office_assigned = request.POST.get('office_assigned', account_obj.office_assigned)
         elif account_type == 'healthcareaccount':
             account_obj.first_name = request.POST.get('first_name', account_obj.first_name)
             account_obj.middle_name = request.POST.get('middle_name', account_obj.middle_name)
             account_obj.last_name = request.POST.get('last_name', account_obj.last_name)
             account_obj.region = request.POST.get('region', account_obj.region)
             account_obj.province = request.POST.get('province', account_obj.province)
+            account_obj.city = request.POST.get('city', account_obj.city)
             account_obj.hospital_name = request.POST.get('hospital_name', account_obj.hospital_name)
         
         if account_obj:
@@ -187,7 +206,8 @@ def profile_view(request):
 
     return render(request, 'account/profile.html', {
         'account_obj': account_obj,
-        'account_type': account_type
+        'account_type': account_type,
+        'base_template': base_template
     })
 
 def address_view (request):
@@ -454,7 +474,7 @@ def logout_view(request):
 
 @login_required
 def admin_dashboard_view (request):
-    if request.user.account.type != 'admin':
+    if not hasattr(request.user, 'account') or request.user.account.type != 'admin':
         return redirect('login')
     
     year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
@@ -462,7 +482,7 @@ def admin_dashboard_view (request):
 
 @login_required
 def admin_case_view(request):
-    if request.user.account.type != 'admin':
+    if not hasattr(request.user, 'account') or request.user.account.type != 'admin':
         return redirect('login')
     
     logged_in_user = request.user  # Retrieve the logged-in user
@@ -498,8 +518,10 @@ def admin_dashboard_data (request, get_year):
     
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
 
     total_cases = cases.count() or 0
     ongoing_cases = cases.filter(status='Active').count() or 0
@@ -514,12 +536,11 @@ def admin_dashboard_data (request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     cases_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:
-        annual_cases[month_temp] = 0     
     
     # Iterate through filtered cases
     for case in cases:
@@ -552,9 +573,12 @@ def admin_dashboard_data (request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
         
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b')
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
         
         # if get_year:
         #     case_dict_data = Case.objects.filter(date_added__year=get_year, id=case.id).values().first()
@@ -649,6 +673,8 @@ def admin_dashboard_data (request, get_year):
         'cases_per_geography': cases_per_geography,
         'republic_acts': republic_acts,
         'annual_cases': annual_cases,
+        'quarterly_cases': quarterly_cases,
+        'yearly_cases': dict(sorted(yearly_cases.items())),
         'cases_list': cases_list,
     })
 
@@ -795,8 +821,9 @@ def create_swdo_manage_account(request):
             region = request.POST.get('region')
             province = request.POST.get('province')
             city = request.POST.get('city')
+            office_assigned = request.POST.get('account_office_assigned')
             
-            print(username, email, name,region,province,city)
+            print(username, email, name,region,province,city,office_assigned)
             
             try:
                 password = generate_random_password()
@@ -810,6 +837,7 @@ def create_swdo_manage_account(request):
                     f'Region:  {region}\n'
                     f'Province:  {province}\n'
                     f'City:  {city}\n'
+                    f'Office Assigned:  {office_assigned}\n'
                     f'Email:  {email}\n'
                     f'Username:  {username}\n'
                     f'Password:  {password}\n\n'
@@ -819,6 +847,8 @@ def create_swdo_manage_account(request):
                 send_email(email, subject, message)
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                id_picture = request.FILES.get('account_id_picture')
+
                 # Create the Account instance and link it to the user
                 account = SWDOaccount.objects.create(
                     user=user,
@@ -826,6 +856,8 @@ def create_swdo_manage_account(request):
                     region=region,
                     province=province,
                     city=city,
+                    office_assigned=office_assigned,
+                    id_picture=id_picture,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -952,6 +984,7 @@ def edit_law_enforcement_account_view(request, account_id):
                 'status': police_account.status,
                 'region': police_account.region,
                 'province': police_account.province,
+                'city': police_account.city,
                 'station': police_account.station,
                 'email': police_account.user.email,
                 'default_regions': regions,
@@ -971,7 +1004,8 @@ def edit_law_enforcement_account_view(request, account_id):
             police_account.status = request.POST.get('edit_status')
             police_account.region = request.POST.get('edit_account_region')
             police_account.province = request.POST.get('edit_account_province')
-            police_account.city = request.POST.get('edit_account_police_station')
+            police_account.city = request.POST.get('edit_account_city')
+            police_account.station = request.POST.get('edit_account_police_station')
             police_account.save()
 
             new_email = request.POST.get('edit_account_email')
@@ -1007,6 +1041,7 @@ def edit_healthcare_account_view(request, account_id):
                 'status': healthcare_account.status,
                 'region': healthcare_account.region,
                 'province': healthcare_account.province,
+                'city': healthcare_account.city,
                 'email': healthcare_account.user.email,
                 'default_regions': regions,
                 'default_provinces': provinces,
@@ -1025,6 +1060,7 @@ def edit_healthcare_account_view(request, account_id):
             healthcare_account.status = request.POST.get('edit_status')
             healthcare_account.region = request.POST.get('edit_account_region')
             healthcare_account.province = request.POST.get('edit_account_province')
+            healthcare_account.city = request.POST.get('edit_account_city')
             healthcare_account.hospital_name = request.POST.get('edit_account_hospital_name')
             healthcare_account.save()
 
@@ -1058,6 +1094,7 @@ def edit_swdo_account_view(request, account_id):
                 'region': SWDO_account.region,
                 'province': SWDO_account.province,
                 'city': SWDO_account.city,
+                'office_assigned': SWDO_account.office_assigned,
                 'email': SWDO_account.user.email,
             })
         except SWDOaccount.DoesNotExist:
@@ -1072,6 +1109,7 @@ def edit_swdo_account_view(request, account_id):
             SWDO_account.region = request.POST.get('edit_region')
             SWDO_account.province = request.POST.get('edit_province')
             SWDO_account.city = request.POST.get('edit_city')
+            SWDO_account.office_assigned = request.POST.get('edit_account_office_assigned')
             SWDO_account.save()
 
             new_email = request.POST.get('edit_account_email')
@@ -1150,6 +1188,8 @@ def create_account(request):
                 send_email(email, subject, message)
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                id_picture = request.FILES.get('account_id_picture')
+
                 # Create the Account instance and link it to the user
                 account = Account.objects.create(
                     user=user,
@@ -1159,7 +1199,8 @@ def create_account(request):
                     region=region, 
                     province=province, 
                     city=city,
-                    barangay=barangay
+                    barangay=barangay,
+                    id_picture=id_picture,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -1189,9 +1230,10 @@ def create_law_enforcement_account(request):
             last_name = request.POST.get('account_lname')
             region = request.POST.get('account_region')
             province = request.POST.get('account_province')
+            city = request.POST.get('account_city')
             station = request.POST.get('account_police_station')
             
-            print(username, email, first_name, middle_name, last_name, region, province, station)
+            print(username, email, first_name, middle_name, last_name, region, province, city, station)
             
             try:
                 password = generate_random_password()
@@ -1210,6 +1252,7 @@ def create_law_enforcement_account(request):
                     f'Last Name:  {last_name}\n\n'
                     f'Region:  {region}\n'
                     f'Province:  {province}\n'
+                    f'City/Municipality:  {city}\n'
                     f'Station:  {station}\n\n'
                     f'--------------------------\n'
                     f'This email was sent automatically. Please do not reply.'
@@ -1217,6 +1260,8 @@ def create_law_enforcement_account(request):
                 send_email(email, subject, message)
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                id_picture = request.FILES.get('account_id_picture')
+
                 # Create the Account instance and link it to the user
                 account = LawEnforcementAccount.objects.create(
                     user=user,
@@ -1225,7 +1270,9 @@ def create_law_enforcement_account(request):
                     last_name=last_name,
                     region=region, 
                     province=province, 
-                    station=station
+                    city=city,
+                    station=station,
+                    id_picture=id_picture,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -1255,9 +1302,10 @@ def create_healthcare_account(request):
             last_name = request.POST.get('account_lname')
             region = request.POST.get('account_region')
             province = request.POST.get('account_province')
+            city = request.POST.get('account_city')
             hospital_name = request.POST.get('account_hospital_name')
             
-            print(username, email, first_name, middle_name, last_name, region, province, hospital_name)
+            print(username, email, first_name, middle_name, last_name, region, province, city, hospital_name)
             
             try:
                 password = generate_random_password()
@@ -1276,6 +1324,7 @@ def create_healthcare_account(request):
                     f'Last Name:  {last_name}\n\n'
                     f'Region:  {region}\n'
                     f'Province:  {province}\n'
+                    f'City/Municipality:  {city}\n'
                     f'Hospital Name:  {hospital_name}\n\n'
                     f'--------------------------\n'
                     f'This email was sent automatically. Please do not reply.'
@@ -1283,6 +1332,8 @@ def create_healthcare_account(request):
                 send_email(email, subject, message)
                 # Create the user with provided data using the CustomUser manager
                 user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                id_picture = request.FILES.get('account_id_picture')
+
                 # Create the Account instance and link it to the user
                 account = HealthcareAccount.objects.create(
                     user=user,
@@ -1291,7 +1342,9 @@ def create_healthcare_account(request):
                     last_name=last_name,
                     region=region, 
                     province=province, 
-                    hospital_name=hospital_name
+                    city=city,
+                    hospital_name=hospital_name,
+                    id_picture=id_picture,
                 )
             except Exception as e:
                 if 'account' in locals():
@@ -1406,14 +1459,18 @@ def admin_graph_view(request):
     total_victim = victims.count()
     total_perpetrator = perpetrators.count()
 
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    print_info = _build_print_info(request)
     return render(request, 'super-admin/graph-report.html', {
+        'print_info': print_info,
+        'year_list': year_list,
         'cases': cases,
         'account': account,
         'total_cases': total_cases,
         'total_active': total_active,
         'total_closed': total_closed,
         'total_victim': total_victim,
-        'total_perpetrator': total_perpetrator
+        'total_perpetrator': total_perpetrator,
     })
 
 @login_required
@@ -1642,7 +1699,7 @@ def law_enforcement_view_case_impacted(request):
 
 @login_required
 def barangay_dashboard_view (request):
-    if request.user.account.type != 'staff':
+    if not hasattr(request.user, 'account') or request.user.account.type != 'staff':
         return redirect('login')
     
     logged_in_user = request.user  # Retrieve the logged-in user
@@ -1668,13 +1725,18 @@ def barangay_dashboard_data(request, get_year):
     try:
         account = logged_in_user.account
         barangay = account.barangay
-    except Account.DoesNotExist:
+    except (AttributeError, ObjectDoesNotExist):
         barangay = None
     
-    if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(barangay=barangay)
+    base_q = Q(created_by=logged_in_user) | Q(barangay=barangay)
+    if get_year == '0':
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( barangay=barangay, date_added__year = get_year)
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+        else:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -1689,12 +1751,11 @@ def barangay_dashboard_data(request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
 
     # Iterate through filtered cases
     for case in cases:
@@ -1722,9 +1783,12 @@ def barangay_dashboard_data(request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
 
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b') 
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
 
         case_dict_data = {
             'case_number': case.case_number,
@@ -1767,6 +1831,8 @@ def barangay_dashboard_data(request, get_year):
         'cases_w_criminal_cases': cases_w_criminal_cases,
         'republic_acts': republic_acts,
         'annual_cases': annual_cases,
+        'quarterly_cases': quarterly_cases,
+        'yearly_cases': dict(sorted(yearly_cases.items())),
         'barangay_case_list': barangay_case_list,
         # 'logged_in_user': logged_in_user,
         # 'email' : logged_in_user.email,
@@ -1855,23 +1921,25 @@ def barangay_case_view(request):
     if request.user.account.type != 'staff':
         return redirect('login')
     
-    logged_in_user = request.user  # Retrieve the logged-in user
-    # Retrieve the Account object associated with the logged-in user
+    logged_in_user = request.user
     try:
         account = logged_in_user.account
         barangay = account.barangay
     except Account.DoesNotExist:
         barangay = None
-    cases = Case.objects.all()  # Retrieve all cases from the database
-    
-    filtered_cases = []
-    
-    for case in cases:
-        if case.barangay == barangay:
-            filtered_cases.append(case)
-    
+
+    # Show cases created by this user OR cases in their barangay (referrals/walk-ins)
+    # OR cases referred to this barangay
+    cases = Case.objects.filter(
+        Q(created_by=logged_in_user) | 
+        Q(barangay=barangay) |
+        Q(barangay_referrals__to_barangay=barangay, 
+          barangay_referrals__to_city=account.city,
+          barangay_referrals__to_province=account.province)
+    ).distinct()
+
     return render(request, 'barangay-admin/case/case.html', {
-        'cases': filtered_cases,
+        'cases': cases,
         'global': request.session,
         'logged_in_user': logged_in_user,
         'barangay': barangay,
@@ -2033,23 +2101,21 @@ def law_enforcement_case_view(request):
     if request.user.lawenforcementaccount.type != 'law_enforcement':
         return redirect('login')
     
-    logged_in_user = request.user  # Retrieve the logged-in user
-    # Retrieve the Account object associated with the logged-in user
+    logged_in_user = request.user
     try:
         lawenforcementaccount = logged_in_user.lawenforcementaccount
         station = lawenforcementaccount.station
     except LawEnforcementAccount.DoesNotExist:
         station = None
-    cases = Case.objects.all()  # Retrieve all cases from the database
-    
-    filtered_cases = []
-    
-    for case in cases:
-        if case.law_enforcement_agency_name == station:
-            filtered_cases.append(case)
-    
+
+    # Show cases created by this user OR cases referred to their station
+    cases = Case.objects.filter(
+        Q(created_by=logged_in_user) |
+        Q(law_enforcement_agency_name=station, refers_to_law_enforcement=True)
+    ).distinct()
+
     return render(request, 'law-enforcement-admin/case/case.html', {
-        'cases': filtered_cases,
+        'cases': cases,
         'global': request.session,
         'logged_in_user': logged_in_user,
         'station': station,
@@ -2061,23 +2127,21 @@ def healthcare_case_view(request):
     if request.user.healthcareaccount.type != 'healthcare':
         return redirect('login')
     
-    logged_in_user = request.user  # Retrieve the logged-in user
-    # Retrieve the Account object associated with the logged-in user
+    logged_in_user = request.user
     try:
         healthcareaccount = logged_in_user.healthcareaccount
         hospital_name = healthcareaccount.hospital_name
     except HealthcareAccount.DoesNotExist:
         hospital_name = None
-    cases = Case.objects.all()  # Retrieve all cases from the database
-    
-    filtered_cases = []
-    
-    for case in cases:
-        if case.healthcare_provider_name == hospital_name:
-            filtered_cases.append(case)
+
+    # Show cases created by this user OR cases referred to their hospital
+    cases = Case.objects.filter(
+        Q(created_by=logged_in_user) |
+        Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
+    ).distinct()
 
     return render(request, 'healthcare-admin/case/case.html', {
-        'cases': filtered_cases,
+        'cases': cases,
         'global': request.session,
         'logged_in_user': logged_in_user,
         'hospital_name': hospital_name,
@@ -2111,18 +2175,15 @@ def SWDO_case_view(request):
     if request.user.swdoaccount.type != 'SWDO':
         return redirect('login')
     
-    logged_in_user = request.user  # Retrieve the logged-in user
-    
-    cases = Case.objects.all()  # Retrieve all cases from the database
-    
-    filtered_cases = []
-    
-    for case in cases:
-        if case.refers_to_social_welfare == True:
-            filtered_cases.append(case)
+    logged_in_user = request.user
+
+    # Show cases created by this user OR cases referred to social welfare
+    cases = Case.objects.filter(
+        Q(created_by=logged_in_user) | Q(refers_to_social_welfare=True)
+    ).distinct()
 
     return render(request, 'SWDO/case/case.html', {
-        'cases': filtered_cases,
+        'cases': cases,
         'global': request.session,
         'logged_in_user': logged_in_user,
     })
@@ -3193,11 +3254,46 @@ def view_case_behalf(request, case_id):
     try:
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
+        
+        # Ownership and Referral Status
+        account = request.user.account
+        is_owner = (case.barangay == account.barangay or case.created_by == request.user)
+        referral = BarangayReferral.objects.filter(
+            case=case, 
+            to_barangay=account.barangay,
+            to_city=account.city,
+            to_province=account.province
+        ).last()
+        
+        referral_status = referral.status if referral else None
+        
+        if not is_owner and not referral_status:
+             return redirect('barangay dashboard')
+             
+        # Log Access
+        CaseEditHistory.objects.create(
+            case=case,
+            user=request.user,
+            section_edited="Case Viewed (Barangay Staff)"
+        )
+
         # Retrieve related objects such as contact persons, evidence, victims, perpetrators, and parents
         contact_persons = Contact_Person.objects.filter(case_contact=case)
         evidences = Evidence.objects.filter(case=case)
         victims = Victim.objects.filter(case_victim=case)
         perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
+        
+        # Redaction for Pending Referrals
+        if not is_owner and referral_status == 'Pending':
+            for v in victims:
+                v.first_name = "REDACTED"
+                v.last_name = "REDACTED"
+                v.middle_name = "REDACTED"
+            for p in perpetrators:
+                p.first_name = "REDACTED"
+                p.last_name = "REDACTED"
+                p.middle_name = "REDACTED"
+                
         witnesses = Witness.objects.filter(case_witness=case)
         hospitals = HealthcareAccount.objects.values_list('hospital_name', flat=True).distinct()
         status_history = Status_History.objects.filter(case_status_history=case)
@@ -3319,6 +3415,9 @@ def view_case_behalf(request, case_id):
 
         return render(request, 'barangay-admin/case/view-case-behalf.html', {
             'case': case,
+            'is_true_owner': is_owner,
+            'referral_status': referral_status,
+            'referral': referral,
             'contact_persons': contact_persons,
             'evidence': evidences,
             'victims': victims,
@@ -3352,6 +3451,29 @@ def view_case_impact(request, case_id):
     try:
         # Retrieve the case object from the database based on the case_id
         case = Case.objects.get(id=case_id)
+
+        # Ownership and Referral Status
+        account = request.user.account
+        is_owner = (case.barangay == account.barangay or case.created_by == request.user)
+        referral = BarangayReferral.objects.filter(
+            case=case, 
+            to_barangay=account.barangay,
+            to_city=account.city,
+            to_province=account.province
+        ).last()
+        
+        referral_status = referral.status if referral else None
+        
+        if not is_owner and not referral_status:
+             return redirect('barangay dashboard')
+             
+        # Log Access
+        CaseEditHistory.objects.create(
+            case=case,
+            user=request.user,
+            section_edited="Case Viewed (Barangay Staff)"
+        )
+
         # Retrieve related objects such as evidence, victims, perpetrators, and parents
         evidences = Evidence.objects.filter(case=case)
         victims = Victim.objects.filter(case_victim=case)
@@ -3444,6 +3566,9 @@ def view_case_impact(request, case_id):
         
         return render(request, 'barangay-admin/case/view-case-impacted.html', {
             'case': case,
+            'is_true_owner': is_owner,
+            'referral_status': referral_status,
+            'referral': referral,
             'evidence': evidences,
             'victims': victims,
             'perpetrators': perpetrators,
@@ -3748,15 +3873,130 @@ def view_enforcement_case_impact(request, case_id):
         return HttpResponseNotFound("Case not found")
 
 @login_required
-def pdf_template_view (request, case_id):
+def _build_print_info(request):
+    """
+    Build a dict of provider-specific info used by PDF and Graph Report print headers.
+    Returns: agency_name, region, province, city, provider_label, profile_picture_url, account_type.
+    """
+    user = request.user
+    account = None
+    account_type = None
+
+    # Check if Super Admin (Barangay Account with type='admin' or no account but superuser)
+    is_super_admin = False
+    if user.is_superuser:
+        is_super_admin = True
+    
+    try:
+        account = user.account
+        if getattr(account, 'type', '') == 'admin':
+            is_super_admin = True
+        account_type = 'barangay'
+    except Exception:
+        pass
+
+    if not account:
+        try:
+            account = user.lawenforcementaccount
+            account_type = 'law_enforcement'
+        except Exception:
+            pass
+
+    if not account:
+        try:
+            account = user.swdoaccount
+            account_type = 'swdo'
+        except Exception:
+            pass
+
+    if not account:
+        try:
+            account = user.healthcareaccount
+            account_type = 'healthcare'
+        except Exception:
+            pass
+
+    dilg_logo_url = request.build_absolute_uri(settings.STATIC_URL + 'img/dilg.png')
+    # Local path for server-side PDF engines
+    dilg_logo_path = os.path.join(settings.BASE_DIR, 'static', 'img', 'dilg.png')
+
+    if not account:
+        if is_super_admin:
+            return {
+                'agency_name': 'System Administrator Office',
+                'region': 'NCR', 'province': 'Metro Manila', 'city': 'Quezon City',
+                'provider_label': 'Super Admin', 'profile_picture_url': '', 
+                'account_type': 'admin', 'dilg_logo_url': dilg_logo_url,
+                'dilg_logo_path': dilg_logo_path
+            }
+        return {
+            'agency_name': '', 'region': '', 'province': '', 'city': '',
+            'provider_label': '', 'profile_picture_url': '', 'account_type': None,
+            'dilg_logo_url': dilg_logo_url, 'dilg_logo_path': dilg_logo_path
+        }
+
+    REGION_MAP = {
+        'region-I': 'Region I', 'region-II': 'Region II', 'region-III': 'Region III',
+        'region-IV': 'Region IV-A', 'mimaropa': 'MIMAROPA Region', 'region-V': 'Region V',
+        'region-VI': 'Region VI', 'region-VII': 'Region VII', 'region-VIII': 'Region VIII',
+        'region-IX': 'Region IX', 'region-X': 'Region X', 'region-XI': 'Region XI',
+        'region-XII': 'Region XII', 'region-XIII': 'Region XIII',
+        'ncr': 'NCR', 'car': 'CAR', 'barmm': 'BARMM',
+    }
+
+    if is_super_admin:
+        account_type = 'admin'
+        agency_name = 'DILG Central Office'
+        provider_label = 'Super Admin / System Administrator'
+    elif account_type == 'barangay':
+        agency_name = getattr(account, 'barangay', '') or ''
+        provider_label = 'Barangay VAW Desk'
+    elif account_type == 'law_enforcement':
+        agency_name = getattr(account, 'station', '') or ''
+        provider_label = 'PNP Station'
+    elif account_type == 'swdo':
+        agency_name = getattr(account, 'office_assigned', '') or getattr(account, 'name', '') or ''
+        provider_label = 'SWDO Office'
+    elif account_type == 'healthcare':
+        agency_name = getattr(account, 'hospital_name', '') or ''
+        provider_label = 'Hospital / Medical Center'
+    else:
+        agency_name = ''
+        provider_label = ''
+
+    region_raw = getattr(account, 'region', '') or ''
+    region_display = REGION_MAP.get(region_raw, region_raw)
+
+    profile_picture_url = ''
+    if getattr(account, 'profile_picture', None):
+        try:
+            profile_picture_url = request.build_absolute_uri(account.profile_picture.url)
+        except Exception:
+            pass
+
+    return {
+        'agency_name': agency_name,
+        'region': region_display,
+        'province': getattr(account, 'province', '') or '',
+        'city': getattr(account, 'city', '') or '',
+        'provider_label': provider_label,
+        'profile_picture_url': profile_picture_url,
+        'account_type': account_type,
+        'dilg_logo_url': dilg_logo_url,
+        'dilg_logo_path': dilg_logo_path
+    }
+
+
+def pdf_template_view(request, case_id):
     logged_in_user = request.user
+
     # Try getting the specific account, gracefully fallback if it doesn't exist
     account = None
     try:
         account = logged_in_user.account
     except Exception:
         pass
-    
+
     if not account:
         try:
             account = logged_in_user.lawenforcementaccount
@@ -3774,6 +4014,10 @@ def pdf_template_view (request, case_id):
             account = logged_in_user.healthcareaccount
         except Exception:
             pass
+
+    # Build dynamic print header info
+    print_info = _build_print_info(request)
+
     # Retrieve the case object from the database based on the case_id
     case = Case.objects.get(id=case_id)
     # Retrieve related objects such as evidence, victims, perpetrators, and parents
@@ -3781,11 +4025,11 @@ def pdf_template_view (request, case_id):
     victims = Victim.objects.filter(case_victim=case)
     perpetrators = Perpetrator.objects.filter(case_perpetrator=case)
     witnesses = Witness.objects.filter(case_witness=case)
-    
+
     # CASE ----------------------
     case_attributes = vars(case)
     case_decrypted = {}
-    
+
     for attribute, value in case_attributes.items():
         if isinstance(value, str) and value.startswith('b\'gAAAAA'):
             case_decrypted[attribute] = decrypt_data(value)
@@ -3805,9 +4049,9 @@ def pdf_template_view (request, case_id):
                 victim_decrypted[attribute] = decrypt_data(value)
             else:
                 victim_decrypted[attribute] = value
-        
+
         #insert print of date_of_birth of victims here
-        
+
         # Fetch parent object related to this victim
         parent = Parent.objects.filter(victim_parent=victim).first()
 
@@ -3823,7 +4067,7 @@ def pdf_template_view (request, case_id):
         else:
             # If no parent is found for the victim, append None
             list_victim_decrypted.append((victim_decrypted, None))
-        
+
         # Calculate age for each victim
         for victim, parent in list_victim_decrypted:
             if 'date_of_birth' in victim:
@@ -3843,7 +4087,7 @@ def pdf_template_view (request, case_id):
                 perpetrator_decrypted[attribute] = decrypt_data(value)
             else:
                 perpetrator_decrypted[attribute] = value
-        
+
         # Fetch parent perpetrator object related to this perpetrator
         parent_perpetrator = Parent_Perpetrator.objects.filter(perpetrator_parent=perpetrator).first()
 
@@ -3866,24 +4110,30 @@ def pdf_template_view (request, case_id):
                 perpetrator['age'] = calculate_age(perpetrator['date_of_birth'])
                 print(f"Perpetrator Age: {perpetrator['age']}")
 
-        # Print the encrypted attributes
-        # for attribute, value in perpetrator_decrypted.items():
-        #     print(f"{attribute}: {value}")
+    # Route to the correct provider template based on account type
+    template_map = {
+        'barangay': 'barangay-admin/case/pdf-template.html',
+        'law_enforcement': 'law-enforcement-admin/case/pdf-template.html',
+        'swdo': 'SWDO/case/pdf-template.html',
+        'healthcare': 'healthcare-admin/case/pdf-template.html',
+        'admin': 'super-admin/case/pdf-template.html',
+    }
+    template_name = template_map.get(print_info['account_type'], 'barangay-admin/case/pdf-template.html')
 
-    template = loader.get_template('barangay-admin/case/pdf-template.html') # Load HTML template
+    template = loader.get_template(template_name)  # Load HTML template
     html_string = template.render({
         'case': case,
         'case_decrypted': case_decrypted,
         'account': account,
+        'print_info': print_info,
         'list_victim_decrypted': list_victim_decrypted,
         'list_perpetrator_decrypted': list_perpetrator_decrypted,
         'witnesses': witnesses,
-    }) # Render the template
-    # print(html_string)
+    })  # Render the template
 
     # Generate the PDF using WeasyPrint
-    pdf = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
-    
+    pdf = HTML(string=html_string, base_url=request.build_absolute_uri('/')).write_pdf()
+
     # Create an HttpResponse with the PDF content
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="Print Case No. {}.pdf"'.format(case.case_number)
@@ -4984,6 +5234,119 @@ def refer_law_enforcement(request):
         return JsonResponse({'error': 'Invalid request method.'})
 
 
+@login_required
+@require_POST
+def refer_to_barangay(request):
+    if not hasattr(request.user, 'account') or request.user.account.type != 'staff':
+        return JsonResponse({'success': False, 'message': 'Unauthorized.'}, status=403)
+
+    case_id = request.POST.get('case_id')
+    case = get_object_or_404(Case, id=case_id)
+    
+    to_barangay = request.POST.get('to_barangay')
+    to_city = request.POST.get('to_city')
+    to_province = request.POST.get('to_province')
+    to_region = request.POST.get('to_region')
+    reason = request.POST.get('reason')
+    
+    if not to_barangay:
+        return JsonResponse({'success': False, 'message': 'Target barangay is required.'})
+
+    # Check if referral already exists
+    if BarangayReferral.objects.filter(
+        case=case,
+        to_barangay=to_barangay,
+        to_city=to_city,
+        to_province=to_province
+    ).exists():
+        return JsonResponse({'success': False, 'message': f'Case is already referred to {to_barangay}.'})
+
+    referral = BarangayReferral.objects.create(
+        case=case,
+        from_barangay=request.user.account.barangay,
+        to_barangay=to_barangay,
+        to_city=to_city,
+        to_province=to_province,
+        to_region=to_region,
+        reason=reason,
+        referred_by=request.user
+    )
+    
+    # Create notification for target barangay users
+    target_users = Account.objects.filter(
+        barangay=to_barangay, 
+        city=to_city, 
+        province=to_province, 
+        type='staff'
+    )
+    
+    for account in target_users:
+        Notification.objects.create(
+            receiver_account=account.user.username,
+            message=f"New Case Referral from {request.user.account.barangay}: {case.case_number if case.case_number else 'ID '+str(case.id)}",
+            link=reverse('barangay case')
+        )
+
+    return JsonResponse({'success': True, 'message': f'Case referred to {to_barangay} successfully.'})
+
+
+@login_required
+@require_POST
+def accept_referral(request, referral_id):
+    referral = get_object_or_404(BarangayReferral, id=referral_id)
+    # Authorization: only the target barangay can accept
+    if referral.to_barangay != request.user.account.barangay:
+        return JsonResponse({'success': False, 'message': 'Unauthorized.'}, status=403)
+    
+    referral.status = 'Accepted'
+    referral.save()
+
+    # Log action
+    CaseEditHistory.objects.create(
+        case=referral.case,
+        user=request.user,
+        section_edited="Referral Accepted"
+    )
+
+    # Notify sender
+    Notification.objects.create(
+        receiver_account=referral.referred_by.username,
+        message=f"Referral for Case {referral.case.case_number} was ACCEPTED by {referral.to_barangay}.",
+        link=reverse('barangay case')
+    )
+
+    return JsonResponse({'success': True, 'message': 'Referral accepted.'})
+
+
+@login_required
+@require_POST
+def reject_referral(request, referral_id):
+    referral = get_object_or_404(BarangayReferral, id=referral_id)
+    # Authorization: only the target barangay can reject
+    if referral.to_barangay != request.user.account.barangay:
+        return JsonResponse({'success': False, 'message': 'Unauthorized.'}, status=403)
+    
+    reason = request.POST.get('reason', 'No reason provided.')
+    referral.status = 'Rejected'
+    referral.save()
+
+    # Log action
+    CaseEditHistory.objects.create(
+        case=referral.case,
+        user=request.user,
+        section_edited=f"Referral Rejected: {reason}"
+    )
+
+    # Notify sender
+    Notification.objects.create(
+        receiver_account=referral.referred_by.username,
+        message=f"Referral for Case {referral.case.case_number} was REJECTED by {referral.to_barangay}. Reason: {reason}",
+        link=reverse('barangay case')
+    )
+
+    return JsonResponse({'success': True, 'message': 'Referral rejected.'})
+
+
 @login_required(login_url='login')
 def refer_SWDO(request):
     if request.method == 'POST':
@@ -5284,10 +5647,19 @@ def get_police_station(request):
             data = [{"name": province} for province in provinces]
             return JsonResponse(data, safe=False)
 
-        elif action == "police_station":
+        elif action == "city":
             province_name = request.POST.get("province")
-            stations = PoliceStations.objects.filter(
+            cities = PoliceStations.objects.filter(
                 province=province_name
+            ).exclude(city__isnull=True).exclude(city__exact='').values_list("city", flat=True).distinct().order_by("city")
+
+            data = [{"name": city} for city in cities]
+            return JsonResponse(data, safe=False)
+
+        elif action == "police_station":
+            city_name = request.POST.get("city")
+            stations = PoliceStations.objects.filter(
+                city=city_name
             ).values_list("name", flat=True).order_by("name")
 
             data = [{"name": station} for station in stations]
@@ -5898,13 +6270,18 @@ def LawEnforcement_dashboard_data(request, get_year):
     try:
         law_enforcement_account = request.user.lawenforcementaccount
         station = law_enforcement_account.station
-    except Account.DoesNotExist:
+    except (AttributeError, ObjectDoesNotExist):
         station = None
     
-    if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(law_enforcement_agency_name=station)
+    base_q = Q(created_by=logged_in_user) | Q(law_enforcement_agency_name=station, refers_to_law_enforcement=True)
+    if get_year == '0':
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( law_enforcement_agency_name=station, date_added__year = get_year)
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+        else:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -5919,12 +6296,11 @@ def LawEnforcement_dashboard_data(request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
 
     # Iterate through filtered cases
     for case in cases:
@@ -5952,9 +6328,12 @@ def LawEnforcement_dashboard_data(request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
 
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b') 
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
 
         case_dict_data = {
             'case_number': case.case_number,
@@ -6013,8 +6392,10 @@ def healthcare_dashboard_view(request):
     healthcare_account = request.user.healthcareaccount
     hospital_name = healthcare_account.hospital_name
 
-    # Get the list of years for which we have cases for this station
-    year_list = Case.objects.filter(healthcare_provider_name=hospital_name).annotate(
+    # Get the list of years for which we have cases for this hospital (own + referred)
+    year_list = Case.objects.filter(
+        Q(created_by=request.user) | Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
+    ).distinct().annotate(
         year=ExtractYear('date_added')
     ).values_list('year', flat=True).distinct()
     
@@ -6033,13 +6414,18 @@ def healthcare_dashboard_data(request, get_year):
     try:
         healthcare_account = request.user.healthcareaccount
         hospital_name = healthcare_account.hospital_name
-    except Account.DoesNotExist:
+    except (AttributeError, ObjectDoesNotExist):
         hospital_name = None
     
-    if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(healthcare_provider_name=hospital_name)
+    base_q = Q(created_by=logged_in_user) | Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
+    if get_year == '0':
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( healthcare_provider_name=hospital_name, date_added__year = get_year)
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+        else:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6054,12 +6440,11 @@ def healthcare_dashboard_data(request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
 
     # Iterate through filtered cases
     for case in cases:
@@ -6087,9 +6472,12 @@ def healthcare_dashboard_data(request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
 
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b') 
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
 
         case_dict_data = {
             'case_number': case.case_number,
@@ -6132,6 +6520,8 @@ def healthcare_dashboard_data(request, get_year):
         'cases_w_criminal_cases': cases_w_criminal_cases,
         'republic_acts': republic_acts,
         'annual_cases': annual_cases,
+        'quarterly_cases': quarterly_cases,
+        'yearly_cases': dict(sorted(yearly_cases.items())),
         'barangay_case_list': barangay_case_list,
         # 'logged_in_user': logged_in_user,
         # 'email' : logged_in_user.email,
@@ -6167,14 +6557,19 @@ def SWDO_dashboard_data(request, get_year):
     # Retrieve the Account object associated with the logged-in user
     try:
         swdo_account = request.user.swdoaccount
-        SWDO = swdo_account.name
-    except Account.DoesNotExist:
-        SWDO = None
+        SWDO_name = swdo_account.name
+    except (AttributeError, ObjectDoesNotExist):
+        SWDO_name = None
     
-    if get_year == 0:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(refers_to_social_welfare = True)
+    base_q = Q(created_by=logged_in_user) | Q(refers_to_social_welfare=True)
+    if get_year == '0':
+        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter( refers_to_social_welfare = True, date_added__year = get_year)
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+        else:
+            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6189,12 +6584,11 @@ def SWDO_dashboard_data(request, get_year):
     ra_7877 = 0
     ra_7610 = 0
     ra_9775 = 0
-    annual_cases = defaultdict(lambda:defaultdict(int))
+    annual_cases = {m: 0 for m in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']}
+    quarterly_cases = {'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0}
+    yearly_cases = defaultdict(int)
     cases_w_criminal_cases = 0
     barangay_case_list = []
-    all_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    for month_temp in all_months:   
-        annual_cases[month_temp] = 0
 
     # Iterate through filtered cases
     for case in cases:
@@ -6222,9 +6616,12 @@ def SWDO_dashboard_data(request, get_year):
         if case.checkbox_ra_9262 or case.checkbox_ra_8353 or case.checkbox_ra_7877 or case.checkbox_a_7610 or case.checkbox_ra_9775:
             cases_w_criminal_cases += 1
 
-        # increment case count per month    
+        # Time-based aggregations
         month = case.date_added.strftime('%b') 
         annual_cases[month] += 1
+        q = (case.date_added.month - 1) // 3 + 1
+        quarterly_cases[f'Q{q}'] += 1
+        yearly_cases[str(case.date_added.year)] += 1
 
         case_dict_data = {
             'case_number': case.case_number,
@@ -6267,10 +6664,12 @@ def SWDO_dashboard_data(request, get_year):
         'cases_w_criminal_cases': cases_w_criminal_cases,
         'republic_acts': republic_acts,
         'annual_cases': annual_cases,
+        'quarterly_cases': quarterly_cases,
+        'yearly_cases': dict(sorted(yearly_cases.items())),
         'barangay_case_list': barangay_case_list,
         # 'logged_in_user': logged_in_user,
         # 'email' : logged_in_user.email,
-        'barangay': SWDO,
+        'barangay': SWDO_name,
         # 'global': request.session,
     })
 
@@ -6297,8 +6696,10 @@ def admin_consolidated_report_data(request, get_year):
     
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
 
     total_cases = cases.count() or 0
     ongoing_cases = cases.filter(status='Active').count() or 0
@@ -6396,19 +6797,31 @@ def admin_consolidated_report_data(request, get_year):
 
 @login_required
 def SWDO_graph_view(request):
-    return render(request, 'SWDO/graph-report.html', {})
+    print_info = _build_print_info(request)
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    return render(request, 'SWDO/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
 def law_enforcement_graph_view(request):
-    return render(request, 'law-enforcement-admin/graph-report.html', {})
+    print_info = _build_print_info(request)
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    return render(request, 'law-enforcement-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
 def healthcare_graph_view(request):
-    return render(request, 'healthcare-admin/graph-report.html', {})
+    print_info = _build_print_info(request)
+    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    return render(request, 'healthcare-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
 def barangay_graph_view(request):
-    return render(request, 'barangay-admin/graph-report.html', {})
+    print_info = _build_print_info(request)
+    try:
+        barangay = request.user.account.barangay
+    except:
+        barangay = None
+    year_list = Case.objects.filter(barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    return render(request, 'barangay-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 
 # ── Provider Consolidated Report Data Endpoints ────────────────────────────────
@@ -6504,8 +6917,10 @@ def SWDO_consolidated_report_data(request, get_year):
     cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(refers_to_social_welfare=True)
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
     return _provider_graph_response(cases)
 
 
@@ -6519,11 +6934,16 @@ def law_enforcement_consolidated_report_data(request, get_year):
         station = request.user.lawenforcementaccount.station
     except Exception:
         station = None
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(law_enforcement_agency_name=station)
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(
+        Q(created_by=request.user) |
+        Q(law_enforcement_agency_name=station, refers_to_law_enforcement=True)
+    ).distinct()
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
     return _provider_graph_response(cases)
 
 
@@ -6537,11 +6957,16 @@ def healthcare_consolidated_report_data(request, get_year):
         hospital_name = request.user.healthcareaccount.hospital_name
     except Exception:
         hospital_name = None
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(healthcare_provider_name=hospital_name)
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(
+        Q(created_by=request.user) |
+        Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
+    ).distinct()
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
     return _provider_graph_response(cases)
 
 
@@ -6555,11 +6980,15 @@ def barangay_consolidated_report_data(request, get_year):
         barangay_name = request.user.account.barangay
     except Exception:
         barangay_name = None
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(barangay=barangay_name)
+    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(
+        Q(created_by=request.user) | Q(barangay=barangay_name)
+    ).distinct()
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
-    elif get_year != 0:
-        cases = cases.filter(date_added__year=get_year)
+    elif get_year != '0':
+        years = [int(y) for y in get_year.split(',') if y.isdigit()]
+        if years:
+            cases = cases.filter(date_added__year__in=years)
     return _provider_graph_response(cases)
 
 
@@ -6664,6 +7093,30 @@ def case_summary_modal(request, case_id):
     except Case.DoesNotExist:
         return HttpResponse("Case not found.", status=404)
     
+    # Check if authorized (simplified for summary modal)
+    is_authorized = False
+    is_owner = False
+    referral_status = None
+    
+    if hasattr(request.user, 'account'):
+        account = request.user.account
+        is_owner = (case.barangay == account.barangay or case.created_by == request.user)
+        referral = BarangayReferral.objects.filter(
+            case=case, 
+            to_barangay=account.barangay,
+            to_city=account.city,
+            to_province=account.province
+        ).last()
+        referral_status = referral.status if referral else None
+        
+        if is_owner or referral_status or account.type == 'admin':
+            is_authorized = True
+
+    if not is_authorized:
+        return HttpResponse("Unauthorized.", status=403)
+        
     return render(request, 'base/case_modal_content.html', {
-        'case': case
+        'case': case,
+        'is_true_owner': is_owner,
+        'referral_status': referral_status
     })

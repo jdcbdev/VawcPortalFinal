@@ -43,6 +43,10 @@
     </div>
 
     <input type="hidden" id="dilg-static-url" value="{% static 'img/dilg.png' %}">
+    <input type="hidden" id="provider-logo-url" value="{% if request.user.healthcareaccount.profile_picture %}{{ request.user.healthcareaccount.profile_picture.url }}{% endif %}">
+    <input type="hidden" id="agency-name" value="{{ hospital_name }}">
+    <input type="hidden" id="provider-label" value="Healthcare Office">
+    <input type="hidden" id="agency-location" value="{{ request.user.healthcareaccount.region|default:'' }}{% if request.user.healthcareaccount.province %}, {{ request.user.healthcareaccount.province }}{% endif %}{% if request.user.healthcareaccount.city %}, {{ request.user.healthcareaccount.city }}{% endif %}">
 
     <!-- ── Row 1: Basic Filters ── -->
     <div class="row g-2 mt-3 align-items-end">
@@ -247,14 +251,6 @@
     </div>
 </div>
 
-<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
-    <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-dark" style="background-color:#E8A020;">
-            <strong class="me-auto">Success</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-        </div>
-        <div class="toast-body text-dark"></div>
-    </div>
 </div>
 {% endblock content %}
 
@@ -301,7 +297,9 @@
         $('#ownership').on('change', function() { table.columns([OWNERSHIP_COL]).search($(this).val()).draw(); });
 
         table.column(BARANGAY_COL).data().unique().sort().each(d => {
-            if(d) $('#barangay-filter-menu').append(`<li><label class="dropdown-item small"><input type="checkbox" class="case-barangay-cb form-check-input me-2" value="${d}"> ${d}</label></li>`);
+            if(d && d.toLowerCase() !== 'all' && d.toLowerCase() !== 'all barangay') {
+                $('#barangay-filter-menu').append(`<li><label class="dropdown-item small"><input type="checkbox" class="case-barangay-cb form-check-input me-2" value="${d}"> ${d}</label></li>`);
+            }
         });
 
         $(document).on('change', '.case-barangay-cb', function() {
@@ -328,15 +326,59 @@
         });
         $('#case-age-clear').on('click', () => { $('#case-age-from, #case-age-to').val(''); $('#btn-age-filter').text('All Ages'); table.draw(); });
 
-        let logo = null;
-        fetch($('#dilg-static-url').val()).then(r => r.blob()).then(b => {
-            let fr = new FileReader(); fr.onloadend = () => logo = fr.result; fr.readAsDataURL(b);
-        });
+        let dilgLogo = null;
+        let providerLogo = null;
 
-        $('#btn-export-case-report').on('click', function() {
+        async function loadLogos() {
+            try {
+                const dilgUrl = $('#dilg-static-url').val();
+                if (dilgUrl) {
+                    const r = await fetch(dilgUrl);
+                    if (!r.ok) throw new Error("DILG logo fetch failed");
+                    const b = await r.blob();
+                    dilgLogo = await new Promise(res => {
+                        let fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(b);
+                    });
+                }
+                const pLogoUrl = $('#provider-logo-url').val();
+                if (pLogoUrl) {
+                    const r = await fetch(pLogoUrl);
+                    if (r.ok) {
+                        const b = await r.blob();
+                        providerLogo = await new Promise(res => {
+                            let fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(b);
+                        });
+                    }
+                }
+            } catch (e) { 
+                console.error("Logo load error:", e);
+                if (!dilgLogo) {
+                    try {
+                        const r = await fetch(window.location.origin + $('#dilg-static-url').val());
+                        if (r.ok) {
+                            const b = await r.blob();
+                            dilgLogo = await new Promise(res => {
+                                let fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(b);
+                            });
+                        }
+                    } catch(err) { console.error("Logo fallback failed:", err); }
+                }
+            }
+        }
+        loadLogos();
+
+        $('#btn-export-case-report').on('click', async function() {
             const rows = table.rows({ filter: 'applied' });
-            if (!rows.count()) return alert("No data.");
-            const btn = $(this); btn.prop('disabled', true).html("<i class='bx bx-loader-alt bx-spin me-1'></i>Building PDF...");
+            if (!rows.count()) return showToast('error', "No data to export.");
+
+            // Ensure logos are loaded
+            if (!dilgLogo || ($('#provider-logo-url').val() && !providerLogo)) {
+                await loadLogos();
+            }
+
+            const btn = $(this); 
+            btn.prop('disabled', true).html("<i class='bx bx-loader-alt bx-spin me-1'></i>Building PDF...");
+            
             setTimeout(() => {
                 let s = { t:0, a:0, r:0, c:0, v:0, p:0, b:0 };
                 rows.every(function() {
@@ -347,24 +389,92 @@
                     s.p += d[P_NAMES_COL].split(',').filter(Boolean).length;
                     if (d[2].toLowerCase().includes('issuance')) s.b++;
                 });
+
                 const doc = {
-                    pageOrientation: 'landscape', content: [
-                        { columns: [{ text: '' }, logo ? { image: logo, width: 50 } : { text: '' }, { stack: ['Republic of the Philippines', 'VAWC CASE MANAGEMENT SYSTEM'], alignment: 'center' }, { text: '' }] },
-                        { text: 'CONSOLIDATED CASE RECORDS REPORT', bold: true, alignment: 'center', margin: [0, 20] },
-                        { table: { widths: ['*','*','*','*'], body: [[{text:'Total',bold:true},{text:'Active',bold:true},{text:'Resolved',bold:true},{text:'Criminal',bold:true}],[s.t,s.a,s.r,s.c]] }, margin: [0,0,0,20] },
-                        { table: { headerRows: 1, widths: [80, '*', '*', 60, '*', 70], body: [['Case #', 'Victim(s)', 'Service', 'Status', 'Address', 'Date'], ...rows.data().toArray().map(d => [d[0], d[V_NAMES_COL]||'—', d[2], d[3], d[ADDR_COL], d[4]])] } }
-                    ]
+                    pageOrientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    pageMargins: [30, 30, 30, 30],
+                    content: [
+                        // Hierarchical Header
+                        {
+                            columns: [
+                                // Left: DILG Logo
+                                {
+                                    width: 80,
+                                    stack: [
+                                        dilgLogo ? { image: dilgLogo, width: 60, alignment: 'left' } : { text: '' }
+                                    ]
+                                },
+                                // Center: Agency Info
+                                {
+                                    width: '*',
+                                    stack: [
+                                        { text: 'Republic of the Philippines', fontSize: 9, alignment: 'center', color: '#444', margin: [0, 0, 0, 2] },
+                                        { text: $('#provider-label').val(), fontSize: 10, bold: true, alignment: 'center', color: '#222' },
+                                        { text: $('#agency-name').val(), fontSize: 16, bold: true, alignment: 'center', color: '#000', margin: [0, 2, 0, 2] },
+                                        { text: $('#agency-location').val(), fontSize: 9, alignment: 'center', color: '#555' },
+                                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0, 5, 0, 0] }
+                                    ]
+                                },
+                                // Right: Provider Logo
+                                {
+                                    width: 80,
+                                    stack: [
+                                        providerLogo ? { image: providerLogo, width: 60, alignment: 'right' } : { text: '' }
+                                    ]
+                                }
+                            ],
+                            margin: [0, 0, 0, 10]
+                        },
+                        // Border line
+                        { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 900, y2: 0, lineWidth: 2 }], margin: [0, 0, 0, 20] },
+                        
+                        { text: 'CONSOLIDATED CASE RECORDS REPORT', bold: true, fontSize: 14, alignment: 'center', margin: [0, 10, 0, 20] },
+                        
+                        { 
+                            table: { 
+                                widths: ['*','*','*','*'], 
+                                body: [
+                                    [{text:'Total Cases', bold:true, fillColor: '#f3f3f3'}, {text:'Active', bold:true, fillColor: '#f3f3f3'}, {text:'Resolved/Closed', bold:true, fillColor: '#f3f3f3'}, {text:'Criminal Cases (RA)', bold:true, fillColor: '#f3f3f3'}],
+                                    [s.t, s.a, s.r, s.c]
+                                ] 
+                            }, 
+                            margin: [0, 0, 0, 20] 
+                        },
+                        
+                        { 
+                            table: { 
+                                headerRows: 1, 
+                                widths: [70, '*', '*', 60, '*', 70], 
+                                body: [
+                                    [
+                                        {text: 'Case #', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Victim(s)', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Service', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Status', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Address', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
+                                        {text: 'Date Added', bold: true, fillColor: '#3b1a6e', color: 'white'}
+                                    ],
+                                    ...rows.data().toArray().map(d => [d[0], d[V_NAMES_COL]||'—', d[2], d[3], d[ADDR_COL], d[4]])
+                                ] 
+                            } 
+                        }
+                    ],
+                    styles: {
+                        header: { fontSize: 18, bold: true },
+                        subheader: { fontSize: 12, bold: true }
+                    }
                 };
-                pdfMake.createPdf(doc).download('Healthcare_Case_Report.pdf');
+                pdfMake.createPdf(doc).download('Healthcare_Consolidated_Case_Report.pdf');
                 btn.prop('disabled', false).html("<i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)");
-            }, 100);
+            }, 500);
         });
 
         $('#addCaseBtn').click(function(e) {
             e.preventDefault();
             $.ajax({ type: 'POST', url: "{% url 'add_new_case' %}", data: $('#add_case_form').serialize(), success: r => {
                 if (r.success) {
-                    $('.toast-body').text('Case added.'); $('#successToast').toast('show');
+                    showToast('success', 'Case added.');
                     setTimeout(() => window.location.href = `/admin-healthcare-vawc/view-healthcare-case/${r.type_of_case.toLowerCase()}/${r.case_id}/`, 1500);
                 }
             }});
