@@ -20,10 +20,10 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-8"
                     style="min-height: 67vh; display: flex; flex-direction: column; justify-content: center;">
-                    <h2 class="text-center pt-3 fw-regular" style="color: purple; z-index: 1000; position: relative;">
+                    <h2 class="text-center pt-3 fw-regular" style="color: #8a2be2; z-index: 1000; position: relative;">
                         User Login</h2>
                     <p class="text-center fw-regular"
-                        style="color: purple; opacity: 75%; z-index: 1000; position: relative;">Sign in to your account
+                        style="color: #8a2be2; opacity: 75%; z-index: 1000; position: relative;">Sign in to your account
                     </p>
                     <form id="loginForm" method="post">
                         {% csrf_token %}
@@ -43,7 +43,7 @@
                                     <input type="password" class="form-control input-purple" placeholder="Password"
                                         id="barangay-passkey" name="barangay-passkey" style="border: 1px solid #c0adcc"
                                         aria-describedby="barangay-passkeyFeedback">
-                                    <button class="btn btn-outline-primary toggle-password" type="button">
+                                    <button class="btn btn-outline-purple toggle-password" type="button">
                                         <i class='bx bx-show'></i>
                                     </button>
                                 </div>
@@ -54,7 +54,7 @@
                         </div>
                         <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2 pb-3">
                             <button id="submitButton"
-                                class="btn btn-primary w-100 d-flex justify-content-center align-items-center"
+                                class="btn btn-purple w-100 d-flex justify-content-center align-items-center"
                                 type="submit">
                                 <span>Log in</span>
                                 <div class="spinner-border text-light position-absolute" role="status"
@@ -62,7 +62,7 @@
                                 </div>
                             </button>
                             <a href="{% url 'home' %}" style="text-decoration: none; z-index: 1000;"><button
-                                    type="button" class="btn btn-outline-primary my-2 w-100"
+                                    type="button" class="btn btn-outline-purple my-2 w-100"
                                     style="z-index: 1000; position: relative;">Back to home</button></a>
                             <p class="pt-2 text-center" style="z-index: 1000; position: relative;"><a
                                     href="{% url 'forgot pass' %}"
@@ -101,7 +101,7 @@
                         <input class="m-2 text-center form-control rounded" type="text" name="otp_6" maxlength="1" />
                     </div>
                     <div class="text-center mt-4">
-                        <button class="btn btn-primary px-4" type="submit">Validate</button>
+                        <button class="btn btn-purple px-4" type="submit">Validate</button>
                     </div>
                     <div class="text-center mt-3 text-danger" style="display: none;">
                         <i class='bx bx-error-circle'></i>

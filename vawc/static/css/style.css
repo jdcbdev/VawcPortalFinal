@@ -202,7 +202,7 @@ div.bg-light {
     color: #6717b2 !important;
 }
 .text-alt-cust-color {
-    color: #E8A020 !important;
+    color: #8a2be2 !important;
 }
 .form-check-input:checked {
     background-color: #6717b2 !important;
@@ -353,42 +353,42 @@ span.required::before {
     color: red;
 }
 
-/* Dashboard & Global Amber Gold Theme Utilities */
-.text-color-gold {
-    color: #E8A020 !important;
+/* Dashboard & Global Purple Theme Utilities */
+.text-color-purple {
+    color: #8a2be2 !important;
 }
 
-.bg-gold {
-    background-color: #E8A020 !important;
+.bg-purple {
+    background-color: #8a2be2 !important;
 }
 
-.border-gold {
-    border-color: #E8A020 !important;
+.border-purple {
+    border-color: #8a2be2 !important;
 }
 
-.btn-gold {
-    background-color: #E8A020 !important;
-    border-color: #E8A020 !important;
+.btn-purple {
+    background-color: #8a2be2 !important;
+    border-color: #8a2be2 !important;
     color: white !important;
 }
 
-.btn-gold:hover {
-    background-color: #d18d1a !important;
-    border-color: #d18d1a !important;
+.btn-purple:hover {
+    background-color: #6717b2 !important;
+    border-color: #6717b2 !important;
     color: white !important;
 }
 
-.btn-outline-gold {
+.btn-outline-purple {
     background-color: transparent !important;
-    color: #E8A020 !important;
-    border-color: #E8A020 !important;
+    color: #8a2be2 !important;
+    border-color: #8a2be2 !important;
 }
 
-.btn-outline-gold:hover {
-    background-color: #E8A020 !important;
+.btn-outline-purple:hover {
+    background-color: #8a2be2 !important;
     color: white !important;
 }
 
-.bg-gold-light {
-    background-color: #fffbf0 !important;
+.bg-purple-light {
+    background-color: #6f42c1 !important;
 }

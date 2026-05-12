@@ -13,11 +13,26 @@
     <link rel="stylesheet" href="{% static '/css/multi-form.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script>Chart.register(ChartDataLabels);</script>
     {% comment %} <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" /> {% endcomment %}
     {% comment %} <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.5/css/buttons.dataTables.min.css"> {% endcomment %}
 
     {% comment %} <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.0.8/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/fh-4.0.1/r-3.0.2/sc-2.4.3/sb-1.7.1/sp-2.3.1/datatables.min.css" rel="stylesheet"> {% endcomment %}
     {% block styles %}{% endblock %}
+    <style>
+        :root {
+            --primary-purple: #8a2be2;
+            --primary-purple-hover: #7b2ff7;
+            --purple-light: #f3e5f5;
+        }
+        .btn-purple { background-color: var(--primary-purple) !important; color: white !important; border: none !important; }
+        .btn-purple:hover { background-color: var(--primary-purple-hover) !important; color: white !important; }
+        .text-purple { color: var(--primary-purple) !important; }
+        .bg-purple-light { background-color: var(--purple-light) !important; }
+        
+        .border-purple { border-color: var(--primary-purple) !important; }
+    </style>
   </head>
   <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -99,7 +114,7 @@
 
     <div class="modal fade" id="ResetPasswordConfirmModal" tabindex="-1" aria-labelledby="ResetPasswordConfirmModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-top border-4 border-warning">
+            <div class="modal-content border-top border-4 border-purple">
                 <div class="modal-header">
                     <h5 class="modal-title" id="ResetPasswordConfirmModalLabel">Confirm Password Reset</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -111,7 +126,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-target="#ResetPasswordEmailModal" data-bs-toggle="modal">Back</button>
-                    <button type="button" class="btn btn-warning" id="resetPasswordFinalConfirmBtn">Confirm & Reset</button>
+                    <button type="button" class="btn btn-purple" id="resetPasswordFinalConfirmBtn">Confirm & Reset</button>
                 </div>
             </div>
         </div>

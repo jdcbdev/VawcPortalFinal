@@ -21,12 +21,12 @@
                         {% csrf_token %}
                         <div class="position-relative d-inline-block mb-3">
                             {% if account_obj.profile_picture %}
-                                <img src="{{ account_obj.profile_picture.url }}" id="profileImagePreview" alt="Profile" class="rounded-circle border border-3 border-warning shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="{{ account_obj.profile_picture.url }}" id="profileImagePreview" alt="Profile" class="rounded-circle border border-3 border-purple shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
                             {% else %}
-                                <img src="{% static 'img/dilg.png' %}" id="profileImagePreview" alt="Profile" class="rounded-circle border border-3 border-warning shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="{% static 'img/dilg.png' %}" id="profileImagePreview" alt="Profile" class="rounded-circle border border-3 border-purple shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
                             {% endif %}
                             
-                            <label for="profile_picture" class="btn btn-warning btn-sm rounded-circle position-absolute bottom-0 end-0 shadow" style="cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                            <label for="profile_picture" class="btn btn-purple btn-sm rounded-circle position-absolute bottom-0 end-0 shadow" style="cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
                                 <i class="bx bx-camera text-white fs-5"></i>
                             </label>
                             <input type="file" name="profile_picture" id="profile_picture" accept="image/*" class="d-none" onchange="previewImage(event); document.getElementById('savePicBtn').classList.remove('d-none');">
@@ -40,7 +40,7 @@
                             {% endif %}
                         </h4>
                         <p class="text-muted small mb-3">
-                            <span class="badge bg-warning text-dark text-uppercase px-3 py-1 rounded-pill">
+                            <span class="badge bg-purple text-white text-uppercase px-3 py-1 rounded-pill">
                                 {% if account_type == 'swdoaccount' %}SWDO{% elif account_type == 'lawenforcementaccount' %}Law Enforcement{% elif account_type == 'healthcareaccount' %}Healthcare{% else %}Staff / Admin{% endif %}
                             </span>
                         </p>
@@ -160,7 +160,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end mt-4">
-                            <button type="submit" class="btn btn-warning px-4 py-2 rounded-pill fw-bold text-white shadow-sm" style="background-color: #E8A020; border-color: #E8A020;">
+                            <button type="submit" class="btn btn-purple px-4 py-2 rounded-pill fw-bold text-white shadow-sm">
                                 Save Changes
                             </button>
                         </div>

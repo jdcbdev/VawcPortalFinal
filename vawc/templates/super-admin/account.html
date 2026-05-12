@@ -10,11 +10,11 @@
     <div class="row d-flex justify-content-between align-items-center">
         <div class="col-auto">
             <h1 class="text-color-primary fw-bold d-flex align-items-center">
-                <i class='bx bxs-user-account text-color-gold me-2'></i>Account Management
+                <i class='bx bxs-user-account text-purple me-2'></i>Account Management
             </h1>
         </div>
         <div class="col-auto">
-            <button class="btn btn-gold rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account">
+            <button class="btn btn-purple rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="modal" data-bs-target="#add_new_account">
                 <i class="bx bx-plus"></i> Add Account
             </button>
         </div>
@@ -68,7 +68,7 @@
                         <td>{{ account.barangay }}</td>
                         <td>{{ account.user.date_joined }}</td>
                         <td class="text-center">
-                            <button class="btn btn-outline-gold edit-account-btn btn-sm px-3" role="button" data-account-id="{{ account.user.id }}">View</button>
+                            <button class="btn btn-outline-purple edit-account-btn btn-sm px-3" role="button" data-account-id="{{ account.user.id }}">View</button>
                             <button class="btn btn-outline-danger delete-account-btn btn-sm px-3 ms-lg-2" role="button" data-account-id="{{ account.user.id }}">Delete</button>
                         </td>
                     </tr>
@@ -80,7 +80,7 @@
 <!-- Add the toast container to your HTML, make sure it's placed in a suitable location -->
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white" style="background-color:#E8A020;">
+        <div class="toast-header text-white" style="background-color:#8a2be2;">
             <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
             <strong class="me-auto">Success</strong>
             <small>Just Now</small>
@@ -105,7 +105,7 @@
 <div class="modal fade" id="add_new_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content border-0 shadow-lg rounded-4">
-        <div class="modal-header bg-gold-light border-bottom-0 rounded-top-4">
+        <div class="modal-header bg-purple-light border-bottom-0 rounded-top-4">
           <h5 class="modal-title fw-bold text-color-primary" id="staticBackdropLabel">
             <i class='bx bx-user-plus me-2'></i>Add New Account
           </h5>
@@ -206,7 +206,7 @@
         </div>
         <div class="modal-footer border-top-0 pt-0">
             <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-gold rounded-3 px-4" id="addAccountBtn" disabled>Create Account</button>
+            <button type="submit" class="btn btn-purple rounded-3 px-4" id="addAccountBtn" disabled>Create Account</button>
         </div>
       </div>
     </div>
@@ -216,7 +216,7 @@
 <div class="modal fade" id="edit_account" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
       <div class="modal-content border-0 shadow-lg rounded-4">
-        <div class="modal-header bg-gold-light border-bottom-0 rounded-top-4">
+        <div class="modal-header bg-purple-light border-bottom-0 rounded-top-4">
           <h5 class="modal-title fw-bold text-color-primary" id="staticBackdropLabel">
             <i class='bx bx-edit-alt me-2'></i>Edit Account Details
           </h5>
@@ -249,7 +249,7 @@
                     <label for="edit_account_email">Email Address</label>
                 </div>
                 <div class="mb-3">
-                    <button type="button" class="btn btn-outline-warning w-100" id="resetPasswordBtn">Reset Password & Send Credentials to Email</button>
+                    <button type="button" class="btn btn-outline-purple w-100" id="resetPasswordBtn">Reset Password & Send Credentials to Email</button>
                 </div>
                 <div class="form-floating mb-3">
                     <select class="form-select" name="edit_status" id="edit_status">
@@ -308,7 +308,7 @@
         </div>
         <div class="modal-footer border-top-0 pt-0">
             <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-gold rounded-3 px-4" id="saveAccountBtn">Save Changes</button>
+            <button type="submit" class="btn btn-purple rounded-3 px-4" id="saveAccountBtn">Save Changes</button>
         </div>
       </div>
     </div>

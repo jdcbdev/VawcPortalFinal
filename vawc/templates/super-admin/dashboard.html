@@ -52,7 +52,7 @@
             <input type="date" id="dash-start-date" class="form-control form-control-sm" style="max-width: 140px;">
             <span class="text-muted small px-1">to</span>
             <input type="date" id="dash-end-date" class="form-control form-control-sm" style="max-width: 140px;">
-            <button id="dash-apply-btn" class="btn btn-sm btn-gold text-white fw-bold ms-2 px-3">Apply</button>
+            <button id="dash-apply-btn" class="btn btn-sm btn-purple text-white fw-bold ms-2 px-3">Apply</button>
             <button id="dash-clear-btn" class="btn btn-sm btn-outline-secondary ms-1">Reset</button>
         </div>
     </div>
@@ -67,7 +67,7 @@
                     <i class='bx bx-file-blank'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Reported Cases</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="total-cases">-</div>
+                <div class="fw-bold fs-3 text-kpi-purple" id="total-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">All filed cases</div>
             </div>
         </div>
@@ -79,7 +79,7 @@
                     <i class='bx bx-loader-circle'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Ongoing</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="ongoing-cases">-</div>
+                <div class="fw-bold fs-3 text-kpi-purple" id="ongoing-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Active cases</div>
             </div>
         </div>
@@ -91,7 +91,7 @@
                     <i class='bx bx-check-shield'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Resolved</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="resolved-cases">-</div>
+                <div class="fw-bold fs-3 text-kpi-purple" id="resolved-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Closed cases</div>
             </div>
         </div>
@@ -103,7 +103,7 @@
                     <i class='bx bx-shield-x'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Criminal Cases</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="cases-w-criminal-cases">-</div>
+                <div class="fw-bold fs-3 text-kpi-purple" id="cases-w-criminal-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">w/ RA violations</div>
             </div>
         </div>
@@ -117,15 +117,15 @@
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Protection Orders</div>
                 <div class="d-flex gap-2 mt-1">
                     <div class="text-center flex-fill">
-                        <div class="fw-bold fs-5 text-kpi-gold" id="bpo">-</div>
+                        <div class="fw-bold fs-5 text-kpi-purple" id="bpo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">BPO</div>
                     </div>
                     <div class="text-center flex-fill">
-                        <div class="fw-bold fs-5 text-kpi-gold" id="tpo">-</div>
+                        <div class="fw-bold fs-5 text-kpi-purple" id="tpo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">TPO</div>
                     </div>
                     <div class="text-center flex-fill">
-                        <div class="fw-bold fs-5 text-kpi-gold" id="ppo">-</div>
+                        <div class="fw-bold fs-5 text-kpi-purple" id="ppo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">PPO</div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
                     <i class='bx bx-donate-heart'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Services Provided</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="services-provided">-</div>
+                <div class="fw-bold fs-3 text-kpi-purple" id="services-provided">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Resolved w/ services</div>
             </div>
         </div>
@@ -147,21 +147,21 @@
 
     <!-- Drill-down breadcrumb / active filter notice -->
     <div id="kpi-filter-bar" class="d-none mb-3 d-flex align-items-center gap-2 bg-white border rounded px-3 py-2 shadow-sm">
-        <i class='bx bx-filter fs-5' style="color:#E8A020;"></i>
+        <i class='bx bx-filter fs-5' style="color:#8a2be2;"></i>
         <span class="small text-muted">Showing: </span>
-        <span class="fw-bold small text-kpi-gold" id="kpi-filter-label"></span>
+        <span class="fw-bold small text-kpi-purple" id="kpi-filter-label"></span>
         <button class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="drillDown('all')">
             <i class='bx bx-x'></i> Clear filter
         </button>
     </div>
 
     <style>
-        /* Dashboard accent — warm amber-gold (#E8A020) complements the site purple (#8a2be2) */
-        .text-kpi-gold { color: #E8A020 !important; }
+        /* Dashboard accent — corporate purple (#8a2be2) */
+        .text-kpi-purple { color: #8a2be2 !important; }
         .kpi-card { transition: all 0.2s ease; cursor: pointer; }
-        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(232,160,32,0.2) !important; border-color: #E8A020 !important; }
-        .kpi-card.kpi-active { border-color: #E8A020 !important; background-color: #fffbf0 !important; box-shadow: 0 4px 16px rgba(232,160,32,0.25) !important; }
-        .kpi-icon-bg { color: #E8A020; pointer-events: none; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(138, 43, 226, 0.2) !important; border-color: #8a2be2 !important; }
+        .kpi-card.kpi-active { border-color: #8a2be2 !important; background-color: #d0b6e7 !important; box-shadow: 0 4px 16px rgba(138, 43, 226, 0.25) !important; }
+        .kpi-icon-bg { color: #8a2be2; pointer-events: none; }
     </style>
 
     <div class="row g-3 mb-3">
@@ -308,24 +308,38 @@
 <!-- Case Detail Modal -->
 <style>
     /* Only kept for things Bootstrap utilities cannot replicate */
-    .case-modal-gold-header {
-        background: linear-gradient(135deg, #E8A020 0%, #f0b030 50%, #d18d1a 100%);
+    .case-modal-primary-header {
+        background: linear-gradient(135deg, #8a2be2 0%, #7b2ff7 100%);
+    }
+    .text-purple {
+        color: #8a2be2 !important;
+    }
+    .bg-purple-light {
+        background-color: #f3e5f5 !important;
+    }
+    .btn-purple {
+        background-color: #8a2be2 !important;
+        color: white !important;
+    }
+    .btn-purple:hover {
+        background-color: #7b2ff7 !important;
+        color: white !important;
     }
     .ra-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
-        background: linear-gradient(135deg, #E8A020, #d18d1a);
+        background: #8a2be2;
         color: #fff;
         font-weight: 700;
         font-size: 0.75rem;
         padding: 0.4rem 1rem;
         border-radius: 50px;
-        box-shadow: 0 2px 8px rgba(232,160,32,0.35);
+        box-shadow: 0 2px 8px rgba(138, 43, 226, 0.35);
         letter-spacing: 0.04em;
     }
     #cases-table tbody tr.case-detail-row:hover td {
-        background-color: #fffbf0;
+        background-color: #d0b6e7;
     }
 </style>
 
@@ -333,8 +347,8 @@
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-            <!-- Gold Banner Header -->
-            <div class="case-modal-gold-header px-4 pt-4 pb-5 position-relative">
+            <!-- Purple Banner Header -->
+            <div class="case-modal-primary-header px-4 pt-4 pb-5 position-relative">
                 <i class='bx bx-file-blank position-absolute top-0 end-0 opacity-10 pe-none' style="font-size:9rem; margin-top:-1rem;"></i>
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
@@ -342,7 +356,7 @@
                             <span id="modal-status-badge" class="badge rounded-pill small fw-bold" style="display:none;"></span>
                         </div>
                         <h4 class="fw-bold mb-0 text-dark" id="caseDetailModalLabel">
-                            Case <span id="modal-case-number" class="fw-bold" style="color:#5a3400;"></span>
+                            Case <span id="modal-case-number" class="fw-bold" style="color:#3e1e5a;"></span>
                         </h4>
                         <div class="small mt-1 text-dark text-opacity-50">
                             <i class='bx bx-calendar me-1'></i><span id="modal-incident-date"></span>
@@ -353,8 +367,8 @@
             </div>
 
             <!-- Incident Address Strip -->
-            <div class="bg-gold-light border-top border-bottom py-2 px-4 d-flex align-items-center gap-2" style="border-color:#E8A020 !important;">
-                <i class='bx bx-map-pin text-color-gold fs-5'></i>
+            <div class="bg-purple-light border-top border-bottom py-2 px-4 d-flex align-items-center gap-2" style="border-color:#8a2be2 !important;">
+                <i class='bx bx-map-pin text-purple fs-5'></i>
                 <span class="small fw-semibold text-secondary" id="modal-incident-address-strip"></span>
             </div>
 
@@ -364,10 +378,10 @@
                 <!-- Victim Section -->
                 <div class="px-4 pt-4 pb-3 border-bottom">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                        <span class="small fw-bold text-uppercase text-purple" style="letter-spacing:0.08em; white-space:nowrap;">
                             <i class='bx bx-user me-1'></i>Victim Information
                         </span>
-                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#8a2be2;">
                     </div>
                     <div class="row g-2">
                         <div class="col-12">
@@ -400,10 +414,10 @@
                 <!-- Perpetrator Section -->
                 <div class="px-4 pt-4 pb-3 border-bottom">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                        <span class="small fw-bold text-uppercase text-purple" style="letter-spacing:0.08em; white-space:nowrap;">
                             <i class='bx bx-user-x me-1'></i>Perpetrator Information
                         </span>
-                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#8a2be2;">
                     </div>
                     <div class="row g-2">
                         <div class="col-12">
@@ -424,10 +438,10 @@
                 <!-- RA Violations Section -->
                 <div class="px-4 pt-4 pb-5">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
+                        <span class="small fw-bold text-uppercase text-purple" style="letter-spacing:0.08em; white-space:nowrap;">
                             <i class='bx bx-shield-x me-1'></i>RA Violations
                         </span>
-                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#8a2be2;">
                     </div>
                     <div id="modal-ra-badges" class="d-flex flex-wrap gap-2"></div>
                 </div>
@@ -437,7 +451,7 @@
             <!-- Footer -->
             <div class="modal-footer border-top d-flex justify-content-between align-items-center">
                 <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Close</button>
-                <a id="modal-view-case-btn" href="#" class="btn btn-gold rounded-3 px-4 fw-semibold">
+                <a id="modal-view-case-btn" href="#" class="btn btn-purple rounded-3 px-4 fw-semibold">
                     <i class='bx bx-right-arrow-circle me-1'></i>View Full Case
                 </a>
             </div>
@@ -483,12 +497,12 @@
                     label: 'Cases',
                     data: default_province_data,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
+                        'rgba(255, 99, 132, 0.85)',
+                        'rgba(54, 162, 235, 0.85)',
+                        'rgba(255, 206, 86, 0.85)',
+                        'rgba(75, 192, 192, 0.85)',
+                        'rgba(153, 102, 255, 0.85)',
+                        'rgba(255, 159, 64, 0.85)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
@@ -515,6 +529,16 @@
                             boxWidth: 12,
                             padding: 10,
                             font: { size: 11 }
+                        }
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        font: { weight: 'bold', size: 11 },
+                        formatter: (value) => value > 0 ? value : '',
+                        dropShadow: {
+                            enabled: true,
+                            blur: 3,
+                            color: 'rgba(0,0,0,0.5)'
                         }
                     },
                     tooltip: {
@@ -589,12 +613,12 @@
                     label: 'Cases',
                     data: barData,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
+                        'rgba(255, 99, 132, 0.85)',
+                        'rgba(54, 162, 235, 0.85)',
+                        'rgba(255, 206, 86, 0.85)',
+                        'rgba(75, 192, 192, 0.85)',
+                        'rgba(153, 102, 255, 0.85)',
+                        'rgba(255, 159, 64, 0.85)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
@@ -609,20 +633,36 @@
             },
             options: {
                 indexAxis: 'y',
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: false,
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        color: '#555',
+                        font: { weight: 'bold', size: 10 },
+                        formatter: Math.round,
+                        offset: 4,
+                        clip: false
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
                                 return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
                             }
+                        }
+                    }
+                },
+                scales: {
+                    x: { 
+                        beginAtZero: true, 
+                        ticks: { precision: 0 },
+                        grace: '10%'
+                    },
+                    y: {
+                        ticks: {
+                            font: { size: 10 }
                         }
                     }
                 }
@@ -668,10 +708,10 @@
                     label: 'City Total',
                     data: default_city_data,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255, 99, 132, 0.85)',
+                        'rgba(54, 162, 235, 0.85)',
+                        'rgba(255, 206, 86, 0.85)',
+                        'rgba(75, 192, 192, 0.85)',
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
@@ -694,12 +734,27 @@
                 responsive: true,
                 plugins: {
                     legend: false,
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#555',
+                        font: { weight: 'bold', size: 10 },
+                        offset: 4,
+                        clip: false
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
                                 return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
                             }
                         }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 },
+                        grace: '15%'
                     }
                 }
             }
@@ -773,7 +828,7 @@
                     label: 'Cases',
                     fill: true,
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderColor: 'rgba(255, 99, 132, 2)',
                     data: lineData,
                     borderWidth: 1,
                     pointStyle: 'circle',
@@ -786,10 +841,25 @@
                 onHover: (event, chartElement) => {
                     event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
                 },
-                scales: { y: { beginAtZero: true } },
+                scales: { 
+                    y: { 
+                        beginAtZero: true,
+                        ticks: { precision: 0 },
+                        grace: '15%'
+                    } 
+                },
                 responsive: true,
                 plugins: {
                     legend: false,
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#555',
+                        font: { weight: 'bold', size: 10 },
+                        offset: 4,
+                        clip: false,
+                        formatter: (value) => value > 0 ? value : ''
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {

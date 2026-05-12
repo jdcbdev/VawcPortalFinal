@@ -27,14 +27,14 @@
             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
               <div class="message-body">
                 <div class="d-flex align-items-center py-2 px-4 mb-2 bg-light border-bottom">
-                  <img id="dropdown-user-icon" src="" alt="Profile" width="45" height="45" class="rounded-circle me-3 border border-2 border-primary">
+                  <img id="dropdown-user-icon" src="" alt="Profile" width="45" height="45" class="rounded-circle me-3 border border-2 border-purple">
                   <div>
                     <h6 class="mb-0 fw-bold text-dark">{{ request.user.username }}</h6>
                     <small class="text-muted">{{ request.user.email }}</small>
                   </div>
                 </div>
-                <a href="{% url 'profile' %}" class="btn mx-3 mt-2 d-block" style="border: 1px solid #137AFA; color: #137AFA;">Profile</a>
-                <a href="{% url 'logout' %}" class="btn mx-3 mt-2 d-block" style="border: 1px solid #137AFA; color: #137AFA;">Logout</a>
+                <a href="{% url 'profile' %}" class="btn mx-3 mt-2 d-block" style="border: 1px solid #8a2be2; color: #8a2be2;">Profile</a>
+                <a href="{% url 'logout' %}" class="btn mx-3 mt-2 d-block" style="border: 1px solid #8a2be2; color: #8a2be2;">Logout</a>
               </div>
             </div>
           </li>

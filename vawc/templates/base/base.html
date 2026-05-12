@@ -14,7 +14,7 @@
     {% block styles %}{% endblock %}
     <style>
         .bg-purple-custom { background-color: #6717b2 !important; color: white !important; }
-        .bg-gold-custom { background-color: #E8A020 !important; color: white !important; }
+        .bg-purple-light-custom { background-color: #8a2be2 !important; color: white !important; }
         .bg-danger-custom { background-color: #dc3545 !important; color: white !important; }
     </style>
   </head>
@@ -56,13 +56,13 @@
             const $closeBtn = $toast.find('.btn-close');
             const isSuccess = $toast.attr('id') === 'successToast' || $toast.hasClass('bg-success') || $toast.hasClass('toast-success');
             
-            $header.removeClass('bg-primary bg-gold bg-danger bg-purple-custom bg-gold-custom bg-danger-custom text-white text-dark');
-            $body.removeClass('bg-primary bg-gold bg-danger bg-purple-custom bg-gold-custom bg-danger-custom text-white text-dark');
+            $header.removeClass('bg-primary bg-gold bg-danger bg-purple-custom bg-purple-light-custom bg-danger-custom text-white text-dark');
+            $body.removeClass('bg-primary bg-gold bg-danger bg-purple-custom bg-purple-light-custom bg-danger-custom text-white text-dark');
             $header.css('background-color', '');
             $body.css('background-color', '');
             
                         if (isSuccess) {
-                const bgClass = (theme === 'gold') ? 'bg-gold-custom' : 'bg-purple-custom';
+                const bgClass = (theme === 'gold') ? 'bg-purple-light-custom' : 'bg-purple-custom';
                 $header.addClass(bgClass).addClass('text-white');
                 $body.addClass('text-dark');
             } else {

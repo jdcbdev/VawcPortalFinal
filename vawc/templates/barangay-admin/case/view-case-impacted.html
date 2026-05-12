@@ -5,9 +5,9 @@
 <link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
 <link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
 <style>
-    .btn-gold { background-color: #E8A020; color: white; border: none; }
-    .btn-gold:hover { background-color: #d4921c; color: white; }
-    .text-gold { color: #E8A020; }
+    .btn-purple { background-color: #8a2be2; color: white; border: none; }
+    .btn-purple:hover { background-color: #7224cc; color: white; }
+    .text-purple { color: #8a2be2; }
 </style>
 {% endblock %}
 {% load custom_filter %}
@@ -26,13 +26,13 @@
     </div>
 
     {% if referral_status == 'Pending' %}
-    <div class="alert shadow-sm d-flex justify-content-between align-items-center mt-3 mb-4 rounded-4 border-start border-4" style="background-color: #fff9e6; border-color: #E8A020 !important;">
+    <div class="alert shadow-sm d-flex justify-content-between align-items-center mt-3 mb-4 rounded-4 border-start border-4" style="background-color: #f3e8ff; border-color: #8a2be2 !important;">
         <div class="ps-3">
-            <h5 class="alert-heading mb-1 fw-bold" style="color: #E8A020;"><i class='bx bxs-info-circle me-2'></i>Incoming Case Referral</h5>
+            <h5 class="alert-heading mb-1 fw-bold" style="color: #8a2be2;"><i class='bx bxs-info-circle me-2'></i>Incoming Case Referral</h5>
             <p class="mb-0 text-dark">This case was referred to your barangay by <strong>{{ referral.from_barangay }}</strong>. Please accept the referral to view full victim details and start collaborating.</p>
         </div>
         <div class="d-flex gap-2 pe-3">
-            <button class="btn btn-gold rounded-pill px-4 shadow-sm" onclick="handleReferralAction('accept', '{{ referral.id }}')">
+            <button class="btn btn-purple rounded-pill px-4 shadow-sm" onclick="handleReferralAction('accept', '{{ referral.id }}')">
                 <i class='bx bx-check me-1'></i> Accept Referral
             </button>
             <button class="btn btn-outline-danger rounded-pill px-4 bg-white" onclick="handleReferralAction('reject', '{{ referral.id }}')">
@@ -1810,9 +1810,34 @@
             <h2 class="pt-3 pb-2 text-center">EDIT HISTORY</h2>
             <div class="container-fluid pb-5 pt-3">
                 <div class="card p-4 shadow-sm border border-dark border-opacity-10">
-                    <ul class="list-group list-group-flush">
+                    <!-- Filters -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Filter by Editor</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class='bx bx-search text-muted'></i></span>
+                                <input type="text" id="filter-editor-name" class="form-control border-start-0 shadow-none" placeholder="Search name...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Filter by Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class='bx bx-calendar text-muted'></i></span>
+                                <input type="date" id="filter-edit-date" class="form-control border-start-0 shadow-none">
+                            </div>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" id="clear-history-filters" class="btn btn-outline-secondary w-100 shadow-none">
+                                <i class='bx bx-reset'></i> Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <ul class="list-group list-group-flush" id="history-list">
                         {% for edit in case.edit_history.all|dictsortreversed:"timestamp" %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <li class="list-group-item d-flex justify-content-between align-items-center history-item" 
+                            data-editor="{{ edit.get_user_name|lower }}" 
+                            data-date="{{ edit.timestamp|date:'Y-m-d' }}">
                             <div>
                                 <i class='bx bx-edit text-primary me-2'></i>
                                 <strong>{{ edit.get_user_name }}</strong> 
@@ -1823,6 +1848,9 @@
                         {% empty %}
                         <li class="list-group-item text-center text-muted">No edit history available for this case.</li>
                         {% endfor %}
+                        <li id="no-history-results" class="list-group-item text-center text-muted d-none">
+                            <i class='bx bx-info-circle me-2'></i> No matching edit records found.
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -3992,7 +4020,7 @@ function submitReferralResponse(action, referralId, reason = '') {
                     icon: 'success',
                     title: 'Success',
                     text: response.message,
-                    confirmButtonColor: '#E8A020'
+                    confirmButtonColor: '#8a2be2'
                 }).then(() => {
                     location.reload();
                 });
@@ -4001,7 +4029,7 @@ function submitReferralResponse(action, referralId, reason = '') {
                     icon: 'error',
                     title: 'Error',
                     text: response.message,
-                    confirmButtonColor: '#E8A020'
+                    confirmButtonColor: '#8a2be2'
                 });
             }
         },
@@ -4010,10 +4038,53 @@ function submitReferralResponse(action, referralId, reason = '') {
                 icon: 'error',
                 title: 'Error',
                 text: 'An unexpected error occurred.',
-                confirmButtonColor: '#E8A020'
+                confirmButtonColor: '#8a2be2'
             });
         }
     });
 }
+
+// Case Edit History Filtering
+$(document).ready(function() {
+    const $editorInput = $('#filter-editor-name');
+    const $dateInput = $('#filter-edit-date');
+    const $historyItems = $('.history-item');
+    const $noResults = $('#no-history-results');
+
+    function filterHistory() {
+        const nameQuery = $editorInput.val().toLowerCase();
+        const dateQuery = $dateInput.val();
+        let visibleCount = 0;
+
+        $historyItems.each(function() {
+            const editorName = $(this).data('editor') || '';
+            const editDate = $(this).data('date') || '';
+            
+            const matchesName = editorName.includes(nameQuery);
+            const matchesDate = !dateQuery || editDate === dateQuery;
+
+            if (matchesName && matchesDate) {
+                $(this).removeClass('d-none').addClass('d-flex');
+                visibleCount++;
+            } else {
+                $(this).removeClass('d-flex').addClass('d-none');
+            }
+        });
+
+        if (visibleCount === 0 && $historyItems.length > 0) {
+            $noResults.removeClass('d-none');
+        } else {
+            $noResults.addClass('d-none');
+        }
+    }
+
+    $editorInput.on('input', filterHistory);
+    $dateInput.on('change', filterHistory);
+    $('#clear-history-filters').on('click', function() {
+        $editorInput.val('');
+        $dateInput.val('');
+        filterHistory();
+    });
+});
 </script>
 {% endblock scripts %}

@@ -58,7 +58,7 @@
                     <i class='bx bx-file-blank'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Reported Cases</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="total-cases">-</div>
+                <div class="fw-bold fs-3 text-purple" id="total-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">All filed cases</div>
             </div>
         </div>
@@ -69,7 +69,7 @@
                     <i class='bx bx-loader-circle'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Ongoing</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="ongoing-cases">-</div>
+                <div class="fw-bold fs-3 text-purple" id="ongoing-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Active cases</div>
             </div>
         </div>
@@ -80,7 +80,7 @@
                     <i class='bx bx-check-shield'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Resolved</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="resolved-cases">-</div>
+                <div class="fw-bold fs-3 text-purple" id="resolved-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Closed cases</div>
             </div>
         </div>
@@ -91,7 +91,7 @@
                     <i class='bx bx-shield-x'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Criminal Cases</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="cases-w-criminal-cases">-</div>
+                <div class="fw-bold fs-3 text-purple" id="cases-w-criminal-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">w/ RA violations</div>
             </div>
         </div>
@@ -104,15 +104,15 @@
                 <div class="text-muted fw-semibold text-uppercase mb-1" style="font-size:0.7rem;">Protection Orders</div>
                 <div class="d-flex justify-content-between mt-1">
                     <div class="text-center">
-                        <div class="fw-bold fs-6 text-kpi-gold" id="bpo">-</div>
+                        <div class="fw-bold fs-6 text-purple" id="bpo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">BPO</div>
                     </div>
                     <div class="text-center">
-                        <div class="fw-bold fs-6 text-kpi-gold" id="tpo">-</div>
+                        <div class="fw-bold fs-6 text-purple" id="tpo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">TPO</div>
                     </div>
                     <div class="text-center">
-                        <div class="fw-bold fs-6 text-kpi-gold" id="ppo">-</div>
+                        <div class="fw-bold fs-6 text-purple" id="ppo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">PPO</div>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
                     <i class='bx bx-donate-heart'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Services Provided</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="services-provided">-</div>
+                <div class="fw-bold fs-3 text-purple" id="services-provided">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Resolved w/ services</div>
             </div>
         </div>
@@ -133,20 +133,20 @@
 
     <!-- Drill-down filter bar -->
     <div id="kpi-filter-bar" class="d-none mb-3 d-flex align-items-center gap-2 bg-white border rounded px-3 py-2 shadow-sm">
-        <i class='bx bx-filter fs-5' style="color:#E8A020;"></i>
+        <i class='bx bx-filter fs-5' style="color:#8a2be2;"></i>
         <span class="small text-muted">Showing: </span>
-        <span class="fw-bold small text-kpi-gold" id="kpi-filter-label"></span>
+        <span class="fw-bold small text-purple" id="kpi-filter-label"></span>
         <button class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="drillDown('all')">
             <i class='bx bx-x'></i> Clear filter
         </button>
     </div>
 
     <style>
-        .text-kpi-gold { color: #E8A020 !important; }
+        .text-purple { color: #8a2be2 !important; }
         .kpi-card { transition: all 0.2s ease; cursor: pointer; }
-        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(232,160,32,0.2) !important; border-color: #E8A020 !important; }
-        .kpi-card.kpi-active { border-color: #E8A020 !important; background-color: #fffbf0 !important; box-shadow: 0 4px 16px rgba(232,160,32,0.25) !important; }
-        .kpi-icon-bg { color: #E8A020; pointer-events: none; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(138, 43, 226, 0.2) !important; border-color: #8a2be2 !important; }
+        .kpi-card.kpi-active { border-color: #8a2be2 !important; background-color: #d0b6e7 !important; box-shadow: 0 4px 16px rgba(138, 43, 226, 0.25) !important; }
+        .kpi-icon-bg { color: #8a2be2; pointer-events: none; }
     </style>
 
     <div class="row g-3 mb-4">
@@ -224,12 +224,12 @@
                     <tbody class="table-group-divider" id="cases-table-content"></tbody>
                     <tfoot>
                         <tr>
-                            <td><strong>Total Cases: </strong><span id="table-total-cases" class="text-kpi-gold"></span></td>
-                            <td><strong>Total Victims: </strong><span id="table-total-victim" class="text-kpi-gold"></span></td>
+                            <td><strong>Total Cases: </strong><span id="table-total-cases" class="text-purple"></span></td>
+                            <td><strong>Total Victims: </strong><span id="table-total-victim" class="text-purple"></span></td>
                             <td></td>
-                            <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator" class="text-kpi-gold"></span></td>
+                            <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator" class="text-purple"></span></td>
                             <td></td>
-                            <td><strong>Total RA Violations: </strong><span id="table-total-ra" class="text-kpi-gold"></span></td>
+                            <td><strong>Total RA Violations: </strong><span id="table-total-ra" class="text-purple"></span></td>
                             <td></td><td></td><td></td><td></td>
                         </tr>
                     </tfoot>
@@ -246,8 +246,8 @@
 
 <script>
 $(document).ready(function() {
-    const GOLD = '#E8A020', GOLD_BG = 'rgba(232,160,32,0.15)';
-    const PALETTE = ['#E8A020','#5e2ca5','#2d9cdb','#27ae60','#e74c3c','#8e44ad'];
+    const PURPLE = '#8a2be2', PURPLE_BG = 'rgba(138,43,226,0.85)';
+    const PALETTE = ['#8a2be2','#5e2ca5','#2d9cdb','#27ae60','#e74c3c','#8e44ad'];
     let casesTable = null;
     let annualCases = {}, republic_acts = {}, gender_types = [];
     const caseTable = document.getElementById('cases-table-content');
@@ -257,7 +257,24 @@ $(document).ready(function() {
     const casePerRa = new Chart(ctxRA, {
         type: 'bar',
         data: { labels: [], datasets: [{ label: 'Cases', data: [], backgroundColor: PALETTE, borderColor: 'transparent', borderRadius: 4, borderWidth: 0 }] },
-        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+        options: { 
+            indexAxis: 'y', 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: false, 
+                datalabels: { 
+                    anchor: 'end', 
+                    align: 'right', 
+                    color: '#555', 
+                    font: { weight: 'bold', size: 10 },
+                    offset: 4,
+                    clip: false,
+                    formatter: (value) => value > 0 ? value : ''
+                } 
+            }, 
+            scales: { x: { beginAtZero: true, ticks: { precision: 0 }, grace: '10%' } } 
+        }
     });
     ctxRA.canvas.addEventListener('click', function(click) {
         const els = casePerRa.getElementsAtEventForMode(click, 'nearest', { intersect: true }, true);
@@ -269,8 +286,24 @@ $(document).ready(function() {
     const ctxMonth = document.getElementById('bar-cases-by-month').getContext('2d');
     const casesByMonth = new Chart(ctxMonth, {
         type: 'line',
-        data: { labels: [], datasets: [{ label: 'Cases', data: [], fill: true, backgroundColor: GOLD_BG, borderColor: GOLD, borderWidth: 2, tension: 0.4, pointBackgroundColor: GOLD, pointRadius: 4, cubicInterpolationMode: 'monotone' }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: false }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        data: { labels: [], datasets: [{ label: 'Cases', data: [], fill: true, backgroundColor: PURPLE_BG, borderColor: PURPLE, borderWidth: 2, tension: 0.4, pointBackgroundColor: PURPLE, pointRadius: 4, cubicInterpolationMode: 'monotone' }] },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: false, 
+                datalabels: { 
+                    anchor: 'end', 
+                    align: 'top', 
+                    color: PURPLE, 
+                    font: { weight: 'bold', size: 10 }, 
+                    offset: 4,
+                    clip: false,
+                    formatter: (value) => value > 0 ? value : ''
+                } 
+            }, 
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grace: '15%' } } 
+        }
     });
     ctxMonth.canvas.addEventListener('click', function(click) {
         const els = casesByMonth.getElementsAtEventForMode(click, 'nearest', { intersect: true }, true);

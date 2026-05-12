@@ -1,5 +1,5 @@
 .sidebar-nav .sidebar-item .sidebar-link.active {
-    background-color: #E8A020 !important;
+    background-color: #8a2be2 !important;
     color: white !important;
 }
 
@@ -8,23 +8,23 @@
 }
 
 .sidebar-nav .sidebar-item.selected .sidebar-link.active {
-    background-color: #E8A020 !important;
+    background-color: #8a2be2 !important;
 }
 
 .sidebar-nav .sidebar-item .sidebar-link:hover {
-    background-color: #fffbf0 !important;
-    color: #E8A020  !important;
+    background-color: #d0b6e7 !important;
+    color: #9a71c1  !important;
 }
 
 .sidebar-nav .sidebar-item .sidebar-link:hover i {
-    color: #E8A020 !important;
+    color: #8a2be2 !important;
 }
 
 /* Default Sidebar Icons and Small Caps */
 #sidebarnav .nav-small-cap, 
 #sidebarnav .nav-small-cap i,
 .sidebar-nav .sidebar-item .sidebar-link i {
-    color: #E8A020 !important;
+    color: #8a2be2 !important;
 }
 
 .sidebar-nav .sidebar-item .sidebar-link .hide-menu {

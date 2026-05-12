@@ -8,10 +8,13 @@
 <link href='https://cdn.datatables.net/datetime/1.5.2/css/dataTables.dateTime.min.css' rel='stylesheet'>
 <style>
     .stat-card { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
-    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(232,160,32,0.2) !important; }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(138, 43, 226, 0.2) !important; }
+    .text-purple { color: #8a2be2 !important; }
+    .btn-purple { background-color: #8a2be2 !important; color: white !important; }
+    .btn-purple:hover { background-color: #7b2ff7 !important; color: white !important; }
     canvas { cursor: pointer; }
     #consolidated-cases-table tbody tr { cursor: pointer; }
-    #consolidated-cases-table tbody tr:hover td { background-color: #fffbf0; }
+    #consolidated-cases-table tbody tr:hover td { background-color: #d0b6e7; }
     .section-head { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
     .section-head hr { flex: 1; margin: 0; opacity: .2; }
 </style>
@@ -24,7 +27,7 @@
     <div class="row align-items-center mb-4 pt-2">
         <div class="col">
             <h1 class="fw-bold text-color-primary mb-0">
-                <i class='bx bxs-bar-chart-alt-2 text-color-gold me-2'></i>Report Analytics
+                <i class='bx bxs-bar-chart-alt-2 text-purple me-2'></i>Report Analytics
             </h1>
             <p class="text-muted small mb-0">Click any card, chart segment, or case row to navigate.</p>
         </div>
@@ -61,10 +64,10 @@
                 <input type="date" id="graph-start-date" class="form-control form-control-sm" style="max-width: 140px;">
                 <span class="text-muted small px-1">to</span>
                 <input type="date" id="graph-end-date" class="form-control form-control-sm" style="max-width: 140px;">
-                <button id="graph-apply-btn" class="btn btn-sm btn-gold text-white fw-bold ms-2 px-3">Apply Filter</button>
+                <button id="graph-apply-btn" class="btn btn-sm btn-purple text-white fw-bold ms-2 px-3">Apply Filter</button>
                 <button id="graph-clear-btn" class="btn btn-sm btn-outline-secondary ms-1">Reset</button>
             </div>
-            <button id="btn-export-pdf-charts" class="btn btn-gold shadow-sm rounded-pill px-4">
+            <button id="btn-export-pdf-charts" class="btn btn-purple shadow-sm rounded-pill px-4">
                 <i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)
             </button>
         </div>
@@ -85,53 +88,53 @@
         <div class="col-6 col-md-4 col-xl">
             <div class="bg-white rounded-4 p-3 shadow-sm h-100 stat-card" id="sc-total">
                 <div class="text-muted fw-bold text-uppercase mb-1" style="font-size:.67rem;">Total Cases</div>
-                <div class="fw-bold fs-3 text-color-gold" id="stat-total-cases">—</div>
+                <div class="fw-bold fs-3 text-purple" id="stat-total-cases">—</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-xl">
             <div class="bg-white rounded-4 p-3 shadow-sm h-100 stat-card" id="sc-active">
                 <div class="text-muted fw-bold text-uppercase mb-1" style="font-size:.67rem;">Active Cases</div>
-                <div class="fw-bold fs-3 text-color-gold" id="stat-active-cases">—</div>
+                <div class="fw-bold fs-3 text-purple" id="stat-active-cases">—</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-xl">
             <div class="bg-white rounded-4 p-3 shadow-sm h-100 stat-card" id="sc-resolved">
                 <div class="text-muted fw-bold text-uppercase mb-1" style="font-size:.67rem;">Resolved Cases</div>
-                <div class="fw-bold fs-3 text-color-gold" id="stat-resolved-cases">—</div>
+                <div class="fw-bold fs-3 text-purple" id="stat-resolved-cases">—</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-xl">
             <div class="bg-white rounded-4 p-3 shadow-sm h-100 stat-card" id="sc-victims">
                 <div class="text-muted fw-bold text-uppercase mb-1" style="font-size:.67rem;">Total Victims</div>
-                <div class="fw-bold fs-3 text-color-gold" id="stat-total-victims">—</div>
+                <div class="fw-bold fs-3 text-purple" id="stat-total-victims">—</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-xl">
             <div class="bg-white rounded-4 p-3 shadow-sm h-100 stat-card" id="sc-perps">
                 <div class="text-muted fw-bold text-uppercase mb-1" style="font-size:.67rem;">Total Perpetrators</div>
-                <div class="fw-bold fs-3 text-color-gold" id="stat-total-perps">—</div>
+                <div class="fw-bold fs-3 text-purple" id="stat-total-perps">—</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-xl">
             <div class="bg-white rounded-4 p-3 shadow-sm h-100 stat-card" id="sc-orders">
                 <div class="text-muted fw-bold text-uppercase mb-1" style="font-size:.67rem;">Protection Orders</div>
                 <div class="d-flex gap-3 mt-1">
-                    <div class="text-center"><div class="fw-bold fs-5 text-color-gold" id="stat-bpo">—</div><div class="text-muted" style="font-size:.62rem;font-weight:700;">BPO</div></div>
-                    <div class="text-center"><div class="fw-bold fs-5 text-color-gold" id="stat-tpo">—</div><div class="text-muted" style="font-size:.62rem;font-weight:700;">TPO</div></div>
-                    <div class="text-center"><div class="fw-bold fs-5 text-color-gold" id="stat-ppo">—</div><div class="text-muted" style="font-size:.62rem;font-weight:700;">PPO</div></div>
+                    <div class="text-center"><div class="fw-bold fs-5 text-purple" id="stat-bpo">—</div><div class="text-muted" style="font-size:.62rem;font-weight:700;">BPO</div></div>
+                    <div class="text-center"><div class="fw-bold fs-5 text-purple" id="stat-tpo">—</div><div class="text-muted" style="font-size:.62rem;font-weight:700;">TPO</div></div>
+                    <div class="text-center"><div class="fw-bold fs-5 text-purple" id="stat-ppo">—</div><div class="text-muted" style="font-size:.62rem;font-weight:700;">PPO</div></div>
                 </div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-xl">
             <div class="bg-white rounded-4 p-3 shadow-sm h-100 stat-card" id="sc-criminal">
                 <div class="text-muted fw-bold text-uppercase mb-1" style="font-size:.67rem;">Criminal Cases</div>
-                <div class="fw-bold fs-3 text-color-gold" id="stat-criminal">—</div>
+                <div class="fw-bold fs-3 text-purple" id="stat-criminal">—</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-xl">
             <div class="bg-white rounded-4 p-3 shadow-sm h-100 stat-card" id="sc-services">
                 <div class="text-muted fw-bold text-uppercase mb-1" style="font-size:.67rem;">Services Given</div>
-                <div class="fw-bold fs-3 text-color-gold" id="stat-services">—</div>
+                <div class="fw-bold fs-3 text-purple" id="stat-services">—</div>
             </div>
         </div>
     </div> <!-- Close the row of KPI cards -->
@@ -139,7 +142,7 @@
     <div class="card border-0 shadow-sm rounded-4 mb-4">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold text-color-primary mb-0"><i class='bx bx-filter-alt text-color-gold me-1'></i>Advanced Filters</h6>
+                <h6 class="fw-bold text-color-primary mb-0"><i class='bx bx-filter-alt text-color-purple me-1'></i>Advanced Filters</h6>
                 <button class="btn btn-sm btn-outline-warning rounded-pill px-3 d-none" id="clear-filter-btn">
                     <i class='bx bx-x me-1'></i>Clear Active Filters
                 </button>
@@ -210,7 +213,7 @@
     <!-- Dynamic Report Builder Header -->
     <div class="d-flex justify-content-between align-items-end mb-3">
         <div>
-            <h5 class="fw-bold text-color-primary mb-1"><i class='bx bx-bar-chart-square text-color-gold me-2'></i>Dynamic Report Builder</h5>
+            <h5 class="fw-bold text-color-primary mb-1"><i class='bx bx-bar-chart-square text-color-purple me-2'></i>Dynamic Report Builder</h5>
             <p class="text-muted small mb-0">Add up to 9 custom charts. All charts update automatically based on your active filters above.</p>
         </div>
         <button class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" id="btn-add-graph">
@@ -238,8 +241,9 @@
                             <option value="monthly_trend">Monthly Trend</option>
                             <option value="barangay">Barangay</option>
                         </select>
-                        <select class="form-select form-select-sm border-secondary bg-light fw-semibold dynamic-type-select" style="min-width: 100px; max-width: 120px;">
-                            <option value="bar">Bar</option>
+                        <select class="form-select form-select-sm border-secondary bg-light fw-semibold dynamic-type-select" style="min-width: 130px; max-width: 150px;">
+                            <option value="bar">Vertical Bar</option>
+                            <option value="hbar">Horizontal Bar</option>
                             <option value="pie">Pie</option>
                             <option value="doughnut">Doughnut</option>
                             <option value="line">Line</option>
@@ -307,11 +311,11 @@
 $(document).ready(function () {
 
     // ── Constants ──
-    const CASE_URL = '/admin-barangay-vawc/case/';
-    const viewCaseUrl = (id, type) => type === 'Behalf' ? `/admin-barangay-vawc/view-case/behalf/${id}/` : `/admin-barangay-vawc/view-case/impacted/${id}/`;
-    const GOLD   = '#E8A020';
-    const GOLD_BG = 'rgba(232,160,32,0.14)';
-    const PALETTE = ['#E8A020','#5e2ca5','#2d9cdb','#27ae60','#e74c3c',
+    const CASE_URL = '/barangay-admin/case/';
+    const viewCaseUrl = (id, type) => type === 'Behalf' ? `/barangay-admin/view-case/behalf/${id}/` : `/barangay-admin/view-case/impacted/${id}/`;
+    const PURPLE = '#8a2be2';
+    const PURPLE_BG = 'rgba(138, 43, 226, 0.85)';
+    const PALETTE = ['#8a2be2','#5e2ca5','#2d9cdb','#27ae60','#e74c3c',
                      '#8e44ad','#16a085','#d35400','#2980b9','#c0392b','#1abc9c','#f39c12','#7f8c8d'];
 
     // ── State ──
@@ -448,6 +452,9 @@ $(document).ready(function () {
             const caseIds = [];
             $(consolidatedTable.rows({ filter: 'applied' }).nodes()).each(function() { caseIds.push($(this).data('caseid')); });
             const filteredCasesData = rawCasesData.filter(c => caseIds.includes(c.data.case_id));
+            
+            const counts = getDimensionCounts(filteredCasesData);
+            validateDropdowns(cardId, counts);
             renderSpecificChart(cardId, filteredCasesData);
         });
         
@@ -487,15 +494,79 @@ $(document).ready(function () {
 
     // ── Build Dynamic Chart ──
     function updateAllCharts(filteredCases) {
+        const counts = getDimensionCounts(filteredCases);
         Object.keys(chartInstances).forEach(cardId => {
+            validateDropdowns(cardId, counts);
             renderSpecificChart(cardId, filteredCases);
         });
     }
 
+    function getDimensionCounts(filteredCases) {
+        const counts = {
+            ra_violation: new Set(), abuse_type: new Set(), place_of_incident: new Set(),
+            relationship: new Set(), age_group: new Set(), civil_status: new Set(),
+            service_type: new Set(), monthly_trend: new Set(), barangay: new Set()
+        };
+        const today = new Date();
+        filteredCases.forEach(c => {
+            const d = c.data;
+            if (d.checkbox_ra_9262) counts.ra_violation.add('RA 9262');
+            if (d.checkbox_ra_8353) counts.ra_violation.add('RA 8353');
+            if (d.checkbox_ra_7877) counts.ra_violation.add('RA 7877');
+            if (d.checkbox_ra_9775) counts.ra_violation.add('RA 9775');
+            if (d.checkbox_a_7610)  counts.ra_violation.add('RA 7610');
+            if (d.checkbox_physical_abuse)      counts.abuse_type.add('Physical');
+            if (d.checkbox_sexual_abuse)        counts.abuse_type.add('Sexual');
+            if (d.checkbox_psychological_abuse) counts.abuse_type.add('Psychological');
+            if (d.checkbox_economic_abuse)      counts.abuse_type.add('Economic');
+            if (d.checkbox_others)              counts.abuse_type.add('Other');
+            if (d.place_of_incident) counts.place_of_incident.add(d.place_of_incident);
+            c.perpetrators.forEach(p => { if (p.relationship_to_victim) counts.relationship.add(p.relationship_to_victim); });
+            c.victims.forEach(v => {
+                let age='-';
+                if (v.date_of_birth && v.date_of_birth!=='None') {
+                    const bd=new Date(v.date_of_birth);
+                    if (!isNaN(bd)) { age=today.getFullYear()-bd.getFullYear(); const mo=today.getMonth()-bd.getMonth(); if(mo<0||(mo===0&&today.getDate()<bd.getDate()))age--; }
+                }
+                const grp = getAgeGroup(age);
+                if (grp !== 'Unknown') counts.age_group.add(grp);
+                if (v.civil_status) counts.civil_status.add(v.civil_status);
+            });
+            if (d.service_information) counts.service_type.add(d.service_information);
+            if (d.date_added) counts.monthly_trend.add(d.date_added.substring(0,7));
+            if (d.barangay) counts.barangay.add(d.barangay);
+        });
+        const res = {};
+        for (const k in counts) res[k] = counts[k].size;
+        return res;
+    }
+
+    function validateDropdowns(cardId, dimensionCounts) {
+        const dSel = $(`#dim-${cardId}`), tSel = $(`#type-${cardId}`);
+        if (!dSel.length || !tSel.length) return;
+        const curDim = dSel.val(), curType = tSel.val();
+        const isCircular = (curType === 'pie' || curType === 'doughnut');
+        
+        dSel.find('option').each(function() {
+            const dimVal = $(this).val();
+            const count = dimensionCounts[dimVal] || 0;
+            const shouldHide = isCircular && count > 7;
+            $(this).prop('disabled', shouldHide).toggle(!shouldHide);
+        });
+        
+        const selCount = dimensionCounts[curDim] || 0;
+        const tooMany = selCount > 7;
+        tSel.find('option[value="pie"], option[value="doughnut"]').each(function() {
+            $(this).prop('disabled', tooMany).toggle(!tooMany);
+        });
+        if (isCircular && tooMany) tSel.val('bar');
+    }
+
     function renderSpecificChart(cardId, filteredCases) {
-        const dim = $(`#dim-${cardId}`).val();
-        const type = $(`#type-${cardId}`).val();
+        const dSel = $(`#dim-${cardId}`), tSel = $(`#type-${cardId}`);
+        const dim = dSel.val(), type = tSel.val();
         const map = {};
+        const today = new Date();
         
         filteredCases.forEach(c => {
             const d = c.data;
@@ -506,21 +577,16 @@ $(document).ready(function () {
                 if (d.checkbox_ra_9775) map['RA 9775'] = (map['RA 9775']||0)+1;
                 if (d.checkbox_a_7610)  map['RA 7610'] = (map['RA 7610']||0)+1;
             } else if (dim === 'abuse_type') {
-                if (d.checkbox_physical_abuse)      map['Physical'] = (map['Physical']||0)+1;
-                if (d.checkbox_sexual_abuse)        map['Sexual'] = (map['Sexual']||0)+1;
+                if (d.checkbox_physical_abuse)      map['Physical']      = (map['Physical']||0)+1;
+                if (d.checkbox_sexual_abuse)        map['Sexual']        = (map['Sexual']||0)+1;
                 if (d.checkbox_psychological_abuse) map['Psychological'] = (map['Psychological']||0)+1;
-                if (d.checkbox_economic_abuse)      map['Economic'] = (map['Economic']||0)+1;
-                if (d.checkbox_others)              map['Other'] = (map['Other']||0)+1;
+                if (d.checkbox_economic_abuse)      map['Economic']      = (map['Economic']||0)+1;
+                if (d.checkbox_others)              map['Other']         = (map['Other']||0)+1;
             } else if (dim === 'place_of_incident') {
-                let p = {house:'House',work:'Work',school:'School',commercialPlaces:'Commercial Places',religion:'Religious Institutions',placeOfMedicalTreatment:'Medical Treatment',transport:'Transport',brothles:'Brothels',others:'Others',noResponse:'No Response'}[d.place_of_incident] || (d.place_of_incident||'Not Specified');
+                const p = d.place_of_incident || 'Unknown';
                 map[p] = (map[p]||0)+1;
             } else if (dim === 'relationship') {
-                c.perpetrators.forEach(p => {
-                    if (p.relationship_to_victim) {
-                        let r = {currentSpouse:'Current Spouse/Partner',formerSpouse:'Former Spouse/Partner',currentFiance:'Current Fiancé',formerFiance:'Former Fiancé',employer:'Employer',agentOfEmployer:'Agent of Employer',teacher:'Teacher/Instructor',coach:'Coach/Trainer',immediateFamily:'Immediate Family',otherRelatives:'Other Relatives',peopleOfAuthority:'People of Authority',neighbors:'Neighbors/Peers',stranger:'Stranger'}[p.relationship_to_victim]||p.relationship_to_victim;
-                        map[r] = (map[r]||0)+1;
-                    }
-                });
+                c.perpetrators.forEach(p => { const r = p.relationship_to_victim || 'Unknown'; map[r] = (map[r]||0)+1; });
             } else if (dim === 'age_group') {
                 c.victims.forEach(v => {
                     let age='-';
@@ -532,19 +598,19 @@ $(document).ready(function () {
                     if (grp !== 'Unknown') map[grp] = (map[grp]||0)+1;
                 });
             } else if (dim === 'civil_status') {
-                c.victims.forEach(v => {
-                    const cs=v.civil_status||'Unknown';
-                    const csL={single:'Single',married:'Married','live-in':'Live-In',widowed:'Widowed',separated:'Separated'}[cs]||cs;
-                    map[csL] = (map[csL]||0)+1;
+                c.victims.forEach(v => { 
+                    const cs = v.civil_status || 'Unknown'; 
+                    const csL = {single:'Single',married:'Married','live-in':'Live-In',widowed:'Widowed',separated:'Separated'}[cs]||cs;
+                    map[csL] = (map[csL]||0)+1; 
                 });
             } else if (dim === 'service_type') {
-                let svc = d.service_information||'No Service Type';
-                if (svc==='crisis')   svc='Crisis Intervention Including Rescue';
+                let svc = d.service_information || 'No Service Type';
+                if (svc==='crisis') svc='Crisis Intervention Including Rescue';
                 else if (svc==='issuance') svc='Issuance / Enforcement of BPO';
-                else if (svc==='None'||svc==='') svc='No Service Type';
+                else if (svc==='None' || svc==='') svc='No Service Type';
                 map[svc] = (map[svc]||0)+1;
             } else if (dim === 'monthly_trend') {
-                if (d.date_added) { const m=d.date_added.substring(0,7); map[m]=(map[m]||0)+1; }
+                const m = d.date_added ? d.date_added.substring(0, 7) : 'Unknown'; map[m] = (map[m]||0)+1;
             } else if (dim === 'barangay') {
                 if (d.barangay) map[d.barangay] = (map[d.barangay]||0)+1;
             }
@@ -555,41 +621,71 @@ $(document).ready(function () {
         if (dim === 'monthly_trend' || dim === 'age_group') {
             entries.sort((a,b) => a[0].localeCompare(b[0]));
         } else {
-            entries.sort((a,b) => b[1] - a[1]); // Descending count
+            entries.sort((a,b) => b[1] - a[1]);
         }
-
+        
         const labels = entries.map(e => e[0]);
         const dataVals = entries.map(e => e[1]);
+        const isPie = (type === 'pie' || type === 'doughnut');
+        const isHBar = (type === 'hbar');
+        
+        const ctx = document.getElementById(`canvas-${cardId}`).getContext('2d');
+        if (chartInstances[cardId]) chartInstances[cardId].destroy();
 
-        if (chartInstances[cardId]) {
-            chartInstances[cardId].destroy();
-        }
-        
-        const canvasEl = document.getElementById(`canvas-${cardId}`);
-        if (!canvasEl) return;
-        
-        const ctx = canvasEl.getContext('2d');
-        const isPie = type === 'pie' || type === 'doughnut';
-        
         chartInstances[cardId] = new Chart(ctx, {
-            type: type,
-            data: { 
-                labels, 
-                datasets: [{ 
-                    label: 'Cases', 
+            type: (type === 'hbar' ? 'bar' : type),
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total',
                     data: dataVals,
-                    backgroundColor: isPie ? PALETTE.slice(0, dataVals.length) : (type === 'line' ? GOLD_BG : PALETTE.slice(0, dataVals.length)),
-                    borderColor: type === 'line' ? GOLD : 'transparent',
-                    borderWidth: type === 'line' ? 2 : 0,
-                    tension: 0.4, fill: true, pointBackgroundColor: GOLD, pointRadius: 4, borderRadius: type==='bar'?4:0
-                }] 
+                    backgroundColor: isPie ? PALETTE : (type === 'line' ? PURPLE_BG : PALETTE[0]),
+                    borderColor: isPie ? '#fff' : (type === 'line' ? PURPLE : 'transparent'),
+                    borderWidth: isPie ? 1 : (type === 'line' ? 2 : 0),
+                    fill: (type === 'line'),
+                    borderRadius: (type === 'bar' || type === 'hbar') ? 4 : 0
+                }]
             },
             options: {
+                indexAxis: isHBar ? 'y' : 'x',
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: isPie, position: 'bottom' } },
+                layout: {
+                    padding: {
+                        top: isPie ? 0 : 35,
+                        right: (isPie || isHBar) ? 35 : 25,
+                        left: isPie ? 0 : 10,
+                        bottom: isPie ? 10 : 0
+                    }
+                },
+                plugins: { 
+                    legend: { 
+                        display: isPie, 
+                        position: 'bottom',
+                        labels: { boxWidth: 12, font: { size: 11 } }
+                    },
+                    datalabels: {
+                        color: isPie ? '#fff' : (type === 'line' ? PURPLE : '#555'),
+                        anchor: isPie ? 'center' : 'end',
+                        align: isPie ? 'center' : (isHBar ? 'right' : 'top'),
+                        offset: isPie ? 0 : 6,
+                        clip: false,
+                        font: { weight: 'bold', size: 11 },
+                        formatter: (value) => value > 0 ? value : '',
+                        textStrokeColor: isPie ? 'rgba(0,0,0,0.3)' : 'transparent',
+                        textStrokeWidth: isPie ? 1 : 0
+                    }
+                },
                 scales: isPie ? {} : { 
-                    y: { beginAtZero: true, ticks: { precision: 0 } },
-                    x: { ticks: { autoSkip: false } }
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { precision: 0 },
+                        grace: isHBar ? 0 : '15%'
+                    },
+                    x: { 
+                        beginAtZero: true,
+                        ticks: { precision: 0, autoSkip: false },
+                        grace: isHBar ? '15%' : 0
+                    }
                 }
             }
         });
@@ -657,9 +753,9 @@ $(document).ready(function () {
 
             const svcBadge = svc==='No Service Type'
                 ? `<span class="badge bg-secondary rounded-pill small">${svc}</span>`
-                : `<span class="badge bg-gold-light text-color-gold border border-warning rounded-pill small">${svc}</span>`;
+                : `<span class="badge bg-purple-light text-color-purple border border-purple rounded-pill small">${svc}</span>`;
             const raBadges = ra_list.length
-                ? ra_list.map(r=>`<span class="badge bg-gold-light text-color-gold border border-warning rounded-pill me-1 small">${r}</span>`).join('')
+                ? ra_list.map(r=>`<span class="badge bg-purple-light text-color-purple border border-purple rounded-pill me-1 small">${r}</span>`).join('')
                 : '<span class="text-muted small">—</span>';
 
             tbody.innerHTML += `
@@ -843,7 +939,7 @@ $(document).ready(function () {
                         { text: providerLabel, fontSize: 10, bold: true, alignment: 'center', color: '#222' },
                         { text: agencyName, fontSize: 16, bold: true, alignment: 'center', color: '#000', margin: [0, 2, 0, 2] },
                         { text: locationParts, fontSize: 9, alignment: 'center', color: '#555' },
-                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0, 5, 0, 0] }
+                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#8a2be2', margin: [0, 5, 0, 0] }
                     ]
                 },
                 // Right: Provider Logo
@@ -929,7 +1025,7 @@ $(document).ready(function () {
                     if (canvas1) {
                         colArray.push({
                             stack: [
-                                { text: `ANALYSIS: ${subtitle1.toUpperCase()}`, fontSize: 11, bold: true, color: '#3b1a6e', margin: [0, 0, 0, 6], alignment: 'center' },
+                                { text: `ANALYSIS: ${subtitle1.toUpperCase()}`, fontSize: 11, bold: true, color: '#8a2be2', margin: [0, 0, 0, 6], alignment: 'center' },
                                 { image: canvas1.toDataURL('image/png', 0.95), fit: [500, 260], alignment: 'center' }
                             ]
                         });
@@ -943,7 +1039,7 @@ $(document).ready(function () {
                         if (canvas2) {
                             colArray.push({
                                 stack: [
-                                    { text: `ANALYSIS: ${subtitle2.toUpperCase()}`, fontSize: 11, bold: true, color: '#3b1a6e', margin: [0, 0, 0, 6], alignment: 'center' },
+                                    { text: `ANALYSIS: ${subtitle2.toUpperCase()}`, fontSize: 11, bold: true, color: '#8a2be2', margin: [0, 0, 0, 6], alignment: 'center' },
                                     { image: canvas2.toDataURL('image/png', 0.95), fit: [500, 260], alignment: 'center' }
                                 ]
                             });
@@ -1015,10 +1111,10 @@ $(document).ready(function () {
                     },
                     content: [
                         govHeader(),
-                        { text: 'CUSTOM ANALYTICS REPORT', fontSize: 16, bold: true, color: '#E8A020', alignment: 'center', margin: [0, 0, 0, 2] },
+                        { text: 'CUSTOM ANALYTICS REPORT', fontSize: 16, bold: true, color: '#8a2be2', alignment: 'center', margin: [0, 0, 0, 2] },
                         { text: `Generated: ${new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' })}   |   Filter: Active`, fontSize: 9, color: '#777', alignment: 'center', margin: [0, 0, 0, 14] },
                         
-                        { text: 'SUMMARY STATISTICS FOR APPLIED FILTER', fontSize: 9, bold: true, color: '#3b1a6e', margin: [0, 10, 0, 4] },
+                        { text: 'SUMMARY STATISTICS FOR APPLIED FILTER', fontSize: 9, bold: true, color: '#8a2be2', margin: [0, 10, 0, 4] },
                         summaryTable,
 
                         ...chartBlocks,
@@ -1026,13 +1122,13 @@ $(document).ready(function () {
                         // The data table
                         { text: '', pageBreak: 'before' },
                         govHeader(),
-                        { text: `FILTERED CASE DEMOGRAPHICS`, fontSize: 9, bold: true, color: '#3b1a6e', margin: [0, 10, 0, 4] },
+                        { text: `FILTERED CASE DEMOGRAPHICS`, fontSize: 9, bold: true, color: '#8a2be2', margin: [0, 10, 0, 4] },
                         buildPdfFilteredTableBody()
                     ],
                     styles: {
                         kpiLabel: { fontSize: 8, bold: true, color: '#888', uppercaseChars: true, alignment: 'center' },
-                        kpiValue: { fontSize: 16, bold: true, color: '#3b1a6e', alignment: 'center' },
-                        kpiValueSm: { fontSize: 11, bold: true, color: '#E8A020', alignment: 'center' },
+                        kpiValue: { fontSize: 16, bold: true, color: '#8a2be2', alignment: 'center' },
+                        kpiValueSm: { fontSize: 11, bold: true, color: '#8a2be2', alignment: 'center' },
                         th: { fontSize: 9, bold: true, color: '#ffffff', fillColor: '#2d2d2d', alignment: 'left', margin: [0, 4, 0, 4] },
                         td: { fontSize: 8, color: '#444', margin: [0, 2, 0, 2] }
                     }
