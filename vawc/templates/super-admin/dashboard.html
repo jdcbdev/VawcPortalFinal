@@ -147,7 +147,7 @@
 
     <!-- Drill-down breadcrumb / active filter notice -->
     <div id="kpi-filter-bar" class="d-none mb-3 d-flex align-items-center gap-2 bg-white border rounded px-3 py-2 shadow-sm">
-        <i class='bx bx-filter fs-5' style="color:#E8A020;"></i>
+        <i class='bx bx-filter fs-5' style="color:#8a2be2;"></i>
         <span class="small text-muted">Showing: </span>
         <span class="fw-bold small text-kpi-gold" id="kpi-filter-label"></span>
         <button class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="drillDown('all')">
@@ -156,12 +156,12 @@
     </div>
 
     <style>
-        /* Dashboard accent — warm amber-gold (#E8A020) complements the site purple (#8a2be2) */
-        .text-kpi-gold { color: #E8A020 !important; }
+        /* Dashboard accent — warm amber-gold (#8a2be2) complements the site purple (#8a2be2) */
+        .text-kpi-gold { color: #8a2be2 !important; }
         .kpi-card { transition: all 0.2s ease; cursor: pointer; }
-        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(232,160,32,0.2) !important; border-color: #E8A020 !important; }
-        .kpi-card.kpi-active { border-color: #E8A020 !important; background-color: #fffbf0 !important; box-shadow: 0 4px 16px rgba(232,160,32,0.25) !important; }
-        .kpi-icon-bg { color: #E8A020; pointer-events: none; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(232,160,32,0.2) !important; border-color: #8a2be2 !important; }
+        .kpi-card.kpi-active { border-color: #8a2be2 !important; background-color: #fffbf0 !important; box-shadow: 0 4px 16px rgba(232,160,32,0.25) !important; }
+        .kpi-icon-bg { color: #8a2be2; pointer-events: none; }
     </style>
 
     <div class="row g-3 mb-3">
@@ -309,13 +309,13 @@
 <style>
     /* Only kept for things Bootstrap utilities cannot replicate */
     .case-modal-gold-header {
-        background: linear-gradient(135deg, #E8A020 0%, #f0b030 50%, #d18d1a 100%);
+        background: linear-gradient(135deg, #8a2be2 0%, #f0b030 50%, #d18d1a 100%);
     }
     .ra-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
-        background: linear-gradient(135deg, #E8A020, #d18d1a);
+        background: linear-gradient(135deg, #8a2be2, #d18d1a);
         color: #fff;
         font-weight: 700;
         font-size: 0.75rem;
@@ -353,7 +353,7 @@
             </div>
 
             <!-- Incident Address Strip -->
-            <div class="bg-gold-light border-top border-bottom py-2 px-4 d-flex align-items-center gap-2" style="border-color:#E8A020 !important;">
+            <div class="bg-gold-light border-top border-bottom py-2 px-4 d-flex align-items-center gap-2" style="border-color:#8a2be2 !important;">
                 <i class='bx bx-map-pin text-color-gold fs-5'></i>
                 <span class="small fw-semibold text-secondary" id="modal-incident-address-strip"></span>
             </div>
@@ -367,7 +367,7 @@
                         <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
                             <i class='bx bx-user me-1'></i>Victim Information
                         </span>
-                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#8a2be2;">
                     </div>
                     <div class="row g-2">
                         <div class="col-12">
@@ -403,7 +403,7 @@
                         <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
                             <i class='bx bx-user-x me-1'></i>Perpetrator Information
                         </span>
-                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#8a2be2;">
                     </div>
                     <div class="row g-2">
                         <div class="col-12">
@@ -427,7 +427,7 @@
                         <span class="small fw-bold text-uppercase text-color-gold" style="letter-spacing:0.08em; white-space:nowrap;">
                             <i class='bx bx-shield-x me-1'></i>RA Violations
                         </span>
-                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#E8A020;">
+                        <hr class="flex-grow-1 my-0 opacity-25" style="border-color:#8a2be2;">
                     </div>
                     <div id="modal-ra-badges" class="d-flex flex-wrap gap-2"></div>
                 </div>
@@ -483,12 +483,12 @@
                     label: 'Cases',
                     data: default_province_data,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
+                        'rgba(255, 99, 132, 0.85)',
+                        'rgba(54, 162, 235, 0.85)',
+                        'rgba(255, 206, 86, 0.85)',
+                        'rgba(75, 192, 192, 0.85)',
+                        'rgba(153, 102, 255, 0.85)',
+                        'rgba(255, 159, 64, 0.85)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
@@ -589,12 +589,12 @@
                     label: 'Cases',
                     data: barData,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
+                        'rgba(255, 99, 132, 0.85)',
+                        'rgba(54, 162, 235, 0.85)',
+                        'rgba(255, 206, 86, 0.85)',
+                        'rgba(75, 192, 192, 0.85)',
+                        'rgba(153, 102, 255, 0.85)',
+                        'rgba(255, 159, 64, 0.85)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
@@ -668,10 +668,10 @@
                     label: 'City Total',
                     data: default_city_data,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255, 99, 132, 0.85)',
+                        'rgba(54, 162, 235, 0.85)',
+                        'rgba(255, 206, 86, 0.85)',
+                        'rgba(75, 192, 192, 0.85)',
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
@@ -773,7 +773,7 @@
                     label: 'Cases',
                     fill: true,
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderColor: 'rgba(255, 99, 132, 2)',
                     data: lineData,
                     borderWidth: 1,
                     pointStyle: 'circle',
