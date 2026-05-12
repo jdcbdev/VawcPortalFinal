@@ -7,56 +7,77 @@
         <div class="card-body">
             <div class="row overflow-hidden">
                 <div class="col-lg-6 col-md-6 col-sm-8">
-                    <img src= "{% static '/img/layered-waves-1.png' %}" class="img-fluid w-75 h-25" style="position: absolute; bottom: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px;" alt="image">
+                    <img src="{% static '/img/layered-waves-1.png' %}" class="img-fluid w-75 h-25"
+                        style="position: absolute; bottom: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px;"
+                        alt="image">
                     <div class="typing-container">
                         <p class="typing-text"></p>
                     </div>
-                    <img src="{% static '/img/layered-waves-1.png' %}" class="img-fluid w-75 h-25" style="position: absolute; top: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px; transform: scaleY(-1);" alt="image">
+                    <img src="{% static '/img/layered-waves-1.png' %}" class="img-fluid w-75 h-25"
+                        style="position: absolute; top: 0; left: 0; border-top-left-radius: 5px; border-bottom-left-radius: 5px; transform: scaleY(-1);"
+                        alt="image">
                 </div>
-                
-                <div class="col-lg-6 col-md-6 col-sm-8" style="min-height: 67vh; display: flex; flex-direction: column; justify-content: center;">
-                    <h2 class="text-center pt-3 fw-regular" style="color: purple; z-index: 1000; position: relative;">User Login</h2>
-                    <p class="text-center fw-regular" style="color: purple; opacity: 75%; z-index: 1000; position: relative;">Sign in to your account</p>
-                        <form id="loginForm" method="post">
-                            {% csrf_token %}
-                            <div class="row pb-2">
-                                <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                    <input type="email" class="form-control input-purple" placeholder="Email" id="barangay-email" name="barangay-email" style="border: 1px solid #c0adcc" aria-describedby="barangay-emailFeedback">
-                                    <div id="barangay-emailFeedback" class="invalid-feedback">
-                                        Please provide a valid email.
-                                    </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-8"
+                    style="min-height: 67vh; display: flex; flex-direction: column; justify-content: center;">
+                    <h2 class="text-center pt-3 fw-regular" style="color: purple; z-index: 1000; position: relative;">
+                        User Login</h2>
+                    <p class="text-center fw-regular"
+                        style="color: purple; opacity: 75%; z-index: 1000; position: relative;">Sign in to your account
+                    </p>
+                    <form id="loginForm" method="post">
+                        {% csrf_token %}
+                        <div class="row pb-2">
+                            <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
+                                <input type="email" class="form-control input-purple" placeholder="Email"
+                                    id="barangay-email" name="barangay-email" style="border: 1px solid #c0adcc"
+                                    aria-describedby="barangay-emailFeedback">
+                                <div id="barangay-emailFeedback" class="invalid-feedback">
+                                    Please provide a valid email.
                                 </div>
                             </div>
-                            <div class="row pb-2">
-                                <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
-                                    <div class="input-group">
-                                        <input type="password" class="form-control input-purple" placeholder="Password" id="barangay-passkey" name="barangay-passkey" style="border: 1px solid #c0adcc" aria-describedby="barangay-passkeyFeedback">
-                                        <button class="btn btn-outline-primary toggle-password" type="button">
-                                            <i class='bx bx-show'></i>
-                                        </button>
-                                    </div>
-                                    <div id="barangay-passkeyFeedback" class="invalid-feedback">
-                                        Your Passkey is invalid. Please try again.
-                                    </div>
+                        </div>
+                        <div class="row pb-2">
+                            <div class="col-lg-12 col-md-12 col-sm-8 pt-2">
+                                <div class="input-group">
+                                    <input type="password" class="form-control input-purple" placeholder="Password"
+                                        id="barangay-passkey" name="barangay-passkey" style="border: 1px solid #c0adcc"
+                                        aria-describedby="barangay-passkeyFeedback">
+                                    <button class="btn btn-outline-primary toggle-password" type="button">
+                                        <i class='bx bx-show'></i>
+                                    </button>
+                                </div>
+                                <div id="barangay-passkeyFeedback" class="invalid-feedback">
+                                    Your Passkey is invalid. Please try again.
                                 </div>
                             </div>
-                            <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2 pb-3">
-                                <button id="submitButton" class="btn btn-primary w-100 d-flex justify-content-center align-items-center" type="submit">
-                                    <span>Log in</span>
-                                    <div class="spinner-border text-light position-absolute" role="status" style="display: none;">
-                                    </div>
-                                </button>
-                                <a href="{% url 'home' %}" style="text-decoration: none; z-index: 1000;"><button type="button" class="btn btn-outline-primary my-2 w-100" style="z-index: 1000; position: relative;">Back to home</button></a>
-                                <p class="pt-2 text-center" style="z-index: 1000; position: relative;"><a href="{% url 'forgot pass' %}" style="text-decoration: none; cursor: pointer;">Forgot your Password?</a> Let's get you back in.</p>
-                            </div>
-                        </form>
+                        </div>
+                        <div class="col-12 col-md-12 col-sm-8 pt-3 pt-2 pb-3">
+                            <button id="submitButton"
+                                class="btn btn-primary w-100 d-flex justify-content-center align-items-center"
+                                type="submit">
+                                <span>Log in</span>
+                                <div class="spinner-border text-light position-absolute" role="status"
+                                    style="display: none;">
+                                </div>
+                            </button>
+                            <a href="{% url 'home' %}" style="text-decoration: none; z-index: 1000;"><button
+                                    type="button" class="btn btn-outline-primary my-2 w-100"
+                                    style="z-index: 1000; position: relative;">Back to home</button></a>
+                            <p class="pt-2 text-center" style="z-index: 1000; position: relative;"><a
+                                    href="{% url 'forgot pass' %}"
+                                    style="text-decoration: none; cursor: pointer;">Forgot your Password?</a> Let's get
+                                you back in.</p>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <!-- OTP Modal -->
-<div class="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -100,27 +121,27 @@
 </div>
 
 {% for message in messages %}
-    <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-            <div class="toast-header text-dark" style="background-color:#899499;">
-                <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
-                <strong class="me-auto text-dark">Session Expired</strong>
-                <small>Just Now</small>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body text-dark">
-                {{ message }}
-            </div>
+<div class="toast-container position-fixed top-0 end-0 p-3 text-light">
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header">
+            <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
+            <strong class="me-auto">Session Expired</strong>
+            <small>Just Now</small>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            {{ message }}
         </div>
     </div>
+</div>
 {% endfor %}
 
 {% endblock content %}
 {% block scripts %}
 <script>
     // JavaScript for login_with_otp.html
-    $(document).ready(function() {
-        $('.toggle-password').click(function() {
+    $(document).ready(function () {
+        $('.toggle-password').click(function () {
             const passwordField = $('#barangay-passkey');
             const passwordFieldType = passwordField.attr('type');
             const toggleIcon = $(this).find('i');
@@ -136,7 +157,7 @@
         // Initialize Bootstrap toast
         var toastElList = [].slice.call(document.querySelectorAll('.toast'));
         var toastList = toastElList.map(function (toastEl) {
-            return new bootstrap.Toast(toastEl, {autohide: true});
+            return new bootstrap.Toast(toastEl, { autohide: true });
         });
 
         // Show each toast
@@ -144,7 +165,7 @@
             toast.show();
         });
 
-        $('#loginForm').submit(function(event) {
+        $('#loginForm').submit(function (event) {
             event.preventDefault();
             $('.spinner-border').show(); $('#submitButton span').css('visibility', 'hidden');
             $('#submitButton').prop('disabled', true);
@@ -154,7 +175,7 @@
                 type: 'POST',
                 url: '{% url "login_with_otp" %}',
                 data: formData,
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
                         $('#barangay-email').removeClass('is-invalid');
                         $('#barangay-passkey').removeClass('is-invalid');
@@ -162,19 +183,19 @@
                         $('#successMessage').text(response.message);
                         $('#barangay-passkeyFeedback').hide()
                         console.log(response.message);
-                        
-                            const userEmail = $('#barangay-email').val();
-                            if (userEmail) {
-                                // Hide part of the email
-                                const hiddenEmail = userEmail.replace(/^(.)(.*)(@.*)$/, (match, p1, p2, p3) => {
-                                    return p1 + '*'.repeat(p2.length) + p3;
-                                });
 
-                                $('#hidden_email').text(hiddenEmail);
-                            }
+                        const userEmail = $('#barangay-email').val();
+                        if (userEmail) {
+                            // Hide part of the email
+                            const hiddenEmail = userEmail.replace(/^(.)(.*)(@.*)$/, (match, p1, p2, p3) => {
+                                return p1 + '*'.repeat(p2.length) + p3;
+                            });
+
+                            $('#hidden_email').text(hiddenEmail);
+                        }
 
                         // Redirect or perform other actions after successful login
-                        
+
                         if (response.otp_bypassed) {
                             if (response.account_type === 'admin') {
                                 window.location.href = '{% url "admin dashboard" %}';
@@ -219,7 +240,7 @@
                     $('#submitButton').prop('disabled', false);
 
                 },
-                error: function(xhr, errmsg, err) {
+                error: function (xhr, errmsg, err) {
                     $('#errorMessage').text('Error occurred. Please try again.');
                 }
             });
@@ -243,7 +264,7 @@
             }
         });
 
-        $('#otpForm').submit(function(event) {
+        $('#otpForm').submit(function (event) {
             event.preventDefault();
             var formData = $(this).serialize();
             $.ajax({
@@ -253,7 +274,7 @@
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
                         $('#successMessage').text(response.message);
 
@@ -267,19 +288,19 @@
                         } else if (response.account_type === 'law_enforcement') {
                             // Redirect to staff dashboard
                             window.location.href = '{% url "law enforcement case" %}';
-                        }else if (response.account_type === 'SWDO') {
+                        } else if (response.account_type === 'SWDO') {
                             // Redirect to SWDO dashboard
                             window.location.href = '{% url "SWDO case" %}';
-                        }else if (response.account_type === 'SWDO') {
+                        } else if (response.account_type === 'SWDO') {
                             // Redirect to SWDO dashboard
                             window.location.href = '{% url "SWDO case" %}';
                         }
                         else if (response.account_type === 'healthcare') {
                             // Redirect to healthcare dashboard
                             window.location.href = '{% url "healthcare case" %}';
-                        } 
+                        }
 
-                        
+
                         // Log success message to the console
                         console.log('OTP verification successful.');
                     } else {
@@ -289,7 +310,7 @@
                         }
                     }
                 },
-                error: function(xhr, errmsg, err) {
+                error: function (xhr, errmsg, err) {
                     $('#otpErrorMessage').text('Error occurred. Please try again.');
                     // Log error message to the console
                     console.error('Error occurred during OTP verification:', errmsg);
@@ -330,17 +351,17 @@
                 type: 'GET',
                 url: '{% url "resend_otp" %}',
                 headers: { 'X-CSRFToken': '{{ csrf_token }}' }, // Include CSRF token in the headers
-                success: function(response) {
+                success: function (response) {
                     // Handle success response if needed
                 },
-                error: function(xhr, errmsg, err) {
+                error: function (xhr, errmsg, err) {
                     console.error('Error occurred during OTP resend:', errmsg);
                 }
             });
         }
 
         // Click event handler for the resend button
-        $('#resendButton').click(function(event) {
+        $('#resendButton').click(function (event) {
             event.preventDefault();
             resendOTP();
         });

@@ -14,18 +14,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     {% block styles %}{% endblock %}
-    <style>
-        /* Toast Theme Colors */
-        .toast-success-purple .toast-header { background-color: #6717b2 !important; }
-        .toast-success-gold .toast-header { background-color: #E8A020 !important; }
-        .toast-error .toast-header { background-color: #dc3545 !important; }
-        
-        .toast { border-radius: 8px; overflow: hidden; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
-        .toast-header { border-bottom: none; padding: 10px 15px; }
-        .toast-body { padding: 15px; font-weight: 500; color: #333; background-color: #fff; }
-    </style>
   </head>
-  <body data-toast-theme="{% block toast_theme %}purple{% endblock %}">
+  <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
     {% include 'include/law-enforcement/law-enforcement-sidenav.html' %}
@@ -102,7 +92,7 @@
 
     <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
         <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header text-white">
+            <div class="toast-header text-white" style="background-color: #198754;">
                 <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
                 <strong class="me-auto">Success</strong>
                 <small>Just Now</small>
@@ -111,7 +101,7 @@
             <div class="toast-body"></div>
         </div>
         <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header text-white">
+            <div class="toast-header text-white" style="background-color: #dc3545;">
                 <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
                 <strong class="me-auto">Error</strong>
                 <small>Just Now</small>
@@ -125,16 +115,8 @@
         function showToast(type, message) {
             const toastId = type === 'success' ? '#successToast' : '#errorToast';
             const $toast = $(toastId);
-            const theme = $('body').attr('data-toast-theme') || 'purple';
-            
-            if (type === 'success') {
-                $toast.removeClass('toast-success-purple toast-success-gold').addClass('toast-success-' + theme);
-            } else {
-                $toast.addClass('toast-error');
-            }
-            
             $toast.find('.toast-body').text(message);
-            const toast = new bootstrap.Toast($toast[0], { delay: 4000 });
+            const toast = new bootstrap.Toast($toast[0]);
             toast.show();
         }
     </script>
