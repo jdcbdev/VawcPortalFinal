@@ -10,7 +10,7 @@
     <div class="row d-flex justify-content-between align-items-center">
         <div class="col-auto">
             <h1 class="text-color-primary fw-bold d-flex align-items-center">
-                <i class='bx bx-reset text-color-gold me-2'></i>Account Reset Requests
+                <i class='bx bx-reset text-purple me-2'></i>Account Reset Requests
             </h1>
         </div>
     </div>
@@ -47,7 +47,7 @@
             </thead>
             <tbody class="table-group-divider">
                 {% for request in requests %}
-                    <tr class="{% if request.status == 'Pending' %}bg-gold-light{% endif %}">
+                    <tr class="{% if request.status == 'Pending' %}bg-purple-light{% endif %}">
                         <td data-sort="{{ request.created_at|date:'YmdHis' }}">{{ request.created_at }}</td>
                         <td>{{ request.agency_name }}</td>
                         <td>{{ request.first_name }}</td>
@@ -62,14 +62,14 @@
                         </td>
                         <td>
                             {% if request.status == 'Pending' %}
-                                <span class="badge bg-gold text-white">{{ request.status }}</span>
+                                <span class="badge bg-purple text-white">{{ request.status }}</span>
                             {% else %}
                                 <span class="badge bg-success">{{ request.status }}</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
                             {% if request.status == 'Pending' %}
-                                <button class="btn btn-gold btn-sm px-3 shadow-sm mark-resolved-btn" role="button" data-request-id="{{ request.id }}">Mark Resolved</button>
+                                <button class="btn btn-purple btn-sm px-3 shadow-sm mark-resolved-btn" role="button" data-request-id="{{ request.id }}">Mark Resolved</button>
                             {% else %}
                                 <span class="text-muted small"><i class='bx bx-check-double text-success'></i> Resolved</span>
                             {% endif %}
@@ -83,7 +83,7 @@
 
 <div class="toast-container position-fixed top-0 end-0 p-3 text-light">
     <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header text-white" style="background-color:#E8A020;">
+        <div class="toast-header text-white bg-purple">
             <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px; filter: brightness(0) invert(1);">
             <strong class="me-auto">Success</strong>
             <small>Just Now</small>

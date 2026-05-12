@@ -59,7 +59,7 @@
                     <i class='bx bx-file-blank'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Reported Cases</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="total-cases">-</div>
+                <div class="fw-bold fs-3 text-purple" id="total-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">All filed cases</div>
             </div>
         </div>
@@ -71,7 +71,7 @@
                     <i class='bx bx-loader-circle'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Ongoing</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="ongoing-cases">-</div>
+                <div class="fw-bold fs-3 text-purple" id="ongoing-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Active cases</div>
             </div>
         </div>
@@ -83,7 +83,7 @@
                     <i class='bx bx-check-shield'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Resolved</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="resolved-cases">-</div>
+                <div class="fw-bold fs-3 text-purple" id="resolved-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Closed cases</div>
             </div>
         </div>
@@ -95,7 +95,7 @@
                     <i class='bx bx-shield-x'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Criminal Cases</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="cases-w-criminal-cases">-</div>
+                <div class="fw-bold fs-3 text-purple" id="cases-w-criminal-cases">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">w/ RA violations</div>
             </div>
         </div>
@@ -109,15 +109,15 @@
                 <div class="text-muted fw-semibold text-uppercase mb-1" style="font-size:0.7rem;">Protection Orders</div>
                 <div class="d-flex justify-content-between mt-1">
                     <div class="text-center">
-                        <div class="fw-bold fs-6 text-kpi-gold" id="bpo">-</div>
+                        <div class="fw-bold fs-6 text-purple" id="bpo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">BPO</div>
                     </div>
                     <div class="text-center">
-                        <div class="fw-bold fs-6 text-kpi-gold" id="tpo">-</div>
+                        <div class="fw-bold fs-6 text-purple" id="tpo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">TPO</div>
                     </div>
                     <div class="text-center">
-                        <div class="fw-bold fs-6 text-kpi-gold" id="ppo">-</div>
+                        <div class="fw-bold fs-6 text-purple" id="ppo">-</div>
                         <div class="text-muted" style="font-size:0.65rem;">PPO</div>
                     </div>
                 </div>
@@ -131,7 +131,7 @@
                     <i class='bx bx-donate-heart'></i>
                 </div>
                 <div class="text-muted small fw-semibold text-uppercase mb-1">Services Provided</div>
-                <div class="fw-bold fs-3 text-kpi-gold" id="services-provided">-</div>
+                <div class="fw-bold fs-3 text-purple" id="services-provided">-</div>
                 <div class="text-muted" style="font-size:0.72rem;">Resolved w/ services</div>
             </div>
         </div>
@@ -139,20 +139,20 @@
     
     <!-- Drill-down breadcrumb / active filter notice -->
     <div id="kpi-filter-bar" class="d-none mb-3 d-flex align-items-center gap-2 bg-white border rounded px-3 py-2 shadow-sm">
-        <i class='bx bx-filter fs-5' style="color:#E8A020;"></i>
+        <i class='bx bx-filter fs-5' style="color:#8a2be2;"></i>
         <span class="small text-muted">Showing: </span>
-        <span class="fw-bold small text-kpi-gold" id="kpi-filter-label"></span>
+        <span class="fw-bold small text-purple" id="kpi-filter-label"></span>
         <button class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="drillDown('all')">
             <i class='bx bx-x'></i> Clear filter
         </button>
     </div>
 
     <style>
-        .text-kpi-gold { color: #E8A020 !important; }
+        .text-purple { color: #8a2be2 !important; }
         .kpi-card { transition: all 0.2s ease; cursor: pointer; }
-        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(232,160,32,0.2) !important; border-color: #E8A020 !important; }
-        .kpi-card.kpi-active { border-color: #E8A020 !important; background-color: #fffbf0 !important; box-shadow: 0 4px 16px rgba(232,160,32,0.25) !important; }
-        .kpi-icon-bg { color: #E8A020; pointer-events: none; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(138, 43, 226, 0.2) !important; border-color: #8a2be2 !important; }
+        .kpi-card.kpi-active { border-color: #8a2be2 !important; background-color: #d0b6e7 !important; box-shadow: 0 4px 16px rgba(138, 43, 226, 0.25) !important; }
+        .kpi-icon-bg { color: #8a2be2; pointer-events: none; }
     </style>
 
     <div class="row g-3 mb-4">
@@ -236,12 +236,12 @@
           </tbody>
           <tfoot>
             <tr>
-                <td><strong>Total Cases: </strong><span id="table-total-cases" class="text-kpi-gold"></span></td>
-                <td><strong>Total Victims: </strong><span id="table-total-victim" class="text-kpi-gold"></span></td>
+                <td><strong>Total Cases: </strong><span id="table-total-cases" class="text-purple"></span></td>
+                <td><strong>Total Victims: </strong><span id="table-total-victim" class="text-purple"></span></td>
                 <td></td>
-                <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator" class="text-kpi-gold"></span></td>
+                <td><strong>Total Perpetrators: </strong><span id="table-total-perpetrator" class="text-purple"></span></td>
                 <td></td>
-                <td><strong>Total RA Violations: </strong><span id="table-total-ra" class="text-kpi-gold"></span></td>
+                <td><strong>Total RA Violations: </strong><span id="table-total-ra" class="text-purple"></span></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -297,22 +297,8 @@ $(document).ready(function() {
             datasets: [{
                 label: 'Cases',
                 data: barData,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.85)',
-                    'rgba(54, 162, 235, 0.85)',
-                    'rgba(255, 206, 86, 0.85)',
-                    'rgba(75, 192, 192, 0.85)',
-                    'rgba(153, 102, 255, 0.85)',
-                    'rgba(255, 159, 64, 0.85)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                backgroundColor: ['#8a2be2','#5e2ca5','#2d9cdb','#27ae60','#e74c3c','#8e44ad'],
+                borderColor: 'transparent',
                 borderWidth: 1
             }]
         },
@@ -353,8 +339,8 @@ $(document).ready(function() {
             datasets: [{
                 label: 'Cases',
                 fill: true,
-                backgroundColor: 'rgba(255, 99, 132, 0.85)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(138,43,226,0.85)',
+                borderColor: '#8a2be2',
                 data: lineData,
                 borderWidth: 1,
                 pointStyle: false,

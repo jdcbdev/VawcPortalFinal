@@ -11,13 +11,14 @@
         .dataTables_wrapper .dataTables_paginate { text-align: center; }
     }
     #table-case tbody tr { cursor: pointer; transition: background-color 0.2s; }
-    #table-case tbody tr:hover { background-color: rgba(232, 160, 32, 0.05) !important; }
-    .text-color-primary { color: #3b1a6e; }
-    .text-color-gold { color: #E8A020; }
-    .btn-gold { background-color: #E8A020; color: white; border: none; }
-    .btn-gold:hover { background-color: #d4921c; color: white; }
-    .btn-outline-gold { border-color: #E8A020; color: #E8A020; }
-    .btn-outline-gold:hover { background-color: #E8A020; color: white; }
+    #table-case tbody tr:hover { background-color: rgba(138, 43, 226, 0.05) !important; }
+    .text-color-primary { color: #8a2be2; }
+    .text-color-primary { color: #8a2be2; }
+    .text-purple { color: #8a2be2; }
+    .btn-purple { background-color: #8a2be2; color: white; border: none; }
+    .btn-purple:hover { background-color: #7224cc; color: white; }
+    .btn-outline-purple { border-color: #8a2be2; color: #8a2be2; }
+    .btn-outline-purple:hover { background-color: #8a2be2; color: white; }
 </style>
 {% endblock %}
 {% block content %}
@@ -25,7 +26,7 @@
     <div class="row d-flex justify-content-between align-items-center">
         <div class="col-auto">
             <h1 class="text-color-primary fw-bold d-flex align-items-center">
-                <i class='bx bxs-briefcase text-color-gold me-2'></i>Case Records
+                <i class='bx bxs-briefcase text-purple me-2'></i>Case Records
             </h1>
             <p class="text-muted mb-0">Hospital: {{ hospital_name }}</p>
         </div>
@@ -33,10 +34,10 @@
             <button id="btn-export-excel" class="btn btn-outline-success rounded-pill px-4 shadow-sm">
                 <i class='bx bx-file me-1'></i>Export Excel
             </button>
-            <button id="btn-export-case-report" class="btn btn-outline-gold rounded-pill px-4 shadow-sm">
+            <button id="btn-export-case-report" class="btn btn-outline-purple rounded-pill px-4 shadow-sm">
                 <i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)
             </button>
-            <button class="btn btn-gold rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="modal" data-bs-target="#add_case">
+            <button class="btn btn-purple rounded-pill px-4 shadow-sm" type="button" data-bs-toggle="modal" data-bs-target="#add_case">
                 <i class="bx bx-plus"></i> Add Case
             </button>
         </div>
@@ -183,9 +184,9 @@
                     <td style="display:none;">{{ case.barangay }}, {{ case.city }}, {{ case.province }}</td>
                     <td class="text-center">
                         {% if case.type_of_case == 'Impacted' %}
-                            <a class="btn btn-outline-success btn-sm action-btn" href="{% url 'healthcare case impacted view' case_id=case.id %}" role="button">Edit</a>
+                            <a class="btn btn-outline-purple btn-sm action-btn" href="{% url 'healthcare case impacted view' case_id=case.id %}" role="button">Edit</a>
                         {% elif case.type_of_case == 'Behalf' %}
-                            <a class="btn btn-outline-success btn-sm action-btn" href="{% url 'healthcare case behalf view' case_id=case.id %}" role="button">Edit</a>
+                            <a class="btn btn-outline-purple btn-sm action-btn" href="{% url 'healthcare case behalf view' case_id=case.id %}" role="button">Edit</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -225,7 +226,7 @@
                 </div>
                 <div class="modal-footer border-top">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="addCaseBtn">Add Case</button>
+                    <button type="submit" class="btn btn-purple" id="addCaseBtn">Add Case</button>
                 </div>
             </form>
         </div>
@@ -236,16 +237,16 @@
 <div class="modal fade" id="caseDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header bg-primary text-white border-bottom-0 rounded-top-4">
-                <h5 class="modal-title fw-bold" id="caseDetailsModalLabel"><i class='bx bxs-file-find me-2'></i>Case Summary Details</h5>
+            <div class="modal-header bg-purple-light text-white border-bottom-0 rounded-top-4">
+                <h5 class="modal-title fw-bold text-color-primary" id="caseDetailsModalLabel"><i class='bx bxs-file-find me-2'></i>Case Summary Details</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4" id="caseDetailsContent">
-                <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>
+                <div class="text-center py-5"><div class="spinner-border text-purple" role="status"></div><p class="mt-2 text-muted">Fetching case details...</p></div>
             </div>
             <div class="modal-footer border-top-0 pt-0">
                 <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-                <a href="#" id="caseEditLink" class="btn btn-gold rounded-pill px-4"><i class='bx bx-edit-alt'></i> Open for Full Editing</a>
+                <a href="#" id="caseEditLink" class="btn btn-purple rounded-pill px-4"><i class='bx bx-edit-alt'></i> Open for Full Editing</a>
             </div>
         </div>
     </div>
@@ -413,7 +414,7 @@
                                         { text: $('#provider-label').val(), fontSize: 10, bold: true, alignment: 'center', color: '#222' },
                                         { text: $('#agency-name').val(), fontSize: 16, bold: true, alignment: 'center', color: '#000', margin: [0, 2, 0, 2] },
                                         { text: $('#agency-location').val(), fontSize: 9, alignment: 'center', color: '#555' },
-                                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#3b1a6e', margin: [0, 5, 0, 0] }
+                                        { text: 'VAWC CASE MANAGEMENT SYSTEM', fontSize: 11, bold: true, alignment: 'center', color: '#8a2be2', margin: [0, 5, 0, 0] }
                                     ]
                                 },
                                 // Right: Provider Logo
@@ -448,12 +449,12 @@
                                 widths: [70, '*', '*', 60, '*', 70], 
                                 body: [
                                     [
-                                        {text: 'Case #', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
-                                        {text: 'Victim(s)', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
-                                        {text: 'Service', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
-                                        {text: 'Status', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
-                                        {text: 'Address', bold: true, fillColor: '#3b1a6e', color: 'white'}, 
-                                        {text: 'Date Added', bold: true, fillColor: '#3b1a6e', color: 'white'}
+                                        {text: 'Case #', bold: true, fillColor: '#8a2be2', color: 'white'}, 
+                                        {text: 'Victim(s)', bold: true, fillColor: '#8a2be2', color: 'white'}, 
+                                        {text: 'Service', bold: true, fillColor: '#8a2be2', color: 'white'}, 
+                                        {text: 'Status', bold: true, fillColor: '#8a2be2', color: 'white'}, 
+                                        {text: 'Address', bold: true, fillColor: '#8a2be2', color: 'white'}, 
+                                        {text: 'Date Added', bold: true, fillColor: '#8a2be2', color: 'white'}
                                     ],
                                     ...rows.data().toArray().map(d => [d[0], d[V_NAMES_COL]||'—', d[2], d[3], d[ADDR_COL], d[4]])
                                 ] 

@@ -14,6 +14,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     {% block styles %}{% endblock %}
+    <style>
+        :root {
+            --primary-purple: #8a2be2;
+            --primary-purple-hover: #7b2ff7;
+            --purple-light: #f3e5f5;
+        }
+        .btn-purple { background-color: var(--primary-purple) !important; color: white !important; border: none !important; }
+        .btn-purple:hover { background-color: var(--primary-purple-hover) !important; color: white !important; }
+        .text-purple { color: var(--primary-purple) !important; }
+        .bg-purple-light { background-color: var(--purple-light) !important; }
+        
+        .border-purple { border-color: var(--primary-purple) !important; }
+    </style>
   </head>
   <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"

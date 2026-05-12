@@ -5,9 +5,9 @@
 <link href='https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css' rel='stylesheet'>
 <link href='https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css' rel='stylesheet'>
 <style>
-    .btn-gold { background-color: #E8A020; color: white; border: none; }
-    .btn-gold:hover { background-color: #d4921c; color: white; }
-    .text-gold { color: #E8A020; }
+    .btn-purple { background-color: #8a2be2; color: white; border: none; }
+    .btn-purple:hover { background-color: #7224cc; color: white; }
+    .text-purple { color: #8a2be2; }
 </style>
 {% endblock %}
 {% load custom_filter %}
@@ -26,13 +26,13 @@
     </div>
 
     {% if referral_status == 'Pending' %}
-    <div class="alert shadow-sm d-flex justify-content-between align-items-center mt-3 mb-4 rounded-4 border-start border-4" style="background-color: #fff9e6; border-color: #E8A020 !important;">
+    <div class="alert shadow-sm d-flex justify-content-between align-items-center mt-3 mb-4 rounded-4 border-start border-4" style="background-color: #f3e8ff; border-color: #8a2be2 !important;">
         <div class="ps-3">
-            <h5 class="alert-heading mb-1 fw-bold" style="color: #E8A020;"><i class='bx bxs-info-circle me-2'></i>Incoming Case Referral</h5>
+            <h5 class="alert-heading mb-1 fw-bold" style="color: #8a2be2;"><i class='bx bxs-info-circle me-2'></i>Incoming Case Referral</h5>
             <p class="mb-0 text-dark">This case was referred to your barangay by <strong>{{ referral.from_barangay }}</strong>. Please accept the referral to view full victim details and start collaborating.</p>
         </div>
         <div class="d-flex gap-2 pe-3">
-            <button class="btn btn-gold rounded-pill px-4 shadow-sm" onclick="handleReferralAction('accept', '{{ referral.id }}')">
+            <button class="btn btn-purple rounded-pill px-4 shadow-sm" onclick="handleReferralAction('accept', '{{ referral.id }}')">
                 <i class='bx bx-check me-1'></i> Accept Referral
             </button>
             <button class="btn btn-outline-danger rounded-pill px-4 bg-white" onclick="handleReferralAction('reject', '{{ referral.id }}')">
@@ -4304,7 +4304,7 @@ function submitReferralResponse(action, referralId, reason = '') {
                     icon: 'success',
                     title: 'Success',
                     text: response.message,
-                    confirmButtonColor: '#E8A020'
+                    confirmButtonColor: '#8a2be2'
                 }).then(() => {
                     location.reload();
                 });
@@ -4313,7 +4313,7 @@ function submitReferralResponse(action, referralId, reason = '') {
                     icon: 'error',
                     title: 'Error',
                     text: response.message,
-                    confirmButtonColor: '#E8A020'
+                    confirmButtonColor: '#8a2be2'
                 });
             }
         },
@@ -4322,7 +4322,7 @@ function submitReferralResponse(action, referralId, reason = '') {
                 icon: 'error',
                 title: 'Error',
                 text: 'An unexpected error occurred.',
-                confirmButtonColor: '#E8A020'
+                confirmButtonColor: '#8a2be2'
             });
         }
     });

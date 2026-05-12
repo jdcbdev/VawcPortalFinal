@@ -353,42 +353,42 @@ span.required::before {
     color: red;
 }
 
-/* Dashboard & Global Amber Gold Theme Utilities */
-.text-color-gold {
+/* Dashboard & Global Purple Theme Utilities */
+.text-color-purple {
     color: #8a2be2 !important;
 }
 
-.bg-gold {
+.bg-purple {
     background-color: #8a2be2 !important;
 }
 
-.border-gold {
+.border-purple {
     border-color: #8a2be2 !important;
 }
 
-.btn-gold {
+.btn-purple {
     background-color: #8a2be2 !important;
     border-color: #8a2be2 !important;
     color: white !important;
 }
 
-.btn-gold:hover {
+.btn-purple:hover {
     background-color: #6717b2 !important;
     border-color: #6717b2 !important;
     color: white !important;
 }
 
-.btn-outline-gold {
+.btn-outline-purple {
     background-color: transparent !important;
     color: #8a2be2 !important;
     border-color: #8a2be2 !important;
 }
 
-.btn-outline-gold:hover {
+.btn-outline-purple:hover {
     background-color: #8a2be2 !important;
     color: white !important;
 }
 
-.bg-gold-light {
+.bg-purple-light {
     background-color: #6f42c1 !important;
 }
