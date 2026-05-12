@@ -242,8 +242,9 @@
                             <option value="monthly_trend">Monthly Trend</option>
                             <option value="barangay">Barangay</option>
                         </select>
-                        <select class="form-select form-select-sm border-secondary bg-light fw-semibold dynamic-type-select" style="min-width: 100px; max-width: 120px;">
-                            <option value="bar">Bar</option>
+                        <select class="form-select form-select-sm border-secondary bg-light fw-semibold dynamic-type-select" style="min-width: 130px; max-width: 150px;">
+                            <option value="bar">Vertical Bar</option>
+                            <option value="hbar">Horizontal Bar</option>
                             <option value="pie">Pie</option>
                             <option value="doughnut">Doughnut</option>
                             <option value="line">Line</option>
@@ -559,14 +560,14 @@ $(document).ready(function () {
         tSel.find('option[value="pie"], option[value="doughnut"]').each(function() {
             $(this).prop('disabled', tooMany).toggle(!tooMany);
         });
-
         if (isCircular && tooMany) tSel.val('bar');
     }
 
     function renderSpecificChart(cardId, filteredCases) {
-        const dim = $(`#dim-${cardId}`).val();
-        const type = $(`#type-${cardId}`).val();
+        const dSel = $(`#dim-${cardId}`), tSel = $(`#type-${cardId}`);
+        const dim = dSel.val(), type = tSel.val();
         const map = {};
+        const today = new Date();
         
         filteredCases.forEach(c => {
             const d = c.data;
@@ -577,21 +578,16 @@ $(document).ready(function () {
                 if (d.checkbox_ra_9775) map['RA 9775'] = (map['RA 9775']||0)+1;
                 if (d.checkbox_a_7610)  map['RA 7610'] = (map['RA 7610']||0)+1;
             } else if (dim === 'abuse_type') {
-                if (d.checkbox_physical_abuse)      map['Physical'] = (map['Physical']||0)+1;
-                if (d.checkbox_sexual_abuse)        map['Sexual'] = (map['Sexual']||0)+1;
+                if (d.checkbox_physical_abuse)      map['Physical']      = (map['Physical']||0)+1;
+                if (d.checkbox_sexual_abuse)        map['Sexual']        = (map['Sexual']||0)+1;
                 if (d.checkbox_psychological_abuse) map['Psychological'] = (map['Psychological']||0)+1;
-                if (d.checkbox_economic_abuse)      map['Economic'] = (map['Economic']||0)+1;
-                if (d.checkbox_others)              map['Other'] = (map['Other']||0)+1;
+                if (d.checkbox_economic_abuse)      map['Economic']      = (map['Economic']||0)+1;
+                if (d.checkbox_others)              map['Other']         = (map['Other']||0)+1;
             } else if (dim === 'place_of_incident') {
-                let p = {house:'House',work:'Work',school:'School',commercialPlaces:'Commercial Places',religion:'Religious Institutions',placeOfMedicalTreatment:'Medical Treatment',transport:'Transport',brothles:'Brothels',others:'Others',noResponse:'No Response'}[d.place_of_incident] || (d.place_of_incident||'Not Specified');
+                const p = d.place_of_incident || 'Unknown';
                 map[p] = (map[p]||0)+1;
             } else if (dim === 'relationship') {
-                c.perpetrators.forEach(p => {
-                    if (p.relationship_to_victim) {
-                        let r = {currentSpouse:'Current Spouse/Partner',formerSpouse:'Former Spouse/Partner',currentFiance:'Current Fiancé',formerFiance:'Former Fiancé',employer:'Employer',agentOfEmployer:'Agent of Employer',teacher:'Teacher/Instructor',coach:'Coach/Trainer',immediateFamily:'Immediate Family',otherRelatives:'Other Relatives',peopleOfAuthority:'People of Authority',neighbors:'Neighbors/Peers',stranger:'Stranger'}[p.relationship_to_victim]||p.relationship_to_victim;
-                        map[r] = (map[r]||0)+1;
-                    }
-                });
+                c.perpetrators.forEach(p => { const r = p.relationship_to_victim || 'Unknown'; map[r] = (map[r]||0)+1; });
             } else if (dim === 'age_group') {
                 c.victims.forEach(v => {
                     let age='-';
@@ -603,19 +599,19 @@ $(document).ready(function () {
                     if (grp !== 'Unknown') map[grp] = (map[grp]||0)+1;
                 });
             } else if (dim === 'civil_status') {
-                c.victims.forEach(v => {
-                    const cs=v.civil_status||'Unknown';
-                    const csL={single:'Single',married:'Married','live-in':'Live-In',widowed:'Widowed',separated:'Separated'}[cs]||cs;
-                    map[csL] = (map[csL]||0)+1;
+                c.victims.forEach(v => { 
+                    const cs = v.civil_status || 'Unknown'; 
+                    const csL = {single:'Single',married:'Married','live-in':'Live-In',widowed:'Widowed',separated:'Separated'}[cs]||cs;
+                    map[csL] = (map[csL]||0)+1; 
                 });
             } else if (dim === 'service_type') {
-                let svc = d.service_information||'No Service Type';
-                if (svc==='crisis')   svc='Crisis Intervention Including Rescue';
+                let svc = d.service_information || 'No Service Type';
+                if (svc==='crisis') svc='Crisis Intervention Including Rescue';
                 else if (svc==='issuance') svc='Issuance / Enforcement of BPO';
-                else if (svc==='None'||svc==='') svc='No Service Type';
+                else if (svc==='None' || svc==='') svc='No Service Type';
                 map[svc] = (map[svc]||0)+1;
             } else if (dim === 'monthly_trend') {
-                if (d.date_added) { const m=d.date_added.substring(0,7); map[m]=(map[m]||0)+1; }
+                if (d.date_added) { const m = d.date_added.substring(0, 7); map[m] = (map[m]||0)+1; }
             } else if (dim === 'barangay') {
                 if (d.barangay) map[d.barangay] = (map[d.barangay]||0)+1;
             }
@@ -626,41 +622,38 @@ $(document).ready(function () {
         if (dim === 'monthly_trend' || dim === 'age_group') {
             entries.sort((a,b) => a[0].localeCompare(b[0]));
         } else {
-            entries.sort((a,b) => b[1] - a[1]); // Descending count
+            entries.sort((a,b) => b[1] - a[1]);
         }
-
+        
         const labels = entries.map(e => e[0]);
         const dataVals = entries.map(e => e[1]);
+        const isPie = (type === 'pie' || type === 'doughnut');
+        const isHBar = (type === 'hbar');
+        
+        const ctx = document.getElementById(`canvas-${cardId}`).getContext('2d');
+        if (chartInstances[cardId]) chartInstances[cardId].destroy();
 
-        if (chartInstances[cardId]) {
-            chartInstances[cardId].destroy();
-        }
-        
-        const canvasEl = document.getElementById(`canvas-${cardId}`);
-        if (!canvasEl) return;
-        
-        const ctx = canvasEl.getContext('2d');
-        const isPie = type === 'pie' || type === 'doughnut';
-        
         chartInstances[cardId] = new Chart(ctx, {
-            type: type,
-            data: { 
-                labels, 
-                datasets: [{ 
-                    label: 'Cases', 
+            type: (type === 'hbar' ? 'bar' : type),
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total',
                     data: dataVals,
-                    backgroundColor: isPie ? PALETTE.slice(0, dataVals.length) : (type === 'line' ? PURPLE_BG : PALETTE.slice(0, dataVals.length)),
-                    borderColor: type === 'line' ? PURPLE : 'transparent',
-                    borderWidth: type === 'line' ? 2 : 0,
-                    tension: 0.4, fill: true, pointBackgroundColor: PURPLE, pointRadius: 4, borderRadius: type==='bar'?4:0
-                }] 
+                    backgroundColor: isPie ? PALETTE : (type === 'line' ? PURPLE_BG : PALETTE[0]),
+                    borderColor: isPie ? '#fff' : (type === 'line' ? PURPLE : 'transparent'),
+                    borderWidth: isPie ? 1 : (type === 'line' ? 2 : 0),
+                    fill: (type === 'line'),
+                    borderRadius: (type === 'bar' || type === 'hbar') ? 4 : 0
+                }]
             },
             options: {
+                indexAxis: isHBar ? 'y' : 'x',
                 responsive: true, maintainAspectRatio: false,
                 layout: {
                     padding: {
                         top: isPie ? 0 : 35,
-                        right: isPie ? 0 : 25,
+                        right: (isPie || isHBar) ? 35 : 25,
                         left: isPie ? 0 : 10,
                         bottom: isPie ? 10 : 0
                     }
@@ -674,7 +667,7 @@ $(document).ready(function () {
                     datalabels: {
                         color: isPie ? '#fff' : (type === 'line' ? PURPLE : '#555'),
                         anchor: isPie ? 'center' : 'end',
-                        align: isPie ? 'center' : 'top',
+                        align: isPie ? 'center' : (isHBar ? 'right' : 'top'),
                         offset: isPie ? 0 : 6,
                         clip: false,
                         font: { weight: 'bold', size: 11 },
@@ -687,15 +680,17 @@ $(document).ready(function () {
                     y: { 
                         beginAtZero: true, 
                         ticks: { precision: 0 },
-                        grace: '15%'
+                        grace: isHBar ? 0 : '15%'
                     },
-                    x: { ticks: { autoSkip: false } }
+                    x: { 
+                        beginAtZero: true,
+                        ticks: { precision: 0, autoSkip: false },
+                        grace: isHBar ? '15%' : 0
+                    }
                 }
             }
         });
-    }
-
-    // ── Table filter helpers ──
+    }    // ── Table filter helpers ──
     function clearAllFilters() {
         if (!consolidatedTable) return;
         consolidatedTable.search('').columns().search('').draw();
