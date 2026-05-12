@@ -14,18 +14,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     {% block styles %}{% endblock %}
-    <style>
-        .toast { border-radius: 8px; overflow: hidden; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
-        .toast-header { border-bottom: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; }
-        .toast-body { padding: 15px; font-weight: 500; }
-        .bg-purple-custom { background-color: #6717b2 !important; color: white !important; }
-        .bg-gold-custom { background-color: #E8A020 !important; color: white !important; }
-        .bg-danger-custom { background-color: #dc3545 !important; color: white !important; }
-        .toast-header { border-bottom: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; }
-        .toast-body { padding: 15px; font-weight: 500; }
-    </style>
   </head>
-  <body data-toast-theme="{% block toast_theme %}purple{% endblock %}">
+  <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
     {% include 'include/barangay/barangay-sidenav.html' %}
@@ -39,7 +29,6 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -103,7 +92,7 @@
 
     <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
         <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header text-white">
+            <div class="toast-header text-white" style="background-color: #198754;">
                 <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
                 <strong class="me-auto">Success</strong>
                 <small>Just Now</small>
@@ -112,7 +101,7 @@
             <div class="toast-body"></div>
         </div>
         <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header text-white">
+            <div class="toast-header text-white" style="background-color: #dc3545;">
                 <img src="{% static 'img/ecs-no-bg-2.png' %}" class="rounded me-2" alt="..." style="width:20px;">
                 <strong class="me-auto">Error</strong>
                 <small>Just Now</small>
@@ -127,35 +116,9 @@
             const toastId = type === 'success' ? '#successToast' : '#errorToast';
             const $toast = $(toastId);
             $toast.find('.toast-body').text(message);
-            const toast = new bootstrap.Toast($toast[0], { delay: 4000 });
+            const toast = new bootstrap.Toast($toast[0]);
             toast.show();
         }
-
-        $(document).on('show.bs.toast', '.toast', function () {
-            const $toast = $(this);
-            const theme = $('body').attr('data-toast-theme') || 'purple';
-            const $header = $toast.find('.toast-header');
-            const $body = $toast.find('.toast-body');
-            const $closeBtn = $toast.find('.btn-close');
-            const isSuccess = $toast.attr('id') === 'successToast' || $toast.hasClass('bg-success') || $toast.hasClass('toast-success');
-            
-            $header.removeClass('bg-primary bg-gold bg-danger bg-purple-custom bg-gold-custom bg-danger-custom text-white text-dark');
-            $body.removeClass('bg-primary bg-gold bg-danger bg-purple-custom bg-gold-custom bg-danger-custom text-white text-dark');
-            $header.css('background-color', '');
-            $body.css('background-color', '');
-            
-                        if (isSuccess) {
-                const bgClass = (theme === 'gold') ? 'bg-gold-custom' : 'bg-purple-custom';
-                $header.addClass(bgClass).addClass('text-white');
-                $body.addClass('text-dark');
-            } else {
-                $header.addClass('bg-danger-custom').addClass('text-white');
-                $body.addClass('text-dark');
-            }
-            
-            
-            $closeBtn.addClass('btn-close-white');
-        });
     </script>
 
     {% block scripts %}{% endblock %}
