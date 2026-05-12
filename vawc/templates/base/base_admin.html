@@ -19,15 +19,14 @@
     {% comment %} <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.0.8/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/fh-4.0.1/r-3.0.2/sc-2.4.3/sb-1.7.1/sp-2.3.1/datatables.min.css" rel="stylesheet"> {% endcomment %}
     {% block styles %}{% endblock %}
     <style>
-        /* Toast Theme Colors */
-        .toast-success-purple .toast-header { background-color: #6717b2 !important; }
-        .toast-success-gold .toast-header { background-color: #E8A020 !important; }
-        /* Error toast remains consistent red but can be tweaked if needed */
-        .toast-error .toast-header { background-color: #dc3545 !important; }
-        
         .toast { border-radius: 8px; overflow: hidden; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
-        .toast-header { border-bottom: none; padding: 10px 15px; }
-        .toast-body { padding: 15px; font-weight: 500; color: #333; background-color: #fff; }
+        .toast-header { border-bottom: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; }
+        .toast-body { padding: 15px; font-weight: 500; }
+        .bg-purple-custom { background-color: #6717b2 !important; color: white !important; }
+        .bg-gold-custom { background-color: #E8A020 !important; color: white !important; }
+        .bg-danger-custom { background-color: #dc3545 !important; color: white !important; }
+        .toast-header { border-bottom: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; }
+        .toast-body { padding: 15px; font-weight: 500; }
     </style>
   </head>
   <body data-toast-theme="{% block toast_theme %}purple{% endblock %}">
@@ -153,18 +152,36 @@
         function showToast(type, message) {
             const toastId = type === 'success' ? '#successToast' : '#errorToast';
             const $toast = $(toastId);
-            const theme = $('body').attr('data-toast-theme') || 'purple';
-            
-            if (type === 'success') {
-                $toast.removeClass('toast-success-purple toast-success-gold').addClass('toast-success-' + theme);
-            } else {
-                $toast.addClass('toast-error');
-            }
-            
             $toast.find('.toast-body').text(message);
             const toast = new bootstrap.Toast($toast[0], { delay: 4000 });
             toast.show();
         }
+
+        $(document).on('show.bs.toast', '.toast', function () {
+            const $toast = $(this);
+            const theme = $('body').attr('data-toast-theme') || 'purple';
+            const $header = $toast.find('.toast-header');
+            const $body = $toast.find('.toast-body');
+            const $closeBtn = $toast.find('.btn-close');
+            const isSuccess = $toast.attr('id') === 'successToast' || $toast.hasClass('bg-success') || $toast.hasClass('toast-success');
+            
+            $header.removeClass('bg-primary bg-gold bg-danger bg-purple-custom bg-gold-custom bg-danger-custom text-white text-dark');
+            $body.removeClass('bg-primary bg-gold bg-danger bg-purple-custom bg-gold-custom bg-danger-custom text-white text-dark');
+            $header.css('background-color', '');
+            $body.css('background-color', '');
+            
+                        if (isSuccess) {
+                const bgClass = (theme === 'gold') ? 'bg-gold-custom' : 'bg-purple-custom';
+                $header.addClass(bgClass).addClass('text-white');
+                $body.addClass('text-dark');
+            } else {
+                $header.addClass('bg-danger-custom').addClass('text-white');
+                $body.addClass('text-dark');
+            }
+            
+            
+            $closeBtn.addClass('btn-close-white');
+        });
 
         $(document).ready(function() {
             $.ajax({

@@ -925,7 +925,7 @@ $(document).ready(function () {
 
         setTimeout(function () {
             try {
-                const goldLine = { canvas: [{ type: 'line', x1:0, y1:0, x2: 1080, y2:0, lineWidth:1.5, lineColor:'#E8A020' }], margin: [0, 6, 0, 10] };
+                
 
                 // Build chart image blocks in a grid
                 const chartKeys = Object.keys(chartInstances);
@@ -1026,7 +1026,6 @@ $(document).ready(function () {
                     },
                     content: [
                         govHeader(),
-                        goldLine,
                         { text: 'CUSTOM ANALYTICS REPORT', fontSize: 16, bold: true, color: '#E8A020', alignment: 'center', margin: [0, 0, 0, 2] },
                         { text: `Generated: ${new Date().toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' })}   |   Filter: Active`, fontSize: 9, color: '#777', alignment: 'center', margin: [0, 0, 0, 14] },
                         
@@ -1038,7 +1037,6 @@ $(document).ready(function () {
                         // The data table
                         { text: '', pageBreak: 'before' },
                         govHeader(),
-                        goldLine,
                         { text: `FILTERED CASE DEMOGRAPHICS`, fontSize: 9, bold: true, color: '#3b1a6e', margin: [0, 10, 0, 4] },
                         buildPdfFilteredTableBody()
                     ],

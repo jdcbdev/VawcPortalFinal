@@ -3,26 +3,31 @@
 {% load static %}
 {% block content %}
 <div class="container-fluid py-4">
-    <div class="row"> 
+    <div class="row">
         <!--multisteps-form-->
         <div class="multisteps-form col-md-10 p-4 mx-auto">
             <!--progress bar-->
             <div class="row d-flex justify-content-center">
                 <div class="col-12 col-lg-8 mx-auto my-1 my-md-4 mb-md-5">
                     <div class="multisteps-form__progress">
-                        <button class="multisteps-form__progress-btn js-active" type="button" title="Victim-Survivor Info">Victim</button>
-                        <button class="multisteps-form__progress-btn" type="button" title="Perpetrator Information" disabled>Perpetrator</button>
-                        <button class="multisteps-form__progress-btn" type="button" title="Incident Information" disabled>Incident</button>
-                        {% comment %} <button class="multisteps-form__progress-btn" type="button" title="Service Information" disabled>Service</button> {% endcomment %}
+                        <button class="multisteps-form__progress-btn js-active" type="button"
+                            title="Victim-Survivor Info">Victim</button>
+                        <button class="multisteps-form__progress-btn" type="button" title="Perpetrator Information"
+                            disabled>Perpetrator</button>
+                        <button class="multisteps-form__progress-btn" type="button" title="Incident Information"
+                            disabled>Incident</button>
+                        {% comment %} <button class="multisteps-form__progress-btn" type="button"
+                            title="Service Information" disabled>Service</button> {% endcomment %}
                     </div>
                 </div>
             </div>
-    
+
             <!--form panels-->
             <div class="row">
                 <div class="">
-                    <form class="multisteps-form__form" id="impact-victim-form" method="POST" action="{% url 'add_case' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
+                    <form class="multisteps-form__form" id="impact-victim-form" method="POST"
+                        action="{% url 'add_case' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <input type="hidden" name="type_of_case" value="Impacted">
                         <input type="hidden" id="victim_count" name="victim_count" value="1">
                         <input type="hidden" id="perpetrator_count" name="perpetrator_count" value="1">
@@ -34,47 +39,60 @@
                             <h2 class="text-center mb-4 mb-md-5"><strong>Victim Information</strong></h2>
 
                             <!--victims navigation tabs-->
-                            <div class="col-md-11 mx-auto mb-2 d-flex flex-nowrap gap-2 overflow-auto nav nav-pills" id="victim-navtabs-container">
-                                <div class="border rounded p-2 text-nowrap nav-link active d-flex align-items-center" data-toggle="tab" data-target="#victim-form_0">
+                            <div class="col-md-11 mx-auto mb-2 d-flex flex-nowrap gap-2 overflow-auto nav nav-pills"
+                                id="victim-navtabs-container">
+                                <div class="border rounded p-2 text-nowrap nav-link active d-flex align-items-center"
+                                    data-toggle="tab" data-target="#victim-form_0">
                                     <i class="fa-solid fa-user me-1"></i>
                                     <span class="tab-name">
                                         Victim
                                     </span>
                                 </div>
-                                <button class="btn btn-outline-primary text-nowrap" id="add-victim-form" title="Add a new form"><i class="fa-solid fa-plus px-1"></i></button>
+                                <button class="btn btn-outline-primary text-nowrap" id="add-victim-form"
+                                    title="Add a new form"><i class="fa-solid fa-plus px-1"></i></button>
                             </div>
                             <div class="multisteps-form__content col-12 col-md-11 border rounded p-4 mx-auto">
-                                
+
                                 <div class="tab-content">
                                     <!--victim form-->
-                                    <div class="tab-pane fade show active individual-form victim-form" id="victim-form_0">
+                                    <div class="tab-pane fade show active individual-form victim-form"
+                                        id="victim-form_0">
                                         <div class="row">
                                             <div class="col-12 d-flex align-items-center mb-3">
-                                                <h4 class="user_counter fw-bold border rounded py-1 px-3 text-muted " id="victim_counter">
+                                                <h4 class="user_counter fw-bold border rounded py-1 px-3 text-muted "
+                                                    id="victim_counter">
                                                     1
                                                 </h4>
-                                                <button class="delete-individual-form btn btn-outline-danger ms-auto" type="button" title="Delete this form">
+                                                <button class="delete-individual-form btn btn-outline-danger ms-auto"
+                                                    type="button" title="Delete this form">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
                                             </div>
-                                            
-                                            <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
+
+                                            <div
+                                                class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
                                                 <h3 class="fs-5 mb-3">Personal Information</h3>
-                                                <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
+                                                <div class="fw-light mb-3">Fields with <span class="required"></span>
+                                                    are required</div>
                                             </div>
                                             <div class="col-sm-6 mb-3">
-                                                <label for="victim-firstname_0" class="form-label">First Name <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp" id="victim-firstname_0" name="victim-firstname_0">
-                                                <div class="invalid-feedback victim-firstname_0" ></div>
+                                                <label for="victim-firstname_0" class="form-label">First Name <span
+                                                        class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="victim-firstname_0"
+                                                    name="victim-firstname_0">
+                                                <div class="invalid-feedback victim-firstname_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3">
                                                 <label for="victim-middlename_0" class="form-label">Middle Name</label>
-                                                <input type="text" class="form-control" id="victim-middlename_0" name="victim-middlename_0">
+                                                <input type="text" class="form-control" id="victim-middlename_0"
+                                                    name="victim-middlename_0">
                                                 <div class="invalid-feedback victim-middlename_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--lastname-->
-                                                <label for="victim-lastname_0" class="form-label">Last Name <span class="required"></span></label>
-                                                <input type="text" class="form-control victim-lastname req-inp" id="victim-lastname_0" name="victim-lastname_0">
+                                                <label for="victim-lastname_0" class="form-label">Last Name <span
+                                                        class="required"></span></label>
+                                                <input type="text" class="form-control victim-lastname req-inp"
+                                                    id="victim-lastname_0" name="victim-lastname_0">
                                                 <div class="invalid-feedback victim-lastname_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--suffix-->
@@ -89,8 +107,10 @@
                                                 </select>
                                             </div>
                                             <div class="col-sm-6 mb-3">
-                                                <label for="victim-sex_0" class="form-label">Gender <span class="required"></span></label>
-                                                <select id="victim-sex_0" name="victim-sex_0" class="form-select req-inp gender-input">
+                                                <label for="victim-sex_0" class="form-label">Gender <span
+                                                        class="required"></span></label>
+                                                <select id="victim-sex_0" name="victim-sex_0"
+                                                    class="form-select req-inp gender-input">
                                                     <option value="">--Select--</option>
                                                     <option value="male">Male</option>
                                                     <option value="female">Female</option>
@@ -98,7 +118,8 @@
                                                     <option value="Others">Others</option>
                                                 </select>
                                                 <div class="invalid-feedback victim-sex_0"></div>
-                                                <input type="text" class="form-control mt-2 custom-gender" placeholder="Specify" style="display: none;">
+                                                <input type="text" class="form-control mt-2 custom-gender"
+                                                    placeholder="Specify" style="display: none;">
                                             </div>
                                             <!-- <div class="col-sm-6 mb-3">
                                                 <label for="victim-date-of-birth_0" class="form-label">Date of Birth <span class="required"></span></label>
@@ -139,31 +160,39 @@
                                                 </select>
                                             </div> -->
                                             <div class="col-sm-6 mb-3"> <!--cp-->
-                                                <label for="victim-cellphone_number_0" class="form-label">Cellphone Number <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp victim-lastname" id="victim-cellphone_number_0" name="victim-cellphone_number_0">
+                                                <label for="victim-cellphone_number_0" class="form-label">Cellphone
+                                                    Number <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp victim-lastname"
+                                                    id="victim-cellphone_number_0" name="victim-cellphone_number_0">
                                                 <div class="invalid-feedback victim-cellphone_number_0"></div>
                                             </div>
-    
+
                                             <h3 class="fs-5 col-12 my-3">Local Address</h3>
-                                            
+
                                             <div class="col-sm-6 mb-3"> <!-- Region -->
-                                                <label for="victim-region_0" class="form-label">Region <span class="required"></span></label>
-                                                <select id="victim-region_0" name="victim-region_0" class="form-select req-inp" disabled>
+                                                <label for="victim-region_0" class="form-label">Region <span
+                                                        class="required"></span></label>
+                                                <select id="victim-region_0" name="victim-region_0"
+                                                    class="form-select req-inp" disabled>
                                                     {% comment %} <option>--Select Option--</option> {% endcomment %}
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                                    <option value="{{ region.name }}" data-code="{{ region.code }}">{{
+                                                        region.name }}</option>
                                                     {% empty %}
-                                                        <option>No data found</option>
+                                                    <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
                                                 <div class="invalid-feedback victim-region_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Province -->
-                                                <label for="victim-province_0" class="form-label">Province <span class="required"></span></label>
-                                                <select id="victim-province_0" name="victim-province_0" class="form-select req-inp">
+                                                <label for="victim-province_0" class="form-label">Province <span
+                                                        class="required"></span></label>
+                                                <select id="victim-province_0" name="victim-province_0"
+                                                    class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for province in default_provinces %}
-                                                    <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                                    <option value="{{ province.name }}" data-code="{{ province.code }}">
+                                                        {{ province.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -171,46 +200,57 @@
                                                 <div class="invalid-feedback victim-province_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- City -->
-                                                <label for="victim-city_0" class="form-label">City/Municipality <span class="required"></span></label>
-                                                <select id="victim-city_0" name="victim-city_0" class="form-select req-inp">
+                                                <label for="victim-city_0" class="form-label">City/Municipality <span
+                                                        class="required"></span></label>
+                                                <select id="victim-city_0" name="victim-city_0"
+                                                    class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                                    <option value="{{ city.name }}" data-code="{{ city.code }}">{{
+                                                        city.name }}</option>
                                                     {% empty %}
-                                                        <option>No data found</option>
+                                                    <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
                                                 <div class="invalid-feedback victim-city_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Barangay -->
-                                                <label for="victim-barangay_0" class="form-label">Barangay <span class="required"></span></label>
-                                                <select id="victim-barangay_0" name="victim-barangay_0" class="form-select req-inp">
+                                                <label for="victim-barangay_0" class="form-label">Barangay <span
+                                                        class="required"></span></label>
+                                                <select id="victim-barangay_0" name="victim-barangay_0"
+                                                    class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">
+                                                        {{ barangay.name }}</option>
                                                     {% empty %}
-                                                        <option>No data found</option>
+                                                    <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
                                                 <div class="invalid-feedback victim-barangay_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Street -->
-                                                <label for="victim-street_0" class="form-label">Street <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp" id="victim-street_0" name="victim-street_0">
+                                                <label for="victim-street_0" class="form-label">Street <span
+                                                        class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="victim-street_0"
+                                                    name="victim-street_0">
                                                 <div class="invalid-feedback victim-street_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Address -->
-                                                <label for="victim-house-info_0" class="form-label">Landmark <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp" name="victim-house-info_0" id="victim-house-info_0">
+                                                <label for="victim-house-info_0" class="form-label">Landmark <span
+                                                        class="required"></span></label>
+                                                <input type="text" class="form-control req-inp"
+                                                    name="victim-house-info_0" id="victim-house-info_0">
                                                 <div class="invalid-feedback victim-house-info_0"></div>
                                             </div>
-                                                  
+
                                         </div>
                                     </div><!--end of victim form-->
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-end mt-4">
-                                    <button class="btn btn-primary ml-auto next-perpetrator-button js-btn-next" type="button" title="Next">Next</button>
+                                    <button class="btn btn-primary ml-auto next-perpetrator-button js-btn-next"
+                                        type="button" title="Next">Next</button>
                                 </div>
                             </div>
 
@@ -219,50 +259,64 @@
                         <div class="multisteps-form__panel" data-animation="slideVert">
 
                             <h2 class="text-center"><strong>Perpetrator Information</strong></h2>
-                            <p class="text-center text-muted mb-4 mb-md-5">The person may be responsible for a wrongdoing.</p>
+                            <p class="text-center text-muted mb-4 mb-md-5">The person may be responsible for a
+                                wrongdoing.</p>
 
                             <!--perpetrators navigation tabs-->
-                            <div class="col-md-11 mx-auto mb-2 d-flex flex-nowrap gap-2 overflow-auto nav nav-pills" id="perpetrator-navtabs-container">
-                                <div class="border rounded p-2 text-nowrap nav-link active d-flex align-items-center" data-toggle="tab" data-target="#perpetrator-form_0">
+                            <div class="col-md-11 mx-auto mb-2 d-flex flex-nowrap gap-2 overflow-auto nav nav-pills"
+                                id="perpetrator-navtabs-container">
+                                <div class="border rounded p-2 text-nowrap nav-link active d-flex align-items-center"
+                                    data-toggle="tab" data-target="#perpetrator-form_0">
                                     <i class="fa-solid fa-user me-1"></i>
                                     <span class="tab-name">
                                         Perpetrator
                                     </span>
                                 </div>
-                                <button class="btn btn-outline-primary text-nowrap" id="add-perpetrator-form" title="Add a new form"><i class="fa-solid fa-plus px-1"></i></button>
+                                <button class="btn btn-outline-primary text-nowrap" id="add-perpetrator-form"
+                                    title="Add a new form"><i class="fa-solid fa-plus px-1"></i></button>
                             </div>
                             <div class="multisteps-form__content col-12 col-md-11 border rounded p-4 mx-auto">
 
                                 <div class="tab-content">
                                     <!--perpetrator form-->
-                                    <div class="tab-pane fade show active individual-form perpetrator-form" id="perpetrator-form_0">
+                                    <div class="tab-pane fade show active individual-form perpetrator-form"
+                                        id="perpetrator-form_0">
                                         <div class="row">
                                             <div class="col-12 d-flex align-items-center mb-3">
-                                                <h4 class="user_counter fw-bold border rounded py-1 px-3 text-muted " id="perpetrator_counter">
+                                                <h4 class="user_counter fw-bold border rounded py-1 px-3 text-muted "
+                                                    id="perpetrator_counter">
                                                     1
                                                 </h4>
-                                                <button class="delete-individual-form btn btn-outline-danger ms-auto" type="button" title="Delete this form">
+                                                <button class="delete-individual-form btn btn-outline-danger ms-auto"
+                                                    type="button" title="Delete this form">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
                                             </div>
 
-                                            <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
+                                            <div
+                                                class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
                                                 <h3 class="fs-5 mb-3">Personal Information</h3>
-                                                <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
+                                                <div class="fw-light mb-3">Fields with <span class="required"></span>
+                                                    are required</div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--Firstname-->
-                                                <label for="perp-firstname_0" class="form-label">First name <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp" id="perp-firstname_0" name="perp-firstname_0">
+                                                <label for="perp-firstname_0" class="form-label">First name <span
+                                                        class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-firstname_0"
+                                                    name="perp-firstname_0">
                                                 <div class="invalid-feedback perp-firstname_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--middlename-->
                                                 <label for="perp-middlename_0" class="form-label">Middle name</label>
-                                                <input type="text" class="form-control" id="perp-middlename_0" name="perp-middlename_0">
+                                                <input type="text" class="form-control" id="perp-middlename_0"
+                                                    name="perp-middlename_0">
                                                 <div class="invalid-feedback perp-middlename_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--lastname-->
-                                                <label for="perp-lastname_0" class="form-label ">Last name <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp perpetrator-lastname" id="perp-lastname_0" name="perp-lastname_0">
+                                                <label for="perp-lastname_0" class="form-label ">Last name <span
+                                                        class="required"></span></label>
+                                                <input type="text" class="form-control req-inp perpetrator-lastname"
+                                                    id="perp-lastname_0" name="perp-lastname_0">
                                                 <div class="invalid-feedback perp-lastname_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--suffix-->
@@ -277,13 +331,17 @@
                                                 </select>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--alias-->
-                                                <label for="perp-alias_0" class="form-label">Alias <span class="required"></label>
-                                                <input type="text" class="form-control req-inp" id="perp-alias_0" name="perp-alias_0">
+                                                <label for="perp-alias_0" class="form-label">Alias <span
+                                                        class="required"></label>
+                                                <input type="text" class="form-control req-inp" id="perp-alias_0"
+                                                    name="perp-alias_0">
                                                 <div class="invalid-feedback perp-alias_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- gender -->
-                                                <label for="perp-sex_0" class="form-label">Gender <span class="required"></span></label>
-                                                <select id="perp-sex_0" name="perp-sex_0" class="form-select req-inp gender-input">
+                                                <label for="perp-sex_0" class="form-label">Gender <span
+                                                        class="required"></span></label>
+                                                <select id="perp-sex_0" name="perp-sex_0"
+                                                    class="form-select req-inp gender-input">
                                                     <option value="">--Select Option--</option>
                                                     <option value="male">Male</option>
                                                     <option value="female">Female</option>
@@ -291,7 +349,8 @@
                                                     <option>Custom</option>
                                                 </select>
                                                 <div class="invalid-feedback perp-sex_0"></div>
-                                                <input type="text" class="form-control mt-2 custom-gender" placeholder="Specify" style="display: none;">
+                                                <input type="text" class="form-control mt-2 custom-gender"
+                                                    placeholder="Specify" style="display: none;">
                                             </div>
                                             <!-- <div class="col-sm-6 mb-3">
                                                 <label for="perp-date-of-birth_0" class="form-label">Date of Birth <span class="required"></span></label>
@@ -321,110 +380,138 @@
                                                 </select>
                                             </div> -->
                                             <div class="col-sm-6 mb-3"> <!--Identifying remarks-->
-                                                <label for="perp-identifying-marks_0" class="form-label">Identifying Marks <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp" id="perp-identifying-marks_0" name="perp-identifying-marks_0">
+                                                <label for="perp-identifying-marks_0" class="form-label">Identifying
+                                                    Marks <span class="required"></span></label>
+                                                <input type="text" class="form-control req-inp"
+                                                    id="perp-identifying-marks_0" name="perp-identifying-marks_0">
                                                 <div class="invalid-feedback perp-identifying-marks_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3">
-                                                <label for="perp-relationsip-victim_0" class="form-label">Relationship to Victim <span class="required"></span></label>
-                                                {% comment %} <select id="perp-relationsip-victim_0" name="perp-relationsip-victim_0" class="form-select">
+                                                <label for="perp-relationsip-victim_0" class="form-label">Relationship
+                                                    to Victim <span class="required"></span></label>
+                                                {% comment %} <select id="perp-relationsip-victim_0"
+                                                    name="perp-relationsip-victim_0" class="form-select">
                                                     <option value="currentSpouse">Current spouse / partner</option>
                                                     <option value="formerSpouse">Former spouse / partner</option>
-                                                    <option value="currentFiance">Current fiance / dating relationship</option>
-                                                    <option value="formerFiance">Former fiance / dating relationship</option>
+                                                    <option value="currentFiance">Current fiance / dating relationship
+                                                    </option>
+                                                    <option value="formerFiance">Former fiance / dating relationship
+                                                    </option>
                                                     <option value="employer">Employer / manager / supervisor</option>
                                                     <option value="agentOfEmployer">Agent of Employer</option>
                                                     <option value="teacher">Teacher / instructor / professor</option>
                                                     <option value="coach">Coach / trainer</option>
                                                     <option value="immediate family">Immediate family</option>
                                                     <option value="otherRelatives">Other relatives</option>
-                                                    <option value="peopleOfAuthority">People of authority / service provider</option>
-                                                    <option value="neighbors">Neighbors / peers / coworkers / classmates</option>
+                                                    <option value="peopleOfAuthority">People of authority / service
+                                                        provider</option>
+                                                    <option value="neighbors">Neighbors / peers / coworkers / classmates
+                                                    </option>
                                                     <option value="Stranger">Stranger</option>
                                                 </select> {% endcomment %}
-                                                <input id="perp-relationsip-victim_0" name="perp-relationsip-victim_0" class="form-control req-inp">
+                                                <input id="perp-relationsip-victim_0" name="perp-relationsip-victim_0"
+                                                    class="form-control req-inp">
                                                 <div class="invalid-feedback perp-relationship-victim_0"></div>
                                             </div>
 
                                             <h3 class="fs-5 col-12 my-3">Local Address</h3>
                                             <div class="col-12 mb-3">
                                                 <div class="d-flex align-items-center gap-2 pt-1">
-                                                    <input class="form-check-input form-check" type="checkbox" id="same-address-victim">
-                                                    <label for="same-address-victim" class="">Check if same as Victim's Address</label>
+                                                    <input class="form-check-input form-check" type="checkbox"
+                                                        id="same-address-victim">
+                                                    <label for="same-address-victim" class="">Check if same as Victim's
+                                                        Address</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Region -->
-                                                <label for="perp-region_0" class="form-label">Region <span class="required"></span></label>
-                                                <select id="perp-region_0" name="perp-region_0" class="form-select req-inp" disabled>
+                                                <label for="perp-region_0" class="form-label">Region <span
+                                                        class="required"></span></label>
+                                                <select id="perp-region_0" name="perp-region_0"
+                                                    class="form-select req-inp" disabled>
                                                     {% comment %} <option>--Select Option--</option> {% endcomment %}
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                                    <option value="{{ region.name }}" data-code="{{ region.code }}">{{
+                                                        region.name }}</option>
                                                     {% empty %}
-                                                        <option>No data found</option>
+                                                    <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
                                                 <div class="invalid-feedback perp-region_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Province -->
-                                                <label for="perp-province_0" class="form-label">Province <span class="required"></span></label>
-                                                <select id="perp-province_0" name="perp-province_0" class="form-select req-inp">
+                                                <label for="perp-province_0" class="form-label">Province <span
+                                                        class="required"></span></label>
+                                                <select id="perp-province_0" name="perp-province_0"
+                                                    class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                                    <option value="{{ province.name }}" data-code="{{ province.code }}">
+                                                        {{ province.name }}</option>
                                                     {% empty %}
-                                                        <option>No data found</option>
+                                                    <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
                                                 <div class="invalid-feedback perp-province_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- City -->
-                                                <label for="perp-city_0" class="form-label">City/Municipality <span class="required"></span></label>
+                                                <label for="perp-city_0" class="form-label">City/Municipality <span
+                                                        class="required"></span></label>
                                                 <select id="perp-city_0" name="perp-city_0" class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                                    <option value="{{ city.name }}" data-code="{{ city.code }}">{{
+                                                        city.name }}</option>
                                                     {% empty %}
-                                                        <option>No data found</option>
+                                                    <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
                                                 <div class="invalid-feedback perp-city_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Barangay -->
-                                                <label for="perp-barangay_0" class="form-label">Barangay <span class="required"></span></label>
-                                                <select id="perp-barangay_0" name="perp-barangay_0" class="form-select req-inp">
+                                                <label for="perp-barangay_0" class="form-label">Barangay <span
+                                                        class="required"></span></label>
+                                                <select id="perp-barangay_0" name="perp-barangay_0"
+                                                    class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">
+                                                        {{ barangay.name }}</option>
                                                     {% empty %}
-                                                        <option>No data found</option>
+                                                    <option>No data found</option>
                                                     {% endfor %}
                                                 </select>
                                                 <div class="invalid-feedback perp-barangay_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Street -->
-                                                <label for="perp-street_0" class="form-label">Street <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp" id="perp-street_0" name="perp-street_0">
+                                                <label for="perp-street_0" class="form-label">Street <span
+                                                        class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-street_0"
+                                                    name="perp-street_0">
                                                 <div class="invalid-feedback perp-street_0"></div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!-- Address -->
-                                                <label for="perp-address-info_0" class="form-label">Landmark <span class="required"></span></label>
-                                                <input type="text" class="form-control req-inp" id="perp-address-info_0" name="perp-address-info_0">
-                                                <div class="invalid-feedback perp-address-info_0" ></div>
+                                                <label for="perp-address-info_0" class="form-label">Landmark <span
+                                                        class="required"></span></label>
+                                                <input type="text" class="form-control req-inp" id="perp-address-info_0"
+                                                    name="perp-address-info_0">
+                                                <div class="invalid-feedback perp-address-info_0"></div>
                                             </div>
-                                            
+
                                         </div>
                                     </div> <!--end of perpetrator form-->
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between mt-4">
-                                    <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
-                                    <button class="btn btn-primary ml-auto next-incident-button js-btn-next" type="button" title="Next">Next</button>
+                                    <button class="btn btn-outline-primary js-btn-prev" type="button"
+                                        title="Prev">Back</button>
+                                    <button class="btn btn-primary ml-auto next-incident-button js-btn-next"
+                                        type="button" title="Next">Next</button>
                                 </div>
                             </div>
                         </div>
                         <!--single form panel--><!--incident-->
                         <div class="multisteps-form__panel" data-animation="slideVert">
-                            
+
                             <h2 class="text-center mb-4 mb-md-5"><strong>Incident Information</strong></h2>
 
                             <div class="multisteps-form__content col-12 col-md-11 border rounded p-4 mx-auto">
@@ -433,97 +520,126 @@
 
                                     <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
                                         <h3 class="fs-5 mb-3">Incident Details</h3>
-                                        <div class="fw-light mb-3">Fields with <span class="required"></span> are required</div>
+                                        <div class="fw-light mb-3">Fields with <span class="required"></span> are
+                                            required</div>
                                     </div>
                                     <div class="col-12 mb-3"><!--description-->
-                                        <label for="incident-desc" class="form-label">Description <span class="required"></span></label>
-                                        <textarea class="form-control req-inp" name="incident-desc" id="incident-desc" rows="3"></textarea>
+                                        <label for="incident-desc" class="form-label">Description <span
+                                                class="required"></span></label>
+                                        <textarea class="form-control req-inp" name="incident-desc" id="incident-desc"
+                                            rows="3"></textarea>
                                         <div class="invalid-feedback incident-desc"></div>
                                     </div>
                                     <div class="col-12 mb-3"><!--evidence-->
                                         <label for="incident-evidence" class="form-label">Upload Photo Evidences</label>
-                                        <input class="form-control mb-2" type="file" id="incident-evidence" name="evidence_file" accept="image/*" multiple>
+                                        <input class="form-control mb-2" type="file" id="incident-evidence"
+                                            name="evidence_file" accept="image/*" multiple>
                                         <div class="invalid-feedback incident-street"></div>
-                                        <div class="d-flex p-2 border rounded gap-2 overflow-auto" id="photo-evidence-container" style="height: 100px;">
+                                        <div class="d-flex p-2 border rounded gap-2 overflow-auto"
+                                            id="photo-evidence-container" style="height: 100px;">
                                         </div>
-                                        
+
                                     </div>
 
                                     <div class="col-sm-6 mb-3"> <!--date of latest incident-->
-                                        <label for="date-latest-incident" class="form-label">Date of Latest Incident</label>
-                                        <input type="date" class="form-control" name="date-latest-incident" id="date-latest-incident" value="">
-                                        {% comment %} <input type="date" class="form-control" name="date-latest-incident" id="date-latest-incident" value="2024-03-01"> {% endcomment %}
+                                        <label for="date-latest-incident" class="form-label">Date of Latest
+                                            Incident</label>
+                                        <input type="date" class="form-control" name="date-latest-incident"
+                                            id="date-latest-incident" value="">
+                                        {% comment %} <input type="date" class="form-control"
+                                            name="date-latest-incident" id="date-latest-incident" value="2024-03-01"> {%
+                                        endcomment %}
                                     </div>
                                     <div class="col-sm-6 mb-3"> <!--incomplete date-->
                                         <label for="incomplete-date" class="form-label">Incomplete Date</label>
                                         <div class="d-flex align-items-center gap-2 pt-1">
-                                            <input type="hidden" name="incomplete-date" value="False"> <!-- Hidden input with value False -->
-                                            <input class="form-check-input form-check" type="checkbox" id="incomplete-date" name="incomplete-date" value="True"> <!-- Checkbox input with value True -->
-                                            <label for="incomplete-date" class="fs-7">(Check if date is not complete)</label>
+                                            <input type="hidden" name="incomplete-date" value="False">
+                                            <!-- Hidden input with value False -->
+                                            <input class="form-check-input form-check" type="checkbox"
+                                                id="incomplete-date" name="incomplete-date" value="True">
+                                            <!-- Checkbox input with value True -->
+                                            <label for="incomplete-date" class="fs-7">(Check if date is not
+                                                complete)</label>
                                         </div>
                                     </div>
-                                    
+
                                     <h3 class="fs-5 col-12 my-3">Place of Incident</h3>
                                     <div class="col-12 mb-3">
                                         <div class="d-flex align-items-center gap-2 pt-1">
-                                            <input class="form-check-input form-check" type="checkbox" id="same-address-victim-2">
-                                            <label for="same-address-victim-2" class="">Check if same as Victim's Address</label>
+                                            <input class="form-check-input form-check" type="checkbox"
+                                                id="same-address-victim-2">
+                                            <label for="same-address-victim-2" class="">Check if same as Victim's
+                                                Address</label>
                                         </div>
                                     </div>
                                     <div class="col-sm-6 mb-3"> <!-- Region -->
-                                        <label for="incident-region" class="form-label">Region <span class="required"></span></label>
-                                        <select id="incident-region" name="incident-region" class="form-select" disabled>
+                                        <label for="incident-region" class="form-label">Region <span
+                                                class="required"></span></label>
+                                        <select id="incident-region" name="incident-region" class="form-select"
+                                            disabled>
                                             {% comment %} <option>--Select Option--</option> {% endcomment %}
                                             {% for region in default_regions %}
-                                                <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
+                                            <option value="{{ region.name }}" data-code="{{ region.code }}">{{
+                                                region.name }}</option>
                                             {% empty %}
-                                                <option>No data found</option>
+                                            <option>No data found</option>
                                             {% endfor %}
                                         </select>
                                     </div>
                                     <div class="col-sm-6 mb-3"> <!-- Province -->
-                                        <label for="incident-province" class="form-label">Province <span class="required"></span></label>
-                                        <select id="incident-province" name="incident-province" class="form-select req-inp">
+                                        <label for="incident-province" class="form-label">Province <span
+                                                class="required"></span></label>
+                                        <select id="incident-province" name="incident-province"
+                                            class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for province in default_provinces %}
-                                                <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
+                                            <option value="{{ province.name }}" data-code="{{ province.code }}">{{
+                                                province.name }}</option>
                                             {% empty %}
-                                                <option>No data found</option>
+                                            <option>No data found</option>
                                             {% endfor %}
                                         </select>
                                         <div class="invalid-feedback incident-province"></div>
                                     </div>
                                     <div class="col-sm-6 mb-3"> <!-- City -->
-                                        <label for="incident-city" class="form-label">City/Municipality <span class="required"></span></label>
+                                        <label for="incident-city" class="form-label">City/Municipality <span
+                                                class="required"></span></label>
                                         <select id="incident-city" name="incident-city" class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for city in default_cities %}
-                                                <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
+                                            <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}
+                                            </option>
                                             {% empty %}
-                                                <option>No data found</option>
+                                            <option>No data found</option>
                                             {% endfor %}
                                         </select>
                                         <div class="invalid-feedback incident-city"></div>
                                     </div>
                                     <div class="col-sm-6 mb-3"> <!-- Barangay -->
-                                        <label for="incident-barangay" class="form-label">Barangay <span class="required"></span></label>
-                                        <select id="incident-barangay" name="incident-barangay" class="form-select req-inp">
+                                        <label for="incident-barangay" class="form-label">Barangay <span
+                                                class="required"></span></label>
+                                        <select id="incident-barangay" name="incident-barangay"
+                                            class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for barangay in default_barangays %}
-                                                <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
+                                            <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{
+                                                barangay.name }}</option>
                                             {% empty %}
-                                                <option>No data found</option>
+                                            <option>No data found</option>
                                             {% endfor %}
                                         </select>
                                         <div class="invalid-feedback incident-barangay"></div>
                                     </div>
                                     <div class="col-sm-6 mb-3"> <!-- Street -->
-                                        <label for="incident-street" class="form-label">Street <span class="required"></span></label>
-                                        <input type="text" class="form-control req-inp" id="incident-street" name="incident-street">
+                                        <label for="incident-street" class="form-label">Street <span
+                                                class="required"></span></label>
+                                        <input type="text" class="form-control req-inp" id="incident-street"
+                                            name="incident-street">
                                         <div class="invalid-feedback incident-street"></div>
                                     </div>
                                     <div class="col-sm-6 mb-3"> <!-- Type of place -->
-                                        <label for="place-incident" class="form-label">Type of Place <span class="required"></span></label>
+                                        <label for="place-incident" class="form-label">Type of Place <span
+                                                class="required"></span></label>
                                         <select id="place-incident" name="place-incident" class="form-select req-inp">
                                             <option value="" selected>--Select Place of Incident--</option>
                                             <option value="house">House</option>
@@ -543,9 +659,11 @@
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between mt-4 col-12">
-                                    <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
-                                    <button class="btn btn-primary ml-auto btn-form-submit" type="submit" title="Send" id="submitBtn" >Submit report</button>
-                                    
+                                    <button class="btn btn-outline-primary js-btn-prev" type="button"
+                                        title="Prev">Back</button>
+                                    <button class="btn btn-primary ml-auto btn-form-submit" type="submit" title="Send"
+                                        id="submitBtn">Submit report</button>
+
                                 </div>
                             </div>
                         </div>
@@ -557,12 +675,14 @@
 
                                 <div class="label-form border rounded p-4 mb-4">
                                     <div class="row g-4 row-cols-1 row-cols-lg-2">
-                                    {% endcomment %}
+                                        {% endcomment %}
                                         {% comment %} <div class="col-6">
-                                            <input type="radio" class="btn-check" name="service" id="crisis" value="crisis" autocomplete="off" checked>
-                                            <label class="btn custom-btn" for="crisis">Crisis Intervention Including Rescue</label>
+                                            <input type="radio" class="btn-check" name="service" id="crisis"
+                                                value="crisis" autocomplete="off" checked>
+                                            <label class="btn custom-btn" for="crisis">Crisis Intervention Including
+                                                Rescue</label>
                                         </div> {% endcomment %}
-                                    {% comment %} 
+                                        {% comment %}
                                         <label for="crisis" class="col">
                                             <div class="service-option form-check card shadow-sm p-4 h-100 card-link">
                                                 <div class="card-title">
@@ -571,9 +691,12 @@
                                                     </span>
                                                     <h3 class="fw-bold fs-5">Crisis Intervention Including Rescue</h3>
                                                 </div>
-                                                <p class="fw-light">Provides immediate support in emergencies, including rescue operations, temporary shelter, and access to essential resources.</p>
+                                                <p class="fw-light">Provides immediate support in emergencies, including
+                                                    rescue operations, temporary shelter, and access to essential
+                                                    resources.</p>
                                                 <div class="d-flex justify-content-end">
-                                                    <input type="radio" class="form-check-input" name="service" id="crisis" value="crisis" autocomplete="off">
+                                                    <input type="radio" class="form-check-input" name="service"
+                                                        id="crisis" value="crisis" autocomplete="off">
                                                 </div>
                                             </div>
                                         </label>
@@ -583,11 +706,15 @@
                                                     <span>
                                                         <i class="fa-solid fa-shield-halved"></i>
                                                     </span>
-                                                    <h3 class="fw-bold fs-5">Issuance / Enforcement of Barangay Protection Order</h3>
+                                                    <h3 class="fw-bold fs-5">Issuance / Enforcement of Barangay
+                                                        Protection Order</h3>
                                                 </div>
-                                                <p class="fw-light">Issues and enforces protective orders at the barangay to ensure the safety of individuals facing domestic violence.</p>
+                                                <p class="fw-light">Issues and enforces protective orders at the
+                                                    barangay to ensure the safety of individuals facing domestic
+                                                    violence.</p>
                                                 <div class="d-flex justify-content-end">
-                                                    <input type="radio" class="form-check-input" name="service" id="issuance" value="issuance" autocomplete="off">
+                                                    <input type="radio" class="form-check-input" name="service"
+                                                        id="issuance" value="issuance" autocomplete="off">
                                                 </div>
                                             </div>
                                         </label>
@@ -596,8 +723,10 @@
                                 </div>
                                 <hr>
                                 <div class="d-flex justify-content-between mt-4 col-12">
-                                    <button class="btn btn-outline-primary js-btn-prev" type="button" title="Prev">Back</button>
-                                    <button class="btn btn-primary ml-auto btn-form-submit" type="submit" title="Send" id="submitBtn" disabled>Submit Report</button>
+                                    <button class="btn btn-outline-primary js-btn-prev" type="button"
+                                        title="Prev">Back</button>
+                                    <button class="btn btn-primary ml-auto btn-form-submit" type="submit" title="Send"
+                                        id="submitBtn" disabled>Submit Report</button>
                                 </div>
                             </div>
                         </div> {% endcomment %}
@@ -608,27 +737,34 @@
     </div>
 </div>
 <!-- Modal Success -->
-<div class="modal fade email-form" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade email-form" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-        <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel">Success</h1>
-        </div>
-        <div class="modal-body">
-            <div class="wrapper"> <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"> <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/> <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-            </svg>
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Success</h1>
             </div>
-            <h3 class="text-center">Success</h3>
-            <p class="py-1 fs-4 text-center">Thank you for reporting! Your report will help us maintain a safe and enjoyable environment for everyone. We'll review the issue promptly. If necessary, we'll take appropriate action. Your contribution is appreciated! You can check the Progress of Your Case in the Check Status.</p>
-        </div>
-        <div class="modal-footer">
-            <a type="button" class="btn btn-primary" href="{% url 'home' %}">Back to HomePage</a>
-        </div>
+            <div class="modal-body">
+                <div class="wrapper"> <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                    </svg>
+                </div>
+                <h3 class="text-center">Success</h3>
+                <p class="py-1 fs-4 text-center">Thank you for reporting! Your report will help us maintain a safe and
+                    enjoyable environment for everyone. We'll review the issue promptly. If necessary, we'll take
+                    appropriate action. Your contribution is appreciated! You can check the Progress of Your Case in the
+                    Check Status.</p>
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-primary" href="{% url 'home' %}">Back to HomePage</a>
+            </div>
         </div>
     </div>
 </div>
 <!-- Email Modal -->
-<div class="modal fade" id="sendEmail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="sendEmail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -640,21 +776,27 @@
                     <div class="container col-lg-12 col-md-12 col-sm-8">
                         <h3 class="text-center">Before We Can Process Your Case.</h3>
                         {% if twilio_type == 'local' %}
-                            <div class="form-label mb-4">Please enter your email first.</div>
+                        <div class="form-label mb-4">Please enter your email first.</div>
                         {% else %}
-                            <div class="form-label mb-4">Please enter your email or phone number first.</div>
+                        <div class="form-label mb-4">Please enter your email or phone number first.</div>
                         {% endif %}
                         <ul class="nav nav-underline mb-3" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="email-tab" data-bs-toggle="tab" data-bs-target="#email-panel" type="button" role="tab" aria-controls="email" aria-selected="true">Email</button>
+                                <button class="nav-link active" id="email-tab" data-bs-toggle="tab"
+                                    data-bs-target="#email-panel" type="button" role="tab" aria-controls="email"
+                                    aria-selected="true">Email</button>
                             </li>
                             <li class="nav-item {% if twilio_type == 'local' %}d-none{% endif %}" role="presentation">
-                                <button class="nav-link" id="phone-tab" data-bs-toggle="tab" data-bs-target="#phone-panel" type="button" role="tab" aria-controls="phone" aria-selected="false">Phone</button>
+                                <button class="nav-link" id="phone-tab" data-bs-toggle="tab"
+                                    data-bs-target="#phone-panel" type="button" role="tab" aria-controls="phone"
+                                    aria-selected="false">Phone</button>
                             </li>
                         </ul>
                         <div class="tab-content mb-3" id="myTabContent">
-                            <div class="tab-pane fade show active" id="email-panel" role="tabpanel" aria-labelledby="email-tab">
-                                <input type="email" class="form-control" id="email-confirm" name="email-confirm" aria-describedby="emailFeedback" placeholder="example@email.com">
+                            <div class="tab-pane fade show active" id="email-panel" role="tabpanel"
+                                aria-labelledby="email-tab">
+                                <input type="email" class="form-control" id="email-confirm" name="email-confirm"
+                                    aria-describedby="emailFeedback" placeholder="example@email.com">
                                 <div id="emailFeedback" class="invalid-feedback err-msg-email">
                                     No Account Associated with any Case.
                                 </div>
@@ -662,19 +804,21 @@
                             <div class="tab-pane fade" id="phone-panel" role="tabpanel" aria-labelledby="phone-tab">
                                 <div class="input-group" aria-describedby="phoneFeedback">
                                     <span class="input-group-text">+63</span>
-                                    <input type="text" class="form-control" id="phone-confirm" name="phone-confirm" placeholder="987 654 3210" maxlength="10">
+                                    <input type="text" class="form-control" id="phone-confirm" name="phone-confirm"
+                                        placeholder="987 654 3210" maxlength="10">
                                 </div>
                                 <div id="phoneFeedback" class="invalid-feedback err-msg-phone">
                                     No Account Associated with any Case.
                                 </div>
                             </div>
                         </div>
-                        <div class="g-recaptcha d-flex justify-content-center" data-sitekey="{{ site_key }}" data-callback="err_captcha_reset"></div>
+                        <div class="g-recaptcha d-flex justify-content-center" data-sitekey="{{ site_key }}"
+                            data-callback="err_captcha_reset"></div>
                         <div class="err-msg-recaptcha fs-7 text-danger mb-3"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary " id="send_email_confirmation">  
+                    <button type="submit" class="btn btn-primary " id="send_email_confirmation">
                         <span>Confirm</span>
                         <div class="spinner-border text-light position-absolute" role="status" style="display: none;">
                         </div>
@@ -685,7 +829,8 @@
     </div>
 </div>
 <!-- OTP Modal -->
-<div class="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -772,16 +917,8 @@
 <script>
     const csrf_token = '{{ csrf_token }}'
 
-    function showToast(type, message) {
-        var toastId = type === 'success' ? '#successToast' : '#errorToast';
-        var toast = new bootstrap.Toast(document.querySelector(toastId));
-        // Update toast message
-        var toastBody = toastId + ' .toast-body';
-        $(toastBody).text(message);
-        // Show toast
-        toast.show();
-    }
-    $(document).ready(function() {
+    
+    $(document).ready(function () {
         // Function to check if all inputs are valid and enable/disable buttons accordingly
         function checkInputsValidity() {
             const streetInputValue = $("#incident-street").val().trim();
@@ -805,7 +942,7 @@
 
         checkInputsValidity();
 
-        $("#incident-street, #incident-desc" ).on('input change', function() {
+        $("#incident-street, #incident-desc").on('input change', function () {
             checkInputsValidity();
         });
         // Function to validate the incident street input
@@ -848,7 +985,7 @@
         // Add event listener to incident street input for validation
         $("#incident-street").on('input', validateIncidentStreet);
         // Prevent typing numerical characters in the incident street input
-        $("#incident-street").on('keydown', function(event) {
+        $("#incident-street").on('keydown', function (event) {
             if (/\d/.test(event.key)) {
                 event.preventDefault();
             }
@@ -875,7 +1012,7 @@
             const feedback = descriptionInput.next(".invalid-feedback");
             if (isOverMaxLength) {
                 feedback.text(`Only up to ${maxLength} characters allowed.`);
-            }else if (isEmpty) {
+            } else if (isEmpty) {
                 feedback.text("Description of incident is a required input.");
             } else {
                 feedback.text("");
@@ -923,15 +1060,15 @@
         const incidentForm = document.querySelector('.incident-form-panel')
         const requiredIncidentInputs = incidentForm.querySelectorAll('.req-inp')
         requiredIncidentInputs.forEach(input => {
-            
+
             const feedback = input.nextElementSibling;
             input.addEventListener('change', () => {
                 if (input.value.length <= 0) {
-                  feedback.textContent = "This is a required input.";
-                  input.classList.add('is-invalid');
+                    feedback.textContent = "This is a required input.";
+                    input.classList.add('is-invalid');
                 } else {
-                  feedback.textContent = "";
-                  input.classList.remove('is-invalid');
+                    feedback.textContent = "";
+                    input.classList.remove('is-invalid');
                 }
 
             })
@@ -940,33 +1077,33 @@
 
         const form = document.querySelector("#impact-victim-form")
 
-        form.addEventListener("click", function(e) {
+        form.addEventListener("click", function (e) {
             //e.preventDefault()
 
-            if(e.target.classList.contains("delete-individual-form")) {
+            if (e.target.classList.contains("delete-individual-form")) {
 
                 const parentPage = e.target.closest(".multisteps-form__panel")
                 const individualForm = parentPage.querySelectorAll(".individual-form")
                 const word = individualForm[0].querySelector(".user_counter").textContent.split(" ")
                 const victimNavtabsContainer = document.querySelector('#victim-navtabs-container')
                 const perpNavtabsContainer = document.querySelector('#perpetrator-navtabs-container')
-                
-                if (individualForm.length  < 2) {
+
+                if (individualForm.length < 2) {
                     // showToast('error', `At least one {word[0]} form is required.`); 
-                    showToast('error', "At least one " + word[0].toLowerCase() + " form is required."); 
+                    showToast('error', "At least one " + word[0].toLowerCase() + " form is required.");
                 } else {
 
-                    
+
 
                     e.target.closest(".individual-form").remove();
-                    
+
 
                     const victimActiveTab = victimNavtabsContainer.querySelector(`[data-target='#${e.target.closest(".individual-form").id}']`)
                     const perpetratorActiveTab = perpNavtabsContainer.querySelector(`[data-target='#${e.target.closest(".individual-form").id}']`)
 
-                    if(e.target.closest(".individual-form").classList.contains('victim-form')) {
+                    if (e.target.closest(".individual-form").classList.contains('victim-form')) {
                         victimCount--
-                        if(victimActiveTab.nextElementSibling.classList.contains('nav-link')) {
+                        if (victimActiveTab.nextElementSibling.classList.contains('nav-link')) {
                             victimActiveTab.nextElementSibling.click();
                         } else {
                             victimActiveTab.previousElementSibling.click();
@@ -974,9 +1111,9 @@
                         victimActiveTab.remove();
                         recountVictims()
                     }
-                    if(e.target.closest(".individual-form").classList.contains('perpetrator-form')) {
+                    if (e.target.closest(".individual-form").classList.contains('perpetrator-form')) {
                         perpetratorCount--
-                        if(perpetratorActiveTab.nextElementSibling.classList.contains('nav-link')) {
+                        if (perpetratorActiveTab.nextElementSibling.classList.contains('nav-link')) {
                             perpetratorActiveTab.nextElementSibling.click();
                         } else {
                             perpetratorActiveTab.previousElementSibling.click();
@@ -984,11 +1121,11 @@
                         perpetratorActiveTab.remove();
                         recountPerpetrators()
                     }
-                    
-                    
-                    
+
+
+
                     let counter = 1;
-                    individualForm.forEach(function(element) {
+                    individualForm.forEach(function (element) {
                         //element.querySelector(".user_counter").innerHTML = word[0] + " " + counter
 
                         counter++
@@ -1001,7 +1138,7 @@
 
         let goForSubmission = false
 
-        $('#impact-victim-form').submit(function(e) {
+        $('#impact-victim-form').submit(function (e) {
             e.preventDefault(); // Prevent the default form submission
 
             if (!goForSubmission) {
@@ -1013,7 +1150,7 @@
                 // reseting count inputs to actual count.
                 document.querySelector('#victim_count').value = victimCount
                 document.querySelector('#perpetrator_count').value = perpetratorCount
-                
+
                 // Removed disabled attribute in forms
                 $('#incident-region, #incident-province, #incident-city, #incident-barangay, perp-region_0, perp-brangay_0, perp-city_0').removeAttr('disabled');
 
@@ -1025,7 +1162,7 @@
                     contentType: false, // Prevent jQuery from automatically setting contentType
                     processData: false, // Prevent jQuery from automatically processing data
                     dataType: 'json', // Expect JSON response
-                    success: function(response) {    
+                    success: function (response) {
                         // hide otp modal
                         $('#otpModal').modal('hide');
                         if (response.success) {
@@ -1035,7 +1172,7 @@
                             showToast('error', 'An error occurred. Please try again.');
                         }
                     },
-                    error: function(xhr, textStatus, errorThrown) {
+                    error: function (xhr, textStatus, errorThrown) {
                         // hide otp modal
                         $('#otpModal').modal('hide');
                         console.error('Error:', errorThrown);
@@ -1048,7 +1185,7 @@
         });
 
         // email confirmation
-        $('#contactConfirmationForm').submit(function(e) {
+        $('#contactConfirmationForm').submit(function (e) {
             e.preventDefault(); // Prevent the default form submission
 
 
@@ -1062,7 +1199,7 @@
             console.log("Phone entered: " + phoneValue);
 
             requestURL = ''
-            if(document.querySelector('#email-tab').classList.contains('active')) {
+            if (document.querySelector('#email-tab').classList.contains('active')) {
                 console.log('email is selected type')
                 requestURL = "{% url 'email_confirm'  %}"
                 contactValue = isvalid_email(emailValue)
@@ -1076,18 +1213,18 @@
 
             // Check recaptcha if puzzle is solved
             const captchaRes = grecaptcha.getResponse()
-            if(!captchaRes.length > 0) {
+            if (!captchaRes.length > 0) {
                 $('.g-recaptcha').children().css('border', '1px solid red')
                 $('.err-msg-recaptcha').text('You need to solve captcha first')
                 throw new Error('reCAPTCHA validation failed')
             }
 
-            
+
             //show loader and disabled
             $('#send_email_confirmation').prop('disabled', true); // Disable the button to prevent multiple submissions
             $('#send_email_confirmation').css('background-color', '#6c757d'); // Change button color to indicate it's disabled
             $('#send_email_confirmation').text('Sending...'); // Change button text to indicate validation in progress
-            
+
 
             $.ajax({
                 url: requestURL, // Modify the URL to point to your Django view endpoint
@@ -1096,18 +1233,18 @@
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                 },
-                success: function(response) {
+                success: function (response) {
                     // Handle success response
                     console.log(response); // Log the response to the console
-                      //enable button
+                    //enable button
                     $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
                     $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
                     $('#send_email_confirmation').text('Confirm'); // Change button text to indicate validation in progress
-                    
+
 
                     // Server-side validation response
                     if (!response.success) {
-                        if(get_contact_type() == 'email') {
+                        if (get_contact_type() == 'email') {
                             $('#email-confirm').addClass('is-invalid')
                             $('.err-msg-email').text(response.message)
                         } else if (get_contact_type() == 'phone') {
@@ -1135,16 +1272,16 @@
                     // Show the OTP modal
                     $('#otpModal').modal('show');
                 },
-                error: function(xhr, textStatus, errorThrown) {
+                error: function (xhr, textStatus, errorThrown) {
                     console.error('Error:', errorThrown);
                     // Show error toast if response indicates failure
                     showToast('error', 'An error occurred. Please try again.');
 
-                      //enable button
+                    //enable button
                     $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
                     $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
                     $('#send_email_confirmation').text('Confirm'); // Change button text to indicate validation in progress
-                    
+
 
                 }
             });
@@ -1169,7 +1306,7 @@
         });
 
         // otp checking
-        $('#otpForm').submit(function(e) {
+        $('#otpForm').submit(function (e) {
             $('#btn_otp_validate').prop('disabled', true).text('Validating...'); // Disable the button to prevent multiple submissions
 
             // Enable the select for region,barangay, and city
@@ -1185,7 +1322,7 @@
             var formData = $(this).serialize();
 
             requestURL = ''
-            if(document.querySelector('#email-tab').classList.contains('active')) {
+            if (document.querySelector('#email-tab').classList.contains('active')) {
                 console.log('email is selected type')
                 requestURL = "{% url 'verify_otp_email'  %}"
             } else if (document.querySelector('#phone-tab').classList.contains('active')) {
@@ -1199,22 +1336,22 @@
                 type: 'POST',
                 url: requestURL,
                 data: formData,
-                success: function(response) {
+                success: function (response) {
                     if (response.success) {
                         $('#successMessage').text(response.message);
-                        
+
                         var emailValue = $('#email-confirm').val();
                         var phoneValue = $('#phone-confirm').val();
                         console.log("Email entered(OTP): " + emailValue);
                         console.log("Phone entered(OTP): " + phoneValue);
                         $('#email-confirmed').val(emailValue);
                         $('#phone-confirmed').val(phoneValue);
-                        
+
                         goForSubmission = true
-                       
+
                         // to trigger button of main form
                         document.querySelector(".btn-form-submit").click()
-                        
+
                         // Log success message to the console
                         console.log('OTP verification successful.');
                     } else {
@@ -1224,7 +1361,7 @@
                         }
                     }
                 },
-                error: function(xhr, errmsg, err) {
+                error: function (xhr, errmsg, err) {
                     $('#otpErrorMessage').text('Error occurred. Please try again.');
                     // Log error message to the console
                     console.error('Error occurred during OTP verification:', errmsg);
@@ -1234,7 +1371,7 @@
 
 
         // Prevent form submission when clicking the buttons inside the form
-        $('#add-victim-form, #delete-victim-form, #add-perpetrator-form, #delete-perpetrator-form').click(function(e) {
+        $('#add-victim-form, #delete-victim-form, #add-perpetrator-form, #delete-perpetrator-form').click(function (e) {
             e.preventDefault(); // Prevent the default action
         });
 
@@ -1272,10 +1409,10 @@
                 type: 'POST',
                 url: '{% url "resend_otp_email" %}',
                 headers: { 'X-CSRFToken': '{{ csrf_token }}' }, // Include CSRF token in the headers
-                success: function(response) {
+                success: function (response) {
                     // Handle success response if needed
                 },
-                error: function(xhr, errmsg, err) {
+                error: function (xhr, errmsg, err) {
                     console.error('Error occurred during OTP resend:', errmsg);
                 }
             });
@@ -1284,7 +1421,7 @@
         // Client side validation
         function isvalid_phone_number(number) {
             console.log(typeof number)
-            if(/^\d+$/.test(number) && number.length === 10) {
+            if (/^\d+$/.test(number) && number.length === 10) {
                 console.log('Phone number isvalid')
                 return number
             } else if (number.trim().length <= 0) {
@@ -1299,7 +1436,7 @@
             }
         }
         function isvalid_email(email) {
-            if(email.trim().length <= 0) {
+            if (email.trim().length <= 0) {
                 $('.err-msg-email').text('Please enter your email')
                 $('#email-confirm').addClass('is-invalid')
                 throw new Error('No input detected')
@@ -1309,7 +1446,7 @@
         }
 
         function get_contact_type() {
-            if(document.querySelector('#email-tab').classList.contains('active')) {
+            if (document.querySelector('#email-tab').classList.contains('active')) {
                 return 'email'
             } else if (document.querySelector('#phone-tab').classList.contains('active')) {
                 return 'phone'
@@ -1317,16 +1454,16 @@
                 return false
             }
         }
-        
+
 
         // Click event handler for the resend button
-        $('#resendButton').click(function(event) {
+        $('#resendButton').click(function (event) {
             event.preventDefault();
             resendOTP();
         });
 
         // Prevent character inputs other than numbers in the phone input element
-        $('#phone-confirm').on('input', function() {
+        $('#phone-confirm').on('input', function () {
             // Remove any non-numeric character
             $(this).val($(this).val().replace(/[^0-9]/g, ''));
         });
@@ -1368,11 +1505,11 @@
 
     function setContactModalMessage() {
         if (document.querySelector('#phone-tab').classList.contains('active')) {
-          document.querySelector('#hidden_email').textContent = '09*******' + (document.querySelector('#phone-confirm').value.toString()).slice(-2)
-      
+            document.querySelector('#hidden_email').textContent = '09*******' + (document.querySelector('#phone-confirm').value.toString()).slice(-2)
+
         } else if (document.querySelector('#email-tab').classList.contains('active')) {
-          email = document.querySelector('#email-confirm').value
-          document.querySelector('#hidden_email').textContent = email[0] + '*****' + email.slice(-10)
+            email = document.querySelector('#email-confirm').value
+            document.querySelector('#hidden_email').textContent = email[0] + '*****' + email.slice(-10)
         }
     }
 
