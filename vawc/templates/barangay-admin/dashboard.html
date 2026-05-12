@@ -257,7 +257,24 @@ $(document).ready(function() {
     const casePerRa = new Chart(ctxRA, {
         type: 'bar',
         data: { labels: [], datasets: [{ label: 'Cases', data: [], backgroundColor: PALETTE, borderColor: 'transparent', borderRadius: 4, borderWidth: 0 }] },
-        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+        options: { 
+            indexAxis: 'y', 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: false, 
+                datalabels: { 
+                    anchor: 'end', 
+                    align: 'right', 
+                    color: '#555', 
+                    font: { weight: 'bold', size: 10 },
+                    offset: 4,
+                    clip: false,
+                    formatter: (value) => value > 0 ? value : ''
+                } 
+            }, 
+            scales: { x: { beginAtZero: true, ticks: { precision: 0 }, grace: '10%' } } 
+        }
     });
     ctxRA.canvas.addEventListener('click', function(click) {
         const els = casePerRa.getElementsAtEventForMode(click, 'nearest', { intersect: true }, true);
@@ -270,7 +287,23 @@ $(document).ready(function() {
     const casesByMonth = new Chart(ctxMonth, {
         type: 'line',
         data: { labels: [], datasets: [{ label: 'Cases', data: [], fill: true, backgroundColor: PURPLE_BG, borderColor: PURPLE, borderWidth: 2, tension: 0.4, pointBackgroundColor: PURPLE, pointRadius: 4, cubicInterpolationMode: 'monotone' }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: false }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: false, 
+                datalabels: { 
+                    anchor: 'end', 
+                    align: 'top', 
+                    color: PURPLE, 
+                    font: { weight: 'bold', size: 10 }, 
+                    offset: 4,
+                    clip: false,
+                    formatter: (value) => value > 0 ? value : ''
+                } 
+            }, 
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 }, grace: '15%' } } 
+        }
     });
     ctxMonth.canvas.addEventListener('click', function(click) {
         const els = casesByMonth.getElementsAtEventForMode(click, 'nearest', { intersect: true }, true);

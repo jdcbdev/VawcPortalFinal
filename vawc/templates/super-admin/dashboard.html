@@ -531,6 +531,16 @@
                             font: { size: 11 }
                         }
                     },
+                    datalabels: {
+                        color: '#fff',
+                        font: { weight: 'bold', size: 11 },
+                        formatter: (value) => value > 0 ? value : '',
+                        dropShadow: {
+                            enabled: true,
+                            blur: 3,
+                            color: 'rgba(0,0,0,0.5)'
+                        }
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
@@ -623,20 +633,36 @@
             },
             options: {
                 indexAxis: 'y',
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: false,
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'right',
+                        color: '#555',
+                        font: { weight: 'bold', size: 10 },
+                        formatter: Math.round,
+                        offset: 4,
+                        clip: false
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
                                 return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
                             }
+                        }
+                    }
+                },
+                scales: {
+                    x: { 
+                        beginAtZero: true, 
+                        ticks: { precision: 0 },
+                        grace: '10%'
+                    },
+                    y: {
+                        ticks: {
+                            font: { size: 10 }
                         }
                     }
                 }
@@ -708,12 +734,27 @@
                 responsive: true,
                 plugins: {
                     legend: false,
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#555',
+                        font: { weight: 'bold', size: 10 },
+                        offset: 4,
+                        clip: false
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
                                 return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
                             }
                         }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { precision: 0 },
+                        grace: '15%'
                     }
                 }
             }
@@ -800,10 +841,25 @@
                 onHover: (event, chartElement) => {
                     event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
                 },
-                scales: { y: { beginAtZero: true } },
+                scales: { 
+                    y: { 
+                        beginAtZero: true,
+                        ticks: { precision: 0 },
+                        grace: '15%'
+                    } 
+                },
                 responsive: true,
                 plugins: {
                     legend: false,
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: '#555',
+                        font: { weight: 'bold', size: 10 },
+                        offset: 4,
+                        clip: false,
+                        formatter: (value) => value > 0 ? value : ''
+                    },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {

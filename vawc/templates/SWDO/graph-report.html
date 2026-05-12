@@ -452,6 +452,9 @@ $(document).ready(function () {
             const caseIds = [];
             $(consolidatedTable.rows({ filter: 'applied' }).nodes()).each(function() { caseIds.push($(this).data('caseid')); });
             const filteredCasesData = rawCasesData.filter(c => caseIds.includes(c.data.case_id));
+            
+            const counts = getDimensionCounts(filteredCasesData);
+            validateDropdowns(cardId, counts);
             renderSpecificChart(cardId, filteredCasesData);
         });
         
@@ -491,9 +494,73 @@ $(document).ready(function () {
 
     // ── Build Dynamic Chart ──
     function updateAllCharts(filteredCases) {
+        const counts = getDimensionCounts(filteredCases);
         Object.keys(chartInstances).forEach(cardId => {
+            validateDropdowns(cardId, counts);
             renderSpecificChart(cardId, filteredCases);
         });
+    }
+
+    function getDimensionCounts(filteredCases) {
+        const counts = {
+            ra_violation: new Set(), abuse_type: new Set(), place_of_incident: new Set(),
+            relationship: new Set(), age_group: new Set(), civil_status: new Set(),
+            service_type: new Set(), monthly_trend: new Set(), barangay: new Set()
+        };
+        const today = new Date();
+        filteredCases.forEach(c => {
+            const d = c.data;
+            if (d.checkbox_ra_9262) counts.ra_violation.add('RA 9262');
+            if (d.checkbox_ra_8353) counts.ra_violation.add('RA 8353');
+            if (d.checkbox_ra_7877) counts.ra_violation.add('RA 7877');
+            if (d.checkbox_ra_9775) counts.ra_violation.add('RA 9775');
+            if (d.checkbox_a_7610)  counts.ra_violation.add('RA 7610');
+            if (d.checkbox_physical_abuse)      counts.abuse_type.add('Physical');
+            if (d.checkbox_sexual_abuse)        counts.abuse_type.add('Sexual');
+            if (d.checkbox_psychological_abuse) counts.abuse_type.add('Psychological');
+            if (d.checkbox_economic_abuse)      counts.abuse_type.add('Economic');
+            if (d.checkbox_others)              counts.abuse_type.add('Other');
+            if (d.place_of_incident) counts.place_of_incident.add(d.place_of_incident);
+            c.perpetrators.forEach(p => { if (p.relationship_to_victim) counts.relationship.add(p.relationship_to_victim); });
+            c.victims.forEach(v => {
+                let age='-';
+                if (v.date_of_birth && v.date_of_birth!=='None') {
+                    const bd=new Date(v.date_of_birth);
+                    if (!isNaN(bd)) { age=today.getFullYear()-bd.getFullYear(); const mo=today.getMonth()-bd.getMonth(); if(mo<0||(mo===0&&today.getDate()<bd.getDate()))age--; }
+                }
+                const grp = getAgeGroup(age);
+                if (grp !== 'Unknown') counts.age_group.add(grp);
+                if (v.civil_status) counts.civil_status.add(v.civil_status);
+            });
+            if (d.service_information) counts.service_type.add(d.service_information);
+            if (d.date_added) counts.monthly_trend.add(d.date_added.substring(0,7));
+            if (d.barangay) counts.barangay.add(d.barangay);
+        });
+        const res = {};
+        for (const k in counts) res[k] = counts[k].size;
+        return res;
+    }
+
+    function validateDropdowns(cardId, dimensionCounts) {
+        const dSel = $(`#dim-${cardId}`), tSel = $(`#type-${cardId}`);
+        if (!dSel.length || !tSel.length) return;
+        const curDim = dSel.val(), curType = tSel.val();
+        const isCircular = (curType === 'pie' || curType === 'doughnut');
+        
+        dSel.find('option').each(function() {
+            const dimVal = $(this).val();
+            const count = dimensionCounts[dimVal] || 0;
+            const shouldHide = isCircular && count > 7;
+            $(this).prop('disabled', shouldHide).toggle(!shouldHide);
+        });
+        
+        const selCount = dimensionCounts[curDim] || 0;
+        const tooMany = selCount > 7;
+        tSel.find('option[value="pie"], option[value="doughnut"]').each(function() {
+            $(this).prop('disabled', tooMany).toggle(!tooMany);
+        });
+
+        if (isCircular && tooMany) tSel.val('bar');
     }
 
     function renderSpecificChart(cardId, filteredCases) {
@@ -590,9 +657,38 @@ $(document).ready(function () {
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: isPie, position: 'bottom' } },
+                layout: {
+                    padding: {
+                        top: isPie ? 0 : 35,
+                        right: isPie ? 0 : 25,
+                        left: isPie ? 0 : 10,
+                        bottom: isPie ? 10 : 0
+                    }
+                },
+                plugins: { 
+                    legend: { 
+                        display: isPie, 
+                        position: 'bottom',
+                        labels: { boxWidth: 12, font: { size: 11 } }
+                    },
+                    datalabels: {
+                        color: isPie ? '#fff' : (type === 'line' ? PURPLE : '#555'),
+                        anchor: isPie ? 'center' : 'end',
+                        align: isPie ? 'center' : 'top',
+                        offset: isPie ? 0 : 6,
+                        clip: false,
+                        font: { weight: 'bold', size: 11 },
+                        formatter: (value) => value > 0 ? value : '',
+                        textStrokeColor: isPie ? 'rgba(0,0,0,0.3)' : 'transparent',
+                        textStrokeWidth: isPie ? 1 : 0
+                    }
+                },
                 scales: isPie ? {} : { 
-                    y: { beginAtZero: true, ticks: { precision: 0 } },
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { precision: 0 },
+                        grace: '15%'
+                    },
                     x: { ticks: { autoSkip: false } }
                 }
             }
