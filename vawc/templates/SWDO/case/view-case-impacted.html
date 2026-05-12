@@ -3445,6 +3445,55 @@
 
             </div> <!--end of incident tab pane-->
         </div> {% endcomment %}
+        <div class="tab-pane fade" id="nav-history" role="tabpanel" aria-labelledby="nav-history-tab">
+            <h2 class="pt-3 pb-2 text-center">EDIT HISTORY</h2>
+            <div class="container-fluid pb-5 pt-3">
+                <div class="card p-4 shadow-sm border border-dark border-opacity-10">
+                    <!-- Filters -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-5">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Filter by Editor</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class='bx bx-search text-muted'></i></span>
+                                <input type="text" id="filter-editor-name" class="form-control border-start-0 shadow-none" placeholder="Search name...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Filter by Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class='bx bx-calendar text-muted'></i></span>
+                                <input type="date" id="filter-edit-date" class="form-control border-start-0 shadow-none">
+                            </div>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" id="clear-history-filters" class="btn btn-outline-secondary w-100 shadow-none">
+                                <i class='bx bx-reset'></i> Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <ul class="list-group list-group-flush" id="history-list">
+                        {% for edit in case.edit_history.all|dictsortreversed:"timestamp" %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center history-item" 
+                            data-editor="{{ edit.get_user_name|lower }}" 
+                            data-date="{{ edit.timestamp|date:'Y-m-d' }}">
+                            <div>
+                                <i class='bx bx-edit text-primary me-2'></i>
+                                <strong>{{ edit.get_user_name }}</strong> 
+                                <span class="ms-4 text-muted">Edited {{ edit.section_edited }}</span>
+                            </div>
+                            <small class="text-muted">{{ edit.timestamp|date:"M j, Y g:i A" }}</small>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted">No edit history available for this case.</li>
+                        {% endfor %}
+                        <li id="no-history-results" class="list-group-item text-center text-muted d-none">
+                            <i class='bx bx-info-circle me-2'></i> No matching edit records found.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
     
 </div>
@@ -5061,6 +5110,48 @@
 
     });
 
+// Case Edit History Filtering
+$(document).ready(function() {
+    const $editorInput = $('#filter-editor-name');
+    const $dateInput = $('#filter-edit-date');
+    const $historyItems = $('.history-item');
+    const $noResults = $('#no-history-results');
+
+    function filterHistory() {
+        const nameQuery = $editorInput.val().toLowerCase();
+        const dateQuery = $dateInput.val();
+        let visibleCount = 0;
+
+        $historyItems.each(function() {
+            const editorName = $(this).data('editor') || '';
+            const editDate = $(this).data('date') || '';
+            
+            const matchesName = editorName.includes(nameQuery);
+            const matchesDate = !dateQuery || editDate === dateQuery;
+
+            if (matchesName && matchesDate) {
+                $(this).removeClass('d-none').addClass('d-flex');
+                visibleCount++;
+            } else {
+                $(this).removeClass('d-flex').addClass('d-none');
+            }
+        });
+
+        if (visibleCount === 0 && $historyItems.length > 0) {
+            $noResults.removeClass('d-none');
+        } else {
+            $noResults.addClass('d-none');
+        }
+    }
+
+    $editorInput.on('input', filterHistory);
+    $dateInput.on('change', filterHistory);
+    $('#clear-history-filters').on('click', function() {
+        $editorInput.val('');
+        $dateInput.val('');
+        filterHistory();
+    });
+});
     </script>
     
 {% if not is_owner %}
