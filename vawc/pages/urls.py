@@ -139,10 +139,12 @@ urlpatterns = [
 
     # ── Provider Graph Report Pages ──────────────────────────────────────────────
     path('admin-SWDO-vawc/graph-report/', views.SWDO_graph_view, name='SWDO graph'),
+    path('admin-law-enforcement-vawc/graph-report/', views.law_enforcement_graph_view, name='law enforcement graph'),
+    path('admin-healthcare-vawc/graph-report/', views.healthcare_graph_view, name='healthcare graph'),
+    path('admin-barangay-vawc/graph-report/', views.barangay_graph_view, name='barangay graph'),
     path('admin-SWDO-vawc/SWDO-consolidated-report-data/<str:get_year>/', views.SWDO_consolidated_report_data, name='SWDO consolidated report data'),
     path('admin-law-enforcement-vawc/law-enforcement-consolidated-report-data/<str:get_year>/', views.law_enforcement_consolidated_report_data, name='law enforcement consolidated report data'),
     path('admin-healthcare-vawc/healthcare-consolidated-report-data/<str:get_year>/', views.healthcare_consolidated_report_data, name='healthcare consolidated report data'),
-    path('admin-barangay-vawc/graph-report/', views.barangay_graph_view, name='barangay graph'),
     path('admin-barangay-vawc/barangay-consolidated-report-data/<str:get_year>/', views.barangay_consolidated_report_data, name='barangay consolidated report data'),
 
     # NOTIF
