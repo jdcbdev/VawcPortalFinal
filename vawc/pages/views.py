@@ -7109,7 +7109,6 @@ def reset_account_password(request, account_id):
 
 @login_required
 def case_summary_modal(request, case_id):
-    from case.models import Case
     try:
         case = Case.objects.get(id=case_id)
     except Case.DoesNotExist:
@@ -7120,9 +7119,12 @@ def case_summary_modal(request, case_id):
     is_owner = False
     referral_status = None
     
-    if hasattr(request.user, 'account'):
-        account = request.user.account
-        is_owner = (case.barangay == account.barangay or case.created_by == request.user)
+    user = request.user
+    
+    # 1. Check for Barangay/Admin Account
+    if hasattr(user, 'account'):
+        account = user.account
+        is_owner = (case.barangay == account.barangay or case.created_by == user)
         referral = BarangayReferral.objects.filter(
             case=case, 
             to_barangay=account.barangay,
@@ -7133,6 +7135,39 @@ def case_summary_modal(request, case_id):
         
         if is_owner or referral_status or account.type == 'admin':
             is_authorized = True
+
+    # 2. Check for Law Enforcement Account
+    if not is_authorized and hasattr(user, 'lawenforcementaccount'):
+        le_account = user.lawenforcementaccount
+        is_owner = (case.created_by == user)
+        is_referred = (case.refers_to_law_enforcement and case.law_enforcement_agency_name == le_account.station)
+        if is_owner or is_referred:
+            is_authorized = True
+
+    # 3. Check for Healthcare Account
+    if not is_authorized and hasattr(user, 'healthcareaccount'):
+        hc_account = user.healthcareaccount
+        is_owner = (case.created_by == user)
+        is_referred = (case.refers_to_healthcare_provider and case.healthcare_provider_name == hc_account.hospital_name)
+        if is_owner or is_referred:
+            is_authorized = True
+
+    # 4. Check for SWDO Account
+    if not is_authorized and hasattr(user, 'swdoaccount'):
+        swdo_account = user.swdoaccount
+        is_owner = (case.created_by == user)
+        is_referred = case.refers_to_social_welfare
+        if is_owner or is_referred:
+            is_authorized = True
+
+    if not is_authorized:
+        return HttpResponse("Unauthorized.", status=403)
+        
+    return render(request, 'base/case_modal_content.html', {
+        'case': case,
+        'is_true_owner': is_owner,
+        'referral_status': referral_status
+    })
 
     if not is_authorized:
         return HttpResponse("Unauthorized.", status=403)
