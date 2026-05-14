@@ -170,6 +170,7 @@ urlpatterns = [
     path('process_incident_form/', views.process_incident_form, name='process_incident_form'),
     path('save_contact_person_data/<int:contact_person_id>/', views.save_contact_person_data, name='save_contact_person_data'),
     path('delete_case/', views.delete_case, name='delete_case'),
+    path('restore_case/', views.restore_case, name='restore_case'),
     path('update_case_status/<int:case_id>/', views.update_case_status, name='update_case_status'),
     path('update_case_date_closed/<int:case_id>/', views.update_case_date_closed, name='update_case_date_closed'),
 

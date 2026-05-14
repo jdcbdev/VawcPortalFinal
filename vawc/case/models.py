@@ -141,6 +141,13 @@ class Case(models.Model):
 
     archived = models.BooleanField(default=False)
     
+    # Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deletion_reason = models.TextField(null=True, blank=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.ForeignKey('account.CustomUser', on_delete=models.SET_NULL, null=True, blank=True, related_name='deleted_cases')
+    
+    
     def __str__(self):
         return f"Case ID: {self.id}, Case Number: {self.case_number}"
     def get_user_name(self):
