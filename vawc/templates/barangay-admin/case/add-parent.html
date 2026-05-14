@@ -197,10 +197,7 @@
                                                 data-selected="{{ parent.region }}">
                                                 <option value="">--Select Region--</option>
                                                 {% for region in default_regions %}
-                                                    <option value="{{ region.name }}" data-code="{{ region.code }}"
-                                                        {% if region.name == parent.region %}selected{% endif %}>
-                                                        {{ region.name }}
-                                                    </option>
+                                                    <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == parent.region %}selected{% endif %}>{{ region.name }}</option>
                                                 {% empty %}
                                                     <option value="">No data found</option>
                                                 {% endfor %}
@@ -215,10 +212,7 @@
                                                 data-selected="{{ parent.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <option value="">--Select Province--</option>
                                                 {% for province in default_provinces %}
-                                                    <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                        {% if province.name == parent.province %}selected{% endif %}>
-                                                        {{ province.name }}
-                                                    </option>
+                                                    <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == parent.province %}selected{% endif %}>{{ province.name }}</option>
                                                 {% empty %}
                                                     <option value="">No data found</option>
                                                 {% endfor %}
@@ -233,10 +227,7 @@
                                                 data-selected="{{ parent.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <option value="">--Select City--</option>
                                                 {% for city in default_cities %}
-                                                    <option value="{{ city.name }}" data-code="{{ city.code }}"
-                                                        {% if city.name == parent.city %}selected{% endif %}>
-                                                        {{ city.name }}
-                                                    </option>
+                                                    <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == parent.city %}selected{% endif %}>{{ city.name }}</option>
                                                 {% empty %}
                                                     <option value="">No data found</option>
                                                 {% endfor %}
@@ -251,10 +242,7 @@
                                                 data-selected="{{ parent.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                 <option value="">--Select Barangay--</option>
                                                 {% for barangay in default_barangays %}
-                                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                        {% if barangay.name == parent.barangay %}selected{% endif %}>
-                                                        {{ barangay.name }}
-                                                    </option>
+                                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == parent.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                                 {% empty %}
                                                     <option>No data found</option>
                                                 {% endfor %}
@@ -483,10 +471,7 @@
                                 <select class="form-select" id="parent_region" name="parent_region" data-selected="{{ parent.region }}">
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
-                                            {% if region.name == parent.region %}selected{% endif %}>
-                                            {{ region.name }}
-                                        </option>
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == parent.region %}selected{% endif %}>{{ region.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -500,10 +485,7 @@
                                 <select class="form-select" id="parent_province" name="parent_province" data-selected="{{ parent.province }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">--Select Province--</option>
                                     {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                            {% if province.name == parent.province %}selected{% endif %}>
-                                            {{ province.name }}
-                                        </option>
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == parent.province %}selected{% endif %}>{{ province.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -517,10 +499,7 @@
                                 <select class="form-select" id="parent_city" name="parent_city" data-selected="{{ parent.city }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">--Select City--</option>
                                     {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
-                                            {% if city.name == parent.city %}selected{% endif %}>
-                                            {{ city.name }}
-                                        </option>
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == parent.city %}selected{% endif %}>{{ city.name }}</option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}
@@ -534,10 +513,7 @@
                                 <select class="form-select" id="parent_barangay" name="parent_barangay" data-selected="{{ parent.barangay }}" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">--Select Barangay--</option>
                                     {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                            {% if barangay.name == parent.barangay %}selected{% endif %}>
-                                            {{ barangay.name }}
-                                        </option>
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == parent.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}

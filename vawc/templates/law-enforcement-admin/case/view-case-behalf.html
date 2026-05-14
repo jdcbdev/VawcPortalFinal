@@ -781,10 +781,7 @@
                                                     {% if False %}disabled{% endif %}>
                                                     <option value="">--Select Option--</option>
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
-                                                            {% if region.name == victim.region %}selected{% endif %}>
-                                                            {{ region.name }}
-                                                        </option>
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == victim.region %}selected{% endif %}>{{ region.name }}</option>
                                                     {% empty %}
                                                         <option value="">No data found</option>
                                                     {% endfor %}
@@ -802,10 +799,7 @@
                                                     {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                            {% if province.name == victim.province %}selected{% endif %}>
-                                                            {{ province.name }}
-                                                        </option>
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>{{ province.name }}</option>
                                                     {% empty %}
                                                         <option value="">No data found</option>
                                                     {% endfor %}
@@ -823,10 +817,7 @@
                                                     {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
-                                                            {% if city.name == victim.city %}selected{% endif %}>
-                                                            {{ city.name }}
-                                                        </option>
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>{{ city.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
@@ -844,10 +835,7 @@
                                                     {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                            {% if barangay.name == victim.barangay %}selected{% endif %}>
-                                                            {{ barangay.name }}
-                                                        </option>
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == victim.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
@@ -962,9 +950,7 @@
                                 {% if False %}disabled{% endif %}>
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == contact_person.region %}selected{% endif %}>
-                                            {{ region.name }}
-                                        </option>
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == contact_person.region %}selected{% endif %}>{{ region.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -978,9 +964,7 @@
                                     data-selected="{{ contact_person.province }}" {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == contact_person.province %}selected{% endif %}>
-                                            {{ province.name }}
-                                        </option>
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == contact_person.province %}selected{% endif %}>{{ province.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -994,9 +978,7 @@
                                     data-selected="{{ contact_person.city }}" {% if False %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == contact_person.city %}selected{% endif %}>
-                                            {{ city.name }}
-                                        </option>
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == contact_person.city %}selected{% endif %}>{{ city.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -1010,9 +992,7 @@
                                     data-selected="{{ contact_person.barangay }}" {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Barangay --</option>
                                     {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == contact_person.barangay %}selected{% endif %}>
-                                            {{ barangay.name }}
-                                        </option>
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == contact_person.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -1322,10 +1302,7 @@
                                                         {% if False %}disabled{% endif %}>
                                                     <option value="">--Select Region--</option>
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
-                                                            {% if region.name == perpetrator.region %}selected{% endif %}>
-                                                            {{ region.name }}
-                                                        </option>
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == perpetrator.region %}selected{% endif %}>{{ region.name }}</option>
                                                     {% empty %}
                                                         <option value="">No data found</option>
                                                     {% endfor %}
@@ -1342,10 +1319,7 @@
                                                         {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                            {% if province.name == perpetrator.province %}selected{% endif %}>
-                                                            {{ province.name }}
-                                                        </option>
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == perpetrator.province %}selected{% endif %}>{{ province.name }}</option>
                                                     {% empty %}
                                                         <option value="">No data found</option>
                                                     {% endfor %}
@@ -1362,10 +1336,7 @@
                                                         {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
-                                                            {% if city.name == perpetrator.city %}selected{% endif %}>
-                                                            {{ city.name }}
-                                                        </option>
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == perpetrator.city %}selected{% endif %}>{{ city.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
@@ -1382,10 +1353,7 @@
                                                         {% if False %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                            {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
-                                                            {{ barangay.name }}
-                                                        </option>
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == perpetrator.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
@@ -1578,9 +1546,7 @@
                                     {% if False %}disabled{% endif %}>
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
-                                            {{ region.name }}
-                                        </option>
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>{{ region.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -1596,9 +1562,7 @@
                                     {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
-                                            {{ province.name }}
-                                        </option>
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>{{ province.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -1614,9 +1578,7 @@
                                     {% if False %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
-                                            {{ city.name }}
-                                        </option>
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>{{ city.name }}</option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}
@@ -1633,9 +1595,7 @@
                                     {% if False %}disabled{% endif %}>
                                     <option value="">-- Select Barangay --</option>
                                     {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
-                                            {{ barangay.name }}
-                                        </option>
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}
