@@ -31,8 +31,8 @@ class Case(models.Model):
     TYPE_IMPACTED_VICTIM = 'Impacted'
     TYPE_REPORTING_BEHALF = 'Behalf'
     TYPE_CHOICES = [
-        (TYPE_IMPACTED_VICTIM, 'The Impacted Victim'),
-        (TYPE_REPORTING_BEHALF, 'Reporting on Behalf of Impacted Victim'),
+        (TYPE_IMPACTED_VICTIM, 'Victim'),
+        (TYPE_REPORTING_BEHALF, 'On behalf of victim'),
     ]
     type_of_case = models.CharField(max_length=30, default='Pending',null=True, blank=True)
     CRISIS_INTERVENTION = 'crisis'

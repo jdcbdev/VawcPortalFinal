@@ -47,12 +47,12 @@
                                     <span class="badge fs-6 px-3 py-2 {% if case.status == 'Active' %}bg-success{% else %}bg-primary{% endif %}">{{ case.status }}</span>
                                 </div>
                                 <div class="me-4 mb-3">
-                                    <h5 class="mb-1">Case Type</h5>
+                                    <h5 class="mb-1">Report Type</h5>
                                     <span class="badge bg-info fs-6 px-3 py-2">
                                         {% if case.type_of_case == 'Impacted' %}
-                                            Impacted Victim
+                                            Victim
                                         {% elif case.type_of_case == 'Behalf' %}
-                                            Reporting on Behalf of Victim
+                                            On behalf of victim
                                         {% endif %}
                                     </span>
                                 </div>
