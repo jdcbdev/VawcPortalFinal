@@ -2683,11 +2683,7 @@ def add_case(request):
 
         # Iterate over the collected emails and send the notification to each email
         for receiver in matching_users_emails:
-            message = "You have a new case (#" + str(case_instance.case_number) + ") awaiting for your attention. The priority is "
-            if temp_service_info == "crisis":
-                message += "HIGH"
-            else:
-                message += "LOW"
+            message = "You have a new case (#" + str(case_instance.case_number) + ") awaiting for your attention."
 
             try:
                 path = f"/admin-barangay-vawc/view-case/{temp_type_case.lower()}/{case_instance.id}/"
