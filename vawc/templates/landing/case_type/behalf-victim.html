@@ -1,6 +1,12 @@
 {% extends "../../base/base.html" %}
-{% block title %}Behalf of Victim{% endblock %}
+{% block title %}On behalf of victim{% endblock %}
 {% load static %}
+<style>
+    .unknown-victim-toggle:checked {
+        background-color: #8a2be2 !important;
+        border-color: #8a2be2 !important;
+    }
+</style>
 {% block content %}
 <div class="container-fluid py-4">
     <div class="row">
@@ -87,11 +93,26 @@
                                                 </button>
                                             </div>
 
-                                            <div
-                                                class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
+                                            <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
                                                 <h3 class="fs-5 mb-3">Personal Information</h3>
                                                 <div class="fw-light mb-3">Fields with <span class="required"></span>
                                                     are required</div>
+                                            </div>
+                                            <div class="col-12 mb-4">
+                                                <div class="alert border-0 shadow-sm d-flex align-items-center p-3 mb-0" style="background-color: #f8f0ff; border-left: 5px solid #8a2be2 !important;">
+                                                    <div class="me-3 fs-3" style="color: #8a2be2;">
+                                                        <i class="fa-solid fa-circle-info"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="form-check form-switch p-0 d-flex align-items-center">
+                                                            <input class="form-check-input ms-0 me-2 unknown-victim-toggle" type="checkbox" id="unknown-victim_0" style="width: 2.5em; height: 1.25em;">
+                                                            <label class="form-check-label fw-bold text-dark fs-6" for="unknown-victim_0">
+                                                                I don't know the victim's personal details
+                                                            </label>
+                                                        </div>
+                                                        <small class="text-muted d-block mt-1">Check this if you are reporting as a witness or informant and do not have the victim's name or contact info.</small>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--firstname-->
                                                 <label for="victim-firstname_0" class="form-label">First Name <span
@@ -193,8 +214,7 @@
                                                 <select id="victim-region_0" name="victim-region_0"
                                                     class="form-select req-inp" disabled>
                                                     {% for region in default_regions %}
-                                                    <option value="{{ region.name }}" data-code="{{ region.code }}">{{
-                                                        region.name }}</option>
+                                                    <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -208,8 +228,7 @@
                                                     class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for province in default_provinces %}
-                                                    <option value="{{ province.name }}" data-code="{{ province.code }}">
-                                                        {{ province.name }}</option>
+                                                    <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -223,8 +242,7 @@
                                                     class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for city in default_cities %}
-                                                    <option value="{{ city.name }}" data-code="{{ city.code }}">{{
-                                                        city.name }}</option>
+                                                    <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -238,8 +256,7 @@
                                                     class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for barangay in default_barangays %}
-                                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">
-                                                        {{ barangay.name }}</option>
+                                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -419,11 +436,26 @@
                                                 </button>
                                             </div>
 
-                                            <div
-                                                class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
+                                            <div class="col-12 d-flex flex-column flex-md-row justify-content-md-between">
                                                 <h3 class="fs-5 mb-3">Personal Information</h3>
                                                 <div class="fw-light mb-3">Fields with <span class="required"></span>
                                                     are required</div>
+                                            </div>
+                                            <div class="col-12 mb-4">
+                                                <div class="alert border-0 shadow-sm d-flex align-items-center p-3 mb-0" style="background-color: #f8f0ff; border-left: 5px solid #8a2be2 !important;">
+                                                    <div class="me-3 fs-3" style="color: #8a2be2;">
+                                                        <i class="fa-solid fa-circle-info"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="form-check form-switch p-0 d-flex align-items-center">
+                                                            <input class="form-check-input ms-0 me-2 unknown-perp-toggle" type="checkbox" id="unknown-perp_0" style="width: 2.5em; height: 1.25em;">
+                                                            <label class="form-check-label fw-bold text-dark fs-6" for="unknown-perp_0">
+                                                                I don't know the perpetrator's details
+                                                            </label>
+                                                        </div>
+                                                        <small class="text-muted d-block mt-1">Check this if the perpetrator is unknown or a stranger.</small>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-sm-6 mb-3"> <!--Firstname-->
                                                 <label for="perp-firstname_0" class="form-label">First name <span
@@ -555,8 +587,7 @@
                                                 <select id="perp-region_0" name="perp-region_0"
                                                     class="form-select req-inp">
                                                     {% for region in default_regions %}
-                                                    <option value="{{ region.name }}" data-code="{{ region.code }}">{{
-                                                        region.name }}</option>
+                                                    <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -570,8 +601,7 @@
                                                     class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for province in default_provinces %}
-                                                    <option value="{{ province.name }}" data-code="{{ province.code }}">
-                                                        {{ province.name }}</option>
+                                                    <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -584,8 +614,7 @@
                                                 <select id="perp-city_0" name="perp-city_0" class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for city in default_cities %}
-                                                    <option value="{{ city.name }}" data-code="{{ city.code }}">{{
-                                                        city.name }}</option>
+                                                    <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -599,8 +628,7 @@
                                                     class="form-select req-inp">
                                                     <option value="">--Select Option--</option>
                                                     {% for barangay in default_barangays %}
-                                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">
-                                                        {{ barangay.name }}</option>
+                                                    <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
                                                     {% empty %}
                                                     <option>No data found</option>
                                                     {% endfor %}
@@ -698,8 +726,7 @@
                                                 class="required"></span></label>
                                         <select id="incident-region" name="incident-region" class="form-select req-inp">
                                             {% for region in default_regions %}
-                                            <option value="{{ region.name }}" data-code="{{ region.code }}">{{
-                                                region.name }}</option>
+                                            <option value="{{ region.name }}" data-code="{{ region.code }}">{{ region.name }}</option>
                                             {% empty %}
                                             <option>No data found</option>
                                             {% endfor %}
@@ -713,8 +740,7 @@
                                             class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for province in default_provinces %}
-                                            <option value="{{ province.name }}" data-code="{{ province.code }}">{{
-                                                province.name }}</option>
+                                            <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
                                             {% empty %}
                                             <option>No data found</option>
                                             {% endfor %}
@@ -727,8 +753,7 @@
                                         <select id="incident-city" name="incident-city" class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for city in default_cities %}
-                                            <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}
-                                            </option>
+                                            <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
                                             {% empty %}
                                             <option>No data found</option>
                                             {% endfor %}
@@ -742,8 +767,7 @@
                                             class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for barangay in default_barangays %}
-                                            <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{
-                                                barangay.name }}</option>
+                                            <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
                                             {% empty %}
                                             <option>No data found</option>
                                             {% endfor %}
@@ -865,8 +889,7 @@
                                                 class="required"></span></label>
                                         <select id="contact-region" name="contact-region" class="form-select req-inp">
                                             {% for region in default_regions %}
-                                            <option value="{{ region.name }}" data-code="{{  region.code }}">{{
-                                                region.name }}</option>
+                                            <option value="{{ region.name }}" data-code="{{  region.code }}">{{ region.name }}</option>
                                             {% empty %}
                                             <option>No data found</option>
                                             {% endfor %}
@@ -880,8 +903,7 @@
                                             class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for province in default_provinces %}
-                                            <option value="{{ province.name }}" data-code="{{ province.code }}">{{
-                                                province.name }}</option>
+                                            <option value="{{ province.name }}" data-code="{{ province.code }}">{{ province.name }}</option>
                                             {% empty %}
                                             <option>No data found</option>
                                             {% endfor %}
@@ -894,8 +916,7 @@
                                         <select id="contact-city" name="contact-city" class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for city in default_cities %}
-                                            <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}
-                                            </option>
+                                            <option value="{{ city.name }}" data-code="{{ city.code }}">{{ city.name }}</option>
                                             {% empty %}
                                             <option>No data found</option>
                                             {% endfor %}
@@ -909,8 +930,7 @@
                                             class="form-select req-inp">
                                             <option value="">--Select Option--</option>
                                             {% for barangay in default_barangays %}
-                                            <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{
-                                                barangay.name }}</option>
+                                            <option value="{{ barangay.name }}" data-code="{{ barangay.code }}">{{ barangay.name }}</option>
                                             {% empty %}
                                             <option>No data found</option>
                                             {% endfor %}
@@ -1563,7 +1583,7 @@
                 document.querySelector('#perpetrator_count').value = perpetratorCount
 
                 // Remove disabled attribute in forms
-                $('#incident-region, #incident-province, #incident-city, #incident-barangay, perp-region_0, perp-brangay_0, perp-city_0').removeAttr('disabled');
+                $('#incident-region, #incident-province, #incident-city, #incident-barangay, perp-region_0, perp-brangay_0, perp-city_0, [id^="victim-sex"], [id^="perp-sex"], [id^="perp-Suffix"]').removeAttr('disabled');
 
                 var formData = new FormData(this); // Create FormData object from the form
                 console.log(formData)
@@ -1730,6 +1750,7 @@
             $('#contact-region').prop('disabled', false);
             $('#contact-city').prop('disabled', false);
             $('#contact-barangay').prop('disabled', false);
+            $('#perp-Suffix_0').prop('disabled', false);
 
 
             e.preventDefault(); // Prevent the default form submission
@@ -1886,6 +1907,99 @@
 
         // Set the value of the input field to the current date
         $('#date-latest-incident').val(formattedDate);
+
+        // Unknown Victim Toggle Logic
+        $(document).on('change', '.unknown-victim-toggle', function () {
+            const isChecked = $(this).is(':checked');
+            const panel = $(this).closest('.victim-form');
+            const firstName = panel.find('[id^="victim-firstname"]');
+            const lastName = panel.find('[id^="victim-lastname"]');
+            const sex = panel.find('[id^="victim-sex"]');
+            const cellphone = panel.find('[id^="victim-cellphone_number"]');
+            
+            if (isChecked) {
+                firstName.val('Unknown').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                lastName.val('Victim').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                sex.val('rather_not_say').removeClass('is-invalid').prop('disabled', true).css('background-color', '#e9ecef');
+                cellphone.val('0000000000').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                panel.find('.invalid-feedback').text('');
+            } else {
+                firstName.val('').prop('readonly', false).css('background-color', '');
+                lastName.val('').prop('readonly', false).css('background-color', '');
+                sex.val('').prop('disabled', false).css('background-color', '');
+                cellphone.val('').prop('readonly', false).css('background-color', '');
+            }
+            
+            // Trigger input event to refresh validation status in dynamic_forms.js
+            firstName.trigger('input');
+            lastName.trigger('input');
+            sex.trigger('change');
+            cellphone.trigger('input');
+        });
+
+        // Unknown Perpetrator Toggle Logic
+        $(document).on('change', '.unknown-perp-toggle', function () {
+            const isChecked = $(this).is(':checked');
+            const panel = $(this).closest('.perpetrator-form');
+            
+            const firstName = panel.find('[id^="perp-firstname"]');
+            const lastName = panel.find('[id^="perp-lastname"]');
+            const alias = panel.find('[id^="perp-alias"]');
+            const sex = panel.find('[id^="perp-sex"]');
+            const marks = panel.find('[id^="perp-identifying-marks"]');
+            const relationship = panel.find('[id^="perp-relationsip-victim"]');
+            const suffix = panel.find('[id^="perp-Suffix"]');
+            
+            // Address fields
+            const province = panel.find('[id^="perp-province"]');
+            const city = panel.find('[id^="perp-city"]');
+            const barangay = panel.find('[id^="perp-barangay"]');
+            const street = panel.find('[id^="perp-street"]');
+            const landmark = panel.find('[id^="perp-address-info"]');
+
+            if (isChecked) {
+                firstName.val('Unknown').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                lastName.val('Perpetrator').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                alias.val('N/A').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                sex.val('rather_not_say').removeClass('is-invalid').prop('disabled', true).css('background-color', '#e9ecef');
+                marks.val('Unknown').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                relationship.val('Stranger').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                suffix.val('none').prop('disabled', true).css('background-color', '#e9ecef');
+                
+                // Set address fields to Unknown/N/A
+                province.val('Unknown').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                city.val('Unknown').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                barangay.val('Unknown').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                street.val('Unknown').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                landmark.val('Unknown').removeClass('is-invalid').prop('readonly', true).css('background-color', '#e9ecef');
+                
+                panel.find('.invalid-feedback').text('');
+            } else {
+                firstName.val('').prop('readonly', false).css('background-color', '');
+                lastName.val('').prop('readonly', false).css('background-color', '');
+                alias.val('').prop('readonly', false).css('background-color', '');
+                sex.val('').prop('disabled', false).css('background-color', '');
+                marks.val('').prop('readonly', false).css('background-color', '');
+                relationship.val('').prop('readonly', false).css('background-color', '');
+                suffix.val('none').prop('disabled', false).css('background-color', '');
+                
+                province.val('').prop('readonly', false).css('background-color', '');
+                city.val('').prop('readonly', false).css('background-color', '');
+                barangay.val('').prop('readonly', false).css('background-color', '');
+                street.val('').prop('readonly', false).css('background-color', '');
+                landmark.val('').prop('readonly', false).css('background-color', '');
+            }
+            
+            // Trigger events to refresh validation
+            firstName.trigger('input');
+            lastName.trigger('input');
+            alias.trigger('input');
+            sex.trigger('change');
+            marks.trigger('input');
+            relationship.trigger('input');
+            street.trigger('input');
+            landmark.trigger('input');
+        });
     });
 
     function err_captcha_reset() {

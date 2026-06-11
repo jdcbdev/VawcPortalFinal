@@ -3,9 +3,22 @@
 {% block title %}Notification{% endblock %}
 {% block styles %}
   <style>
-    /* Custom CSS for DataTables pagination */
-    .dataTables_wrapper .dataTables_paginate {
-      margin-right: 10px;
+    /* Custom CSS for unread notifications */
+    .notification-item {
+      transition: all 0.3s ease;
+      border-left: 5px solid transparent;
+    }
+    .notification-item.unread {
+      background-color: rgba(138, 43, 226, 0.08) !important;
+      border-left: 5px solid #8a2be2;
+    }
+    .notification-item.unread .notification-message {
+      font-weight: 700;
+      color: #212529;
+    }
+    .notification-item.unread .notification-date {
+      color: #8a2be2;
+      font-weight: 500;
     }
   </style>
 {% endblock styles %}
@@ -21,29 +34,31 @@
                 </button>
             </div>
         </div>
-        <table class="table" id="notif_tbl">
+        <table class="table mb-0" id="notif_tbl">
             <thead>
                 <th class="p-0 m-0 col-10"></th>
                 <th class="p-0 m-0 col-2"></th>
             </thead>
             <tbody id ="notification-content">
                 {% for notification in notifications %}
-                <tr {% if notification.read %}  class="bg-light-subtle" {% else %} class="bg-body-secondary" {% endif %}>
+                <tr class="notification-item {% if not notification.read %}unread{% else %}bg-light-subtle{% endif %}">
                   <td class="col-10 align-middle">
-                    <div class="mb-0">
-                      <p>{{ notification.message }}</p>
+                    <div class="mb-0 notification-message">
+                      <p class="mb-1">{{ notification.message }}</p>
                     </div>
-                    <div class="mt-0">
-                      <p>{{notification.date}}</p>
+                    <div class="mt-0 notification-date">
+                      <p class="small mb-0"><i class='bx bx-time-five me-1'></i>{{notification.date}}</p>
                     </div>
                   </td>
-                  <td class="col-2 align-middle">
+                  <td class="col-2 align-middle text-end px-3">
                     <p class="d-none">{{notification.read}}</p>
                     <p class="d-none">{{notification.id}}</p>
                     {% if notification.link != "#" %}
-                      <a href="{{notification.link}}" class="btn btn-sm btn-primary mb-lg-0 mb-2">View</a>
+                      <a href="{{notification.link}}" class="btn btn-sm btn-purple mb-lg-0 mb-2">View</a>
                     {% endif %}
-                    <a href="#{{notification.id}}" class="btn btn-sm btn-danger read-notif dismiss-notification">Read</a>
+                    {% if not notification.read %}
+                      <a href="#{{notification.id}}" class="btn btn-sm btn-outline-danger read-notif dismiss-notification">Mark as Read</a>
+                    {% endif %}
                   </td>
                 </tr>
                 {% endfor %}

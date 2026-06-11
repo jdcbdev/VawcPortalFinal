@@ -477,7 +477,7 @@ def admin_dashboard_view (request):
     if not hasattr(request.user, 'account') or request.user.account.type != 'admin':
         return redirect('login')
     
-    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    year_list = Case.objects.filter(is_deleted=False).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
     return render (request, 'super-admin/dashboard.html', {"year_list": year_list})
 
 @login_required
@@ -492,7 +492,7 @@ def admin_case_view(request):
         barangay = 'All'
     except Account.DoesNotExist:
         barangay = None
-    cases = Case.objects.all()  # Retrieve all cases from the database
+    cases = Case.objects.filter(is_deleted=False)  # Retrieve all non-deleted cases from the database
     
     filtered_cases = []
     
@@ -514,7 +514,7 @@ def admin_dashboard_data (request, get_year):
     start_date = request.GET.get('start')
     end_date = request.GET.get('end')
 
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
+    cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator')
     
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
@@ -1459,7 +1459,7 @@ def admin_graph_view(request):
     total_victim = victims.count()
     total_perpetrator = perpetrators.count()
 
-    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    year_list = Case.objects.filter(is_deleted=False).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
     print_info = _build_print_info(request)
     return render(request, 'super-admin/graph-report.html', {
         'print_info': print_info,
@@ -1712,7 +1712,7 @@ def barangay_dashboard_view (request):
 
     print(barangay)
 
-    year_list = Case.objects.filter(barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    year_list = Case.objects.filter(is_deleted=False, barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
 
     return render(request, 'barangay-admin/dashboard.html', {"year_list": year_list, "barangay": barangay})
 
@@ -1936,7 +1936,7 @@ def barangay_case_view(request):
         Q(barangay_referrals__to_barangay=barangay, 
           barangay_referrals__to_city=account.city,
           barangay_referrals__to_province=account.province)
-    ).distinct()
+    ).filter(is_deleted=False).distinct()
 
     return render(request, 'barangay-admin/case/case.html', {
         'cases': cases,
@@ -2112,7 +2112,7 @@ def law_enforcement_case_view(request):
     cases = Case.objects.filter(
         Q(created_by=logged_in_user) |
         Q(law_enforcement_agency_name=station, refers_to_law_enforcement=True)
-    ).distinct()
+    ).filter(is_deleted=False).distinct()
 
     return render(request, 'law-enforcement-admin/case/case.html', {
         'cases': cases,
@@ -2138,7 +2138,7 @@ def healthcare_case_view(request):
     cases = Case.objects.filter(
         Q(created_by=logged_in_user) |
         Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
-    ).distinct()
+    ).filter(is_deleted=False).distinct()
 
     return render(request, 'healthcare-admin/case/case.html', {
         'cases': cases,
@@ -2180,7 +2180,7 @@ def SWDO_case_view(request):
     # Show cases created by this user OR cases referred to social welfare
     cases = Case.objects.filter(
         Q(created_by=logged_in_user) | Q(refers_to_social_welfare=True)
-    ).distinct()
+    ).filter(is_deleted=False).distinct()
 
     return render(request, 'SWDO/case/case.html', {
         'cases': cases,
@@ -2683,11 +2683,7 @@ def add_case(request):
 
         # Iterate over the collected emails and send the notification to each email
         for receiver in matching_users_emails:
-            message = "You have a new case (#" + str(case_instance.case_number) + ") awaiting for your attention. The priority is "
-            if temp_service_info == "crisis":
-                message += "HIGH"
-            else:
-                message += "LOW"
+            message = "You have a new case (#" + str(case_instance.case_number) + ") awaiting for your attention."
 
             try:
                 path = f"/admin-barangay-vawc/view-case/{temp_type_case.lower()}/{case_instance.id}/"
@@ -4390,6 +4386,11 @@ def delete_perpetrator(request):
 @login_required(login_url='login')
 def delete_case(request):
     case_id = request.POST.get('case_id')
+    reason = request.POST.get('reason')
+    
+    if not reason:
+        return JsonResponse({'success': False, 'message': 'A reason for deletion is required.'}, status=400)
+        
     print('Case ID:', case_id)
     case = get_object_or_404(Case, id=case_id)
 
@@ -4397,8 +4398,28 @@ def delete_case(request):
     if not can_edit_case(request.user, case):
         return JsonResponse({'success': False, 'message': 'You do not have permission to delete this case.'}, status=403)
 
-    case.delete()
-    return JsonResponse({'success': True, 'message': 'Case Deleted successfully'})
+    case.is_deleted = True
+    case.deletion_reason = reason
+    case.deleted_at = timezone.now()
+    case.deleted_by = request.user
+    case.save()
+    
+    return JsonResponse({'success': True, 'message': 'Case Deleted successfully (Soft Delete)'})
+
+@require_POST
+@login_required(login_url='login')
+def restore_case(request):
+    case_id = request.POST.get('case_id')
+    case = get_object_or_404(Case, id=case_id)
+
+    # Check edit permission
+    if not can_edit_case(request.user, case):
+        return JsonResponse({'success': False, 'message': 'You do not have permission to restore this case.'}, status=403)
+
+    case.is_deleted = False
+    case.save()
+    
+    return JsonResponse({'success': True, 'message': 'Case Restored successfully'})
 
 def add_new_contact_person(request):
     try:
@@ -6250,7 +6271,7 @@ def lawEnforcement_dashboard_view(request):
     station = law_enforcement_account.station
     
     # Get the list of years for which we have cases for this station
-    year_list = Case.objects.filter(law_enforcement_agency_name=station).annotate(
+    year_list = Case.objects.filter(is_deleted=False, law_enforcement_agency_name=station).annotate(
         year=ExtractYear('date_added')
     ).values_list('year', flat=True).distinct()
     
@@ -6394,7 +6415,8 @@ def healthcare_dashboard_view(request):
 
     # Get the list of years for which we have cases for this hospital (own + referred)
     year_list = Case.objects.filter(
-        Q(created_by=request.user) | Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
+        Q(created_by=request.user) | Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True),
+        is_deleted=False
     ).distinct().annotate(
         year=ExtractYear('date_added')
     ).values_list('year', flat=True).distinct()
@@ -6538,7 +6560,7 @@ def SWDO_dashboard_view(request):
     SWDO = swdo_account.name
 
     # Get the list of years for which we have cases for this station
-    year_list = Case.objects.filter(refers_to_social_welfare = True).annotate(
+    year_list = Case.objects.filter(is_deleted=False, refers_to_social_welfare = True).annotate(
         year=ExtractYear('date_added')
     ).values_list('year', flat=True).distinct()
     
@@ -6563,13 +6585,13 @@ def SWDO_dashboard_data(request, get_year):
     
     base_q = Q(created_by=logged_in_user) | Q(refers_to_social_welfare=True)
     if get_year == '0':
-        cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
+        cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
     else:
         years = [int(y) for y in get_year.split(',') if y.isdigit()]
         if years:
-            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
+            cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator').filter(base_q, date_added__year__in=years).distinct()
         else:
-            cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
+            cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator').filter(base_q).distinct()
 
     
     total_cases = cases.count() or 0
@@ -6681,7 +6703,7 @@ def admin_consolidated_report_view(request):
     logged_in_user = request.user
     
     # We can pre-fetch year lists if necessary just like dashboard
-    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    year_list = Case.objects.filter(is_deleted=False).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
     
     return render(request, 'super-admin/consolidated-report.html', {"year_list": year_list, 'logged_in_user': logged_in_user})
 
@@ -6692,7 +6714,7 @@ def admin_consolidated_report_data(request, get_year):
     start_date = request.GET.get('start')
     end_date = request.GET.get('end')
 
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator')
+    cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator')
     
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
@@ -6798,19 +6820,19 @@ def admin_consolidated_report_data(request, get_year):
 @login_required
 def SWDO_graph_view(request):
     print_info = _build_print_info(request)
-    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    year_list = Case.objects.filter(is_deleted=False).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
     return render(request, 'SWDO/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
 def law_enforcement_graph_view(request):
     print_info = _build_print_info(request)
-    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    year_list = Case.objects.filter(is_deleted=False).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
     return render(request, 'law-enforcement-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
 def healthcare_graph_view(request):
     print_info = _build_print_info(request)
-    year_list = Case.objects.annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    year_list = Case.objects.filter(is_deleted=False).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
     return render(request, 'healthcare-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 @login_required
@@ -6820,7 +6842,7 @@ def barangay_graph_view(request):
         barangay = request.user.account.barangay
     except:
         barangay = None
-    year_list = Case.objects.filter(barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
+    year_list = Case.objects.filter(is_deleted=False, barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
     return render(request, 'barangay-admin/graph-report.html', {'print_info': print_info, 'year_list': year_list})
 
 
@@ -6914,7 +6936,7 @@ def SWDO_consolidated_report_data(request, get_year):
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
     start_date = request.GET.get('start')
     end_date = request.GET.get('end')
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(refers_to_social_welfare=True)
+    cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator').filter(refers_to_social_welfare=True)
     if start_date and end_date:
         cases = cases.filter(date_added__range=[start_date, end_date])
     elif get_year != '0':
@@ -6934,7 +6956,7 @@ def law_enforcement_consolidated_report_data(request, get_year):
         station = request.user.lawenforcementaccount.station
     except Exception:
         station = None
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(
+    cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator').filter(
         Q(created_by=request.user) |
         Q(law_enforcement_agency_name=station, refers_to_law_enforcement=True)
     ).distinct()
@@ -6957,7 +6979,7 @@ def healthcare_consolidated_report_data(request, get_year):
         hospital_name = request.user.healthcareaccount.hospital_name
     except Exception:
         hospital_name = None
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(
+    cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator').filter(
         Q(created_by=request.user) |
         Q(healthcare_provider_name=hospital_name, refers_to_healthcare_provider=True)
     ).distinct()
@@ -6980,7 +7002,7 @@ def barangay_consolidated_report_data(request, get_year):
         barangay_name = request.user.account.barangay
     except Exception:
         barangay_name = None
-    cases = Case.objects.prefetch_related('victim_set', 'perpetrator').filter(
+    cases = Case.objects.filter(is_deleted=False).prefetch_related('victim_set', 'perpetrator').filter(
         Q(created_by=request.user) | Q(barangay=barangay_name)
     ).distinct()
     if start_date and end_date:
@@ -7087,7 +7109,6 @@ def reset_account_password(request, account_id):
 
 @login_required
 def case_summary_modal(request, case_id):
-    from case.models import Case
     try:
         case = Case.objects.get(id=case_id)
     except Case.DoesNotExist:
@@ -7098,9 +7119,12 @@ def case_summary_modal(request, case_id):
     is_owner = False
     referral_status = None
     
-    if hasattr(request.user, 'account'):
-        account = request.user.account
-        is_owner = (case.barangay == account.barangay or case.created_by == request.user)
+    user = request.user
+    
+    # 1. Check for Barangay/Admin Account
+    if hasattr(user, 'account'):
+        account = user.account
+        is_owner = (case.barangay == account.barangay or case.created_by == user)
         referral = BarangayReferral.objects.filter(
             case=case, 
             to_barangay=account.barangay,
@@ -7111,6 +7135,39 @@ def case_summary_modal(request, case_id):
         
         if is_owner or referral_status or account.type == 'admin':
             is_authorized = True
+
+    # 2. Check for Law Enforcement Account
+    if not is_authorized and hasattr(user, 'lawenforcementaccount'):
+        le_account = user.lawenforcementaccount
+        is_owner = (case.created_by == user)
+        is_referred = (case.refers_to_law_enforcement and case.law_enforcement_agency_name == le_account.station)
+        if is_owner or is_referred:
+            is_authorized = True
+
+    # 3. Check for Healthcare Account
+    if not is_authorized and hasattr(user, 'healthcareaccount'):
+        hc_account = user.healthcareaccount
+        is_owner = (case.created_by == user)
+        is_referred = (case.refers_to_healthcare_provider and case.healthcare_provider_name == hc_account.hospital_name)
+        if is_owner or is_referred:
+            is_authorized = True
+
+    # 4. Check for SWDO Account
+    if not is_authorized and hasattr(user, 'swdoaccount'):
+        swdo_account = user.swdoaccount
+        is_owner = (case.created_by == user)
+        is_referred = case.refers_to_social_welfare
+        if is_owner or is_referred:
+            is_authorized = True
+
+    if not is_authorized:
+        return HttpResponse("Unauthorized.", status=403)
+        
+    return render(request, 'base/case_modal_content.html', {
+        'case': case,
+        'is_true_owner': is_owner,
+        'referral_status': referral_status
+    })
 
     if not is_authorized:
         return HttpResponse("Unauthorized.", status=403)

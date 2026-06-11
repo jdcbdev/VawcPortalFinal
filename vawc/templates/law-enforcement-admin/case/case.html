@@ -59,9 +59,9 @@
         </div>
         <div class="col-6 col-md-2">
             <select id="case_type" class="form-select">
-                <option value="">All Case Type</option>
-                <option value="Impacted Victim">Impacted Victim</option>
-                <option value="Behalf">Behalf of Impacted Victim</option>
+                <option value="">All Report Types</option>
+                <option value="Victim">Victim</option>
+                <option value="Behalf">On behalf of victim</option>
             </select>
         </div>
         <div class="col-6 col-md-2">
@@ -147,7 +147,7 @@
             <thead class="border-bottom border-dark border-2 border-opacity-50">
                 <tr>
                     <th scope="col" class="text-center">Case Number</th>
-                    <th scope="col">Type of Case</th>
+                    <th scope="col">Report Type</th>
                     <th scope="col">Service</th>
                     <th scope="col">Status</th>
                     <th scope="col">Date Added</th>
@@ -167,7 +167,7 @@
                 <tr class="border-bottom border-2" data-case-id="{{ case.id }}" data-edit-url="{% if case.type_of_case == 'Impacted' %}{% url 'law enforcement case impacted view' case_id=case.id %}{% else %}{% url 'law enforcement case behalf view' case_id=case.id %}{% endif %}">
                     <td class="text-center">{{ case.date_added|date:'Y-m' }}-{{ case.case_number }}</td>
                     <td>
-                        {% if case.type_of_case == 'Impacted' %}Impacted{% elif case.type_of_case == 'Behalf' %}Behalf of Impacted Victim{% endif %}
+                        {% if case.type_of_case == 'Impacted' %}Victim{% elif case.type_of_case == 'Behalf' %}On behalf of victim{% endif %}
                     </td>
                     <td>
                         {% if case.service_information == 'crisis' %}Crisis Intervention Including Rescue{% elif case.service_information == 'issuance' %}Issuance / Enforcement of Barangay Protection Order{% endif %}
@@ -213,9 +213,9 @@
                         <label for="email">Email</label>
                     </div>
                     <div class="row d-flex align-items-center ps-1 mb-3">
-                        <div class="col-4"><h5>Type of Case:</h5></div>
-                        <div class="col"><input type="radio" class="btn-check" name="case_type" value="Impacted" id="Impacted" checked><label class="btn btn-outline-primary w-100" for="Impacted">Impacted</label></div>
-                        <div class="col"><input type="radio" class="btn-check" name="case_type" value="Behalf" id="Behalf"><label class="btn btn-outline-primary w-100" for="Behalf">Behalf</label></div>
+                        <div class="col-4"><h5>Report Type:</h5></div>
+                        <div class="col"><input type="radio" class="btn-check" name="case_type" value="Impacted" id="Impacted" checked><label class="btn btn-outline-primary w-100" for="Impacted">Victim</label></div>
+                        <div class="col"><input type="radio" class="btn-check" name="case_type" value="Behalf" id="Behalf"><label class="btn btn-outline-primary w-100 text-wrap" for="Behalf">On behalf of victim</label></div>
                     </div>
                     <div class="row d-flex align-items-center ps-1">
                         <div class="col-4"><h5>Service:</h5></div>

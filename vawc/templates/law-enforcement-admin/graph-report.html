@@ -25,50 +25,58 @@
 <div class="container-fluid pb-5">
 
     <!-- Header -->
-    <div class="row align-items-center mb-4 pt-2">
-        <div class="col">
+    <div class="row align-items-center mb-4 pt-2 g-3">
+        <div class="col-12 col-xl">
             <h1 class="fw-bold text-color-primary mb-0">
                 <i class='bx bxs-bar-chart-alt-2 text-purple me-2'></i>Report Analytics
             </h1>
             <p class="text-muted small mb-0">Click any card, chart segment, or case row to navigate.</p>
         </div>
-        <div class="col-auto d-flex gap-2 align-items-center">
-            <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded shadow-sm border me-3">
-                <div class="spinner-border spinner-border-sm text-primary d-none" id="graph-date-loading" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                
-                <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Select Year:</span>
-                <div class="dropdown me-3" id="year-filter-dropdown">
-                    <button class="btn btn-sm btn-light dropdown-toggle fw-semibold" type="button" id="dropdownYearMenu" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 130px;">
-                        All Years
-                    </button>
-                    <ul class="dropdown-menu shadow-sm border-0 p-3" aria-labelledby="dropdownYearMenu" style="min-width: 200px;">
-                        <div class="mb-2 pb-2 border-bottom">
-                            <div class="form-check">
-                                <input class="form-check-input year-cb-all" type="checkbox" value="0" id="year-all" checked>
-                                <label class="form-check-label fw-bold" for="year-all">All Years</label>
+        <div class="col-12 col-xl-auto d-flex flex-wrap gap-2 align-items-center justify-content-xl-end">
+            <div class="d-flex flex-wrap align-items-center gap-2 bg-white px-3 py-2 rounded shadow-sm border">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="spinner-border spinner-border-sm text-primary d-none" id="graph-date-loading" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    
+                    <span class="small fw-bold text-muted text-uppercase" style="letter-spacing:0.05em;">Select Year:</span>
+                    <div class="dropdown" id="year-filter-dropdown">
+                        <button class="btn btn-sm btn-light dropdown-toggle fw-semibold" type="button" id="dropdownYearMenu" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 130px;">
+                            All Years
+                        </button>
+                        <ul class="dropdown-menu shadow-sm border-0 p-3" aria-labelledby="dropdownYearMenu" style="min-width: 200px;">
+                            <div class="mb-2 pb-2 border-bottom">
+                                <div class="form-check">
+                                    <input class="form-check-input year-cb-all" type="checkbox" value="0" id="year-all" checked>
+                                    <label class="form-check-label fw-bold" for="year-all">All Years</label>
+                                </div>
                             </div>
-                        </div>
-                        {% for year in year_list %}
-                        <div class="form-check mb-1">
-                            <input class="form-check-input year-cb" type="checkbox" value="{{year}}" id="year-{{year}}">
-                            <label class="form-check-label" for="year-{{year}}">{{year}}</label>
-                        </div>
-                        {% endfor %}
-                    </ul>
+                            {% for year in year_list %}
+                            <div class="form-check mb-1">
+                                <input class="form-check-input year-cb" type="checkbox" value="{{year}}" id="year-{{year}}">
+                                <label class="form-check-label" for="year-{{year}}">{{year}}</label>
+                            </div>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="vr me-3"></div>
+                <div class="vr d-none d-md-block mx-2"></div>
 
-                <span class="small fw-bold text-muted text-uppercase me-2" style="letter-spacing:0.05em;">Custom Range:</span>
-                <input type="date" id="graph-start-date" class="form-control form-control-sm" style="max-width: 140px;">
-                <span class="text-muted small px-1">to</span>
-                <input type="date" id="graph-end-date" class="form-control form-control-sm" style="max-width: 140px;">
-                <button id="graph-apply-btn" class="btn btn-sm btn-purple text-white fw-bold ms-2 px-3">Apply Filter</button>
-                <button id="graph-clear-btn" class="btn btn-sm btn-outline-secondary ms-1">Reset</button>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="small fw-bold text-muted text-uppercase" style="letter-spacing:0.05em;">Custom Range:</span>
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="date" id="graph-start-date" class="form-control form-control-sm" style="max-width: 140px;">
+                        <span class="text-muted small">to</span>
+                        <input type="date" id="graph-end-date" class="form-control form-control-sm" style="max-width: 140px;">
+                    </div>
+                    <div class="d-flex gap-1">
+                        <button id="graph-apply-btn" class="btn btn-sm btn-purple text-white fw-bold px-3">Apply</button>
+                        <button id="graph-clear-btn" class="btn btn-sm btn-outline-secondary">Reset</button>
+                    </div>
+                </div>
             </div>
-            <button id="btn-export-pdf-charts" class="btn btn-purple shadow-sm rounded-pill px-4">
+            <button id="btn-export-pdf-charts" class="btn btn-purple shadow-sm rounded-pill px-4 text-nowrap">
                 <i class='bx bxs-file-pdf me-1'></i>Export Full Report (PDF)
             </button>
         </div>
@@ -313,7 +321,7 @@ $(document).ready(function () {
 
     // ── Constants ──
     const CASE_URL = '/law-enforcement-admin/case/';
-    const viewCaseUrl = (id, type) => type === 'Behalf' ? `/law-enforcement-admin/view-case/behalf/${id}/` : `/law-enforcement-admin/view-case/impacted/${id}/`;
+    const viewCaseUrl = (id, type) => type === 'Behalf' ? `/admin-law-enforcement-vawc/view-law-enforcement-case/behalf/${id}/` : `/admin-law-enforcement-vawc/view-law-enforcement-case/impacted/${id}/`;
     const PURPLE = '#8a2be2';
     const PURPLE_BG = 'rgba(138, 43, 226, 0.85)';
     const PALETTE = ['#8a2be2','#5e2ca5','#2d9cdb','#27ae60','#e74c3c',

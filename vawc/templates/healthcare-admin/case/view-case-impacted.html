@@ -16,6 +16,18 @@
     const csrf_token_contact = csrf_token_generic;
 </script>
 <div class="container-fluid pb-4">
+    {% if case.is_deleted %}
+    <div class="alert alert-danger mt-3 shadow-sm border-start border-5 border-danger" role="alert">
+        <div class="d-flex align-items-center">
+            <i class='bx bx-trash fs-1 me-3'></i>
+            <div>
+                <h4 class="alert-heading mb-1 fw-bold">This case has been soft-deleted</h4>
+                <p class="mb-0"><strong>Reason for Deletion:</strong> {{ case.deletion_reason }}</p>
+                <p class="mb-0 text-muted small">Deleted by {{ case.deleted_by.get_full_name|default:case.deleted_by.username }} on {{ case.deleted_at|date:"F j, Y g:i A" }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     <div class="pt-1 row">
         <a class="col text-decoration-none text-dark" href="{% url "healthcare case" %}" role="button"><i class='bx bx-arrow-back'></i> Back</a>
     </div>
@@ -30,10 +42,18 @@
             </a>
         </div>
         <div class="d-grid gap-2  mx-auto col-lg-2">
+            {% if not case.is_deleted %}
             <button class="btn btn-danger btn-confirm-delete-case" data-case-id="{{ case.id }}" data-bs-toggle="modal" data-bs-target="#confirmDeletCase" {% if global.security_status == "encrypted" %}disabled{% endif %}>
                 <i class='bx bx-trash me-2'></i>
                 Delete Case
             </button>
+            {% else %}
+            <button class="btn btn-success btn-confirm-restore-case" data-case-id="{{ case.id }}" data-bs-toggle="modal"
+                data-bs-target="#confirmRestoreCase">
+                <i class='bx bx-undo me-2'></i>
+                Restore Case
+            </button>
+            {% endif %}
         </div>
     </div>
     <nav>
@@ -145,11 +165,11 @@
                         <div class="pt-2">
                             <div class="row">
                                 <div class="d-flex align-items-center">
-                                    <h5>Case Type:</h5>
+                                    <h5>Report Type:</h5>
                                     {% if case.type_of_case == 'Impacted' %}
-                                        <h5 class="lead">Impacted Victim</h5>
+                                        <h5 class="lead">Victim</h5>
                                     {% elif case.type_of_case == 'Behalf' %}
-                                        <h5 class="lead">Reporting on Behalf of Impacted Victim</h5>
+                                        <h5 class="lead">On behalf of victim</h5>
                                     {% endif %}
                                 </div><!--end of col-->
                             </div><!--end of row-->
@@ -420,7 +440,7 @@
         </div> <!--end of div of status tab-->
 
         <div class="tab-pane fade" id="nav-victim" role="tabpanel" aria-labelledby="nav-victim">
-            <h2 class="pt-3 text-center">VICTIM SURVIVOR INFORMATION</h2>
+            <h2 class="pt-3 text-center">VICTIM INFORMATION</h2>
             <div class="d-lg-flex align-items-start mt-3">
                 <div class="nav flex-column nav-pills me-lg-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     {% for victim in victims %}
@@ -664,10 +684,7 @@
                                                     {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">--Select Option--</option>
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
-                                                            {% if region.name == victim.region %}selected{% endif %}>
-                                                            {{ region.name }}
-                                                        </option>
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == victim.region %}selected{% endif %}>{{ region.name }}</option>
                                                     {% empty %}
                                                         <option value="">No data found</option>
                                                     {% endfor %}
@@ -685,10 +702,7 @@
                                                     {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                            {% if province.name == victim.province %}selected{% endif %}>
-                                                            {{ province.name }}
-                                                        </option>
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == victim.province %}selected{% endif %}>{{ province.name }}</option>
                                                     {% empty %}
                                                         <option value="">No data found</option>
                                                     {% endfor %}
@@ -706,10 +720,7 @@
                                                     {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
-                                                            {% if city.name == victim.city %}selected{% endif %}>
-                                                            {{ city.name }}
-                                                        </option>
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == victim.city %}selected{% endif %}>{{ city.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
@@ -727,10 +738,7 @@
                                                     {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                            {% if barangay.name == victim.barangay %}selected{% endif %}>
-                                                            {{ barangay.name }}
-                                                        </option>
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == victim.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
@@ -1065,10 +1073,7 @@
                                                         {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">--Select Region--</option>
                                                     {% for region in default_regions %}
-                                                        <option value="{{ region.name }}" data-code="{{ region.code }}"
-                                                            {% if region.name == perpetrator.region %}selected{% endif %}>
-                                                            {{ region.name }}
-                                                        </option>
+                                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == perpetrator.region %}selected{% endif %}>{{ region.name }}</option>
                                                     {% empty %}
                                                         <option value="">No data found</option>
                                                     {% endfor %}
@@ -1085,10 +1090,7 @@
                                                         {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Province --</option>
                                                     {% for province in default_provinces %}
-                                                        <option value="{{ province.name }}" data-code="{{ province.code }}"
-                                                            {% if province.name == perpetrator.province %}selected{% endif %}>
-                                                            {{ province.name }}
-                                                        </option>
+                                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == perpetrator.province %}selected{% endif %}>{{ province.name }}</option>
                                                     {% empty %}
                                                         <option value="">No data found</option>
                                                     {% endfor %}
@@ -1105,10 +1107,7 @@
                                                         {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select City --</option>
                                                     {% for city in default_cities %}
-                                                        <option value="{{ city.name }}" data-code="{{ city.code }}"
-                                                            {% if city.name == perpetrator.city %}selected{% endif %}>
-                                                            {{ city.name }}
-                                                        </option>
+                                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == perpetrator.city %}selected{% endif %}>{{ city.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
@@ -1125,10 +1124,7 @@
                                                         {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                                     <option value="">-- Select Barangay --</option>
                                                     {% for barangay in default_barangays %}
-                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}"
-                                                            {% if barangay.name == perpetrator.barangay %}selected{% endif %}>
-                                                            {{ barangay.name }}
-                                                        </option>
+                                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == perpetrator.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                                     {% empty %}
                                                         <option>No data found</option>
                                                     {% endfor %}
@@ -1319,9 +1315,7 @@
                                     {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">--Select Region--</option>
                                     {% for region in default_regions %}
-                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>
-                                            {{ region.name }}
-                                        </option>
+                                        <option value="{{ region.name }}" data-code="{{ region.code }}" {% if region.name == case.region %}selected{% endif %}>{{ region.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -1337,9 +1331,7 @@
                                     {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select Province --</option>
                                     {% for province in default_provinces %}
-                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>
-                                            {{ province.name }}
-                                        </option>
+                                        <option value="{{ province.name }}" data-code="{{ province.code }}" {% if province.name == case.province %}selected{% endif %}>{{ province.name }}</option>
                                     {% empty %}
                                         <option value="">No data found</option>
                                     {% endfor %}
@@ -1355,9 +1347,7 @@
                                     {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select City --</option>
                                     {% for city in default_cities %}
-                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>
-                                            {{ city.name }}
-                                        </option>
+                                        <option value="{{ city.name }}" data-code="{{ city.code }}" {% if city.name == case.city %}selected{% endif %}>{{ city.name }}</option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}
@@ -1374,9 +1364,7 @@
                                     {% if global.security_status == "encrypted" %}disabled{% endif %}>
                                     <option value="">-- Select Barangay --</option>
                                     {% for barangay in default_barangays %}
-                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>
-                                            {{ barangay.name }}
-                                        </option>
+                                        <option value="{{ barangay.name }}" data-code="{{ barangay.code }}" {% if barangay.name == case.barangay %}selected{% endif %}>{{ barangay.name }}</option>
                                     {% empty %}
                                         <option>No data found</option>
                                     {% endfor %}
@@ -1704,11 +1692,35 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          Are you sure you want to delete this Case?
+          <p>Are you sure you want to delete this Case?</p>
+          <div class="mb-3">
+              <label for="deletionReason" class="form-label fw-bold">Reason for Deletion <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="deletionReason" rows="3" placeholder="Please provide a reason for deleting this case..." required></textarea>
+              <div class="invalid-feedback">Reason for deletion is required.</div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" id="confirmDeletCaseBtn">Yes</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal for Restore Case -->
+<div class="modal fade" id="confirmRestoreCase" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Restore Case</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to restore this case?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="confirmRestoreCaseBtn">Yes, Restore</button>
         </div>
       </div>
     </div>
@@ -2532,6 +2544,7 @@
         // Function to handle the confirmation of case deletion
         $('.btn-confirm-delete-case').click(function() {
             var caseId = $(this).data('case-id');
+            $('#deletionReason').val('').removeClass('is-invalid');
             $('#confirmDeletCase').modal('show'); // Show the confirmation modal
             // Set the caseId as data attribute of the confirmation button
             console.log(caseId)
@@ -2540,11 +2553,20 @@
 
         $('#confirmDeletCaseBtn').click(function() {
             var caseId = $(this).data('case-id');
+            var reason = $('#deletionReason').val();
+
+            if (!reason.trim()) {
+                $('#deletionReason').addClass('is-invalid');
+                return;
+            }
+            $('#deletionReason').removeClass('is-invalid');
         
             $.ajax({
                 method: 'POST',
                 url: '{% url "delete_case" %}',
-                data: { case_id: caseId,
+                data: { 
+                    case_id: caseId,
+                    reason: reason,
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(response) {
@@ -2565,6 +2587,42 @@
                 error: function(xhr, status, error) {
                     // Handle error
                     console.error('Error deleting case:', error);
+                }
+            });
+        });
+
+        $('.btn-confirm-restore-case').click(function() {
+            var caseId = $(this).data('case-id');
+            $('#confirmRestoreCase').modal('show');
+            $('#confirmRestoreCaseBtn').data('case-id', caseId);
+        });
+
+        $('#confirmRestoreCaseBtn').click(function() {
+            var caseId = $(this).data('case-id');
+            $.ajax({
+                method: 'POST',
+                url: '{% url "restore_case" %}',
+                data: { 
+                    case_id: caseId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Display success message
+                        $('#successToast .toast-body').text(response.message);
+                        $('#successToast').toast('show');
+                        // Reload the page after 2 seconds
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        // Display error message
+                        $('#errorToast .toast-body').text(response.message);
+                        $('#errorToast').toast('show');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error restoring case:', error);
                 }
             });
         });

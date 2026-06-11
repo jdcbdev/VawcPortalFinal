@@ -31,8 +31,8 @@ class Case(models.Model):
     TYPE_IMPACTED_VICTIM = 'Impacted'
     TYPE_REPORTING_BEHALF = 'Behalf'
     TYPE_CHOICES = [
-        (TYPE_IMPACTED_VICTIM, 'The Impacted Victim'),
-        (TYPE_REPORTING_BEHALF, 'Reporting on Behalf of Impacted Victim'),
+        (TYPE_IMPACTED_VICTIM, 'Victim'),
+        (TYPE_REPORTING_BEHALF, 'On behalf of victim'),
     ]
     type_of_case = models.CharField(max_length=30, default='Pending',null=True, blank=True)
     CRISIS_INTERVENTION = 'crisis'
@@ -140,6 +140,13 @@ class Case(models.Model):
     date_closed = models.DateField(null=True, blank=True)
 
     archived = models.BooleanField(default=False)
+    
+    # Soft Delete Fields
+    is_deleted = models.BooleanField(default=False)
+    deletion_reason = models.TextField(null=True, blank=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.ForeignKey('account.CustomUser', on_delete=models.SET_NULL, null=True, blank=True, related_name='deleted_cases')
+    
     
     def __str__(self):
         return f"Case ID: {self.id}, Case Number: {self.case_number}"
