@@ -12,10 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
-
-# Load environment variables from .env file (if present)
-load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / '.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,19 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Loaded from .env — never hardcode this value
-SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY',
-    # Fallback ONLY for CI/testing environments — do NOT use in production
-    'django-insecure-fallback-not-for-production'
-)
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-+*(0)%sps7b11(di24!f*wh!$ar$la0f)cxce0#66%xcp_c9e7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Set DJANGO_DEBUG=False in .env before deploying
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'vawc.vawc.store']
-#ALLOWED_HOSTS = ['vawcdilg.pythonanywhere.com']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost,vawc.vawc.store,testserver').split(',')
 
 
 # Application definition
@@ -106,11 +95,11 @@ WSGI_APPLICATION = 'vawc.wsgi.application'
 DATABASES = {
     'default':  {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vawcdb2',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.environ.get('DB_NAME', 'vawcdb2'),
+        'USER': os.environ.get('DB_USER', 'root'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
     }
 }
 
@@ -155,7 +144,7 @@ TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
-USE_TZ = False
+USE_TZ = True
 
 AUTH_USER_MODEL = "account.CustomUser"
 
@@ -185,7 +174,7 @@ time_to_logout = 30
 
 AUTO_LOGOUT = {
     'IDLE_TIME': timedelta(minutes=time_to_logout),
-    'SESSION_TIME': timedelta(minutes=30000),
+    'SESSION_TIME': timedelta(minutes=60),
     'MESSAGE': 'The session has expired. Please login again to continue.',
     'REDIRECT_TO_LOGIN_IMMEDIATELY': True,
 }
@@ -202,3 +191,12 @@ if DEBUG:
     DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 # Disable OTP by default as requested
 ENABLE_OTP = False
+
+# Production Security Headers
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True

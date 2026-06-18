@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.core.mail import send_mail 
 from django.conf import settings
 from .utils import load_settings
+from django.contrib.auth.decorators import login_required
 
 from account.models import *
 from case.models import *
@@ -13,6 +14,7 @@ import secrets
 import string
 
 # Create your views here.
+@login_required
 def request_passkey (request):
   email = request.POST.get('requester')
   
@@ -47,6 +49,7 @@ def request_passkey (request):
 
   return JsonResponse({'success': True, 'message': message})
 
+@login_required
 def update_passkey(request):
   email = request.POST.get('email')
   action = request.POST.get('action')
@@ -69,6 +72,22 @@ def update_passkey(request):
 
     account.passkey = passkey
     account.save()
+
+    # Log action
+    from django.contrib.admin.models import LogEntry, CHANGE
+    from django.contrib.contenttypes.models import ContentType
+    try:
+        content_type = ContentType.objects.get_for_model(account)
+        LogEntry.objects.log_action(
+            user_id=request.user.id,
+            content_type_id=content_type.pk,
+            object_id=account.pk,
+            object_repr=str(account),
+            action_flag=CHANGE,
+            change_message=f"Approved passkey reset request for user: {email}"
+        )
+    except Exception:
+        pass
   else:
     status = "declined"
     message = "Unfortunately, your request for new passkey is " + status
@@ -78,6 +97,24 @@ def update_passkey(request):
 
     # Send notification
     send_notification(message, link, receiver)
+
+    # Log action
+    from django.contrib.admin.models import LogEntry, CHANGE
+    from django.contrib.contenttypes.models import ContentType
+    try:
+        user = CustomUser.objects.filter(email=email).first()
+        account = user.account
+        content_type = ContentType.objects.get_for_model(account)
+        LogEntry.objects.log_action(
+            user_id=request.user.id,
+            content_type_id=content_type.pk,
+            object_id=account.pk,
+            object_repr=str(account),
+            action_flag=CHANGE,
+            change_message=f"Declined passkey reset request for user: {email}"
+        )
+    except Exception:
+        pass
 
   subject = "Request for new passkey is " + status
   send_email(email, subject, message)
