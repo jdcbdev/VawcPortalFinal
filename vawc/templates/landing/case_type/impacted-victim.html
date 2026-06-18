@@ -940,11 +940,11 @@
             const nextButton = $('.btn-next-service');
 
             if (isStreetValid && isDescriptionValid) {
-                console.log("Okay: All inputs are valid.");
+                /* console.log("Okay: All inputs are valid."); */;
                 progressButton.prop('disabled', false);
                 //nextButton.prop('disabled', false);
             } else {
-                console.log("No: Some inputs are not valid.");
+                /* console.log("No: Some inputs are not valid."); */;
                 progressButton.prop('disabled', true);
                 //nextButton.prop('disabled', true);
             }
@@ -1205,16 +1205,16 @@
             let contactValue = ''
 
             // For example, you can log it to the console
-            console.log("Email entered: " + emailValue);
-            console.log("Phone entered: " + phoneValue);
+            /* console.log("Email entered: " + emailValue); */;
+            /* console.log("Phone entered: " + phoneValue); */;
 
             requestURL = ''
             if (document.querySelector('#email-tab').classList.contains('active')) {
-                console.log('email is selected type')
+                /* console.log('email is selected type') */
                 requestURL = "{% url 'email_confirm'  %}"
                 contactValue = isvalid_email(emailValue)
             } else if (document.querySelector('#phone-tab').classList.contains('active')) {
-                console.log('phone number is selected type')
+                /* console.log('phone number is selected type') */
                 requestURL = "{% url 'phone_confirm'  %}"
                 contactValue = isvalid_phone_number(phoneValue)
             } else {
@@ -1245,7 +1245,7 @@
                 },
                 success: function (response) {
                     // Handle success response
-                    console.log(response); // Log the response to the console
+                    /* console.log(response); */; // Log the response to the console
                     //enable button
                     $('#send_email_confirmation').prop('disabled', false); // Disable the button to prevent multiple submissions
                     $('#send_email_confirmation').css('background-color', '#8a2be2'); // Change button color to indicate it's disabled
@@ -1333,10 +1333,10 @@
 
             requestURL = ''
             if (document.querySelector('#email-tab').classList.contains('active')) {
-                console.log('email is selected type')
+                /* console.log('email is selected type') */
                 requestURL = "{% url 'verify_otp_email'  %}"
             } else if (document.querySelector('#phone-tab').classList.contains('active')) {
-                console.log('phone number is selected type')
+                /* console.log('phone number is selected type') */
                 requestURL = "{% url 'verify_otp_phone'  %}"
             } else {
                 throw new Error('No contact type selected')
@@ -1352,8 +1352,8 @@
 
                         var emailValue = $('#email-confirm').val();
                         var phoneValue = $('#phone-confirm').val();
-                        console.log("Email entered(OTP): " + emailValue);
-                        console.log("Phone entered(OTP): " + phoneValue);
+                        /* console.log("Email entered(OTP): " + emailValue); */;
+                        /* console.log("Phone entered(OTP): " + phoneValue); */;
                         $('#email-confirmed').val(emailValue);
                         $('#phone-confirmed').val(phoneValue);
 
@@ -1363,7 +1363,7 @@
                         document.querySelector(".btn-form-submit").click()
 
                         // Log success message to the console
-                        console.log('OTP verification successful.');
+                        /* console.log('OTP verification successful.'); */;
                     } else {
                         $('#otpErrorMessage').text(response.message);
                         if (response.message === 'OTP has expired.' || response.message === 'Incorrect OTP.') {
@@ -1430,16 +1430,16 @@
 
         // Client side validation
         function isvalid_phone_number(number) {
-            console.log(typeof number)
+            /* console.log(typeof number) */
             if (/^\d+$/.test(number) && number.length === 10) {
-                console.log('Phone number isvalid')
+                /* console.log('Phone number isvalid') */
                 return number
             } else if (number.trim().length <= 0) {
                 $('.err-msg-phone').text('Please enter your phone number')
                 $('#phone-confirm').parent().addClass('is-invalid')
                 throw new Error('No input detected')
             } else {
-                console.log(number)
+                /* console.log(number) */
                 $('.err-msg-phone').text('Invalid phone number')
                 $('#phone-confirm').parent().addClass('is-invalid')
                 throw new Error('Invalid phone number')

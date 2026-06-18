@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+
+# Load environment variables from .env file (if present)
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / '.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,10 +25,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+*(0)%sps7b11(di24!f*wh!$ar$la0f)cxce0#66%xcp_c9e7'
+# Loaded from .env — never hardcode this value
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    # Fallback ONLY for CI/testing environments — do NOT use in production
+    'django-insecure-fallback-not-for-production'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Set DJANGO_DEBUG=False in .env before deploying
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'vawc.vawc.store']
 #ALLOWED_HOSTS = ['vawcdilg.pythonanywhere.com']

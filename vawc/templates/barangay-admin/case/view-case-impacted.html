@@ -2817,7 +2817,7 @@
             $('#deletionReason').val('').removeClass('is-invalid');
             $('#confirmDeletCase').modal('show'); // Show the confirmation modal
             // Set the caseId as data attribute of the confirmation button
-            console.log(caseId)
+            /* console.log(caseId) */
             $('#confirmDeletCaseBtn').data('case-id', caseId);
         });
 
@@ -2936,7 +2936,7 @@
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            console.log('Case status updated successfully');
+                            /* console.log('Case status updated successfully'); */;
                             $('.toast-body').text('Case status updated successfully');
                             $('#successToast').toast('show');
                             // Update original status to the new status
@@ -2963,7 +2963,7 @@
                                 success: function(response) {
                                     if (response.success) {
                                         if(originalStatus === 'Close') {
-                                            console.log('Case Date Closed updated successfully');
+                                            /* console.log('Case Date Closed updated successfully'); */;
                                             $('.toast-body').text('Case Date Closed updated successfully');
                                             $('#successToast').toast('show');
 
@@ -2975,7 +2975,7 @@
                                             addingStatusPerAction( '{{case.id}}', statusTitle, statusText, statusEventDate, successMessage);
                                             
                                         }else{
-                                            console.log('Case Date Activated updated successfully');
+                                            /* console.log('Case Date Activated updated successfully'); */;
                                             $('.toast-body').text('Case Date Activated successfully');
                                             $('#successToast').toast('show');
 
@@ -3043,7 +3043,7 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        console.log('Case Date Closed updated successfully');
+                        /* console.log('Case Date Closed updated successfully'); */;
                         $('.toast-body').text('Case Date Closed updated successfully');
                         $('#successToast').toast('show');
                     } else {
@@ -3161,7 +3161,7 @@
                     }
                 },
                 error: function(xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
+                    /* console.log(xhr.status + ": " + xhr.responseText); */;
                 },
                 complete: function() {
                     // Re-enable the submit button after the AJAX request is complete
@@ -3240,7 +3240,7 @@
                     }
                 },
                 error: function(xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
+                    /* console.log(xhr.status + ": " + xhr.responseText); */;
                 }
             });
         });
@@ -3423,7 +3423,7 @@
 
                 // Get the perpetrator ID from the form's ID
                 const perpetratorId = this.id.split('_')[2];
-                console.log(perpetratorId);
+                /* console.log(perpetratorId); */;
 
                 // Get the form data
                 const formData = new FormData(this);

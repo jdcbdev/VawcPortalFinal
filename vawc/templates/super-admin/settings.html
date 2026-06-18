@@ -302,7 +302,7 @@
                         }
                     }
                     showToast('error', errorMsg);
-                    console.log(data.errors);
+                    /* console.log(data.errors); */;
                 }
             },
             error: function () {
@@ -367,7 +367,7 @@
                     // Revert the switch if failed
                     switchEl.checked = !isChecked;
                     label.textContent = !isChecked ? ' Enabled' : ' Disabled';
-                    console.log(data.message);
+                    /* console.log(data.message); */;
                 }
             },
             error: function () {

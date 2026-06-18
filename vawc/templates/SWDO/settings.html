@@ -116,7 +116,7 @@
                   'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                 },
                 success: function(response) {
-                    console.log(response)
+                    /* console.log(response) */
 
                         let newElementHTML = `<div class="modal-body">
                             <p class="text-center">${response.message}</p>
@@ -146,7 +146,7 @@
         // Listen for the switch change event
         switchEncrypt.addEventListener("change", function(e) {
 
-            console.log('change detected')
+            /* console.log('change detected') */
 
             if (!this.checked) {
                 // If the switch is toggled off, prevent the default behavior
@@ -172,14 +172,14 @@
                                 'X-CSRFToken': '{{ csrf_token }}' // Include the CSRF token using Django's template syntax
                             },
                             success: function(response) {
-                                console.log(response.message)
+                                /* console.log(response.message) */
                 
                                 if (response.success) {
-                                    console.log("good")
+                                    /* console.log("good") */
                                     location.reload();
                                 } else {
                                     passkeyResult.innerHTML = response.message
-                                    console.log("bad")
+                                    /* console.log("bad") */
                                 }
                             },
                             error: function(xhr, errmsg, err) {
@@ -205,14 +205,14 @@
                         'security_status': 'decrypted'
                     },
                     success: function(response) {
-                        console.log(response.message)
+                        /* console.log(response.message) */
 
                         if (response.success) {
-                            console.log("good")
+                            /* console.log("good") */
                             location.reload();
                         } else {
                             passkeyResult.innerHTML = response.message
-                            console.log("bad")
+                            /* console.log("bad") */
                         }
                     },
                     error: function(xhr, errmsg, err) {
@@ -407,7 +407,7 @@
                         }
                     }
                     showToast('error', errorMsg);
-                    console.log(data.errors);
+                    /* console.log(data.errors); */;
                 }
             },
             error: function () {

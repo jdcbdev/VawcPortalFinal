@@ -170,8 +170,8 @@
             
             
             // For example, you can log it to the console
-            console.log("Email entered: " + emailValue);
-            console.log("Phone entered: " + phoneValue);
+            /* console.log("Email entered: " + emailValue); */;
+            /* console.log("Phone entered: " + phoneValue); */;
 
             // Determine what url endpoint to use, either for email or phone
             let requestURL = ''
@@ -207,7 +207,7 @@
                 },
                 success: function(response) {
                     // Handle success response
-                    console.log(response); // Log the response to the console
+                    /* console.log(response); */; // Log the response to the console
                     
                     $('.spinner-border').show(); $('#form-submit-text').css('visibility', 'hidden');
                     $('#submitButton').prop('disabled', true);
@@ -279,7 +279,7 @@
                                         },
                                         success: function(response) {
                                             // Handle success response
-                                            console.log(response); // Log the response to the console
+                                            /* console.log(response); */; // Log the response to the console
 
                                             // Check if reCAPTCHA serverside validation is not successful
                                             if (!response.success) {
@@ -396,12 +396,12 @@
                         
                         var emailValue = $('#email').val();
                         var phoneValue = $('#phone').val();
-                        console.log("Email entered(OTP): " + response.user_email);
-                        console.log("Phone entered(OTP): " + response.user_phone);
+                        /* console.log("Email entered(OTP): " + response.user_email); */;
+                        /* console.log("Phone entered(OTP): " + response.user_phone); */;
                         // Log success message to the console
-                        console.log('OTP verification successful.');
+                        /* console.log('OTP verification successful.'); */;
                         // Access and log the token to the console
-                        console.log('Token:', response.token);
+                        /* console.log('Token:', response.token); */;
 
                         // Get the URL for track_case_info view with placeholders for user_email and token
                         var trackCaseInfoUrl = "{% url 'track_case_info' contact_type='__contact_type__'  user_contact='__user_contact__' case_num='__case_num__' token='__token__' %}";
@@ -419,7 +419,7 @@
                             window.location.href = trackCaseInfoUrl;
                         }, 3000);
                     } else {
-                        console.log('i am here in trackcase.html but eeror');
+                        /* console.log('i am here in trackcase.html but eeror'); */;
                         $('#otpErrorMessage').text(response.message);
                         if (response.message === 'OTP has expired.' || response.message === 'Incorrect OTP.') {
                             $('.text-danger').show(); // Show the error message div
@@ -511,11 +511,11 @@
 
         // Client side validation
         function isvalid_phone_number(number) {
-            console.log(typeof number)
+            /* console.log(typeof number) */
             $('.spinner-border').hide(); $('#form-submit-text').css('visibility', 'visible');
             $('#submitButton').prop('disabled', false);
             if(/^\d+$/.test(number) && number.length === 10) {
-                console.log('Phone number isvalid')
+                /* console.log('Phone number isvalid') */
                 return number
             } else if (number.trim().length <= 0) {
                 $('.err-msg-phone').text('Please enter your phone number')

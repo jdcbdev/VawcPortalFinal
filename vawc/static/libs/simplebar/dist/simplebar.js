@@ -1819,7 +1819,7 @@
 	 * @example
 	 *
 	 * _.defer(function(stamp) {
-	 *   console.log(_.now() - stamp);
+	 *   /* console.log(_.now() - stamp); */;
 	 * }, _.now());
 	 * // => Logs the number of milliseconds it took for the deferred invocation.
 	 */
@@ -2259,7 +2259,7 @@
 	 * @example
 	 *
 	 * _.defer(function(stamp) {
-	 *   console.log(_.now() - stamp);
+	 *   /* console.log(_.now() - stamp); */;
 	 * }, _.now());
 	 * // => Logs the number of milliseconds it took for the deferred invocation.
 	 */

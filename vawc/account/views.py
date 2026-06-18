@@ -39,7 +39,7 @@ def request_passkey (request):
         receiver = admin_account.user.email
         message = f"Passkey reset request from email: {email}."
         link = request.build_absolute_uri('/admin-vawc/manage/passkey/')
-        print('link:', link)
+        # print('link:', link)
 
         # Send notification
         send_notification(message, link, receiver)
@@ -59,7 +59,7 @@ def update_passkey(request):
     receiver = email
     message_notif = f"New Passkey is sent to your Email."
     link = request.build_absolute_uri('/admin-barangay-vawc/settings/')
-    print('link:', link)
+    # print('link:', link)
 
     # Send notification
     send_notification(message_notif, link, receiver)
@@ -74,7 +74,7 @@ def update_passkey(request):
     message = "Unfortunately, your request for new passkey is " + status
     receiver = email
     link = request.build_absolute_uri('/admin-barangay-vawc/settings/')
-    print('link:', link)
+    # print('link:', link)
 
     # Send notification
     send_notification(message, link, receiver)

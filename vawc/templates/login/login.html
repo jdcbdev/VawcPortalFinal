@@ -182,7 +182,7 @@
                         $('#login-text-form').removeClass('text-color-primary')
                         $('#successMessage').text(response.message);
                         $('#barangay-passkeyFeedback').hide()
-                        console.log(response.message);
+                        /* console.log(response.message); */;
 
                         const userEmail = $('#barangay-email').val();
                         if (userEmail) {
@@ -213,7 +213,7 @@
                         $('#otpModal').modal('show'); // Show the OTP modal after successful login
 
                     } else {
-                        console.log(response.message);
+                        /* console.log(response.message); */;
                         if (response.message === 'Account is Not Active Anymore') {
                             $('#barangay-email').addClass('is-invalid'); // Add is-invalid class for email input
                             $('#barangay-emailFeedback').text('Account is Not Active Anymore');
@@ -302,7 +302,7 @@
 
 
                         // Log success message to the console
-                        console.log('OTP verification successful.');
+                        /* console.log('OTP verification successful.'); */;
                     } else {
                         $('#otpErrorMessage').text(response.message);
                         if (response.message === 'Code is already expired.' || response.message === 'OTP Inputted is not Correct.') {

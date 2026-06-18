@@ -433,19 +433,19 @@
                     }
                 },
                 error: function(xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
+                    /* console.log(xhr.status + ": " + xhr.responseText); */;
                 }
             });
         });
 
         $(document).on('click', '.edit-account-btn', function() {
             var accountId = $(this).data('account-id');
-            //console.log(accountId);
+            ///* console.log(accountId); */;
             $.ajax({
                 url: '{% url "edit_account" 0 %}'.replace('0', accountId),
                 method: 'GET',
                 success: function(response) {
-                    console.log(response);
+                    /* console.log(response); */;
 
                     setGeoSelect($('#edit_account_region'), 'region', 'default_regions')
                     setGeoSelect($('#edit_account_province'), 'province', 'default_provinces')
@@ -461,7 +461,7 @@
                         // apend blank option as the first selected options
                         geoTypeInput.empty().append(blankOption)
                         // apped data to respective inputs
-                        console.log(response[key])
+                        /* console.log(response[key]) */
                         response[key].forEach(item => {
                             const option = document.createElement('option')
                             option.dataset.code = item.code
@@ -469,7 +469,7 @@
                             option.textContent = item.name
     
                             if(option.value == response.geoType) {
-                                console.log(okeeeee)
+                                /* console.log(okeeeee) */
                             }
                             geoTypeInput.append(option)
                         })
@@ -504,15 +504,15 @@
 
             // Get the accountId from the hidden input field
             var accountId = $('#account_id').val();
-            console.log('Account Id:', accountId);
-            console.log(accountId);
+            /* console.log('Account Id:', accountId); */;
+            /* console.log(accountId); */;
             $.ajax({
                 url: '{% url "edit_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
                     // Handle success response
-                    console.log(response);
+                    /* console.log(response); */;
                     // Optionally, close the modal or show a success message
                     $('#edit_account').modal('hide');
                     // Display success message and reload page after 2 seconds

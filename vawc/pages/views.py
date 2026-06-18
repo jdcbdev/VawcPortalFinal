@@ -236,7 +236,7 @@ def forgot_pass_view (request):
 def forgot_pass_confirm_sent_view(request):
     # Retrieve the email from the query parameters
     email = request.GET.get('email')
-    print('email: ', email)
+    # print('email: ', email)
     try:
         # Check if the email exists in the CustomUser model
         custom_user = CustomUser.objects.get(email=email)
@@ -256,7 +256,7 @@ def forgot_pass_confirm_sent_view(request):
         return JsonResponse({'success': True, 'message': 'Link has been sent'})
     except ObjectDoesNotExist:
         # If the email does not exist, return error response
-        print('not found')
+        # print('not found')
         return JsonResponse({'success': False, 'message': 'Email does not exist'})
 
 def change_password_view(request, uidb64, token):
@@ -375,7 +375,7 @@ def verify_otp_email_track_case(request):
         otp_expiry_str = request.session.get('otp_expiry')
         user_email = request.session.get('user_email')  # Retrieving user email from session
         
-        print(user_email)
+        # print(user_email)
 
         if otp_saved and otp_expiry_str and user_email:  # Check if user_email exists
             otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
@@ -385,12 +385,12 @@ def verify_otp_email_track_case(request):
                 request.session.pop('otp_expiry')
                 request.session.pop('user_email')
                 
-                print('OTP Verified Succesfully, Used Email:', user_email)
+                # print('OTP Verified Succesfully, Used Email:', user_email)
 
                 # Generate a unique token for password reset using Django's default_token_generator
                 token = generate_token(user_email)
-                print('Token generated:', token)
-                print('going to redirect to track_case_info')
+                # print('Token generated:', token)
+                # print('going to redirect to track_case_info')
 
                 
 
@@ -408,7 +408,7 @@ def verify_otp_phone_track_case(request):
         otp_saved = request.session.get('otp')
         otp_expiry_str = request.session.get('otp_expiry')
         user_phone = request.session.get('user_phone')  # Retrieving user phone from session
-        print(user_phone)
+        # print(user_phone)
 
         if otp_saved and otp_expiry_str and user_phone:  # Check if user_phone exists
             otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
@@ -417,7 +417,7 @@ def verify_otp_phone_track_case(request):
                 request.session.pop('otp')
                 request.session.pop('otp_expiry')
                 request.session.pop('user_phone')
-                print('OTP Verified Succesfully, Used Phone:', user_phone)
+                # print('OTP Verified Succesfully, Used Phone:', user_phone)
 
                 # Generate a unique token for password reset using Django's default_token_generator
                 token = generate_token(user_phone)
@@ -446,12 +446,12 @@ def track_case_info_view(request, contact_type, user_contact, case_num, token):
             temp_user = User(email=user_contact)
 
     except User.DoesNotExist:
-        print('User does not exist')
+        # print('User does not exist')
         return redirect('error_view')
 
     # Check if the token is valid for the temporary user
     if not default_token_generator.check_token(temp_user, token):
-        print('Token is invalid')
+        # print('Token is invalid')
         return redirect('error_view')
 
     # Fetch cases related to the user_contact and prefetch related status history
@@ -459,12 +459,12 @@ def track_case_info_view(request, contact_type, user_contact, case_num, token):
     if contact_type == 'email':
         cases = Case.objects.filter(email=user_contact, case_number=case_num).prefetch_related('status_history')
     elif contact_type == 'phone':
-        print('contact type: phone')
+        # print('contact type: phone')
         cases = Case.objects.filter(phone=user_contact, case_number=case_num).prefetch_related('status_history')
 
-    print(cases)
+    # print(cases)
     # Token is valid, render the template
-    print('Token is valid, rendering track_case_info.html')
+    # print('Token is valid, rendering track_case_info.html')
     return render(request, 'landing/track_case_info.html', {'contact_type': contact_type, 'user_contact': user_contact, 'token': token, 'cases': cases})
 
 @login_required
@@ -697,7 +697,7 @@ def admin_manage_account_view(request):
         Q(region_id=region_id) | Q(name__icontains='Sulu')
     )
     
-    print(custom_provinces)
+    # print(custom_provinces)
     # Exclude the specified emails from the queryset
     users = CustomUser.objects.exclude(email__in=excluded_emails)
     accounts = Account.objects.filter(user__in=users)
@@ -823,7 +823,7 @@ def create_swdo_manage_account(request):
             city = request.POST.get('city')
             office_assigned = request.POST.get('account_office_assigned')
             
-            print(username, email, name,region,province,city,office_assigned)
+            # print(username, email, name,region,province,city,office_assigned)
             
             try:
                 password = generate_random_password()
@@ -903,7 +903,7 @@ def create_swdo_manage_account(request):
 def edit_account_view(request, account_id):
     if request.method == 'GET':
         try: 
-            print(account_id)
+            # print(account_id)
             account = get_object_or_404(Account, user__id=account_id)
             regions = list(Region.objects.filter(name=account.region).values())
             provinces = list(
@@ -969,7 +969,7 @@ def edit_account_view(request, account_id):
 def edit_law_enforcement_account_view(request, account_id):
     if request.method == 'GET':
         try: 
-            print(account_id)
+            # print(account_id)
             police_account = get_object_or_404(LawEnforcementAccount, user_id=account_id)
             regions = list(PoliceStations.objects.values('region').distinct())
             provinces = list(PoliceStations.objects.values('province').distinct())
@@ -1027,7 +1027,7 @@ def edit_law_enforcement_account_view(request, account_id):
 def edit_healthcare_account_view(request, account_id):
     if request.method == 'GET':
         try: 
-            print(account_id)
+            # print(account_id)
             healthcare_account = get_object_or_404(HealthcareAccount, user_id=account_id)
             regions = list(HealthcareAccount.objects.values('region').distinct())
             provinces = list(PoliceStations.objects.values('province').distinct())
@@ -1083,7 +1083,7 @@ def edit_healthcare_account_view(request, account_id):
 def edit_swdo_account_view(request, account_id):
     if request.method == 'GET':
         try: 
-            print(account_id)
+            # print(account_id)
             SWDO_account = get_object_or_404(SWDOaccount, user_id=account_id)
           
             return JsonResponse({
@@ -1161,7 +1161,7 @@ def create_account(request):
             city = request.POST.get('account_city')
             barangay = request.POST.get('account_barangay')
             
-            print(username, email, first_name, middle_name, last_name, region, province, city, barangay)
+            # print(username, email, first_name, middle_name, last_name, region, province, city, barangay)
             
             try:
                 password = generate_random_password()
@@ -1233,7 +1233,7 @@ def create_law_enforcement_account(request):
             city = request.POST.get('account_city')
             station = request.POST.get('account_police_station')
             
-            print(username, email, first_name, middle_name, last_name, region, province, city, station)
+            # print(username, email, first_name, middle_name, last_name, region, province, city, station)
             
             try:
                 password = generate_random_password()
@@ -1305,7 +1305,7 @@ def create_healthcare_account(request):
             city = request.POST.get('account_city')
             hospital_name = request.POST.get('account_hospital_name')
             
-            print(username, email, first_name, middle_name, last_name, region, province, city, hospital_name)
+            # print(username, email, first_name, middle_name, last_name, region, province, city, hospital_name)
             
             try:
                 password = generate_random_password()
@@ -1400,7 +1400,7 @@ def check_username_email(request):
 @login_required
 def get_city_by_province(request, province_id):
         
-        cities = Municipality.objects.filter(province_id=province_id,is_city=1).values('name')
+        cities = Municipality.objects.filter(province_id=province_id).order_by('name').values('name')
         city_list = [city['name'] for city in cities]
 
         return JsonResponse({'city_list': city_list})
@@ -1485,7 +1485,7 @@ def send_email_report(request):
     total_victims = request.POST.get('total_victims')  # Replace with actual total victims count
     total_perpetrators = request.POST.get('total_perpetrators')  # Replace with actual total perpetrators count
     
-    print(email, total_cases, total_active_cases, total_closed_cases, total_victims, total_perpetrators)
+    # print(email, total_cases, total_active_cases, total_closed_cases, total_victims, total_perpetrators)
 
     subject = 'VAWC Summary Report'
     message = (
@@ -1518,7 +1518,7 @@ def update_graph_table_report(request):
 
             temp_case =Case.objects.all()
             total_active = temp_case.filter(status=Case.STATUS_ACTIVE).count()
-            print("active:",total_active)
+            # print("active:",total_active)
             # Filter cases based on the date range
             if max_date:
                 cases = Case.objects.filter(date_added__range=[min_date, max_date])
@@ -1568,8 +1568,8 @@ def update_graph_report(request):
             # Convert max_date_str to datetime object if it's not empty
             max_date = datetime.strptime(max_date_str, '%m/%d/%Y').strftime('%Y-%m-%d') if max_date_str else None
 
-            print("Start Date test:", min_date)
-            print("End Date test:", max_date)
+            # print("Start Date test:", min_date)
+            # print("End Date test:", max_date)
             
             # Filter cases based on the date range
             if min_date and max_date:
@@ -1644,50 +1644,46 @@ def send_notification (message, link, receiver):
     # Save the instance to the database
     notification.save()
 
+@login_required
 def read_notification(request):
-    if request.method == 'POST':
-        notification_id = request.POST.get('id')
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
 
-    notification = Notification.objects.get(id=notification_id)
+    notification_id = request.POST.get('id')
+    if not notification_id:
+        return JsonResponse({'success': False, 'message': 'Missing notification ID.'}, status=400)
+
+    # Ownership check: only mark a notification as read if it belongs to the current user
+    notification = get_object_or_404(
+        Notification,
+        id=notification_id,
+        receiver_account=request.user.email
+    )
     notification.read = True
     notification.save()
-    
-    # Return JSON response
-    return JsonResponse({'success': True, 'message': 'Updated Succesfully.'})
 
+    return JsonResponse({'success': True, 'message': 'Updated Successfully.'})
+
+@login_required
 def get_all_notification_barangay(request):
-    # Get the current user
-    CustomUser = get_user_model()
     current_user = request.user
 
-    # Filter notifications for the current user
+    # Filter notifications for the current user only
     user_notifications = Notification.objects.filter(receiver_account=current_user.email)
-
-    # Check if there are any unread notifications for the current user
     unread_notifications_exist = user_notifications.filter(read=False).exists()
-
-    # Serialize the queryset to JSON
     notifications_list = list(user_notifications.values())
 
-    # Return JSON response with list of dictionaries and flag indicating unread notifications
     return JsonResponse({'notifications': notifications_list, 'unread_notifications_exist': unread_notifications_exist})
 
+@login_required
 def get_all_notification_admin(request):
-    # Get the current user
-    CustomUser = get_user_model()
     current_user = request.user
-    print('admin:',current_user)
 
-    # Filter notifications for the current user
+    # Filter notifications for the current user only
     user_notifications = Notification.objects.filter(receiver_account=current_user.email)
-
-    # Check if there are any unread notifications for the current user
     unread_notifications_exist = user_notifications.filter(read=False).exists()
-
-    # Serialize the queryset to JSON
     notifications_list = list(user_notifications.values())
 
-    # Return JSON response with list of dictionaries and flag indicating unread notifications
     return JsonResponse({'notifications': notifications_list, 'unread_notifications_exist': unread_notifications_exist})
 @login_required
 def law_enforcement_view_case_behalf(request):
@@ -1710,7 +1706,7 @@ def barangay_dashboard_view (request):
     except Account.DoesNotExist:
         barangay = None
 
-    print(barangay)
+    # print(barangay)
 
     year_list = Case.objects.filter(is_deleted=False, barangay=barangay).annotate(year=ExtractYear('date_added')).values_list('year', flat=True).distinct()
 
@@ -2240,7 +2236,7 @@ def send_phone(receiver, message_body):
     body= message_body,
     to=f'+63{receiver}'
     )
-    print(message.sid)
+    # print(message.sid)
 
 def generate_otp():
     return ''.join(random.choices(string.digits, k=6))
@@ -2412,7 +2408,7 @@ def email_confirm(request):
         result = r.json()
         # return JsonResponse({'result': result})
         if not result['success']:
-            print(result)
+            # print(result)
             return JsonResponse({'success': False, 'message': 'reCAPTCHA validation failed, please try again'})
         
         email = request.POST.get('contactConfirm')
@@ -2442,7 +2438,7 @@ def phone_confirm(request):
             return JsonResponse({'success': False, 'message': 'reCAPTCHA validation failed, please try again'})
         
         phone = request.POST.get('contactConfirm')
-        print('Phone Inputted:',phone)
+        # print('Phone Inputted:',phone)
 
         # checks if phone number is still in invalid format
         if not phone.isdigit() or not len(phone) == 10:
@@ -2467,7 +2463,7 @@ def verify_otp_email(request):
         otp_saved = request.session.get('otp')
         otp_expiry_str = request.session.get('otp_expiry')
         user_email = request.session.get('user_email')  # Retrieving user email from session
-        print(user_email)
+        # print(user_email)
 
         if otp_saved and otp_expiry_str and user_email:  # Check if user_email exists
             otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
@@ -2490,7 +2486,7 @@ def verify_otp_phone(request):
         otp_saved = request.session.get('otp')
         otp_expiry_str = request.session.get('otp_expiry')
         user_phone = request.session.get('user_phone')  # Retrieving user email from session
-        print(user_phone)
+        # print(user_phone)
 
         if otp_saved and otp_expiry_str and user_phone:  # Check if user_email exists
             otp_expiry = timezone.datetime.fromisoformat(otp_expiry_str)
@@ -2583,11 +2579,11 @@ def add_case(request):
     temp_type_case = request.POST.get('type_of_case')
     temp_service_info = request.POST.get('service')
     
-    print('service:',temp_service_info)
+    # print('service:',temp_service_info)
     if request.method == 'POST':
         email = request.POST.get('email-confirmed') or None
         phone = request.POST.get('phone-confirmed') or None
-        print('Entered Email:', email)
+        # print('Entered Email:', email)
 
         # Create a new QueryDict object
         modified_post_data = QueryDict('', mutable=True)
@@ -2662,7 +2658,7 @@ def add_case(request):
         # Filter CustomUser objects based on the barangay attribute of associated Account objects
         all_users = CustomUser.objects.all()
 
-        print('case number:',case_instance.case_number)
+        # print('case number:',case_instance.case_number)
         # Now you can iterate over all_users and access each user's attributes
         for user in all_users:
             try:
@@ -2676,10 +2672,11 @@ def add_case(request):
 
             except ObjectDoesNotExist:
                 # Handle the case where no associated Account object exists for the user
-                print("No associated Account object found for this user.")
+                # print("No associated Account object found for this user.")
+                pass
 
         # Now, matching_users_emails contains the email addresses of all users whose associated accounts match temp_barangay
-        print("Matching users emails:", matching_users_emails)
+        # print("Matching users emails:", matching_users_emails)
 
         # Iterate over the collected emails and send the notification to each email
         for receiver in matching_users_emails:
@@ -2688,7 +2685,7 @@ def add_case(request):
             try:
                 path = f"/admin-barangay-vawc/view-case/{temp_type_case.lower()}/{case_instance.id}/"
                 link = request.build_absolute_uri(path)
-                print('link:', link)
+                # print('link:', link)
             except:
                 link = request.build_absolute_uri("/admin-barangay-vawc/view-case/")
 
@@ -2828,8 +2825,8 @@ def add_new_case(request):
         station = request.POST.get('station') or None
         swdo = request.POST.get('swdo') or None
         
-        print('barangay encrypted:', encrypt_data(barangay))
-        print('barangay decrypted:', barangay)
+        # print('barangay encrypted:', encrypt_data(barangay))
+        # print('barangay decrypted:', barangay)
         case_data = {
             'case_number': get_next_case_number(),
             'email': email,
@@ -2986,7 +2983,7 @@ def view_admin_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -3021,8 +3018,8 @@ def view_admin_case_behalf(request, case_id):
                 victim.number_of_children = encrypt_data(victim.number_of_children)
                 victim.ages_of_children = encrypt_data(victim.ages_of_children)
                 
-                print("Here")
-                print(victim.occupation)
+                # print("Here")
+                # print(victim.occupation)
 
             for perpetrator in perpetrators:
                 perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
@@ -3035,7 +3032,7 @@ def view_admin_case_behalf(request, case_id):
                 perpetrator.sex = encrypt_data(perpetrator.sex)
                 perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
                 perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
-                print(perpetrator.contact_number)
+                # print(perpetrator.contact_number)
                 perpetrator.occupation = encrypt_data(perpetrator.occupation)
                 perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
                 perpetrator.nationality = encrypt_data(perpetrator.nationality)
@@ -3080,16 +3077,16 @@ def view_admin_case_behalf(request, case_id):
             #     contact_person.province = decrypt_data(contact_person.province)
             #     contact_person.region = decrypt_data(contact_person.region)
 
-        #print(decrypt_data(case.street))
+        ## print(decrypt_data(case.street))
         # if isinstance(encrypted_data_from_db, bytes):
-        #     print("Decrypted: ", decrypt_data(encrypted_data_from_db))
+        #     # print("Decrypted: ", decrypt_data(encrypted_data_from_db))
         # else:
-        #     print("Decrypted: ", decrypt_data())
+        #     # print("Decrypted: ", decrypt_data())
         
         # for victim in victims:
         #     encryted_value = encrypt_data(victim.first_name)
-        #     print("Encrypted: ", encryted_value)
-        #     print("Decrypted: ", decrypt_data(encryted_value))
+        #     # print("Encrypted: ", encryted_value)
+        #     # print("Decrypted: ", decrypt_data(encryted_value))
 
         # Render the view-case.html template with the case and related objects as context
         
@@ -3142,7 +3139,7 @@ def view_admin_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print("Security_status: ",request.session.get('security_status'))
+        # print("Security_status: ",request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -3297,7 +3294,7 @@ def view_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -3333,8 +3330,8 @@ def view_case_behalf(request, case_id):
                 victim.number_of_children = encrypt_data(victim.number_of_children)
                 victim.ages_of_children = encrypt_data(victim.ages_of_children)
                 
-                print("Here")
-                print(victim.occupation)
+                # print("Here")
+                # print(victim.occupation)
 
             for perpetrator in perpetrators:
                 perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
@@ -3347,7 +3344,7 @@ def view_case_behalf(request, case_id):
                 perpetrator.sex = encrypt_data(perpetrator.sex)
                 perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
                 perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
-                print(perpetrator.contact_number)
+                # print(perpetrator.contact_number)
                 perpetrator.occupation = encrypt_data(perpetrator.occupation)
                 perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
                 perpetrator.nationality = encrypt_data(perpetrator.nationality)
@@ -3392,16 +3389,16 @@ def view_case_behalf(request, case_id):
             #     contact_person.province = decrypt_data(contact_person.province)
             #     contact_person.region = decrypt_data(contact_person.region)
 
-        #print(decrypt_data(case.street))
+        ## print(decrypt_data(case.street))
         # if isinstance(encrypted_data_from_db, bytes):
-        #     print("Decrypted: ", decrypt_data(encrypted_data_from_db))
+        #     # print("Decrypted: ", decrypt_data(encrypted_data_from_db))
         # else:
-        #     print("Decrypted: ", decrypt_data())
+        #     # print("Decrypted: ", decrypt_data())
         
         # for victim in victims:
         #     encryted_value = encrypt_data(victim.first_name)
-        #     print("Encrypted: ", encryted_value)
-        #     print("Decrypted: ", decrypt_data(encryted_value))
+        #     # print("Encrypted: ", encryted_value)
+        #     # print("Decrypted: ", decrypt_data(encryted_value))
 
         # Render the view-case.html template with the case and related objects as context
         
@@ -3481,7 +3478,7 @@ def view_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -3610,7 +3607,7 @@ def view_enforcement_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -3647,8 +3644,8 @@ def view_enforcement_case_behalf(request, case_id):
                 victim.number_of_children = encrypt_data(victim.number_of_children)
                 victim.ages_of_children = encrypt_data(victim.ages_of_children)
                 
-                print("Here")
-                print(victim.occupation)
+                # print("Here")
+                # print(victim.occupation)
 
             for perpetrator in perpetrators:
                 perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
@@ -3661,7 +3658,7 @@ def view_enforcement_case_behalf(request, case_id):
                 perpetrator.sex = encrypt_data(perpetrator.sex)
                 perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
                 perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
-                print(perpetrator.contact_number)
+                # print(perpetrator.contact_number)
                 perpetrator.occupation = encrypt_data(perpetrator.occupation)
                 perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
                 perpetrator.nationality = encrypt_data(perpetrator.nationality)
@@ -3706,16 +3703,16 @@ def view_enforcement_case_behalf(request, case_id):
             #     contact_person.province = decrypt_data(contact_person.province)
             #     contact_person.region = decrypt_data(contact_person.region)
 
-        #print(decrypt_data(case.street))
+        ## print(decrypt_data(case.street))
         # if isinstance(encrypted_data_from_db, bytes):
-        #     print("Decrypted: ", decrypt_data(encrypted_data_from_db))
+        #     # print("Decrypted: ", decrypt_data(encrypted_data_from_db))
         # else:
-        #     print("Decrypted: ", decrypt_data())
+        #     # print("Decrypted: ", decrypt_data())
         
         # for victim in victims:
         #     encryted_value = encrypt_data(victim.first_name)
-        #     print("Encrypted: ", encryted_value)
-        #     print("Decrypted: ", decrypt_data(encryted_value))
+        #     # print("Encrypted: ", encryted_value)
+        #     # print("Decrypted: ", decrypt_data(encryted_value))
 
         # Render the view-case.html template with the case and related objects as context
         
@@ -3767,7 +3764,7 @@ def view_enforcement_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -4068,7 +4065,7 @@ def pdf_template_view(request, case_id):
         for victim, parent in list_victim_decrypted:
             if 'date_of_birth' in victim:
                 victim['age'] = calculate_age(victim['date_of_birth'])
-                print(f"victim Age: {victim['age']}")
+                # print(f"victim Age: {victim['age']}")
 
 
     # PERPETRATORS ----------------------
@@ -4104,7 +4101,7 @@ def pdf_template_view(request, case_id):
         for perpetrator, parent_perpetrator in list_perpetrator_decrypted:
             if 'date_of_birth' in perpetrator:
                 perpetrator['age'] = calculate_age(perpetrator['date_of_birth'])
-                print(f"Perpetrator Age: {perpetrator['age']}")
+                # print(f"Perpetrator Age: {perpetrator['age']}")
 
     # Route to the correct provider template based on account type
     template_map = {
@@ -4213,9 +4210,9 @@ def add_new_victim(request):
         number_of_children = request.POST.get('victim_number_children')
         ages_of_children = request.POST.get('victim_ages_children')
         
-        print(case_id)
-        print(first_name)
-        print(last_name)
+        # print(case_id)
+        # print(first_name)
+        # print(last_name)
         # Create and save the new victim instance
         victim = Victim.objects.create(
             case_victim=case_instance,
@@ -4286,9 +4283,9 @@ def add_new_perpetrator(request):
         city = request.POST.get('perpetrator_city')
         region = request.POST.get('perpetrator_region')
 
-        print(case_id)
-        print(first_name)
-        print(last_name)
+        # print(case_id)
+        # print(first_name)
+        # print(last_name)
         # Create and save the new perpetrator instance
         perpetrator = Perpetrator.objects.create(
             case_perpetrator=case_instance,
@@ -4327,8 +4324,8 @@ def add_new_perpetrator(request):
 @require_POST
 def save_perpetrator_data(request, perpetrator_id):
     try:
-        print("HERE")
-        print(request.POST.get('perpetrator_contact_number_' + str(perpetrator_id)))
+        # print("HERE")
+        # print(request.POST.get('perpetrator_contact_number_' + str(perpetrator_id)))
         perpetrator = get_object_or_404(Perpetrator, id=perpetrator_id)
 
         # Check edit permission
@@ -4391,7 +4388,7 @@ def delete_case(request):
     if not reason:
         return JsonResponse({'success': False, 'message': 'A reason for deletion is required.'}, status=400)
         
-    print('Case ID:', case_id)
+    # print('Case ID:', case_id)
     case = get_object_or_404(Case, id=case_id)
 
     # Check edit permission
@@ -4722,7 +4719,7 @@ def add_parent_perp_view(request, case_id, perp_id):
     # Query Parent objects related to the Victim
     parents = Parent_Perpetrator.objects.filter(perpetrator_parent=perpetrator)
     
-    print("test")
+    # print("test")
     
    
     if request.session.get('security_status') == "encrypted":
@@ -4772,7 +4769,7 @@ def add_parent_perp_admin_view(request, case_id, perp_id):
     # Query Parent objects related to the Victim
     parents = Parent_Perpetrator.objects.filter(perpetrator_parent=perpetrator)
     
-    print("test")
+    # print("test")
     
    
     if request.session.get('security_status') == "encrypted":
@@ -4923,7 +4920,7 @@ def delete_parent_perp(request):
 def delete_victim(request):
     if request.method == 'POST':
         victim_id = request.POST.get('victim_id')
-        print(victim_id)
+        # print(victim_id)
 
         # Check edit permission
         if victim_id:
@@ -5008,7 +5005,7 @@ def process_incident_form(request):
                 request.POST.getlist('witness_email')
             )
             witness_data_list = list(witness_data)
-            print(witness_data_list)
+            # print(witness_data_list)
 
             #Create a new Witness object for each set of witness data
             for name, address, number, email in witness_data_list:
@@ -5020,9 +5017,10 @@ def process_incident_form(request):
                         contact_number=number,
                         email=email,
                     )
-                    print('saved data:',name, address, number, email)
+                    # print('saved data:',name, address, number, email)
                 except Exception as e:
-                    print("Error creating Witness:", e)
+                    # print("Error creating Witness:", e)
+                    pass
         # Process removal of witnesses
         witnesses_to_delete = request.POST.getlist('witnesstoDelete')
         for witness_id in witnesses_to_delete:
@@ -5031,7 +5029,7 @@ def process_incident_form(request):
         # Process other fields in the form and save them to Case model
         case_id = request.POST.get('case_id')
         case = Case.objects.get(id=case_id)
-        print(case_id)
+        # print(case_id)
         
         # Retrieve existing witnesses associated with the case
         existing_witnesses = Witness.objects.filter(case_witness=case)
@@ -5058,7 +5056,7 @@ def process_incident_form(request):
                 witness_instance.save()
 
         date_latest_incident = request.POST.get('date_latest_incident')
-        print(date_latest_incident)
+        # print(date_latest_incident)
 
         case.date_latest_incident = request.POST.get('date_latest_incident')
         case.incomplete_date = True if request.POST.get('incomplete_date') == 'true' else False
@@ -5537,8 +5535,8 @@ def update_case_status(request, case_id):
         return JsonResponse({'success': False, 'error': 'Invalid request method'})  # Return an error response if the request method is not POST
     
 def update_case_date_closed(request, case_id):
-    print(f"Request method: {request.method}")
-    print(f"Request data: {request.POST}")
+    # print(f"Request method: {request.method}")
+    # print(f"Request data: {request.POST}")
     if request.method == 'POST':
         new_status_date = request.POST.get('date_closed')  # Get the date from the form data
         case = get_object_or_404(Case, pk=case_id)  # Get the case object
@@ -5568,7 +5566,7 @@ def update_case_date_closed(request, case_id):
 #     requested_user = request.POST.get('logged_in_user')
 #     user = CustomUser.objects.filter(username=requested_user).first()
 #     account = user.account
-#     print("account:",user)
+#     # print("account:",user)
 #     if action == "decrypted":
 #         request.session['security_status'] = "encrypted"
 #         return JsonResponse({'success': True, 'message': 'encryted successfully.'})
@@ -5588,18 +5586,18 @@ def encrypt_decrypt(request):
     form_data = request.POST.get('formData')
     parsed_data = QueryDict(form_data)
     security_stat = request.POST.get('security_status')
-    print(security_stat)
+    # print(security_stat)
     # Check if what action the button wants to perform
     action = parsed_data.get('security_status')
     requested_user = request.POST.get('logged_in_user')
     
     # Retrieve the user from the database
     user = CustomUser.objects.filter(username=requested_user).first()
-    print("user:", user)
+    # print("user:", user)
     if user:
         account = user.account
-        print("account:", account)
-        print(account.passkey)
+        # print("account:", account)
+        # print(account.passkey)
 
         if security_stat == "decrypted":
             request.session['security_status'] = "encrypted"
@@ -5708,7 +5706,7 @@ def view_SWDO_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -5745,8 +5743,8 @@ def view_SWDO_case_behalf(request, case_id):
                 victim.number_of_children = encrypt_data(victim.number_of_children)
                 victim.ages_of_children = encrypt_data(victim.ages_of_children)
                 
-                print("Here")
-                print(victim.occupation)
+                # print("Here")
+                # print(victim.occupation)
 
             for perpetrator in perpetrators:
                 perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
@@ -5759,7 +5757,7 @@ def view_SWDO_case_behalf(request, case_id):
                 perpetrator.sex = encrypt_data(perpetrator.sex)
                 perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
                 perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
-                print(perpetrator.contact_number)
+                # print(perpetrator.contact_number)
                 perpetrator.occupation = encrypt_data(perpetrator.occupation)
                 perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
                 perpetrator.nationality = encrypt_data(perpetrator.nationality)
@@ -5804,16 +5802,16 @@ def view_SWDO_case_behalf(request, case_id):
             #     contact_person.province = decrypt_data(contact_person.province)
             #     contact_person.region = decrypt_data(contact_person.region)
 
-        #print(decrypt_data(case.street))
+        ## print(decrypt_data(case.street))
         # if isinstance(encrypted_data_from_db, bytes):
-        #     print("Decrypted: ", decrypt_data(encrypted_data_from_db))
+        #     # print("Decrypted: ", decrypt_data(encrypted_data_from_db))
         # else:
-        #     print("Decrypted: ", decrypt_data())
+        #     # print("Decrypted: ", decrypt_data())
         
         # for victim in victims:
         #     encryted_value = encrypt_data(victim.first_name)
-        #     print("Encrypted: ", encryted_value)
-        #     print("Decrypted: ", decrypt_data(encryted_value))
+        #     # print("Encrypted: ", encryted_value)
+        #     # print("Decrypted: ", decrypt_data(encryted_value))
 
         # Render the view-case.html template with the case and related objects as context
         
@@ -5866,7 +5864,7 @@ def view_SWDO_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -5989,7 +5987,7 @@ def view_healthcare_case_impact(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -6119,7 +6117,7 @@ def view_healthcare_case_behalf(request, case_id):
         # Retrieve only the latest status history entry
         latest_status_history = status_history.order_by('-status_date_added').first()
 
-        print(request.session.get('security_status'))
+        # print(request.session.get('security_status'))
 
         if request.session.get('security_status') == "encrypted":
             case.street = encrypt_data(case.street)
@@ -6159,8 +6157,8 @@ def view_healthcare_case_behalf(request, case_id):
                 victim.number_of_children = encrypt_data(victim.number_of_children)
                 victim.ages_of_children = encrypt_data(victim.ages_of_children)
                 
-                print("Here")
-                print(victim.occupation)
+                # print("Here")
+                # print(victim.occupation)
 
             for perpetrator in perpetrators:
                 perpetrator.relationship_to_victim = encrypt_data(perpetrator.relationship_to_victim)
@@ -6173,7 +6171,7 @@ def view_healthcare_case_behalf(request, case_id):
                 perpetrator.sex = encrypt_data(perpetrator.sex)
                 perpetrator.contact_number = encrypt_data(perpetrator.contact_number)
                 perpetrator.telephone_number = encrypt_data(perpetrator.telephone_number)
-                print(perpetrator.contact_number)
+                # print(perpetrator.contact_number)
                 perpetrator.occupation = encrypt_data(perpetrator.occupation)
                 perpetrator.date_of_birth = encrypt_data(perpetrator.date_of_birth)
                 perpetrator.nationality = encrypt_data(perpetrator.nationality)
@@ -6218,16 +6216,16 @@ def view_healthcare_case_behalf(request, case_id):
             #     contact_person.province = decrypt_data(contact_person.province)
             #     contact_person.region = decrypt_data(contact_person.region)
 
-        #print(decrypt_data(case.street))
+        ## print(decrypt_data(case.street))
         # if isinstance(encrypted_data_from_db, bytes):
-        #     print("Decrypted: ", decrypt_data(encrypted_data_from_db))
+        #     # print("Decrypted: ", decrypt_data(encrypted_data_from_db))
         # else:
-        #     print("Decrypted: ", decrypt_data())
+        #     # print("Decrypted: ", decrypt_data())
         
         # for victim in victims:
         #     encryted_value = encrypt_data(victim.first_name)
-        #     print("Encrypted: ", encryted_value)
-        #     print("Decrypted: ", decrypt_data(encryted_value))
+        #     # print("Encrypted: ", encryted_value)
+        #     # print("Decrypted: ", decrypt_data(encryted_value))
 
         # Render the view-case.html template with the case and related objects as context
         

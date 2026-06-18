@@ -25,10 +25,10 @@ function addAddressListener(formElement, formType = '', count = 0) {
     const selectedCity = city.getAttribute('data-selected');
     const selectedBarangay = barangay.getAttribute('data-selected');
 
-    console.log('Selected Region:', selectedRegion);
-    console.log('Selected Province:', selectedProvince);
-    console.log('Selected City:', selectedCity);
-    console.log('Selected Barangay:', selectedBarangay);
+    /* console.log('Selected Region:', selectedRegion); */;
+    /* console.log('Selected Province:', selectedProvince); */;
+    /* console.log('Selected City:', selectedCity); */;
+    /* console.log('Selected Barangay:', selectedBarangay); */;
 
     disableSelect(province);
     disableSelect(city);

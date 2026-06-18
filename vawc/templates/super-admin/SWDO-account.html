@@ -404,7 +404,7 @@
                     $('#addAccountBtn').prop('disabled', false); // Enable the button after submission
                 },
                 error: function(xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
+                    /* console.log(xhr.status + ": " + xhr.responseText); */;
                     $('#addAccountBtn').prop('disabled', false); // Enable the button after submission
                 }
             });
@@ -449,15 +449,15 @@
             $('#saveAccountBtn').prop('disabled', true); // Disable the button to prevent multiple submissions
             // Get the accountId from the hidden input field
             var accountId = $('#account_id').val();
-            console.log('Account Id:', accountId);
-            console.log(accountId);
+            /* console.log('Account Id:', accountId); */;
+            /* console.log(accountId); */;
             $.ajax({
                 url: '{% url "edit_SWDO_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
                     // Handle success response
-                    console.log(response);
+                    /* console.log(response); */;
                     // Optionally, close the modal or show a success message
                     $('#edit_law_enforcement_account').modal('hide');
                     // Display success message and reload page after 2 seconds
@@ -659,7 +659,7 @@
         city.disabled = true
 
         region.addEventListener('change', (e) => {
-            console.log("region changed")
+            /* console.log("region changed") */
             const regionSelect = formElement.querySelector(`#region`);
             const regionNameRaw = regionSelect.value;
             const regionName = regionNameRaw.replace(/\s*\(.*?\)\s*/g, '').trim();
@@ -670,13 +670,13 @@
                     csrfmiddlewaretoken: csrf_token,
                 });
                 province.disabled = false
-                console.log("enabled province")
+                /* console.log("enabled province") */
                 
                 // Clear cities when region changes
                 city.innerHTML = '<option value="">--Select Option--</option>';
                 city.disabled = true;
             } else {
-                console.log('Please select a region.');
+                /* console.log('Please select a region.'); */;
             }
         })
 
@@ -685,9 +685,9 @@
             if (provinceName) {
                 // Fetch cities for selected province
                 fetchCitiesByProvince(provinceName, city);
-                console.log("fetching cities for province:", provinceName)
+                /* console.log("fetching cities for province:", provinceName) */
             } else {
-                console.log('Please select a province.');
+                /* console.log('Please select a province.'); */;
                 city.innerHTML = '<option value="">--Select Option--</option>';
                 city.disabled = true;
             }
@@ -696,19 +696,19 @@
         /* Update city validation to work with select dropdown
         {% comment %} $(city).on('change', function() {
             const cityName = $(this).val();
-            console.log("city changed: ", cityName);
+            /* console.log("city changed: ", cityName); */;
             if(cityName){
                 city_have_an_acc = is_city_have_an_account(cityName)
-                console.log(city_have_an_acc)
+                /* console.log(city_have_an_acc) */
                 if(city_have_an_acc){
-                    console.log("city has an account")
+                    /* console.log("city has an account") */
                     $(city).addClass('is-invalid');
                     $(city).removeClass('is-valid');
                     $('#account_cityFeedback').show();
                     $('#account_cityFeedback.valid-feedback').hide();
                     $('#addAccountBtn').attr('disabled', 'disabled');
                 }else{
-                    console.log("city do not have an account")
+                    /* console.log("city do not have an account") */
                     $(city).removeClass('is-invalid');
                     $(city).addClass('is-valid');
                     $('#account_cityFeedback').hide();
@@ -747,7 +747,7 @@
                     city.innerHTML = '<option value="">--Select Option--</option>';
                     city.disabled = true;
                 } else {
-                    console.log('Please select a region.');
+                    /* console.log('Please select a region.'); */;
                 }
             })
         }
@@ -758,9 +758,9 @@
                 if (provinceName) {
                     // Fetch cities for selected province
                     fetchCitiesByProvince(provinceName, city);
-                    console.log("fetching cities for province:", provinceName)
+                    /* console.log("fetching cities for province:", provinceName) */
                 } else {
-                    console.log('Please select a province.');
+                    /* console.log('Please select a province.'); */;
                     city.innerHTML = '<option value="">--Select Option--</option>';
                     city.disabled = true;
                 }
@@ -769,7 +769,7 @@
 
         /* {% comment %} $(city).on('change', function() {
             const cityName = $(this).val();
-            console.log("city changed: ", cityName);
+            /* console.log("city changed: ", cityName); */;
             if(cityName){
                 
             } else {
@@ -831,7 +831,7 @@
                 option.value = item.name;
                 option.textContent = item.name;
                 selectElement.appendChild(option);
-                console.log(item.name);
+                /* console.log(item.name); */;
             });
         } catch (error) {
             console.error("Failed to fetch Province:", error);
@@ -981,7 +981,7 @@
                 });
                 
                 selectElement.disabled = false;
-                console.log(`Loaded ${cityData.city_list.length} cities for province: ${provinceName}`);
+                /* console.log(`Loaded ${cityData.city_list.length} cities for province: ${provinceName}`); */;
                 
             } else {
                 console.error('Province not found:', provinceData.error);

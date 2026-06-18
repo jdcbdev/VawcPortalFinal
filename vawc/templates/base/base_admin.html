@@ -72,7 +72,7 @@
         success: function(response) {
             if (response.unread_notifications_exist) {
                 notification_icon_parent.classList.add("notification");
-                console.log(response)
+                /* console.log(response) */
             } else {
                 notification_icon_parent.classList.remove("notification");
             }
@@ -168,7 +168,7 @@
                 url: '/request_username/',
                 success: function(response) {
                     $('#username').text(`Welcome, ${response.username}!`);
-                    console.log(response.username)
+                    /* console.log(response.username) */
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching username:', error);
@@ -184,7 +184,7 @@
                     }
                     $('#user-icon').attr('src', src);
                     $('#dropdown-user-icon').attr('src', src);
-                    console.log(`Profile URL loaded: ${src}`);
+                    /* console.log(`Profile URL loaded: ${src}`); */;
                 }
             });
             // "Next" button on Email Modal

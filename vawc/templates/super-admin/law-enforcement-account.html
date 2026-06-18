@@ -403,19 +403,19 @@
                     }
                 },
                 error: function(xhr, errmsg, err) {
-                    console.log(xhr.status + ": " + xhr.responseText);
+                    /* console.log(xhr.status + ": " + xhr.responseText); */;
                 }
             });
         });
 
         $(document).on('click', '.edit-account-btn', function() {
             var accountId = $(this).data('account-id');
-            console.log(accountId);
+            /* console.log(accountId); */;
             $.ajax({
                 url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
                 method: 'GET',
                 success: function(response) {
-                    // console.log("Full response object:", response);
+                    // /* console.log("Full response object:", response); */;
 
                     setGeoSelect($('#edit_account_region'), 'region', 'default_regions');
                     setGeoSelect($('#edit_account_province'), 'province', 'default_provinces');
@@ -426,7 +426,7 @@
                         blankOption.textContent = '--Select Option--';
                         geoTypeInput.empty().append(blankOption);
 
-                    // console.log("response data key: ",response[dataKey]);
+                    // /* console.log("response data key: ",response[dataKey]); */;
 
                     response[dataKey].forEach(item => {
                         const value = item[itemKey];
@@ -478,15 +478,15 @@
 
             // Get the accountId from the hidden input field
             var accountId = $('#account_id').val();
-            console.log('Account Id:', accountId);
-            console.log(accountId);
+            /* console.log('Account Id:', accountId); */;
+            /* console.log(accountId); */;
             $.ajax({
                 url: '{% url "edit_law-enforcement_account" 0 %}'.replace('0', accountId),
                 method: 'POST',
                 data: formData,
                 success: function(response) {
                     // Handle success response
-                    console.log(response);
+                    /* console.log(response); */;
                     // Display success message and reload page after 2 seconds
                     $('#successToast .toast-body').text(response.message);
                     $('#successToast').toast('show');
@@ -683,14 +683,14 @@
                     csrfmiddlewaretoken: csrf_token,
                 });
                 province.disabled=false
-                console.log("enabled police station")
+                /* console.log("enabled police station") */
                 
                 if(city) {
                     city.innerHTML = '<option value="">--Select Option--</option>';
                     city.disabled = true;
                 }
             } else {
-                console.log('Please select a region.');
+                /* console.log('Please select a region.'); */;
             }
 
         })
@@ -709,7 +709,7 @@
                 police_station.innerHTML = '<option value="">--Select Option--</option>';
                 police_station.disabled = true;
             } else {
-                console.log('Please select a province.');
+                /* console.log('Please select a province.'); */;
                 if(city) {
                     city.innerHTML = '<option value="">--Select Option--</option>';
                     city.disabled = true;
@@ -771,7 +771,7 @@
                     city.disabled = true;
                 }
             } else {
-                console.log('Please select a region.');
+                /* console.log('Please select a region.'); */;
             }
 
         })
@@ -790,7 +790,7 @@
                 police_station.innerHTML = '<option value="">--Select Option--</option>';
                 police_station.disabled = true;
             } else {
-                console.log('Please select a province.');
+                /* console.log('Please select a province.'); */;
                 if(city) {
                     city.innerHTML = '<option value="">--Select Option--</option>';
                     city.disabled = true;
@@ -881,7 +881,7 @@
                 option.value = item.name;
                 option.textContent = item.name;
                 selectElement.appendChild(option);
-                console.log(item.name);
+                /* console.log(item.name); */;
             });
         } catch (error) {
             console.error("Failed to fetch police stations:", error);
@@ -934,7 +934,7 @@
                 });
                 
                 selectElement.disabled = false;
-                console.log(`Loaded ${cityData.city_list.length} cities for province: ${provinceName}`);
+                /* console.log(`Loaded ${cityData.city_list.length} cities for province: ${provinceName}`); */;
                 
             } else {
                 console.error('Province not found:', provinceData.error);

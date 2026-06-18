@@ -380,7 +380,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // added event listener to victim lastname input to rename navigation tab names
 function addVictimLastnameListener(id) {
-    console.log(id)
+    /* console.log(id) */
     const lastnameInput = document.querySelector(`#${id}`).querySelector(`.victim-lastname`)
     lastnameInput.addEventListener('input', () => {
         document.querySelector('#victim-navtabs-container').querySelector(`[data-target='#${id}'] .tab-name`).innerText = lastnameInput.value
@@ -390,7 +390,7 @@ addVictimLastnameListener('victim-form_0')
 
 // added event listener to perpetrator lastname input to rename navigation tab names
 function addPerpLastnameListener(id) {
-    console.log(id)
+    /* console.log(id) */
     const lastnameInput = document.querySelector(`#${id}`).querySelector(`.perpetrator-lastname`)
     lastnameInput.addEventListener('input', () => {
         document.querySelector('#perpetrator-navtabs-container').querySelector(`[data-target='#${id}'] .tab-name`).innerText = lastnameInput.value

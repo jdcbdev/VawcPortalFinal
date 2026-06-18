@@ -84,7 +84,7 @@ const DOMstrings = {
     //show active panel
     DOMstrings.stepFormPanels.forEach((elem, index) => {
       if (index === activePanelNum) {
-        console.log(elem)
+        /* console.log(elem) */
         elem.classList.add('js-active');
   
         //setFormHeight(elem);
@@ -267,8 +267,8 @@ function setCustomGender(selectInput) {
   // update the value of the <option>custom based on sibling custom input
   customInput.addEventListener('input', () => {
     customGenderOption.value = customInput.value
-    console.log(customInput.value)
-    console.log(customGenderOption.value)
+    /* console.log(customInput.value) */
+    /* console.log(customGenderOption.value) */
   })
 }
 
